@@ -1,0 +1,75 @@
+<div *ngIf='tokenIsValid' class='body-frame col-xs-12 col-sm-11 col-md-10 col-lg-8'>
+  <h3>
+    Alteração de Senha
+  </h3>
+  <hr>
+  <div class='alert' *ngIf='resetResponse'
+  [ngClass]="{'alert-success' : passwordSent,
+              'alert-danger' : !passwordSent }">
+              {{ resetResponse }}
+  <a *ngIf='passwordSent' routerLink='/login' class='float-right ml-auto'>Efetuar login</a>          
+  </div>
+  <form [formGroup]='resetForm' (ngSubmit)='resetPassword(resetForm.value)'>
+    <div class="col-md-12 mb-3">
+      <label for="newPassword">
+        Nova senha
+      </label>
+      <label for="newPassword" 
+      class="valid-feedback col-1 float-right" [ngStyle]="{
+        'display' : 
+        (( resetForm.controls['newPassword'].touched ) &&
+         ( resetForm.controls['newPassword'].dirty ) &&
+         ( resetForm.controls['newPassword'].valid )
+         ? 'block' : 'none' )}"> 
+          <i class='fa fa-check ml-auto float-right'></i>
+      </label>
+      <div class="input-group">
+          <div class="input-group-prepend">
+              <span class="input-group-text" id="inputGroupPrependNewPassword">
+                  <i class="fa fa-key"></i>
+                </span>
+          </div>
+        <input type="password" class="form-control has-error" id="newPassword" placeholder="Senha" 
+          aria-describedby="inputGroupPrependNewPassword" [formControl]="resetForm.controls['newPassword']" >
+      </div>
+      <div class='invalid-feedback' [ngStyle]="{
+        'display' : 
+        (( resetForm.controls['newPassword'].touched ) &&
+         ( resetForm.controls['newPassword'].dirty ) &&
+         ( resetForm.controls['newPassword'].invalid )
+         ? 'block' : 'none' )}">
+         Digite uma senha com pelo menos 4 caracteres
+      </div>
+     </div>
+     <div class="col-md-12 mb-3">
+      <label for="confPassword">
+        Confirme sua senha
+      </label>
+      <label for="confPassword" 
+      class="valid-feedback col-1 float-right" [ngStyle]="{
+            'display' : 
+            (( resetForm.controls['confPassword'].touched ) &&
+             ( resetForm.controls['confPassword'].dirty ) &&
+             ( resetForm.controls['newPassword'].value === resetForm.controls['confPassword'].value ) &&
+             ( resetForm.controls['confPassword'].valid )
+             ? 'block' : 'none' )}"> 
+          <i class='fa fa-check ml-auto float-right'></i>
+      </label>
+      <input type="password" class="form-control" name="confPassword" id="confPassword" placeholder="Confirmação de senha" 
+      [formControl]="resetForm.controls['confPassword']" >
+      <div class='invalid-feedback' [ngStyle]="{
+        'display' : 
+        (( resetForm.controls['confPassword'].touched &&
+           resetForm.controls['confPassword'].dirty &&
+           ( resetForm.controls['newPassword'].value != resetForm.controls['confPassword'].value ||
+           resetForm.controls['confPassword'].invalid)
+        )? 'block' : 'none' )}"> 
+         Senhas não conferem
+      </div>
+     </div>
+     <hr>
+     <div class="row align-items-center justify-content-center">
+        <button type="submit" class="btn btn-success" [disabled]="!resetForm.valid || sendingPassword || passwordSent">Alterar Senha</button>
+      </div>
+    </form>
+</div>

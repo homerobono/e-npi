@@ -1,0 +1,28 @@
+<app-navbar></app-navbar>
+<div class='container-fluid'>
+<div class='row alert-space align-itens-center'>
+<div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+[ngClass]="{'alert-success' : response.type == 'success',
+            'alert-warning' : response.type == 'warning',
+            'alert-info' : response.type == 'info',
+            'alert-danger' : response.type == 'error' }">
+            {{ response.message }}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+</div>
+</div>
+
+<div class='container'>
+    <div class='row justify-content-center'>
+      <div class='col-sm-auto body-home'>
+        <div class='row'>
+          <div class='col-sm'>
+            <app-nav-buttons></app-nav-buttons>
+          </div>
+        </div> 
+        Lista de projetos
+      </div>
+    </div>
+</div>

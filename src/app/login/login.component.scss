@@ -1,0 +1,42 @@
+.form-header {
+    background-color:gray;
+    border-radius: 10px;
+    padding-top: 10%;
+}
+
+.login-btn {
+    color: white; 
+    background-color: orange; 
+    padding: 8px 30px 8px 30px; 
+    font-size: 16px;
+    box-shadow: 0px 2px 8px #999; 
+}
+
+.login-btn:hover {
+    background-color: darkorange; 
+    box-shadow: 0 2px 12px #999
+}
+
+.form-header{
+    -webkit-box-shadow:0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
+    box-shadow:0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
+    color:#fff;
+    text-align: center;
+    margin: -3.13rem 2rem 3rem 2rem;
+    padding: 1rem 0 0.5rem;
+    -webkit-border-radius:.125rem;
+    border-radius: 10px
+}
+
+.card {
+    width: 24rem; 
+    border-radius: 10px; 
+    margin: auto; 
+    margin-top: 100px; 
+    padding-bottom: 10px
+}
+
+.alert{
+    margin: -2.5rem 0 0.5rem
+}
+

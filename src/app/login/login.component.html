@@ -1,0 +1,68 @@
+  <div class='text-center' style='margin-top:50px'>
+      <img src='/assets/pixelti_logo.png' height='60'>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="loginForm">
+
+        <!--Header-->
+        <div class="form-header">
+          <h3>
+            <i class="fa fa-lock"></i> Login:
+          </h3>
+        </div>
+
+        <!--Body-->
+
+      <div class='alert col-12 alert-dismissible fade show' *ngIf='operationResponse' 
+        [ngClass]="{'alert-success' : operationResponse.type == 'success',
+              'alert-warning' : operationResponse.type == 'warning',
+              'alert-info' : operationResponse.type == 'info',
+              'alert-danger' : operationResponse.type == 'error' }">
+              {{ operationResponse.message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      </div>
+        <div class="form-row">
+          <div class="col mb-2">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="emailPrepend">
+                        <i class="fa fa-envelope"></i>
+                      </span>
+                </div>
+              <input type="text" class="form-control" id="email" placeholder="E-mail" 
+              aria-describedby="email" formControlName='email' autofocus>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col mb-3">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="passwordPrepend">
+                        <i class="fa fa-lock"></i>
+                      </span>
+                </div>
+              <input type="password" class="form-control" id="password" placeholder="Senha" aria-describedby="password" formControlName='password' >
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <button class="btn login-btn" (click)="login()">
+            Login
+        </button>
+        </div>
+      </form>
+    </div>
+
+    <!--Footer-->
+    <div style='margin: auto'>
+        <p>
+          <a href="/forgot">Esqueci a Senha</a>
+        </p>
+    </div>
+
+  </div>

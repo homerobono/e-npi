@@ -1,0 +1,34 @@
+.user-delete {
+    color: red;
+    font-size: 28px;
+    margin: 0
+}
+.user-edit {
+    color: royalblue;
+    font-size: 30px;
+    margin: 0 6px
+}
+.user {
+    vertical-align: center;
+}
+.user:hover {
+    cursor: pointer;
+}
+.user-delete:hover{
+    color: darkred;
+}
+.user-edit:hover{
+    color: midnightblue;
+}
+
+.radio-level-legend {
+    font-size: 12px; 
+    line-height: 12px;
+    color: gray;
+}
+.fa-trash,.fa-edit {
+    text-shadow: 1px 1px 8px #aaa
+}
+.fa-trash:hover,.fa-edit:hover {
+    text-shadow: 2px 2px 8px #aaa
+}

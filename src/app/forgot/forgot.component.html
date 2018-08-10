@@ -1,0 +1,48 @@
+<div class='body-frame col-xs-12 col-sm-11 col-md-10 col-lg-8'>
+    <h3>
+      Esqueci Minha Senha
+    </h3>
+    <hr>
+    <div class='alert' *ngIf="tokenResponse" [ngClass]="{
+      'alert-success' : tokenSent,
+      'alert-danger' : !tokenSent
+     }">
+      {{ tokenResponse }}</div>
+    <form [formGroup]='emailForm' (ngSubmit)='sendResetToken(emailForm.value)'>
+      <div class="col-md-12 mb-3">
+        <label for="email">
+          E-mail
+        </label>
+        <label for="email" 
+        class="valid-feedback col-1 float-right" [ngStyle]="{
+          'display' : 
+          (( emailForm.controls['email'].touched ) &&
+           ( emailForm.controls['email'].dirty ) &&
+           ( emailForm.controls['email'].valid )
+           ? 'block' : 'none' )}"> 
+            <i class='fa fa-check ml-auto float-right'></i>
+        </label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrependEmail">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+            </div>
+          <input type="email" class="form-control has-error" id="email" placeholder="E-mail" 
+            aria-describedby="inputGroupPrependEmail" [formControl]="emailForm.controls['email']" >
+        </div>
+        <div class='invalid-feedback' [ngStyle]="{
+          'display' : 
+          (( emailForm.controls['email'].touched ) &&
+           ( emailForm.controls['email'].dirty ) &&
+           ( emailForm.controls['email'].invalid )
+           ? 'block' : 'none' )}">
+           Não é um e-mail válido
+        </div>
+       </div>
+       <hr>
+       <div class="row align-items-center justify-content-center">
+          <button type="submit" class="btn btn-success" [disabled]="!emailForm.valid || sendingToken "> {{ actionLabel }} </button>
+        </div>
+      </form>
+  </div>

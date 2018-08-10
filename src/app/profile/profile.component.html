@@ -1,0 +1,248 @@
+<app-navbar></app-navbar>
+<div class="body-frame col-sm-10 col-md-9 col-lg-6">
+  <app-nav-buttons></app-nav-buttons>
+  <h3>Meu Perfil</h3>
+  <form [formGroup]='profileForm' (ngSubmit)="updateUser(profileForm.value)">
+    <div class="form-row">
+      <hr style='width: 100%; color: lightgray'>
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom01">Nome</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrependFirstName">
+                    <i class="fa fa-user"></i>
+                  </span>
+            </div>
+          <input type="text" class="form-control has-error" id="validationCustom01" placeholder="Nome" aria-describedby="inputGroupPrependFirstName" [formControl]="profileForm.controls['firstName']" >
+        </div>
+        <div class='valid-feedback' *ngIf="
+            profileForm.controls['firstName'].touched &&
+            profileForm.controls['firstName'].valid">
+          <i class="fa fa-check"></i>
+        </div>
+        <div class="invalid-feedback" *ngIf="
+          profileForm.controls['firstName'].touched &&
+          profileForm.controls['firstName'].dirty &&
+          profileForm.controls['firstName'].invalid">
+          Digite um nome
+        </div>
+      </div>  
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom02">Sobrenome</label>
+        <input type="text" class="form-control" id="validationCustom02" placeholder="Sobrenome" [formControl]="profileForm.controls['lastName']">
+        <div class="valid-feedback" *ngIf="
+            profileForm.controls['lastName'].touched &&
+            profileForm.controls['lastName'].valid">
+            <i class="fa fa-check"></i>
+        </div>
+        <div class="invalid-feedback" *ngIf="
+          profileForm.controls['lastName'].touched &&
+          profileForm.controls['lastName'].dirty &&
+          profileForm.controls['lastName'].invalid">
+          Digite um sobrenome
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationCustomEmail">E-Mail</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          <input type="text" class="form-control" id="validationCustomEmail" placeholder="E-mail" aria-describedby="inputGroupPrepend" [formControl]="profileForm.controls['email']" > 
+          <div class="valid-feedback" *ngIf="
+            profileForm.controls['email'].touched &&
+            profileForm.controls['email'].valid">
+            <i class="fa fa-check"></i>
+          </div>
+          <div class="invalid-feedback" *ngIf="
+            profileForm.controls['email'].touched &&
+            profileForm.controls['email'].dirty &&
+            profileForm.controls['email'].invalid">
+            Digite um e-mail válido
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom03">Telefone</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependPhone">
+                <i class="fa fa-phone"></i>
+              </span>
+          </div>
+        <input type="text" class="form-control" id="validationCustom03" placeholder="Telefone"  aria-describedby="inputGroupPrepend" [formControl]="profileForm.controls['phone']" >
+          <div class='valid-feedback' *ngIf="
+            profileForm.controls['phone'].touched &&
+            profileForm.controls['phone'].valid">
+            <i class="fa fa-check"></i>
+          </div>
+          <div class='invalid-feedback' *ngIf="
+            profileForm.controls['phone'].touched &&
+            profileForm.controls['phone'].dirty &&
+            profileForm.controls['phone'].invalid">
+            Digite um telefone válido
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom04">Departamento</label>
+        <select class="form-control" id="validationCustom04" placeholder="Departamento" [formControl]="profileForm.controls['department']">
+          <option *ngFor="let dept of departments">{{ dept }}</option>
+        </select>  
+        <div class='valid-feedback' *ngIf="
+          profileForm.controls['department'].touched &&
+          profileForm.controls['department'].valid">
+          <i class="fa fa-check"></i>
+        </div>
+        <div class='invalid-feedback' *ngIf="
+            profileForm.controls['department'].touched &&
+            profileForm.controls['department'].dirty &&
+            profileForm.controls['department'].invalid"> Escolha um departamento
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationCustom05">Nível de Permissão</label>
+
+        <div class="form-group">
+          <div class='row'>
+
+            <!-- Normal -->
+            <div class='col-4'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="defaultInline1" 
+                [formControl]="profileForm.controls['level']" name="level" value=0>
+                <label class="custom-control-label" for="defaultInline1">
+                    Normal<br>
+                    <div class='col-xs-11 radio-level-legend'>
+                        Usuário normal, com restrições padrão, 
+                        pode visualizar, criar NPI's e O&M's e editá-las, 
+                        restrito ao seu departamento.                
+                      </div>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Master -->
+            <div class='col-4'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="defaultInline2" 
+                name="level" value=1 [formControl]="profileForm.controls['level']">
+                <label class="custom-control-label" for="defaultInline2">
+                  Master<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                    Usuário privilegiado, pode sobrescrever decisões da análise crítica, 
+                    independente do departamento. 
+                    Pode visualizar usuários.
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Administrador-->
+            <div class='col-4'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="defaultInline3"
+                name="level" value=2 [formControl]="profileForm.controls['level']">
+                <label class="custom-control-label" for="defaultInline3">
+                  Administrador<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                      Usuário com nível de permissão máximo, pode editar qualquer campo. 
+                      Deve ser usado somente para propósito de manutenção do sistema.
+                      Pode gerenciar usuários (cadastrar, editar, excluir).
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    <div class='alert' *ngIf='profileResponse'
+      class="{'alert-success' : profileSent,
+              'alert-danger' : !profileSent }">
+        {{ profileResponse }}
+    </div>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" 
+      [disabled]="!profileForm.valid || sendingProfile">
+        Salvar Alterações</button>
+    </div>
+  </form>
+  <hr>
+  <form [formGroup]='passwordForm' (ngSubmit)="changePassword(passwordForm.value)">
+    <h4>Alterar Senha</h4>
+    <div class='alert' *ngIf='passwordResponse'
+      class="{'alert-success' : passwordSent,
+              'alert-danger' : !passwordSent }">
+      {{ passwordResponse }} </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="password">Senha Atual</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependPassword">
+              <i class="fa fa-key"></i>
+            </span>
+          </div>
+          <input type="password" class="form-control has-error" id="password" placeholder="Senha" 
+            aria-describedby="inputGroupPrependPassword" [formControl]="passwordForm.controls['password']" >
+        </div>
+      </div>
+    </div> 
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="newPassword">Nova Senha</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrependNewPassword">
+                    <i class="fa fa-key"></i>
+                  </span>
+            </div>
+          <input type="password" class="form-control has-error" id="newPassword" placeholder="Senha" 
+            aria-describedby="inputGroupPrependNewPassword" [formControl]="passwordForm.controls['newPassword']" >
+        </div>
+        <div class="valid-feedback" *ngIf="
+            passwordForm.controls['newPassword'].touched &&
+            passwordForm.controls['newPassword'].valid">
+            <i class="fa fa-check"></i>
+        </div>
+        <div class="invalid-feedback" *ngIf="
+          passwordForm.controls['newPassword'].touched &&
+          passwordForm.controls['newPassword'].dirty &&
+          passwordForm.controls['newPassword'].invalid">
+          Digite uma senha com 4 caracteres ou mais
+        </div>
+      </div>  
+      <div class="col-md-6 mb-3">
+        <label for="confPassword">Confirmação de Senha</label>
+        <input type="password" class="form-control" id="confPassword" placeholder="Confirmação de senha" 
+          [formControl]="passwordForm.controls['confPassword']" name='confPassword'>
+        <div class='valid-feedback' *ngIf="
+          (passwordForm.controls['confPassword'].touched || passwordForm.controls['confPassword'].dirty) &&
+          passwordForm.controls['newPassword'].value == passwordForm.controls['confPassword'].value &&
+          passwordForm.controls['confPassword'].valid">
+          <i class="fa fa-check"></i>
+        </div>
+        <div class="invalid-feedback" *ngIf="
+          (passwordForm.controls['confPassword'].touched || passwordForm.controls['confPassword'].dirty) &&
+          passwordForm.controls['newPassword'].value != passwordForm.controls['confPassword'].value &&
+          passwordForm.controls['confPassword'].invalid">
+          Senhas não conferem
+        </div>
+      </div>
+    </div>  
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" [disabled]="!passwordForm.valid">Alterar Senha</button>
+    </div>
+  </form>
+</div>
+
