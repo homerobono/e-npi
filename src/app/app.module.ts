@@ -3,6 +3,7 @@ import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { JwtModule } from '@auth0/angular-jwt';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -20,6 +21,7 @@ import { HomeComponent } from './home/home.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { NavButtonsComponent } from './nav-buttons/nav-buttons.component';
 import { RoutingModule } from './routing.module';
+import { MessageService } from './services/message.service';
 
 @NgModule({
   declarations: [
@@ -41,11 +43,12 @@ import { RoutingModule } from './routing.module';
     HttpClientModule,
     FormsModule, ReactiveFormsModule,
     BrowserModule, BrowserAnimationsModule,
-    RoutingModule
+    RoutingModule, JwtModule
   ],
   providers: [
     UsersService,
     AuthService,
+    MessageService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
