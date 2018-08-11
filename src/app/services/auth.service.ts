@@ -13,7 +13,7 @@ import { Globals } from 'config';
   providedIn: 'root'
 })
 export class AuthService {
-    api_url = Globals.LOCAL_ENPI_URL;
+    api_url = Globals.ENPI_SERVER_URL;
     loginUrl = `${this.api_url}/login`;
     resetUrl = `${this.api_url}/reset/`;
     forgotUrl = `${this.api_url}/forgot/`;

@@ -78,17 +78,7 @@ export class RegisterComponent implements OnInit {
     }
     )}
 
-  ngOnInit() {
-    let session_token = localStorage.getItem('id_token');
-    if (!session_token) this.router.navigate(['login']);
-    this.authService.verifySessionToken().do(
-      null,
-      err => {this.router.navigate(['/login'])}
-    );
-    if (parseInt(localStorage.getItem('userLevel')) < 2)
-      this.router.navigate(['/error', {type:'Nível de permissão', 
-      message:'Usuário não tem permissão para realizar a operação'}]);
-  }
+  ngOnInit() {}
 
   registerUser(userForm : any): void {
     this.sendingRegister = true

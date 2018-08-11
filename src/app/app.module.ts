@@ -22,6 +22,9 @@ import { ForgotComponent } from './forgot/forgot.component';
 import { NavButtonsComponent } from './nav-buttons/nav-buttons.component';
 import { RoutingModule } from './routing.module';
 import { MessageService } from './services/message.service';
+import { NpiService } from './services/npi.service';
+import { CreateComponent } from './npi/create/create.component';
+import { NpiComponent } from './npi/npi.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +39,9 @@ import { MessageService } from './services/message.service';
     ErrorComponent,
     ForgotComponent,
     UserComponent,
-    NavButtonsComponent
+    NavButtonsComponent,
+    CreateComponent,
+    NpiComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +53,7 @@ import { MessageService } from './services/message.service';
   providers: [
     UsersService,
     AuthService,
+    NpiService,
     MessageService,
     {
       provide: HTTP_INTERCEPTORS,

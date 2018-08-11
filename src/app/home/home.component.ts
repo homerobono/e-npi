@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UsersService } from '../services/users.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+import { NpiService } from '../services/npi.service';
+import Npi from '../models/npi.model';
 
 @Component({
   selector: 'app-home',
@@ -11,18 +12,42 @@ import { MessageService } from '../services/message.service';
 })
 export class HomeComponent implements OnInit {
 
-  userLevel : Number = 0
+  npiLevel : Number = 0
   response = null
+  npisList : Npi[]
 
-  constructor( private usersService : UsersService,
+  constructor( private npisService : NpiService,
                private router : Router,
                private authService : AuthService,
+               private npiService : NpiService,
                private messenger : MessageService,
   ) { 
     this.response = this.messenger.getAndClear();
-    this.userLevel = this.authService.getUserLevel();
+    this.npiLevel = this.authService.getUserLevel();
   }
 
-  ngOnInit() { }
+  ngOnInit(): void {
+    console.log('getting npis');
+    this.npiService.getNpis()
+      .subscribe(npis => { 
+        console.log(this.npisList)
+        this.npisList = npis;
+        this.formatDate();
+      })
+  }
+
+  editProfile(npiId:String) {
+    this.router.navigate(['/npi/'+npiId]);
+  }
+
+  formatDate(): void {
+    this.npisList.forEach(npi => {
+      npi.createdString = new Date(npi.created).toLocaleString();
+    });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 
 }

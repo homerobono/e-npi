@@ -12,7 +12,7 @@ import 'rxjs/add/operator/map';
 })
 
 export class UsersService {
-  api_url = Globals.LOCAL_ENPI_URL
+  api_url = Globals.ENPI_SERVER_URL
   usersUrl = `${this.api_url}/users`;
   userUrl = `${this.api_url}/user/`;
   registerUrl = `${this.api_url}/users`;

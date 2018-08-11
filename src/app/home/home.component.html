@@ -1,17 +1,17 @@
 <app-navbar></app-navbar>
 <div class='container-fluid'>
-<div class='row alert-space align-itens-center'>
-<div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
-[ngClass]="{'alert-success' : response.type == 'success',
-            'alert-warning' : response.type == 'warning',
-            'alert-info' : response.type == 'info',
-            'alert-danger' : response.type == 'error' }">
-            {{ response.message }}
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-</div>
+  <div class='row alert-space align-itens-center'>
+    <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+    [ngClass]="{'alert-success' : response.type == 'success',
+                'alert-warning' : response.type == 'warning',
+                'alert-info' : response.type == 'info',
+                'alert-danger' : response.type == 'error' }">
+                {{ response.message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class='container'>
@@ -19,10 +19,62 @@
       <div class='col-sm-auto body-home'>
         <div class='row'>
           <div class='col-sm'>
-            <app-nav-buttons></app-nav-buttons>
+            <button routerLink='/npi/create' class='btn btn-primary m-0 p-3 shadow-sm'>
+              <i class='fa fa-plus fa-2x'></i>
+              <div>Novo NPI</div>
+            </button>
+          </div> 
+        </div>
+        <hr>
+        <div *ngIf='npisList'>
+          <div class='row align-items-center'>
+            <div class='col-2'>
+              <b>Número</b>
+            </div>
+            <div class='col-2'>
+              <b>Nome</b>
+            </div>
+            <div class='col-2'>
+              <b>Criado em</b>
+            </div>
+            <div class='col-2'>
+              <b>Status</b>
+            </div>
+            <div class='col-auto'>
+              <b>Status</b>
+            </div>
+            <div class='col-auto ml-auto justify-content-right'>
+              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+                <i class='fa fa-pencil fa-fw'></i>
+              </button>
+              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+                <i class='fa fa-trash fa-fw'></i>
+              </button>
+            </div> 
           </div>
-        </div> 
-        Lista de projetos
+          <div class='row npi rounded pl-1 align-items-center' *ngFor='let npi of npisList'>
+             <div class='col-2'>
+              {{ npi.number }}
+            </div>
+            <div class='col-2'>
+              {{ npi.name }}
+            </div>
+            <div class='col-2'>
+              {{ npi.createdString }}
+            </div>
+            <div class='col-2'>
+                {{ npi.status }}
+              </div>
+            <div class='col-auto ml-auto justify-content-right'>
+              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+                <i class='fa fa-pencil fa-fw'></i>
+              </button>
+              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+                <i class='fa fa-trash fa-fw'></i>
+              </button>
+            </div> 
+          </div>
+        </div>
       </div>
     </div>
 </div>

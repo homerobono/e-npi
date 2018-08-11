@@ -34,7 +34,8 @@ export class LoginComponent {
       private authService: AuthService, 
       private router: Router,
       private messenger : MessageService
-) {
+    ) { 
+    this.operationResponse = this.messenger.getAndClear();
     this.loginForm = fb.group({
         email: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(4)]]

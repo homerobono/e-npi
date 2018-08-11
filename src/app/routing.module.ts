@@ -10,6 +10,8 @@ import { RegisterComponent } from './register/register.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { ResetComponent } from './reset/reset.component';
 import { ErrorComponent } from './error/error.component';
+import { NpiComponent } from './npi/npi.component';
+import { CreateComponent } from './npi/create/create.component';
 
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
@@ -74,6 +76,17 @@ const appRoutes: Routes = [
       AuthGuard,
     ],
     data: { mustNotBeLogged: true }
+  },
+  { path: 'npis', redirectTo: '/home' },
+  { path: 'npi/create', component: CreateComponent },
+  { 
+    path: 'npi',
+    canActivate: [AuthGuard],
+    children: 
+    [{ 
+      path: ':npiId', 
+      component: NpiComponent,
+    }], 
   },
   { path: 'error', component: ErrorComponent },
   { path: '**', redirectTo: '/home' }
