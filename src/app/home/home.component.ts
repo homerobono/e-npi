@@ -16,10 +16,9 @@ export class HomeComponent implements OnInit {
   response = null
   npisList : Npi[]
 
-  constructor( private npisService : NpiService,
+  constructor( private npiService : NpiService,
                private router : Router,
                private authService : AuthService,
-               private npiService : NpiService,
                private messenger : MessageService,
   ) { 
     this.response = this.messenger.getAndClear();
@@ -42,7 +41,7 @@ export class HomeComponent implements OnInit {
 
   formatDate(): void {
     this.npisList.forEach(npi => {
-      npi.createdString = new Date(npi.created).toLocaleString();
+      npi.createdString = new Date(npi.created).toLocaleDateString();
     });
   }
 

@@ -16,9 +16,9 @@
 
 <div class='container'>
     <div class='row justify-content-center'>
-      <div class='col-sm-auto body-home'>
+      <div class='col body-home'>
         <div class='row'>
-          <div class='col-sm'>
+          <div class='col'>
             <button routerLink='/npi/create' class='btn btn-primary m-0 p-3 shadow-sm'>
               <i class='fa fa-plus fa-2x'></i>
               <div>Novo NPI</div>
@@ -26,53 +26,104 @@
           </div> 
         </div>
         <hr>
+        <div *ngIf='!npisList'>
+          <div class='row justify-content-center'>
+            <i class='fa fa-circle-o-notch fa-spin fa-4x text-primary '></i>
+            <div class='w-100'></div>
+            <div>Carregando NPI's...</div>
+          </div>
+        </div>
         <div *ngIf='npisList'>
-          <div class='row align-items-center'>
-            <div class='col-2'>
+          <div class='row align-items-center m-0 pr-0 d-none d-sm-flex'>
+            <div class='col'>
               <b>Número</b>
             </div>
-            <div class='col-2'>
+            <div class='col'>
               <b>Nome</b>
             </div>
-            <div class='col-2'>
+            <div class='col'>
               <b>Criado em</b>
             </div>
-            <div class='col-2'>
+            <div class='col'>
               <b>Status</b>
             </div>
-            <div class='col-auto'>
-              <b>Status</b>
+            <div class='col'>
+              <b>Tipo</b>
             </div>
-            <div class='col-auto ml-auto justify-content-right'>
-              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
-                <i class='fa fa-pencil fa-fw'></i>
+            <div class='d-none d-md-block col-auto ml-auto mr-0 pr-0 justify-content-right invisible'>
+              <button class='btn m-0 p-1'>
+                <i class='fa fa-fw'></i>
               </button>
-              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
-                <i class='fa fa-trash fa-fw'></i>
+              <button class='btn m-0 p-1'>
+                <i class='fa fa-fw'></i>
               </button>
             </div> 
           </div>
-          <div class='row npi rounded pl-1 align-items-center' *ngFor='let npi of npisList'>
-             <div class='col-2'>
-              {{ npi.number }}
-            </div>
-            <div class='col-2'>
-              {{ npi.name }}
-            </div>
-            <div class='col-2'>
-              {{ npi.createdString }}
-            </div>
-            <div class='col-2'>
-                {{ npi.status }}
+          <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList'>
+            <div class='col-xs-12 col-sm'>
+              <span class='d-none d-sm-block'>{{ npi.number }}</span>
+              <div class='row d-flex d-sm-none'>
+                <span class='col-3 pl-0'>
+                  <b>Número: </b>
+                </span>
+                {{ npi.number }}
+                <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
+                  <button (click)='cancelNPI' class='btn btn-danger m-0 shadow-sm p-0'>
+                      <i class='fa fa-trash fa-fw'></i>
+                  </button>
+                </div>
               </div>
-            <div class='col-auto ml-auto justify-content-right'>
-              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+            </div>
+            <div class='col-xs-12 col-sm'>
+                <span class='d-none d-sm-block'>{{ npi.name }}</span>
+                <div class='row d-flex d-sm-none'>
+                  <div class='col-3 pl-0'>
+                    <b>Nome: </b>
+                  </div>
+                  {{ npi.name }} 
+                  <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
+                    <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-0'>
+                      <i class='fa fa-pencil fa-fw'></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <div class='col-xs-12 col-sm'>
+              <span class='d-none d-sm-block'>{{ npi.createdString }}</span>
+              <div class='row d-flex d-sm-none'>
+                <div class='col-3 pl-0'>
+                  <b>Criado em: </b>
+                </div>
+                <span class='align-items-center mt-auto'>{{ npi.createdString }}</span>
+              </div>
+            </div>
+            <div class='col-xs-12 col-sm'>
+              <span class='d-none d-sm-block'>{{ npi.status }}</span>
+              <div class='row d-flex d-sm-none'>
+                <div class='col-3 pl-0'>
+                  <b>Status: </b>
+                </div>
+                <span>{{ npi.status }}</span>
+              </div>
+            </div>
+            <div class='col-xs-12 col-sm'>
+              <span class='d-none d-sm-block'>{{ npi.entry }}</span>
+              <div class='row d-flex d-sm-none'>
+                <div class='col-3 pl-0'>
+                  <b>Entrada: </b>
+                </div>
+                <span>{{ npi.entry }}</span>
+              </div>
+            </div>
+            <div class='col-auto ml-auto mr-0 pr-0 d-none d-sm-block justify-content-right'>
+              <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-1'>
                 <i class='fa fa-pencil fa-fw'></i>
               </button>
-              <button routerLink='/npis' class='btn btn-pencil m-0 shadow-sm'>
+              <button (click)='cancelNPI' class='btn btn-danger m-0 shadow-sm p-1'>
                 <i class='fa fa-trash fa-fw'></i>
               </button>
             </div> 
+            <hr class='w-100 d-flex d-sm-none'>
           </div>
         </div>
       </div>
