@@ -1,0 +1,52 @@
+<app-navbar></app-navbar>
+<div class='container-fluid'>
+    <div class='row alert-space align-itens-center'>
+      <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+      [ngClass]="{'alert-success' : response.type == 'success',
+                  'alert-warning' : response.type == 'warning',
+                  'alert-info' : response.type == 'info',
+                  'alert-danger' : response.type == 'error' }">
+                  {{ response.message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class='container'>
+    <div class='row justify-content-center'>
+      <div class='col body-main'>
+        <app-nav-buttons></app-nav-buttons>
+        <h3>Criar NPI</h3>
+        <form [formGroup]='createForm' (ngSubmit)="createNpi(createForm.value)">
+          <hr>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="name">Nome</label>
+              <input type="text" class="form-control has-errors" id="name" placeholder="Nome" 
+              [formControl]="createForm.controls['name']" >
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col">
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="pixel-npi" value='pixel' name='entry'
+                  [formControl]="createForm.controls['entry']" >
+                  <label for="pixel-npi" class='custom-control-label'>Pixel</label>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem'
+                  [formControl]="createForm.controls['entry']" >
+                  <label for="oem-npi" class='custom-control-label'>O&M</label>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row align-items-center justify-content-center">
+            <button type="submit" class="btn btn-success" 
+            [disabled]="!createForm.valid || sendingCreate">Submeter NPI</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
