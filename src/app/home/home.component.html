@@ -19,7 +19,7 @@
       <div class='col body-home'>
         <div class='row'>
           <div class='col'>
-            <button routerLink='/npi/create' class='btn btn-primary m-0 p-3 shadow-sm'>
+            <button routerLink='/npi/create' class='btn btn-primary m-0 p-2 shadow'>
               <i class='fa fa-plus fa-2x'></i>
               <div>Criar NPI</div>
             </button>
@@ -34,21 +34,21 @@
           </div>
         </div>
         <div *ngIf='npisList'>
-          <div class='row align-items-center m-0 pr-0 d-none d-sm-flex sticky-top'>
-            <div class='col'>
+          <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
+            <div class='col-lg-1 col-md-2 col'>
               <b>Número</b>
             </div>
             <div class='col'>
               <b>Nome</b>
             </div>
-            <div class='col'>
-              <b>Criado em</b>
+            <div class='col col-lg-1 col-md-2 col'>
+              <b>Tipo</b>
             </div>
             <div class='col'>
               <b>Status</b>
             </div>
-            <div class='col'>
-              <b>Tipo</b>
+            <div class='col-lg-1 col-md-2 col-md col'>
+              <b>Criado em</b>
             </div>
             <div class='d-none d-md-block col-auto ml-auto mr-0 pr-0 justify-content-right invisible'>
               <button class='btn m-0 p-1'>
@@ -60,70 +60,75 @@
             </div> 
           </div>
           <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList'>
-            <div class='col-xs-12 col-sm'>
-              <span class='d-none d-sm-block'>{{ npi.number }}</span>
-              <div class='row d-flex d-sm-none'>
+            <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
+              <span class='d-none d-md-block col-lg-1'>{{ npi.number }}</span>
+              <div class='row d-flex d-md-none'>
                 <span class='col-3 pl-0'>
                   <b>Número: </b>
                 </span>
-                {{ npi.number }}
+                <span class='col'>{{ npi.number }}</span>
                 <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                  <button (click)='cancelNPI' class='btn btn-danger m-0 shadow-sm p-0'>
+                  <button (click)='cancelNPI(npi._id)' class='btn btn-danger m-0 shadow-sm p-0'>
                       <i class='fa fa-trash fa-fw'></i>
                   </button>
                 </div>
+                <div class='w-100'></div>
               </div>
             </div>
-            <div class='col-xs-12 col-sm'>
-                <span class='d-none d-sm-block'>{{ npi.name }}</span>
-                <div class='row d-flex d-sm-none'>
-                  <div class='col-3 pl-0'>
-                    <b>Nome: </b>
-                  </div>
-                  {{ npi.name }} 
-                  <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                    <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-0'>
-                      <i class='fa fa-pencil fa-fw'></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            <div class='col-xs-12 col-sm'>
-              <span class='d-none d-sm-block'>{{ npi.createdString }}</span>
-              <div class='row d-flex d-sm-none'>
+            <div class='col-xs-12 col-md'>
+              <span class='d-none d-md-block m-0 p-0'>{{ npi.name }}</span>
+              <div class='row d-flex d-md-none'>
                 <div class='col-3 pl-0'>
-                  <b>Criado em: </b>
+                  <b>Nome: </b>
                 </div>
-                <span class='align-items-center mt-auto'>{{ npi.createdString }}</span>
+                <span class=col>{{ npi.name }} </span>
+                <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
+                  <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-0'>
+                    <i class='fa fa-pencil fa-fw'></i>
+                  </button>
+                </div>
+                <div class='w-100'></div>
               </div>
             </div>
-            <div class='col-xs-12 col-sm'>
-              <span class='d-none d-sm-block'>{{ npi.status }}</span>
-              <div class='row d-flex d-sm-none'>
-                <div class='col-3 pl-0'>
-                  <b>Status: </b>
-                </div>
-                <span>{{ npi.status }}</span>
-              </div>
-            </div>
-            <div class='col-xs-12 col-sm'>
-              <span class='d-none d-sm-block'>{{ npi.entry }}</span>
-              <div class='row d-flex d-sm-none'>
+            <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
+              <span class='d-none d-md-block'>{{ npi.entry }}</span>
+              <div class='row d-flex d-md-none'>
                 <div class='col-3 pl-0'>
                   <b>Entrada: </b>
                 </div>
-                <span>{{ npi.entry }}</span>
+                <span class=col>{{ npi.entry }}</span>
               </div>
+              <div class='w-100'></div>
             </div>
-            <div class='col-auto ml-auto mr-0 pr-0 d-none d-sm-block justify-content-right'>
+            <div class='col-xs-12 col-md'>
+              <span class='d-none d-md-block'>{{ npi.status }}</span>
+              <div class='row d-flex d-md-none'>
+                <div class='col-3 pl-0'>
+                  <b>Status: </b>
+                </div>
+                <span class=col>{{ npi.status }}</span>
+              </div>
+              <div class='w-100'></div>
+            </div>
+            <div class='col-xs-12 col-md col-lg-1 col-md-2 col-md'>
+              <span class='d-none d-md-block '>{{ npi.createdString }}</span>
+              <div class='row d-flex d-md-none'>
+                <div class='col-3 pl-0'>
+                  <b>Criado em: </b>
+                </div>
+                <span class='col align-items-center mt-auto'>{{ npi.createdString }}</span>
+              </div>
+              <div class='w-100'></div>
+            </div>            
+            <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right'>
               <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-1'>
                 <i class='fa fa-pencil fa-fw'></i>
               </button>
-              <button (click)='cancelNPI' class='btn btn-danger m-0 shadow-sm p-1'>
+              <button (click)='cancelNPI(npi._id)' class='btn btn-danger m-0 shadow-sm p-1'>
                 <i class='fa fa-trash fa-fw'></i>
               </button>
             </div> 
-            <hr class='w-100 d-flex d-sm-none'>
+            <hr class='w-100 d-flex d-md-none'>
           </div>
         </div>
       </div>

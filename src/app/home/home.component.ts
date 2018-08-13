@@ -12,7 +12,7 @@ import Npi from '../models/npi.model';
 })
 export class HomeComponent implements OnInit {
 
-  npiLevel : Number = 0
+  userLevel : Number = 0
   response = null
   npisList : Npi[]
 
@@ -22,11 +22,19 @@ export class HomeComponent implements OnInit {
                private messenger : MessageService,
   ) { 
     this.response = this.messenger.getAndClear();
-    this.npiLevel = this.authService.getUserLevel();
+    this.userLevel = this.authService.getUserLevel();
   }
 
   ngOnInit(): void {
     console.log('getting npis');
+    this.messenger.response.subscribe(
+      res => { this.response = res },
+      err => { console.log('error on subscribe') }
+    )
+    this.getNpis()
+    }
+
+  getNpis(){
     this.npiService.getNpis()
       .subscribe(npis => { 
         console.log(this.npisList)
@@ -46,7 +54,25 @@ export class HomeComponent implements OnInit {
   }
 
   goToRegister() {
+    this.messenger.clear()
     this.router.navigate(['/register']);
+  }
+
+  cancelNPI(npiId : String) {
+    console.log('canceling NPI')
+    this.npiService.deleteNpi(npiId).subscribe(
+      res => { 
+        console.log(res)
+        this.getNpis();
+        this.messenger.set(
+          {
+            type: 'info',
+            message : 'NPI cancelada'
+          }
+        ) 
+      },
+      err => {console.log('failed to delete')}
+    );
   }
 
 }

@@ -4,6 +4,8 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
+import { NgxMaskModule } from 'ngx-mask';
+import { TextMaskModule } from 'angular2-text-mask'
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -46,9 +48,13 @@ import { NpiComponent } from './npi/npi.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule, ReactiveFormsModule,
-    BrowserModule, BrowserAnimationsModule,
-    RoutingModule, JwtModule
+    FormsModule, 
+    ReactiveFormsModule,
+    BrowserModule,
+    RoutingModule, 
+    JwtModule,
+    NgxMaskModule.forRoot(),
+    TextMaskModule
   ],
   providers: [
     UsersService,

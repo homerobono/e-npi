@@ -35,7 +35,18 @@ export class LoginComponent {
       private router: Router,
       private messenger : MessageService
     ) { 
-    this.operationResponse = this.messenger.getAndClear();
+    this.messenger.response.subscribe(
+        (res) => { this.operationResponse = res},
+        (err) => { this.messenger.set(
+            {
+                type:'error', 
+                message:'Ocorreu um erro ao obter o status da operação',
+                head: 'Serviço de mensagens',
+                log:err
+            }) 
+        }
+    );
+
     this.loginForm = fb.group({
         email: ['', Validators.required],
         password: ['', [Validators.required, Validators.minLength(4)]]
@@ -46,6 +57,7 @@ export class LoginComponent {
         const val = this.loginForm.value;
         if (val.email && val.password) {
             console.log('trying to login');
+            this.messenger.clear()
             this.authService.login(val.email, val.password)
             .subscribe(
                 (res) => {
@@ -56,15 +68,7 @@ export class LoginComponent {
                     console.log(err);
                     this.loginForm.controls['password'].patchValue(null);
                     this.loginForm.markAsPristine();
-                    this.operationResponse = {'type':'error', 'message': err.error.message};
-                    if (err.status==0){
-                        this.messenger.set( 
-                        {
-                        type:'Erro de comunicação', 
-                        message:'Não foi possível obter resposta do servidor.'
-                        })
-                        this.router.navigate(['/error'])
-                    }
+                    //this.operationResponse = this.messenger.getAndClear()
                 }
             );
         }

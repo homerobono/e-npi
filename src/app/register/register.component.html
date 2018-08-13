@@ -13,7 +13,8 @@
                     <i class="fa fa-user"></i>
                   </span>
             </div>
-          <input type="text" class="form-control has-error" id="validationCustom01" placeholder="Nome" aria-describedby="inputGroupPrependFirstName" [formControl]="registerForm.controls['firstName']" >
+          <input type="text" class="form-control has-error" id="validationCustom01" placeholder="Nome" aria-describedby="inputGroupPrependFirstName" 
+          [formControl]="registerForm.controls['firstName']" >
         </div>
         <div [ngClass]="{
             'valid-feedback':registerForm.controls['firstName'].valid

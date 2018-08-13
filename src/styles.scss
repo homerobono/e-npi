@@ -10,7 +10,14 @@ body {
     margin: auto;
     margin-top: 100px;
     padding : 40px;
-    border-radius: 10px;
+    border-radius: 2px;
+    box-shadow: 0px 1px 10px #222;
+}
+.body-home {
+    margin-top: 1px;
+    padding : 40px;
+    background-color : white;
+    border-radius : 2px;
     box-shadow: 0px 1px 10px #222;
 }
 

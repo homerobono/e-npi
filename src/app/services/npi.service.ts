@@ -33,7 +33,7 @@ export class NpiService {
 
   createNpi(npi: Npi): Observable<any> {
     console.log('registering npi');
-    return this.http.post(this.npisUrl, npi);
+    return this.http.post(this.npiUrl, npi);
   }
   
   updateNpi(npiId, npi: Npi): Observable<any> {
@@ -43,6 +43,6 @@ export class NpiService {
 
   deleteNpi(npiId: String): Observable<any> {
     console.log('deleting npi');
-    return this.http.delete(this.npisUrl+'/'+npiId);
+    return this.http.delete(this.npiUrl+npiId);
   }
 }

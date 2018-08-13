@@ -2,12 +2,14 @@ import { HttpInterceptor, HttpHandler, HttpEvent, HttpRequest, HttpErrorResponse
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Router } from "@angular/router";
+import { MessageService } from "./message.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor{
 
     constructor(
-        private router: Router
+        private router: Router,
+        private messenger: MessageService
     ){}
 
     intercept(req: HttpRequest<any>,
@@ -22,26 +24,34 @@ export class AuthInterceptor implements HttpInterceptor{
                 headers: req.headers.set("Authorization", idToken)
               }
             );
-        
-            return next.handle(cloned);
+            req = cloned;
         }
-
         console.log("No session token defined");
-        return next.handle(req);
 
-        /*
-        return next.handle(req).do((event: HttpEvent<any>) => {
-        
-            if (event instanceof HttpResponse ) {
-                }
-            }, (err: any) => {
+        return next.handle(req).do(
+            () => {}, 
+            (err) => {
                 if (err instanceof HttpErrorResponse ) {
-                    //if (err.status === 401) {
-                        this.router.navigate(['login']);
-                    //}
+                    console.log(err)
+                    if (err.status === 0) {
+                        console.log(err)
+                        this.messenger.set(
+                        {
+                            head: 'Servidor não encontrado',
+                            type : 'error',
+                            message : 'Não foi possível estabelecer comunicação com o servidor',
+                            log : err.message
+                        })
+                        this.router.navigate(['/error'])
+                    } else {
+                        this.messenger.set(
+                        {
+                            'type':'error',
+                            'message': err.error.message,
+                            'log' : err.message
+                        })
+                    }
                 }
             });
-        
-        */
         }
 }

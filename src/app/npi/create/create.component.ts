@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 
+
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
@@ -17,7 +18,10 @@ export class CreateComponent implements OnInit {
   sendingCreate: Boolean = false;
   createSent: Boolean = false;
   createResponse: String;
-  response : { 'type', 'message' }
+  response : any
+  
+  public customPatterns = {'0': { pattern: new RegExp('\[a-zA-Z\]')}};
+  public mask = ['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]
 
   createForm : FormGroup;
   departments = [ 'Comercial',
@@ -39,22 +43,30 @@ export class CreateComponent implements OnInit {
     this.createForm = fb.group({
       'name' : 'Projetaço',
       'entry' : 'pixel',
+      'cost' : '10.22'
     })
   }
 
   ngOnInit() {
+    this.messenger.response.subscribe(
+      res => { this.response = res }
+    )
   }
 
   createNpi(npiForm : any): void {
+    console.log(this.createForm.controls['cost'].value)
     this.sendingCreate = true
     this.npiService.createNpi(npiForm).
     subscribe(res => {
-      this.response = { 'type' : 'success', 'message' : 'NPI cadastrado com sucesso' };
+      this.messenger.set({
+         'type' : 'success',
+         'message' : 'NPI cadastrado com sucesso' 
+      });
       this.createSent = true;
       this.sendingCreate = false;
       this.clearFields();
+      this.router.navigateByUrl('home')
     }, err => {
-      this.response = { 'type' : 'error', 'message' : err.error.message };
       console.log(this.response);
       this.createSent = false;
       this.sendingCreate = false;

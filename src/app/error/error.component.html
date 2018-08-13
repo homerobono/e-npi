@@ -1,14 +1,33 @@
 <app-navbar></app-navbar>
 
-<div class='body-frame col-xs-12 col-sm-10 col-md-9 col-lg-8'>
-  <row>
-      <div class='col-1'>
-        <span><div class='float-left fa fa-times-circle' style='color: red; font-size: 26px; margin: 0 6px'></div></span>
+  <container>
+    <div class='row justify-content-center'>
+      <div class='col-xs body-frame'>
+        <div class='row align-items-center'>
+          <div class='col-auto'>
+            <span class='fa fa-times-circle fa-3x text-danger'></span>
+          </div>
+          <h4 class='col-auto m-0 p-0'>{{ response.head }}</h4>
+          <div class='w-100'></div>
+          <div class='col-auto invisible'>
+              <span class='fa fa-times-circle fa-3x text-danger'></span>
+          </div>
+          <div class='col p-0 m-0'>
+            {{ response.message }}
+          </div>
+          <div class='w-100'></div>
+          <div *ngIf='response.log' class='col-auto invisible d-xs-none d-sm-block'>
+              <span class='fa fa-times-circle fa-3x text-danger'></span>
+          </div>
+          <div class='col m-0 p-0'><hr *ngIf='response.log' class='m-0 p-0'></div>
+          <div class='w-100'></div>
+          <div *ngIf='response.log' class='col-auto invisible d-xs-none d-sm-block'>
+              <span class='fa fa-times-circle fa-3x text-danger'></span>
+          </div>
+          <div *ngIf='response.log' class='col p-0 m-0 text-secondary'>
+            <i>{{ response.log }}</i>
+          </div>
+        </div>
       </div>
-      <div class='col-10'>
-        <span><h4>Erro</h4></span>
-      </div>
-  </row>
-  <br>
-  {{ head }}: {{ message }}
-</div>
+    </div>
+  </container>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-error',
@@ -8,16 +9,27 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class ErrorComponent implements OnInit {
 
-  head: String = 'Erro genérico: '
-  message: String = ' Sua solicitação não pode ser efetuada.'
+  response: any
   
-  constructor( private router: Router,
-    private route: ActivatedRoute ) { 
-    this.head = this.route.snapshot.paramMap.get('type');
-    this.message = this.route.snapshot.paramMap.get('message');
+  constructor( 
+    private router: Router,
+    private route: ActivatedRoute,
+    private messenger : MessageService
+  ) { 
   }
 
   ngOnInit() {
+    this.response = this.messenger.getAndClear()
+    this.messenger.response.subscribe(
+      (res) => { this.response = res});
+    if (!this.response)
+      this.response = this.messenger.getAndClear()
+    if (!this.response)
+      this.response = {}
+    if (!this.response.head)
+        this.response.head = 'Erro desconhecido'
+    if (!this.response.message)
+      this.response.message = 'Algo deu errado!'
   }
 
   back(){
