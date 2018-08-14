@@ -15,6 +15,12 @@ export class HomeComponent implements OnInit {
   userLevel : Number = 0
   response = null
   npisList : Npi[]
+  
+  sortParam : String
+  sortOrder : Number
+
+  gettingNpis : Boolean = false
+  manualRefresh : Boolean = false
 
   constructor( private npiService : NpiService,
                private router : Router,
@@ -23,6 +29,8 @@ export class HomeComponent implements OnInit {
   ) { 
     this.response = this.messenger.getAndClear();
     this.userLevel = this.authService.getUserLevel();
+    this.sortParam = 'number'
+    this.sortOrder = -1
   }
 
   ngOnInit(): void {
@@ -35,13 +43,25 @@ export class HomeComponent implements OnInit {
     }
 
   getNpis(){
+    this.gettingNpis = true;
+    console.log(this.sortParam)
     this.npiService.getNpis()
       .subscribe(npis => { 
-        console.log(this.npisList)
-        this.npisList = npis;
+        this.npisList = npis.sort(
+          this.sortBy(this.sortParam,this.sortOrder)
+        );
         this.formatDate();
+        this.gettingNpis = false;
+        this.manualRefresh = false;
       })
   }
+
+  sortBy(property, sortOrder) {
+    return function (a,b) {
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+  } 
 
   editProfile(npiId:String) {
     this.router.navigate(['/npi/'+npiId]);
@@ -75,4 +95,8 @@ export class HomeComponent implements OnInit {
     );
   }
 
+  refresh(){
+    this.manualRefresh = true
+    this.getNpis();
+  }
 }

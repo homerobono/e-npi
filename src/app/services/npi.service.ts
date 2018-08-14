@@ -26,13 +26,21 @@ export class NpiService {
   }
 
   getNpis(): Observable<Npi[]> {
-    return this.http.get(this.npisUrl)
-    .map(res => { console.log(res); return res['data'].docs as Npi[]; })
+    return this.http.get(this.npisUrl).delay(1000)
+    .map(res => { 
+      var Npis : Npi[] = []
+      res['data'].docs.forEach(npi => {
+        var transNpi = new Npi(npi)
+        Npis.push(transNpi)
+      });
+      return Npis;
+    })
     .shareReplay();
   }
 
   createNpi(npi: Npi): Observable<any> {
     console.log('registering npi');
+    console.log(npi);
     return this.http.post(this.npiUrl, npi);
   }
   

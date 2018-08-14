@@ -1,10 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
+import { DatepickerModule, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
-import { NgxMaskModule } from 'ngx-mask';
 import { TextMaskModule } from 'angular2-text-mask'
 
 import { AppComponent } from './app.component';
@@ -53,8 +53,9 @@ import { NpiComponent } from './npi/npi.component';
     BrowserModule,
     RoutingModule, 
     JwtModule,
-    NgxMaskModule.forRoot(),
-    TextMaskModule
+    TextMaskModule,
+    DatepickerModule.forRoot(),
+    BsDatepickerModule.forRoot()
   ],
   providers: [
     UsersService,

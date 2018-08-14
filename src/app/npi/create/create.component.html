@@ -18,29 +18,62 @@
       <div class='col body-main'>
         <app-nav-buttons></app-nav-buttons>
         <h3>Criar NPI</h3>
-        <form [formGroup]='createForm' (ngSubmit)="createNpi(createForm.value)">
+        <form [formGroup]='createForm' (ngSubmit)="createNpi()">
           <hr>
           <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class="form-group col-sm-3 col-md-2 col-lg-1">
+              <label for="number">Número</label>
+              <input type="text" class="form-control" id="number" placeholder="(auto)"
+              readonly>
+            </div>
+            <div class="form-group col-sm-3 col-md-2 col-lg-2">
+              <label for="date">Data</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="datePrepend">
+                      <i class='fa fa-calendar fa-fw'></i>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control" id="date" 
+                      formControlName='date' readonly>
+              </div>
+            </div>
+            <div class="form-group col-sm-3 col-md-2 col-lg-2">
+              <label for="npiref">NPI Ref.</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="npiRefPrepend">
+                    #
+                  </span>
+                </div>
+                <input type="text" class="form-control" id="npiRef" 
+                    formControlName='npiRef'>
+              </div>
+            </div>
+            <div class="form-group col-sm-6 col-md-6 col-lg-3">
               <label for="name">Nome</label>
               <input type="text" class="form-control" id="name" placeholder="Nome" 
-              [formControl]="createForm.controls['name']" >
+              formControlName='name'>
             </div>
           </div>
+          <label for='entry-group'>Entrada</label>
           <div class="form-row">
-            <div class="form-group col">
+            <div class="form-group col" id='entry-group'>
               <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" class="custom-control-input" id="pixel-npi" value='pixel' name='entry'
+                <input type="radio" class="custom-control-input" id="pixel-npi" 
+                  value='pixel' name='entry'
                   [formControl]="createForm.controls['entry']" >
                   <label for="pixel-npi" class='custom-control-label'>Pixel</label>
               </div>
               <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem'
+                <input type="radio" class="custom-control-input" id="oem-npi" name='entry' 
+                  value='oem'
                   [formControl]="createForm.controls['entry']" >
                   <label for="oem-npi" class='custom-control-label'>O&M</label>
               </div>
               <div class="custom-control custom-radio custom-control-inline">
-                <input type="radio" class="custom-control-input" id="internal-npi" name='entry' value='internal'
+                <input type="radio" class="custom-control-input" id="internal-npi" name='entry' 
+                  value='internal'
                   [formControl]="createForm.controls['entry']" >
                   <label for="internal-npi" class='custom-control-label'>Interno</label>
               </div>
@@ -51,13 +84,66 @@
               </div>
             </div>
           </div>
-          <div class="form-row">
-              <div>
-                <input [textMask]="{mask: mask}" type="text"/>
-                <input class='form-control' type='text' prefix='R$ ' pattern='99,99' mask='9*.99'
-                [formControl]="createForm.controls['cost']" name='cost' placeholder='12,12'>
+          <div class="form-row" 
+            *ngIf='createForm.controls["entry"].value!="internal" &&
+            createForm.controls["entry"].value!="oem"'>
+            <div class='col-md-3 form-group'>
+              <label for="cost">Custo</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="costPrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='cost' name='cost' placeholder='Custo' aria-describedby="cost">
               </div>
-              
+            </div>
+            <div class='col-md-3 form-group'>
+              <label for="price">Preço</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="pricePrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='price' name='price' placeholder='Preço de Venda' aria-describedby="Preço">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='col-md-3 form-group'>
+              <label for="investment">Investimento</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="investmentPrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='investment' name='investment' placeholder='Investimento' 
+                aria-describedby="Investimento">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='col-md-3 form-group' 
+              *ngIf='createForm.controls["entry"].value!="internal"'>
+              <label for="inStockDate">Data em Estoque</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inStockDatePrepend"
+                  (click)="dp.toggle()">
+                    <i class='fa fa-calendar fa-fw'></i>
+                  </span>
+                </div>
+                <input type='text' class='form-control'
+                formControlName='inStockDate' name='inStockDate'
+                aria-describedby="Data em Estoque" #dp="bsDatepicker" 
+                bsDatepicker [bsConfig]='datePickerConfig'>
+              </div>
+            </div>
           </div>
           <hr>
           <div class="row align-items-center justify-content-center">
