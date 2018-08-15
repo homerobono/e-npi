@@ -78,6 +78,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
+  goToNpi(npiNumber) {
+    this.router.navigate(['/npi/'+npiNumber]);
+  }
+
   cancelNPI(npiId : String) {
     console.log('canceling NPI')
     this.npiService.deleteNpi(npiId).subscribe(

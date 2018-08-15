@@ -1,3 +1,168 @@
-<p>
-  npi works!
-</p>
+<app-navbar></app-navbar>
+  <div class='container-fluid'>
+    <div class='row alert-space align-itens-center'>
+      <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+      [ngClass]="{'alert-success' : response.type == 'success',
+                  'alert-warning' : response.type == 'warning',
+                  'alert-info' : response.type == 'info',
+                  'alert-danger' : response.type == 'error' }">
+                  {{ response.message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class='container'>
+    <div class='row justify-content-center'>
+      <div class='col body-main'>
+        <app-nav-buttons></app-nav-buttons>
+        <div class='row justify-content-left'>
+          <h3 class='col-auto mb-0'>NPI #{{ npiNumber }} - {{ npi.name }}</h3>
+          <span class='badge pt-1 col-auto align-self-center' [ngClass]='{
+            "badge-success" : npi.entry=="pixel",
+            "badge-purple" : npi.entry=="oem",
+            "badge-secondary" : npi.entry=="internal",
+            "badge-info" : npi.entry=="custom"
+            }'>
+            {{ npi.entryLabel }} 
+          </span>
+        </div>
+        <form [formGroup]='viewForm' (ngSubmit)="viewNpi(viewForm.value)">
+          <hr>
+          <div class=row>
+            <div class='col-sm-6 col-md-5 col-lg-4'> 
+              <div class="form-group row">
+                <label for="date" class='col-auto col-form-label pr-0'>Criado em:</label>
+                <div class='col'> 
+                  <input type="text" class="form-control form-control-plaintext" id="date" 
+                    formControlName='date' readonly>
+                </div>  
+              </div>
+            </div>
+            <div class="col-sm-6 col-md-4 col-lg-2">
+              <div class="form-group row">
+                <label for="npiref" class='col-auto col-form-label pr-0'>NPI Ref.:</label>
+                <div class='col'>
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="npiRefPrepend">
+                        #
+                      </span>
+                    </div>
+                    <input type="text" class="form-control" id="npiRef" 
+                        formControlName='npiRef' disabled readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-row" 
+            *ngIf='npi.entry!="internal" &&
+            npi.entry!="oem"'>
+            <div class='col-md-3 form-group'>
+              <label for="cost">Custo</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="costPrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='cost' name='cost' placeholder='Custo' aria-describedby="Custo">
+              </div>
+            </div>
+            <div class='col-md-3 form-group'>
+              <label for="price">Preço</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="pricePrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='price' name='price' placeholder='Preço de Venda' aria-describedby="Preço">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='col-md-3 form-group'>
+              <label for="investment">Investimento</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="investmentPrepend">
+                    R$
+                  </span>
+                </div>
+                <input class='form-control' type='text' [textMask]="currencyMask"
+                formControlName='investment' name='investment' placeholder='Investimento' 
+                aria-describedby="Investimento">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class='col-md-3 form-group' 
+              *ngIf='viewForm.controls["entry"].value!="internal" &&
+              viewForm.controls["entry"].value!="oem"'>
+              <label for="inStockDate">Data em Estoque</label>
+                <input type='text' class='form-control'
+                formControlName='inStockDate' name='inStockDate'>
+            </div>
+            <div class='col-md-6 form-group' 
+              *ngIf='viewForm.controls["entry"].value=="oem"'>
+              <label for="inStockDate">Data em Estoque</label>
+              <div class="form-row">
+                <div class="form-group col" id='inStockDate-group'>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="fixed-date" 
+                      value='fixed' name='inStockDateType'
+                      formControlName="inStockDateType" >
+                    <label for="fixed-date" class='custom-control-label'>
+                      Data fixa
+                    </label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="offset-date" 
+                      value='offset' name='inStockDateType'
+                      formControlName="inStockDateType" >
+                    <label for="offset-date" class='custom-control-label'>
+                      Prazo após aprovação
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row" 
+              *ngIf='viewForm.controls["inStockDateType"].value=="fixed"'>
+                <div class="input-group">
+                  <input type='text' class='form-control'
+                  formControlName='inStockDate' name='inStockDate'
+                  aria-describedby="Data em Estoque" #dp="bsDatepicker" 
+                  bsDatepicker [bsConfig]='datePickerConfig'>
+                  <div class="input-group-append">
+                    <li class="input-group-text" id="inStockDateAppend"
+                    (click)="dp.toggle()">
+                      <i class='fa fa-calendar fa-fw'></i>
+                    </li>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row" 
+              *ngIf='viewForm.controls["inStockDateType"].value=="offset"'>
+                <div class="input-group col-xs-6 col-sm-3 col-md-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inStockDatePrepend">
+                      +N
+                    </span>
+                  </div>              
+                  <input type='number' class='form-control'
+                  formControlName='inStockDate' name='inStockDate'
+                  aria-describedby="Data em Estoque">
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+      </form>
+    </div>
+  </div>
+</div>

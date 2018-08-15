@@ -19,14 +19,14 @@ export class NpiService {
 
   constructor( private http: HttpClient ) {}
   
-  getNpi(npiId: String): Observable<Npi> {
-    return this.http.get(this.npiUrl+npiId)
-    .map(res => { return res as Npi })
+  getNpi(npiNumber: Number): Observable<Npi> {
+    return this.http.get(this.npiUrl+npiNumber)
+    .map(res => { return new Npi(res) as Npi })
     .shareReplay();
   }
 
   getNpis(): Observable<Npi[]> {
-    return this.http.get(this.npisUrl).delay(1000)
+    return this.http.get(this.npisUrl)
     .map(res => { 
       var Npis : Npi[] = []
       res['data'].docs.forEach(npi => {
@@ -38,8 +38,10 @@ export class NpiService {
     .shareReplay();
   }
 
-  createNpi(npi: Npi): Observable<any> {
+  createNpi(npiForm): Observable<any> {
     console.log('registering npi');
+    console.log(npiForm);
+    var npi = this.formToModel(npiForm)
     console.log(npi);
     return this.http.post(this.npiUrl, npi);
   }
@@ -53,4 +55,39 @@ export class NpiService {
     console.log('deleting npi');
     return this.http.delete(this.npiUrl+npiId);
   }
+
+  formToModel(npiForm): Npi {
+    var model = new Npi(npiForm)
+    var toUnmaskFields = [
+      'cost',
+      'price',
+      'investment'
+    ]
+    
+    toUnmaskFields.forEach(prop => {
+      console.log('there is ' + prop)
+      if(npiForm[prop]){
+        console.log(prop)
+        model[prop] = 
+        parseFloat(
+          npiForm[prop].
+          replace(/\./g,'').
+          replace(/,/,'.')
+        )  
+      }
+    })
+
+    if(model.entry=='oem'){
+      model.inStockDate = 
+      {
+        'fixed' : npiForm.inStockDate instanceof Date ? npiForm.inStockDate : null,
+        'offset' : !(npiForm.inStockDate instanceof Date) ? npiForm.inStockDate as Number : null
+      }
+      if (npiForm.inStockDate == null || npiForm.inStockDate == '')
+        model.inStockDate = null
+        
+    }
+    return model
+  }
+
 }

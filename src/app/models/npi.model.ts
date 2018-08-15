@@ -1,44 +1,57 @@
 class Npi {
-    _id: String;
+    id: String;
     number: Number;
     name: String;
     status: String;
     created : Date;
     createdString : String;
+    npiRef : Number;
     entry : String;
+    entryLabel : String;
+    price : Number;
+    cost : Number;
+    investment : Number;
+    inStockDate : Date | { fixed: Date, offset: Number };
+
     constructor( npiModel : any | null) {
-        this._id = ''
-        this.number = 0;
-        this.name = '';
-        this.status = 'Análise Crítica';
-        this.created = new Date()
-        this.createdString = new Date(this.created).toLocaleString();
-        
         if (npiModel) {
-            for (let prop in npiModel) {
-                if (this[prop]!=null){
-                    this[prop] = npiModel[prop]
-                }
-            }
-            switch(npiModel.__t) {
-                case 'pixel' :
-                    this.entry = 'Pixel'
+            if(npiModel._id) this.id = npiModel._id
+            if(npiModel.number) this.number = npiModel.number
+            if(npiModel.name) this.name = npiModel.name
+            if(npiModel.status) this.status = npiModel.status
+            if(npiModel.created) { this.created = new Date(npiModel.created)
+            this.createdString = this.created.toLocaleDateString() }
+            if(npiModel.entry) this.entry = npiModel.entry
+            if(npiModel.__t) this.entry = npiModel.__t
+            if(npiModel.price) this.price = npiModel.price
+            if(npiModel.cost) this.cost = npiModel.cost
+            if(npiModel.investment) this.investment = npiModel.investment
+            if(npiModel.inStockDate) this.inStockDate = 
+                npiModel.inStockDate instanceof String ?
+                    new Date(npiModel.inStockDate) :
+                    this.inStockDate = npiModel.inStockDate
+                    
+            
+            switch(this.entry){
+                case('pixel'):
+                    this.entryLabel = 'Pixel'
                     break
-                case 'internal' :
-                    this.entry = 'Interno'
+                case('oem'):
+                    this.entryLabel = 'O&M'
                     break
-                case 'oem' :
-                    this.entry = 'O&M'
+                case('internal'):
+                    this.entryLabel = 'Interno'
                     break
-                case 'custom' :
-                    this.entry = 'Customização'
+                case('custom'):
+                    this.entryLabel = 'Customização'
                     break
                 default :
-                    this.entry = null
+                    this.entryLabel = null
             }
+            console.log(this.inStockDate)
+
         }
     }
-    
 }
 
 export default Npi;

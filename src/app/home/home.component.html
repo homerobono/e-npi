@@ -64,7 +64,8 @@
               </button>
             </div> 
           </div>
-          <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList'>
+          <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList'
+            (click)='goToNpi(npi.number)'>
             <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
               <span class='d-none d-md-block col-lg-1'>{{ npi.number }}</span>
               <div class='row d-flex d-md-none'>
@@ -73,7 +74,7 @@
                 </span>
                 <span class='col'>{{ npi.number }}</span>
                 <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                  <button (click)='cancelNPI(npi._id)' class='btn btn-danger m-0 shadow-sm p-0'>
+                  <button (click)='cancelNPI(npi.id)' class='btn btn-danger m-0 shadow-sm p-0'>
                       <i class='fa fa-trash fa-fw'></i>
                   </button>
                 </div>
@@ -96,12 +97,12 @@
               </div>
             </div>
             <div class='col-xs-12 col-lg-2 col-md-2 col-md'>
-              <span class='d-none d-md-block'>{{ npi.entry }}</span>
+              <span class='d-none d-md-block'>{{ npi.entryLabel }}</span>
               <div class='row d-flex d-md-none'>
                 <div class='col-3 pl-0'>
                   <b>Entrada: </b>
                 </div>
-                <span class=col>{{ npi.entry }}</span>
+                <span class=col>{{ npi.entryLabel }}</span>
               </div>
               <div class='w-100'></div>
             </div>

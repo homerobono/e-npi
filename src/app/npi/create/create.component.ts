@@ -9,7 +9,12 @@ import { MessageService } from '../../services/message.service';
 import { conformToMask } from 'angular2-text-mask/dist/angular2TextMask';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker' 
+import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker' 
+import { listLocales, defineLocale } from 'ngx-bootstrap/chronos';
+import { ptBrLocale } from 'ngx-bootstrap/locale';
+import Npi from '../../models/npi.model';
+
+defineLocale('pt-br', ptBrLocale)
 
 @Component({
   selector: 'app-create',
@@ -23,7 +28,6 @@ export class CreateComponent implements OnInit {
   createSent: Boolean = false;
   createResponse: String;
   response : any
-  date : Date
   
   public currencyMask = {
     mask : 
@@ -57,24 +61,28 @@ export class CreateComponent implements OnInit {
               private npiService: NpiService,
               private authService: AuthService,
               private router: Router,
-              private messenger: MessageService
+              private messenger: MessageService,
+              private localeService: BsLocaleService
             ) 
   {
     this.datePickerConfig = Object.assign(
       {},
       { 
-        containerClass : 'theme-dark-blue',
+        containerClass : 'theme-default',
         showWeekNumbers: false,
-        dateInputFormat: 'DD/MM/YYYY'
+        dateInputFormat: 'DD/MM/YYYY',
+        minDate: new Date()
       }
     )
+
     this.createForm = fb.group({
       'date' : new Date().toLocaleDateString(),
       'name' : 'Projetaço',
-      'entry' : 'pixel',
+      'entry' : 'oem',
       'cost' : '',
       'price' : '',
       'investment' : '',
+      'inStockDateType' : 'fixed',
       'inStockDate' : null,
       'npiRef' : ''
     })
@@ -84,12 +92,12 @@ export class CreateComponent implements OnInit {
     this.messenger.response.subscribe(
       res => { this.response = res }
     )
+    this.localeService.use('pt-br');
   }
 
-  createNpi(): void {
-    this.unMaskFields()
+  createNpi(npiForm): void {
     this.sendingCreate = true
-    this.npiService.createNpi(this.createForm.value).
+    this.npiService.createNpi(npiForm).
     subscribe(res => {
       this.messenger.set({
          'type' : 'success',
@@ -104,6 +112,11 @@ export class CreateComponent implements OnInit {
       this.createSent = false;
       this.sendingCreate = false;
     });
+  }
+
+  toNpiModel(){
+    var model = new Npi(this.createForm.value)
+    return model
   }
 
   clearFields(){
@@ -121,19 +134,4 @@ export class CreateComponent implements OnInit {
     this.createForm.markAsUntouched();
   }
 
-  unMaskFields(){
-    var moneyString
-    if (this.createForm.controls['cost'].value) {
-      moneyString = this.createForm.controls['cost'].value.replace(/\./g,'').replace(/,/,'.')
-      this.createForm.controls['cost'].setValue(parseFloat(moneyString as string))
-    }
-    if (this.createForm.controls['price'].value) {
-      moneyString = this.createForm.controls['price'].value.replace(/\./g,'').replace(/,/,'.')
-      this.createForm.controls['price'].setValue(parseFloat(moneyString as string))
-    }
-    if (this.createForm.controls['investment'].value) {
-      moneyString = this.createForm.controls['investment'].value.replace(/\./g,'').replace(/,/,'.')
-      this.createForm.controls['investment'].setValue(parseFloat(moneyString as string))
-    }
-  }
 }

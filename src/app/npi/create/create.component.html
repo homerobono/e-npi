@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<div class='container-fluid'>
+  <div class='container-fluid'>
     <div class='row alert-space align-itens-center'>
       <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
       [ngClass]="{'alert-success' : response.type == 'success',
@@ -18,7 +18,7 @@
       <div class='col body-main'>
         <app-nav-buttons></app-nav-buttons>
         <h3>Criar NPI</h3>
-        <form [formGroup]='createForm' (ngSubmit)="createNpi()">
+        <form [formGroup]='createForm' (ngSubmit)="createNpi(createForm.value)">
           <hr>
           <div class="form-row">
             <div class="form-group col-sm-3 col-md-2 col-lg-1">
@@ -96,7 +96,7 @@
                   </span>
                 </div>
                 <input class='form-control' type='text' [textMask]="currencyMask"
-                formControlName='cost' name='cost' placeholder='Custo' aria-describedby="cost">
+                formControlName='cost' name='cost' placeholder='Custo' aria-describedby="Custo">
               </div>
             </div>
             <div class='col-md-3 form-group'>
@@ -129,19 +129,72 @@
           </div>
           <div class="form-row">
             <div class='col-md-3 form-group' 
-              *ngIf='createForm.controls["entry"].value!="internal"'>
+              *ngIf='createForm.controls["entry"].value!="internal" &&
+              createForm.controls["entry"].value!="oem"'>
               <label for="inStockDate">Data em Estoque</label>
               <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="inStockDatePrepend"
-                  (click)="dp.toggle()">
-                    <i class='fa fa-calendar fa-fw'></i>
-                  </span>
-                </div>
                 <input type='text' class='form-control'
                 formControlName='inStockDate' name='inStockDate'
                 aria-describedby="Data em Estoque" #dp="bsDatepicker" 
                 bsDatepicker [bsConfig]='datePickerConfig'>
+                <div class="input-group-append">
+                  <li class="input-group-text" id="inStockDateAppend"
+                  (click)="dp.toggle()">
+                    <i class='fa fa-calendar fa-fw'></i>
+                  </li>
+                </div>
+              </div>
+            </div>
+            <div class='col-md-6 form-group' 
+              *ngIf='createForm.controls["entry"].value=="oem"'>
+              <label for="inStockDate">Data em Estoque</label>
+              <div class="form-row">
+                <div class="form-group col" id='inStockDate-group'>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="fixed-date" 
+                      value='fixed' name='inStockDateType'
+                      formControlName="inStockDateType" >
+                    <label for="fixed-date" class='custom-control-label'>
+                      Data fixa
+                    </label>
+                  </div>
+                  <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" class="custom-control-input" id="offset-date" 
+                      value='offset' name='inStockDateType'
+                      formControlName="inStockDateType" >
+                    <label for="offset-date" class='custom-control-label'>
+                      Prazo após aprovação
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row" 
+              *ngIf='createForm.controls["inStockDateType"].value=="fixed"'>
+                <div class="input-group">
+                  <input type='text' class='form-control'
+                  formControlName='inStockDate' name='inStockDate'
+                  aria-describedby="Data em Estoque" #dp="bsDatepicker" 
+                  bsDatepicker [bsConfig]='datePickerConfig'>
+                  <div class="input-group-append">
+                    <li class="input-group-text" id="inStockDateAppend"
+                    (click)="dp.toggle()">
+                      <i class='fa fa-calendar fa-fw'></i>
+                    </li>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row" 
+              *ngIf='createForm.controls["inStockDateType"].value=="offset"'>
+                <div class="input-group col-xs-6 col-sm-3 col-md-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inStockDatePrepend">
+                      +N
+                    </span>
+                  </div>              
+                  <input type='number' class='form-control'
+                  formControlName='inStockDate' name='inStockDate'
+                  aria-describedby="Data em Estoque">
+                </div>
               </div>
             </div>
           </div>

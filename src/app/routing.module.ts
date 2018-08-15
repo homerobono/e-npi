@@ -84,7 +84,7 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
     children: 
     [{ 
-      path: ':npiId', 
+      path: ':npiNumber', 
       component: NpiComponent,
     }], 
   },
