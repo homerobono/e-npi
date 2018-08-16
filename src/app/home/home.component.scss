@@ -14,18 +14,17 @@
 
 .btn-create {
     box-shadow: 0 5px 20px #ccc;
-    background-color: #ff8000;
-    border-color: #ff8000;
+    background-color: #ff6500;
     color: white;
     border-radius : 15px;
     width: 30px;
     height: 30px;
-    text-align: center;
 }
 
 .btn-create:hover {
     box-shadow: 0 5px 20px #bbb;
-    background-color: #ff6500;
+    background-color: #ff5500;
+    cursor: pointer;
 }
 
 .refresh {

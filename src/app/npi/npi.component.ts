@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
-import { conformToMask } from 'angular2-text-mask/dist/angular2TextMask';
 
 import { NpiService } from '../services/npi.service';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+
 import Npi from '../models/npi.model';
 
 @Component({
@@ -87,11 +87,11 @@ export class NpiComponent implements OnInit {
     }
 
     fillFormData(){
-      console.log(this.npi.investment)
+      console.log(typeof this.npi.inStockDate)
       this.viewForm.patchValue({
         date : this.npi.createdString,
         inStockDate : 
-          this.npi.inStockDate instanceof Date ?
+          this.npi.inStockDate instanceof (Date || String) ?
             new Date(this.npi.inStockDate).toLocaleDateString('pt-br') :
               this.npi.inStockDate.fixed ?
                 new Date(this.npi.inStockDate.fixed).toLocaleDateString('pt-br') :

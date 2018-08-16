@@ -20,7 +20,7 @@ class Npi {
             if(npiModel.name) this.name = npiModel.name
             if(npiModel.status) this.status = npiModel.status
             if(npiModel.created) { this.created = new Date(npiModel.created)
-            this.createdString = this.created.toLocaleDateString() }
+            this.createdString = this.created.toLocaleDateString('pt-br') }
             if(npiModel.npiRef) this.npiRef = npiModel.npiRef
             if(npiModel.entry) this.entry = npiModel.entry
             if(npiModel.__t) this.entry = npiModel.__t
@@ -28,7 +28,8 @@ class Npi {
             if(npiModel.cost) this.cost = npiModel.cost
             if(npiModel.investment) this.investment = npiModel.investment
             if(npiModel.inStockDate) this.inStockDate = 
-                npiModel.inStockDate instanceof String ?
+                (typeof npiModel.inStockDate === 'string' ||
+                npiModel.inStockDate instanceof String)?
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
                     

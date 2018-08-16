@@ -27,7 +27,6 @@ export class HomeComponent implements OnInit {
                private authService : AuthService,
                private messenger : MessageService,
   ) { 
-    this.response = this.messenger.getAndClear();
     this.userLevel = this.authService.getUserLevel();
     this.sortParam = 'number'
     this.sortOrder = -1
@@ -36,10 +35,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('getting npis');
-    this.messenger.response.subscribe(
-      res => { this.response = res },
-      err => { console.log('error on subscribe') }
-    )
     this.getNpis()
     }
 
@@ -50,7 +45,6 @@ export class HomeComponent implements OnInit {
         this.npisList = npis.sort(
           this.sortBy(this.sortParam,this.sortOrder)
         );
-        this.formatDate();
         this.gettingNpis = false;
         this.manualRefresh = false;
         console.log(this.npisList)
@@ -68,12 +62,6 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/npi/'+npiId]);
   }
 
-  formatDate(): void {
-    this.npisList.forEach(npi => {
-      npi.createdString = new Date(npi.created).toLocaleDateString();
-    });
-  }
-
   goToRegister() {
     this.messenger.clear()
     this.router.navigate(['/register']);
@@ -83,8 +71,12 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/npi/'+npiNumber]);
   }
 
-  cancelNPI(npiId : String, event: Event) {
+  cancelNPI(npiId : String, npiNumber : Number, event: Event) {
     event.stopPropagation()
+    if (!confirm(
+      "Tem certeza que deseja cancelar a NPI " + 
+      npiNumber + '?')
+    ) return;
     console.log('canceling NPI')
     this.npiService.deleteNpi(npiId).subscribe(
       res => { 

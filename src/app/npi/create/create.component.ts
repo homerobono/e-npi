@@ -1,19 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { NpiService } from '../../services/npi.service'
-
 import { Router } from '@angular/router';
+import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
+import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker' 
+import { defineLocale } from 'ngx-bootstrap/chronos';
+
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
+import { NpiService } from '../../services/npi.service'
+import { UploadService } from '../../services/upload.service'
+import { FileUploader } from 'ng2-file-upload';
 
-import { conformToMask } from 'angular2-text-mask/dist/angular2TextMask';
-import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
-
-import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker' 
-import { listLocales, defineLocale } from 'ngx-bootstrap/chronos';
-import { ptBrLocale } from 'ngx-bootstrap/locale';
 import Npi from '../../models/npi.model';
 
+import { ptBrLocale } from 'ngx-bootstrap/locale';
 defineLocale('pt-br', ptBrLocale)
 
 @Component({
@@ -27,8 +27,7 @@ export class CreateComponent implements OnInit {
   sendingCreate: Boolean = false;
   createSent: Boolean = false;
   createResponse: String;
-  response : any
-  
+
   public currencyMask = {
     mask : 
       createNumberMask({
@@ -48,21 +47,14 @@ export class CreateComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
 
   createForm : FormGroup;
-  departments = [ 'Comercial',
-    'Compras',
-    'Engenharia de Produção',
-    'Engenharia de Processos',
-    'Financeiro',
-    'P&D',
-    'Produção',
-    'R.H.' ]
 
   constructor( fb : FormBuilder,
               private npiService: NpiService,
               private authService: AuthService,
               private router: Router,
               private messenger: MessageService,
-              private localeService: BsLocaleService
+              private localeService: BsLocaleService,
+              private uploadService: UploadService
             ) 
   {
     this.datePickerConfig = Object.assign(
@@ -76,9 +68,9 @@ export class CreateComponent implements OnInit {
     )
 
     this.createForm = fb.group({
-      'date' : new Date().toLocaleDateString(),
-      'name' : 'Projetaço',
-      'entry' : 'oem',
+      'date' : new Date().toLocaleDateString('pt-br'),
+      'name' : 'Projetinho',
+      'entry' : 'pixel',
       'cost' : '',
       'price' : '',
       'investment' : '',
@@ -89,10 +81,8 @@ export class CreateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.messenger.response.subscribe(
-      res => { this.response = res }
-    )
     this.localeService.use('pt-br');
+    setTimeout( () => window.scroll(0,500) , 1000 )
   }
 
   createNpi(npiForm): void {
@@ -108,7 +98,7 @@ export class CreateComponent implements OnInit {
       this.clearFields();
       this.router.navigateByUrl('home')
     }, err => {
-      console.log(this.response);
+      console.log(err);
       this.createSent = false;
       this.sendingCreate = false;
     });
@@ -134,8 +124,7 @@ export class CreateComponent implements OnInit {
     this.createForm.markAsUntouched();
   }
 
-  clearMessages(){
-    this.messenger.clear()
-    console.log(this.response)
+  selectFiles(event){
+    event.stopPropagation()
   }
 }

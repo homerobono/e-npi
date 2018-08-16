@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+//import { ptBrLocale } from 'ngx-bootstrap/locale';
+//import { defineLocale } from 'ngx-bootstrap/chronos';
+
+//defineLocale ('pt-br', ptBrLocale)
 
 @Component({
   selector: 'app-root',

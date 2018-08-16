@@ -1,0 +1,24 @@
+.fa-file-upload {
+    color: white;
+    width: 16px;
+    margin: 0;
+    fill: blue
+}
+
+.upload-button{
+    text-shadow: 0 1px 10px #ddd;
+    color: crimson;
+}
+
+.fa-upload {
+    font-size: 14pt
+}
+
+.upload-button:hover{
+    cursor: pointer;
+    text-shadow: 0 1px 12px lighten($color: crimson, $amount: 30)
+}
+
+.upload-button:active{
+    color: darken($color: crimson, $amount: 10)
+}

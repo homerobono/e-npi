@@ -5,7 +5,8 @@ import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
-import { TextMaskModule } from 'angular2-text-mask'
+import { TextMaskModule } from 'angular2-text-mask';
+import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -27,6 +28,7 @@ import { MessageService } from './services/message.service';
 import { NpiService } from './services/npi.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   declarations: [
@@ -43,19 +45,21 @@ import { NpiComponent } from './npi/npi.component';
     UserComponent,
     NavButtonsComponent,
     CreateComponent,
-    NpiComponent
+    NpiComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule, 
     ReactiveFormsModule,
-    BrowserModule,
+    BrowserModule, BrowserAnimationsModule,
     RoutingModule, 
     JwtModule,
     TextMaskModule,
     DatepickerModule.forRoot(),
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    FileUploadModule
   ],
   providers: [
     UsersService,

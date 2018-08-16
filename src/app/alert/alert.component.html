@@ -1,0 +1,15 @@
+<div class='container-fluid sticky-top'>
+  <div class='row alert-space align-itens-center'>
+    <div class='mb-auto col alert alert-dismissible shadow' 
+    *ngIf='response' [@slideInOutAnimation]
+    [ngClass]="{'alert-success' : response.type == 'success',
+                'alert-warning' : response.type == 'warning',
+                'alert-info' : response.type == 'info',
+                'alert-danger' : response.type == 'error' }">
+                {{ response.message }}
+      <button type="button" class="close" (click)="messenger.clear()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+</div>

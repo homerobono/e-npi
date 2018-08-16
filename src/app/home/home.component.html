@@ -1,28 +1,11 @@
-<app-navbar></app-navbar>
-<div class='container-fluid sticky-top'>
-  <div class='row alert-space align-itens-center'>
-    <div class='mb-auto col alert alert-dismissible shadow' *ngIf='response' 
-    [ngClass]="{'alert-success' : response.type == 'success',
-                'alert-warning' : response.type == 'warning',
-                'alert-info' : response.type == 'info',
-                'alert-danger' : response.type == 'error' }">
-                {{ response.message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-  </div>
-</div>
-
 <div class='container'>
     <div class='row justify-content-center'>
       <div class='col body-home'>
         <div class='row justify-content-between align-items-end'>
           <div class='col align-items-center'>
-            <button routerLink='/npi/create' class='btn btn-default btn-create'
-            data-toggle="tooltip" data-placement="top" title="Criar nova NPI">
-              <h2 style='margin-top: -14px; margin-left: -9px'>+</h2>
-            </button>
+            <img routerLink='/npi/create' class='btn btn-default btn-create p-0 m-0'
+            data-toggle="tooltip" data-placement="top" title="Criar nova NPI"
+            src='/assets/add-button.svg'>
           </div>
           <div class='col-auto' (click)='refresh()'>
             <i class='fa fa-refresh refresh' [ngClass]='{"fa-spin" : manualRefresh}'
@@ -31,7 +14,8 @@
         </div>
         <hr>
         <div *ngIf='!npisList.length && !gettingNpis' class='text-center'>
-          <i>Não há NPI's cadastradas no sistema</i>
+          <i class='small text-secondary'>
+            Não há NPI's cadastradas no sistema. Clique no botão acima para criar novas NPI's.</i>
         </div>
         <div *ngIf='!npisList || gettingNpis'>
           <div class='row justify-content-center'>
@@ -76,7 +60,7 @@
                 </span>
                 <span class='col'>{{ npi.number }}</span>
                 <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                  <button (click)='cancelNPI(npi.id, $event)' class='btn btn-danger m-0 shadow-sm p-0'>
+                  <button (click)='cancelNPI(npi.id, npi.number, $event)' class='btn btn-danger m-0 shadow-sm p-0'>
                       <i class='fa fa-trash fa-fw'></i>
                   </button>
                 </div>
@@ -132,7 +116,7 @@
               <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-1'>
                 <i class='fa fa-pencil fa-fw'></i>
               </button>
-              <button (click)='cancelNPI(npi.id, $event)' class='btn btn-danger m-0 shadow-sm p-1'>
+              <button (click)='cancelNPI(npi.id, npi.number, $event)' class='btn btn-danger m-0 shadow-sm p-1'>
                 <i class='fa fa-trash fa-fw'></i>
               </button>
             </div> 
