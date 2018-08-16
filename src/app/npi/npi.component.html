@@ -17,9 +17,9 @@
     <div class='row justify-content-center'>
       <div class='col body-main'>
         <app-nav-buttons></app-nav-buttons>
-        <div class='row justify-content-left'>
+        <div class='row justify-content-left pb-0'>
           <h3 class='col-auto mb-0'>NPI #{{ npiNumber }} - {{ npi.name }}</h3>
-          <span class='badge pt-1 col-auto align-self-center' [ngClass]='{
+          <span class='badge mt-1 col-auto align-self-center' [ngClass]='{
             "badge-success" : npi.entry=="pixel",
             "badge-purple" : npi.entry=="oem",
             "badge-secondary" : npi.entry=="internal",

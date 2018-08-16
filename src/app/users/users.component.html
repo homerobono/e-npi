@@ -31,7 +31,7 @@
         (click)='editProfile(user._id)' *ngFor='let user of usersList'>
           <div class='user-detail'>
             <div class='col-12'>
-              <b> {{ user.firstName + ' ' + user.lastName }}
+              <b> {{ user.firstName + ' ' + (user.lastName ? user.lastName : '')}}
               <span class='label float-right'
               style='margin-right:0; margin-top: 4px' [ngClass]="{
                 'normal' : user.level == 0,

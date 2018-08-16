@@ -35,6 +35,7 @@ export class MessageService {
     localStorage.removeItem('message')
     localStorage.removeItem('type')
     localStorage.removeItem('log')
+    this.response.next(null)
   }
 
   public getAndClear(){

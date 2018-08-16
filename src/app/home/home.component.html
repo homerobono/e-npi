@@ -1,7 +1,7 @@
 <app-navbar></app-navbar>
-<div class='container-fluid'>
+<div class='container-fluid sticky-top'>
   <div class='row alert-space align-itens-center'>
-    <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+    <div class='mb-auto col alert alert-dismissible shadow' *ngIf='response' 
     [ngClass]="{'alert-success' : response.type == 'success',
                 'alert-warning' : response.type == 'warning',
                 'alert-info' : response.type == 'info',
@@ -18,11 +18,10 @@
     <div class='row justify-content-center'>
       <div class='col body-home'>
         <div class='row justify-content-between align-items-end'>
-          <div class='col-auto'>
-            <button routerLink='/npi/create' class='btn m-0 p-2 btn-orange '
+          <div class='col align-items-center'>
+            <button routerLink='/npi/create' class='btn btn-default btn-create'
             data-toggle="tooltip" data-placement="top" title="Criar nova NPI">
-              <i class='fa fa-plus fa-2x'></i>
-              <div>Criar NPI</div>
+              <h2 style='margin-top: -14px; margin-left: -9px'>+</h2>
             </button>
           </div>
           <div class='col-auto' (click)='refresh()'>
@@ -31,6 +30,9 @@
           </div> 
         </div>
         <hr>
+        <div *ngIf='!npisList.length && !gettingNpis' class='text-center'>
+          <i>Não há NPI's cadastradas no sistema</i>
+        </div>
         <div *ngIf='!npisList || gettingNpis'>
           <div class='row justify-content-center'>
             <i class='fa fa-circle-o-notch fa-spin fa-4x text-primary '></i>
@@ -38,7 +40,7 @@
             <div>Carregando NPI's...</div>
           </div>
         </div>
-        <div *ngIf='npisList && !gettingNpis'>
+        <div *ngIf='npisList.length && !gettingNpis'>
           <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
             <div class='col-lg-1 col-md-2 col'>
               <b>Número</b>
@@ -74,7 +76,7 @@
                 </span>
                 <span class='col'>{{ npi.number }}</span>
                 <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                  <button (click)='cancelNPI(npi.id)' class='btn btn-danger m-0 shadow-sm p-0'>
+                  <button (click)='cancelNPI(npi.id, $event)' class='btn btn-danger m-0 shadow-sm p-0'>
                       <i class='fa fa-trash fa-fw'></i>
                   </button>
                 </div>
@@ -130,7 +132,7 @@
               <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-1'>
                 <i class='fa fa-pencil fa-fw'></i>
               </button>
-              <button (click)='cancelNPI(npi._id)' class='btn btn-danger m-0 shadow-sm p-1'>
+              <button (click)='cancelNPI(npi.id, $event)' class='btn btn-danger m-0 shadow-sm p-1'>
                 <i class='fa fa-trash fa-fw'></i>
               </button>
             </div> 

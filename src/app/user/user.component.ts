@@ -49,7 +49,7 @@ export class UserComponent implements OnInit {
     this.userLevel = authService.getUserLevel();
     this.userForm = fb.group({
       'firstName' : [this.user.firstName, Validators.required],
-      'lastName': [this.user.lastName, Validators.required],
+      'lastName': [this.user.lastName?this.user.lastName:null, Validators.required],
       'email' : 
       [
         this.user.email, Validators.compose([
@@ -57,10 +57,10 @@ export class UserComponent implements OnInit {
         Validators.required
         ])
       ],
-      'department' : [ {value: this.user.department, disabled: this.userLevel<2}, Validators.required],
+      'department' : [ {value: this.user.department?this.user.department:null, disabled: this.userLevel<2}, Validators.required],
       'phone' : 
       [
-        this.user.phone, Validators.compose
+        this.user.phone?this.user.phone:null, Validators.compose
           ([
             Validators.pattern( '(\\+?\\d{2})?((\\(\\d{2}\\))||\\d{2})\\d{4,5}-?\\d{4}' ),
             Validators.required
@@ -87,10 +87,10 @@ export class UserComponent implements OnInit {
   fillFormData(){
     this.userForm.setValue({
       firstName : this.user.firstName,
-      lastName : this.user.lastName,
+      lastName : this.user.lastName?this.user.lastName:null,
       email : this.user.email,
-      phone : this.user.phone,
-      department : this.user.department,
+      phone : this.user.phone?this.user.phone:null,
+      department : this.user.department?this.user.department:null,
       level : this.user.level.toString(),
     });
   }

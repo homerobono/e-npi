@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
     this.userLevel = this.authService.getUserLevel();
     this.sortParam = 'number'
     this.sortOrder = -1
+    this.npisList = []
   }
 
   ngOnInit(): void {
@@ -44,7 +45,6 @@ export class HomeComponent implements OnInit {
 
   getNpis(){
     this.gettingNpis = true;
-    console.log(this.sortParam)
     this.npiService.getNpis()
       .subscribe(npis => { 
         this.npisList = npis.sort(
@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit {
         this.formatDate();
         this.gettingNpis = false;
         this.manualRefresh = false;
+        console.log(this.npisList)
       })
   }
 
@@ -82,7 +83,8 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/npi/'+npiNumber]);
   }
 
-  cancelNPI(npiId : String) {
+  cancelNPI(npiId : String, event: Event) {
+    event.stopPropagation()
     console.log('canceling NPI')
     this.npiService.deleteNpi(npiId).subscribe(
       res => { 

@@ -21,6 +21,7 @@ class Npi {
             if(npiModel.status) this.status = npiModel.status
             if(npiModel.created) { this.created = new Date(npiModel.created)
             this.createdString = this.created.toLocaleDateString() }
+            if(npiModel.npiRef) this.npiRef = npiModel.npiRef
             if(npiModel.entry) this.entry = npiModel.entry
             if(npiModel.__t) this.entry = npiModel.__t
             if(npiModel.price) this.price = npiModel.price

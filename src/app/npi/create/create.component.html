@@ -1,13 +1,13 @@
 <app-navbar></app-navbar>
-  <div class='container-fluid'>
+  <div class='container-fluid sticky-top'>
     <div class='row alert-space align-itens-center'>
-      <div class='m-auto col alert alert-dismissible fade show' *ngIf='response' 
+      <div class='mb-auto col alert alert-dismissible shadow' *ngIf='response' 
       [ngClass]="{'alert-success' : response.type == 'success',
                   'alert-warning' : response.type == 'warning',
                   'alert-info' : response.type == 'info',
                   'alert-danger' : response.type == 'error' }">
                   {{ response.message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <button type="button" class="close" (click)="messenger.clear()" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -96,7 +96,7 @@
                   </span>
                 </div>
                 <input class='form-control' type='text' [textMask]="currencyMask"
-                formControlName='cost' name='cost' placeholder='Custo' aria-describedby="Custo">
+                formControlName='cost' name='cost' placeholder='00,00' aria-describedby="Custo">
               </div>
             </div>
             <div class='col-md-3 form-group'>
@@ -108,7 +108,7 @@
                   </span>
                 </div>
                 <input class='form-control' type='text' [textMask]="currencyMask"
-                formControlName='price' name='price' placeholder='Preço de Venda' aria-describedby="Preço">
+                formControlName='price' name='price' placeholder='00,00' aria-describedby="Preço">
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@
                   </span>
                 </div>
                 <input class='form-control' type='text' [textMask]="currencyMask"
-                formControlName='investment' name='investment' placeholder='Investimento' 
+                formControlName='investment' name='investment' placeholder='00,00' 
                 aria-describedby="Investimento">
               </div>
             </div>

@@ -12,14 +12,18 @@
     background-color: #eee;
 }
 
-.btn-orange {
+.btn-create {
     box-shadow: 0 5px 20px #ccc;
     background-color: #ff8000;
     border-color: #ff8000;
-    color: white
+    color: white;
+    border-radius : 15px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
 }
 
-.btn-orange:hover {
+.btn-create:hover {
     box-shadow: 0 5px 20px #bbb;
     background-color: #ff6500;
 }

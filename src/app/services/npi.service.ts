@@ -65,9 +65,7 @@ export class NpiService {
     ]
     
     toUnmaskFields.forEach(prop => {
-      console.log('there is ' + prop)
       if(npiForm[prop]){
-        console.log(prop)
         model[prop] = 
         parseFloat(
           npiForm[prop].

@@ -15,7 +15,6 @@ export class AuthInterceptor implements HttpInterceptor{
     intercept(req: HttpRequest<any>,
               next: HttpHandler): Observable<HttpEvent<any>> {
         
-        console.log('intercepting');
         const idToken = localStorage.getItem("id_token");
 
         if (idToken) {
@@ -26,7 +25,6 @@ export class AuthInterceptor implements HttpInterceptor{
             );
             req = cloned;
         }
-        console.log("No session token defined");
 
         return next.handle(req).do(
             () => {}, 
