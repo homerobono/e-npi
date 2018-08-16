@@ -12,7 +12,14 @@ export class UploadService {
   public uploader : FileUploader
 
   constructor() { 
-    this.uploader = new FileUploader({url: uploadUrl})
+    this.uploader = new FileUploader(
+      {
+        url: uploadUrl,
+        authTokenHeader : "Authorization",
+        authToken : localStorage.getItem('id_token')
+      }
+    )
+
     this.uploader.onAfterAddingFile = (file)=> { file.withCredentials = false; };
        
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {

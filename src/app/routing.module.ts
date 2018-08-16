@@ -78,7 +78,11 @@ const appRoutes: Routes = [
     data: { mustNotBeLogged: true }
   },
   { path: 'npis', redirectTo: '/home' },
-  { path: 'npi/create', component: CreateComponent },
+  { 
+    path: 'npi/create', 
+    canActivate: [AuthGuard],
+    component: CreateComponent 
+  },
   { 
     path: 'npi',
     canActivate: [AuthGuard],
