@@ -44,9 +44,10 @@ export class AuthInterceptor implements HttpInterceptor{
                     } else {
                         this.messenger.set(
                         {
-                            'type':'error',
-                            'message': err.error.message,
-                            'log' : err.message
+                            head: 'Erro ' + err.status,
+                            type:'error',
+                            message: err.error.message,
+                            log : err.message
                         })
                     }
                 }

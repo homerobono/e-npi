@@ -1,31 +1,22 @@
-<app-navbar></app-navbar>
-
   <container>
     <div class='row justify-content-center'>
       <div class='col-xs body-frame'>
-        <div class='row align-items-center'>
-          <div class='col-auto'>
+        <div class='row'>
+          <div class='col-auto pt-1 pr-0 pl-0'>
             <span class='fa fa-times-circle fa-3x text-danger'></span>
           </div>
-          <h4 class='col-auto m-0 p-0'>{{ response.head }}</h4>
-          <div class='w-100'></div>
-          <div class='col-auto invisible'>
-              <span class='fa fa-times-circle fa-3x text-danger'></span>
-          </div>
-          <div class='col p-0 m-0'>
-            {{ response.message }}
-          </div>
-          <div class='w-100'></div>
-          <div *ngIf='response.log' class='col-auto invisible d-xs-none d-sm-block'>
-              <span class='fa fa-times-circle fa-3x text-danger'></span>
-          </div>
-          <div class='col m-0 p-0'><hr *ngIf='response.log' class='m-0 p-0'></div>
-          <div class='w-100'></div>
-          <div *ngIf='response.log' class='col-auto invisible d-xs-none d-sm-block'>
-              <span class='fa fa-times-circle fa-3x text-danger'></span>
-          </div>
-          <div *ngIf='response.log' class='col p-0 m-0 text-secondary'>
-            <i>{{ response.log }}</i>
+          <div class='col p-0'>
+            <h4 class='col mt-3 mb-3'>{{ response.head }}</h4>
+            <div class='w-100'></div>
+            <div class='col'>
+              {{ response.message }}
+            </div>
+            <div class='w-100'></div>
+            <div class='col'><hr *ngIf='response.log'></div>
+            <div class='w-100'></div>
+            <div *ngIf='response.log' class='col text-secondary'>
+              <i>{{ response.log }}</i>
+            </div>
           </div>
         </div>
       </div>

@@ -84,13 +84,9 @@ const appRoutes: Routes = [
     component: CreateComponent 
   },
   { 
-    path: 'npi',
+    path: 'npi/:npiNumber',
     canActivate: [AuthGuard],
-    children: 
-    [{ 
-      path: ':npiNumber', 
-      component: NpiComponent,
-    }], 
+    component: NpiComponent,
   },
   { path: 'error', component: ErrorComponent },
   { path: '**', redirectTo: '/home' }

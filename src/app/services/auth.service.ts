@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -13,6 +13,7 @@ import { Globals } from 'config';
   providedIn: 'root'
 })
 export class AuthService {
+
     api_url = Globals.ENPI_SERVER_URL;
     loginUrl = `${this.api_url}/login`;
     resetUrl = `${this.api_url}/reset/`;
@@ -20,17 +21,23 @@ export class AuthService {
     verifyResetTokenUrl = `${this.api_url}/reset/`;
     verifySessionTokenUrl = `${this.api_url}/`;
 
+    isLoggedStatus: Subject<Boolean>
+
     jwtHelper = new JwtHelperService()
  
   constructor(
     private http: HttpClient,
-  ){ }
+  ){ 
+    this.isLoggedStatus = new Subject()
+    this.isLoggedStatus.next(this.isLoggedIn())
+  }
     
   login(email:string, password:string ) {
     console.log('service: trying to login');
-    return this.http.post <{message, token}>(this.loginUrl, {email: email, password: password})
-    .do( res => { this.setSession(res.token) })
-    .shareReplay();
+    return this.http.post <{message, token}>
+      (this.loginUrl, {email: email, password: password})
+      .do( res => { this.setSession(res.token) })
+      .shareReplay();
 }
 
   private setSession( sessionToken ) {
@@ -39,6 +46,7 @@ export class AuthService {
     localStorage.setItem('first_name', tokenPayload.data.firstName);
     localStorage.setItem('user_level', tokenPayload.data.level);
     localStorage.setItem("expires_at", tokenPayload.exp);
+    this.isLoggedStatus.next(true)
   }          
 
   logout() {
@@ -46,6 +54,7 @@ export class AuthService {
       localStorage.removeItem("first_ame");
       localStorage.removeItem("user_level");
       localStorage.removeItem("expires_at");
+      this.isLoggedStatus.next(false)
       console.log('user logged out')
   }
 

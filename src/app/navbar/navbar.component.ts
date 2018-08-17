@@ -18,11 +18,22 @@ export class NavbarComponent implements OnInit {
     private authService: AuthService, 
     private route: ActivatedRoute
   ) { 
-    if (this.authService.isLoggedIn()) {
-      this.userIsLogged = true;
-      this.nameOfUser = authService.getFirstName();
-      this.userLevel = authService.getUserLevel();
-    }
+    console.log('navbar was constructed')
+    this.userIsLogged = this.authService.isLoggedIn()
+    this.authService.isLoggedStatus.subscribe(
+      status => 
+      {
+        this.userIsLogged = status 
+        if (this.userIsLogged) {
+          console.log('logged')
+          //this.userIsLogged = true;
+          this.nameOfUser = authService.getFirstName();
+          this.userLevel = authService.getUserLevel();
+        } else 
+          console.log('logged out')
+      },
+      error => console.log('ooops :(')
+    )
     this.route.url.subscribe(res => {this.path = res[0].path})
   }
 

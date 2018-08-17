@@ -4,17 +4,20 @@ export const slideInOutAnimation =
     trigger('slideInOutAnimation', [
         transition(':enter', [
           style(
-              {transform: 'translateY(-200%)'}
+              {transform: 'translateY(-200%)',
+              zIndex: 0}
             ),
           animate(
               '200ms ease-out', 
-              style({transform: 'translateY(0%)'})
+              style({transform: 'translateY(0%)',
+              zIndex: 0})
             )
         ]),
         transition(':leave', [
           animate(
               '200ms ease-in-out', 
-              style({transform: 'translateY(-200%)'})
+              style({transform: 'translateY(-200%)',
+              zIndex: 0})
             )
         ])
     ]);

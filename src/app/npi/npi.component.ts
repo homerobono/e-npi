@@ -9,6 +9,8 @@ import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
 
 import Npi from '../models/npi.model';
+import { Location } from '@angular/common';
+import User from '../models/user.model';
 
 @Component({
   selector: 'app-npi',
@@ -17,49 +19,50 @@ import Npi from '../models/npi.model';
 })
 export class NpiComponent implements OnInit {
 
-  response : any
-  date : Date
-  npiNumber : Number
-  npi : Npi
-  
+  response: any
+  date: Date
+  npiNumber: Number
+  npi: Npi
+  authorName: String
+  authorId: String
   currency = createNumberMask({
-    prefix : '',
-    includeThousandsSeparator : true,
-    thousandsSeparatorSymbol : '.',
-    requireDecimal : true,
-    decimalSymbol : ',',
-    allowNegative : false,
+    prefix: '',
+    includeThousandsSeparator: true,
+    thousandsSeparatorSymbol: '.',
+    requireDecimal: true,
+    decimalSymbol: ',',
+    allowNegative: false,
   })
 
   public currencyMask = {
-    mask : this.currency,
-    guide : false,
-  }  
+    mask: this.currency,
+    guide: false,
+  }
   public dateMask = {
-    mask : ['/\d/','/','/\d/','/']
+    mask: ['/\d/', '/', '/\d/', '/']
   }
 
-  viewForm : FormGroup;
+  viewForm: FormGroup;
 
-  constructor( fb : FormBuilder,
-              private npiService: NpiService,
-              private authService: AuthService,
-              private router: Router,
-              private route: ActivatedRoute,
-              private messenger: MessageService,
-              private localeService: BsLocaleService
-            ) 
-  {
+  constructor(fb: FormBuilder,
+    private npiService: NpiService,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private messenger: MessageService,
+    private localeService: BsLocaleService,
+    private location: Location
+  ) {
     this.npi = new Npi(null)
     this.viewForm = fb.group({
-      'date' : null,
-      'entry' : null,
-      'cost' : '',
-      'price' : '',
-      'investment' : '',
-      'inStockDateType' : '',
-      'inStockDate' : '',
-      'npiRef' : ''
+      'date': null,
+      'entry': null,
+      'cost': '',
+      'price': '',
+      'investment': '',
+      'inStockDateType': '',
+      'inStockDate': '',
+      'npiRef': ''
     })
   }
 
@@ -68,50 +71,65 @@ export class NpiComponent implements OnInit {
       res => { this.response = res }
     )
     this.localeService.use('pt-br');
-    this.npiNumber = parseInt(this.route.snapshot.paramMap.get('npiNumber'));
-    this.getNpi(this.npiNumber)
-      
-    }
-  
-    getNpi(npiNumber){
-      console.log('getting npi ' + npiNumber)
-      this.npiService.getNpi(npiNumber)
-      .subscribe(npi => {
-        console.log(npi)
-        this.npi = npi;
-        try {
-          this.fillFormData();
-        } catch (e){
-          console.log(e)}
-      })
-    }
+    this.route.params.subscribe(
+      params => {
+        this.npiNumber = params.npiNumber
+        this.getNpi(this.npiNumber)
+      }
+    )
+  }
 
-    fillFormData(){
-      console.log(typeof this.npi.inStockDate)
+  getNpi(npiNumber) {
+    console.log('getting npi ' + npiNumber)
+    this.npiService.getNpi(npiNumber)
+      .subscribe(
+        npi => {
+          console.log(npi)
+          this.npi = npi;
+          this.authorId = npi.requester._id
+          this.authorName = npi.requester.firstName + 
+          (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
+          try {
+            this.fillFormData();
+          } catch (e) {
+            console.log(e)
+          }
+        }, err => {
+          this.location.replaceState(null)
+          this.router.navigateByUrl('/error')
+        }
+      )
+  }
+
+  fillFormData() {
+    console.log(typeof this.npi.inStockDate)
+    this.viewForm.patchValue({
+      date: this.npi.createdString,
+      npiRef: this.npi.npiRef ? this.npi.npiRef : null,
+      inStockDate: this.npi.inStockDate ?
+        this.npi.inStockDate instanceof (Date || String) ?
+          new Date(this.npi.inStockDate).toLocaleDateString('pt-br') :
+          this.npi.inStockDate.fixed ?
+            new Date(this.npi.inStockDate.fixed).toLocaleDateString('pt-br') :
+            this.npi.inStockDate.offset +
+            (this.npi.inStockDate.offset > 1 ? ' dias' : ' dia') +
+            " após aprovação"
+        : null
+
+    });
+    if (this.npi.entry != 'internal' && this.npi.entry != 'oem')
       this.viewForm.patchValue({
-        date : this.npi.createdString,
-        inStockDate : 
-          this.npi.inStockDate instanceof (Date || String) ?
-            new Date(this.npi.inStockDate).toLocaleDateString('pt-br') :
-              this.npi.inStockDate.fixed ?
-                new Date(this.npi.inStockDate.fixed).toLocaleDateString('pt-br') :
-                this.npi.inStockDate.offset + 
-                (this.npi.inStockDate.offset > 1 ? ' dias' : ' dia') +
-                " após aprovação"
+        price:
+          this.npi.price.toFixed(2).toString().replace('.', ','),
+        cost:
+          this.npi.cost.toFixed(2).toString().replace('.', ','),
+      })
 
-      });
-      if (this.npi.entry != 'internal' && this.npi.entry != 'oem')
-        this.viewForm.patchValue({
-          price : 
-            this.npi.price.toFixed(2).toString().replace('.',','),
-          cost : 
-            this.npi.cost.toFixed(2).toString().replace('.',','),
-        })
+    if (this.npi.investment)
+      this.viewForm.patchValue({
+        investment:
+          this.npi.investment.toFixed(2).toString().replace('.', ','),
+      })
+  }
 
-      if (this.npi.investment)
-        this.viewForm.patchValue({
-          investment : 
-            this.npi.investment.toFixed(2).toString().replace('.',','),
-        })
-    }
 }

@@ -11,11 +11,10 @@ export class UploadService {
 
   public uploader : FileUploader
 
-  constructor() { 
+  constructor() {
     this.uploader = new FileUploader(
       {
         url: uploadUrl,
-        authTokenHeader : "Authorization",
         authToken : localStorage.getItem('id_token')
       }
     )

@@ -3,7 +3,7 @@
       <div class='col body-main'>
         <app-nav-buttons></app-nav-buttons>
         <div class='row justify-content-left pb-0'>
-          <h3 class='col-auto mb-0'>NPI #{{ npiNumber }} - {{ npi.name }}</h3>
+          <h3 class='col-auto mb-0'>NPI #{{ npi.number }} - {{ npi.name }}</h3>
           <span class='badge mt-1 col-auto align-self-center' [ngClass]='{
             "badge-success" : npi.entry=="pixel",
             "badge-purple" : npi.entry=="oem",
@@ -12,6 +12,11 @@
             }'>
             {{ npi.entryLabel }} 
           </span>
+          <div class='w-100'></div>
+          <small class='col mb-0 mt-0'>
+            <a routerLink='/users/{{ authorId }}'>
+              {{ authorName }}</a>, {{ npi.createdString }}
+          </small>
         </div>
         <form [formGroup]='viewForm' (ngSubmit)="viewNpi(viewForm.value)">
           <hr>
@@ -25,19 +30,13 @@
                 </div>  
               </div>
             </div>
-            <div class="col-sm-6 col-md-4 col-lg-2">
+            <div class="col-sm-6 col-md-4 col-lg-2 align-items-center p-auto" *ngIf='npi.npiRef'>
               <div class="form-group row">
-                <label for="npiref" class='col-auto col-form-label pr-0'>NPI Ref.:</label>
-                <div class='col'>
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text" id="npiRefPrepend">
-                        #
-                      </span>
-                    </div>
-                    <input type="text" class="form-control" id="npiRef" 
-                        formControlName='npiRef' disabled readonly>
-                  </div>
+                <label for='npiRef' class='col-auto col-form-label pr-0'>
+                    NPI Ref.:
+                </label>
+                <div class='col col-form-label pl-2'> 
+                  <a id='npiRef' routerLink="../{{ npi.npiRef }}">#{{ npi.npiRef }}</a>
                 </div>
               </div>
             </div>
@@ -70,7 +69,7 @@
               </div>
             </div>
           </div>
-          <div class="form-row">
+          <div class="form-row" *ngIf='npi.investment'>
             <div class='col-md-3 form-group'>
               <label for="investment">Investimento</label>
               <div class="input-group">
@@ -85,7 +84,7 @@
               </div>
             </div>
           </div>
-          <div class="form-row">
+          <div class="form-row" *ngIf='npi.inStockDate'>
             <div class='col-md-3 form-group' 
               *ngIf='viewForm.controls["entry"].value!="internal" &&
               viewForm.controls["entry"].value!="oem"'>

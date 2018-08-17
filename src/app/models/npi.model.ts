@@ -1,7 +1,10 @@
+import User from "./user.model";
+
 class Npi {
     id: String;
     number: Number;
     name: String;
+    requester: User;
     status: String;
     created : Date;
     createdString : String;
@@ -18,6 +21,7 @@ class Npi {
             if(npiModel._id) this.id = npiModel._id
             if(npiModel.number) this.number = npiModel.number
             if(npiModel.name) this.name = npiModel.name
+            if(npiModel.requester) this.requester = npiModel.requester
             if(npiModel.status) this.status = npiModel.status
             if(npiModel.created) { this.created = new Date(npiModel.created)
             this.createdString = this.created.toLocaleDateString('pt-br') }
@@ -50,8 +54,7 @@ class Npi {
                 default :
                     this.entryLabel = null
             }
-            console.log(this.inStockDate)
-
+            console.log(npiModel.requester)
         }
     }
 }

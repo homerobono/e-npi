@@ -38,12 +38,12 @@ body {
 }
 
 .alert-space {
-    min-height: 100px;
-    transition: width 2s linear 1s;
+    height: 100px;
+    z-index: 9
 }
 
 .body-main {
-    margin-top: 1px;
+    position: relative;
     margin-bottom: 30px;
     padding : 40px;
     background-color : white;

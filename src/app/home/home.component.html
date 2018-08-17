@@ -112,13 +112,13 @@
               </div>
               <div class='w-100'></div>
             </div>            
-            <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right'>
-              <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-1'>
+            <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start'>
+              <a routerLink='/npis' class='pl-1 pt-2 pb-2 pr-0 text-info'>
                 <i class='fa fa-pencil fa-fw'></i>
-              </button>
-              <button (click)='cancelNPI(npi.id, npi.number, $event)' class='btn btn-danger m-0 shadow-sm p-1'>
+              </a>
+              <a routerLink=# (click)='cancelNPI(npi.id, npi.number, $event)' class='pl-0 pt-2 pb-2 text-danger'>
                 <i class='fa fa-trash fa-fw'></i>
-              </button>
+              </a>
             </div> 
             <hr class='w-100 d-flex d-md-none'>
           </div>

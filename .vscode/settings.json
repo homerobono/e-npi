@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        "**/*.spec.*" : true,
+        "src/karma.conf.js": true,
+    }
+}
