@@ -1,12 +1,13 @@
   <container>
     <div class='row justify-content-center'>
       <div class='col-xs body-frame'>
-        <div class='row'>
-          <div class='col-auto pt-1 pr-0 pl-0'>
+      <app-nav-buttons></app-nav-buttons>
+        <div class='row pl-0'>
+          <div class='col-auto pt-1 pr-0'>
             <span class='fa fa-times-circle fa-3x text-danger'></span>
           </div>
           <div class='col p-0'>
-            <h4 class='col mt-3 mb-3'>{{ response.head }}</h4>
+            <h4 class='col mt-2 mb-3 pt-1'>{{ response.head }}</h4>
             <div class='w-100'></div>
             <div class='col'>
               {{ response.message }}

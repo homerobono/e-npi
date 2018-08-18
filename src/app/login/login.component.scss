@@ -1,20 +1,22 @@
+.pixel-background{
+    position: fixed;
+    top: 40px;
+    filter: drop-shadow(5px 5px 15px #000);
+}
+
 .form-header {
     background-color:gray;
-    border-radius: 10px;
     padding-top: 10%;
 }
 
 .login-btn {
     color: white; 
     background-color: orange; 
-    padding: 8px 30px 8px 30px; 
     font-size: 16px;
-    box-shadow: 0px 2px 8px #999; 
 }
 
 .login-btn:hover {
-    background-color: darkorange; 
-    box-shadow: 0 2px 12px #999
+    background-color: darkorange
 }
 
 .form-header{
@@ -30,9 +32,5 @@
 
 .card {
     width: 24rem; 
-    border-radius: 10px; 
-    margin: auto; 
-    margin-top: 100px; 
-    padding-bottom: 10px
 }
 

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from '../services/message.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { slideInOutAnimation } from '../_animations/slide_in_out.animation'
+import { Location } from '@angular/common';
  
 @Component({
   selector: 'app-alert',
@@ -14,13 +15,11 @@ import { slideInOutAnimation } from '../_animations/slide_in_out.animation'
 })
 export class AlertComponent implements OnInit {
   response : any
-
+  route : String
   constructor(
-    private router : Router,
     private messenger : MessageService,
-  ) { 
-    this.response = this.messenger.getAndClear();
-  }
+    private location : Location
+  ) { }
 
   ngOnInit(): void {
     this.messenger.response.subscribe(

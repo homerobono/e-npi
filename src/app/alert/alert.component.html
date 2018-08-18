@@ -1,4 +1,4 @@
-<div class='container-fluid sticky-top alert-space'>
+<div class='container-fluid sticky-top alert-space' *ngIf='!location.isCurrentPathEqualTo("/login")'>
   <div class='row align-itens-center'>
     <div class='mb-auto col alert alert-dismissible shadow' 
     *ngIf='response' [@slideInOutAnimation]

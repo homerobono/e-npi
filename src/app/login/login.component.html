@@ -1,24 +1,23 @@
-  <div class='text-center' style='margin-top:50px'>
-      <img src='/assets/pixelti_logo.png' height='60'>
+  <div class='text-center pixel-backgound pt-4 pb-5 mt-5 mb-5' style='filter: drop-shadow(5px 5px 15px #111);'>
+      <img src='/assets/pixelti_logo.png' width='450'>
   </div>
-  <div class="card">
-    <div class="card-body">
+  <div class="card m-auto rounded mt-5 pb-3 shadow-lg">
+    <div class="card-body pb-1">
       <form [formGroup]="loginForm">
 
         <!--Header-->
-        <div class="form-header">
+        <div class="form-header rounded mb-4">
           <h3>
-            <i class="fa fa-lock"></i> Login:
+            <i class="fa fa-lock"></i>Login
           </h3>
         </div>
-
         <div class="form-row">
           <div class="col mb-2">
             <div class="input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="emailPrepend">
-                        <i class="fa fa-envelope fa-fw"></i>
-                      </span>
+                  <span class="input-group-text" id="emailPrepend">
+                    <i class="fa fa-envelope fa-fw"></i>
+                  </span>
                 </div>
               <input type="text" class="form-control" id="email" placeholder="E-mail" 
               aria-describedby="email" formControlName='email' autofocus>
@@ -51,8 +50,8 @@
             </div>
           </div>
         </div>
-        <div class="text-center">
-          <button class="btn login-btn" (click)="login()">
+        <div class="text-center mb-0">
+          <button class="btn login-btn p-2 pl-5 pr-5 mb-0 shadow" (click)="login()">
             Login
         </button>
         </div>
@@ -60,10 +59,10 @@
     </div>
 
     <!--Footer-->
-    <div style='margin: auto'>
-        <p>
-          <a href="/forgot">Esqueci a Senha</a>
-        </p>
+    <div class='m-auto mt-0 mb-2 pt-0'>
+        <small>
+          <a routerLink="/forgot">Esqueci a Senha</a>
+        </small>
     </div>
 
   </div>
