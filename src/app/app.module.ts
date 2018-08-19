@@ -29,6 +29,7 @@ import { NpiService } from './services/npi.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
 import { AlertComponent } from './alert/alert.component';
+import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { AlertComponent } from './alert/alert.component';
     LoginComponent,
     UsersComponent,
     RegisterComponent,
+    CompleteRegistrationComponent,
     ResetComponent,
     NavbarComponent,
     ProfileComponent,

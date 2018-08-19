@@ -35,8 +35,6 @@ export class RegisterComponent implements OnInit {
               private router: Router
             ) { 
     this.registerForm = fb.group({
-      'firstName' : [null, Validators.required],
-      'lastName': [null, Validators.required],
       'email' : 
       [
         null, Validators.compose([
@@ -44,45 +42,16 @@ export class RegisterComponent implements OnInit {
         Validators.required
         ])
       ],
-      'newPassword' : 
-      [
-        null,
-        Validators.compose(
-          [
-            Validators.required,
-            Validators.minLength(4)
-          ])
-      ],
-      'confPassword' : 
-      [
-        null,
-        Validators.compose(
-          [
-            Validators.required,
-            Validators.minLength(4)
-          ])
-      ],
       'department' : [ 'Comercial', Validators.required],
-      'phone' : 
-      [
-        null, Validators.compose
-          ([
-            Validators.pattern( '(\\+?\\d{2})?((\\(\\d{2}\\))||\\d{2})\\d{4,5}-?\\d{4}' ),
-            Validators.required
-          ])
-      ],
       'level' : ['0', Validators.required],
     },
-    {
-      validator: ValidatePasswordMatch.MatchPassword
-    }
     )}
 
   ngOnInit() {}
 
   registerUser(userForm : any): void {
     this.sendingRegister = true
-    this.userService.registerUser(userForm).
+    this.userService.registerPendingUser(userForm).
     subscribe(res => {
       this.registerResponse = 'Usuário cadastrado com sucesso';
       this.registerSent = true;
@@ -102,13 +71,8 @@ export class RegisterComponent implements OnInit {
 
   clearFields(){
     this.registerForm.patchValue({
-      firstName : null,
-      lastName : null,
       email : null,
-      phone : null,
       department : 'Comercial',
-      newPassword : null,
-      confPassword : null,
       level: '0'
     });
     this.registerForm.markAsPristine();

@@ -1,0 +1,174 @@
+<div class="body-frame col-sm-10 col-md-9 col-lg-6">
+  <app-nav-buttons></app-nav-buttons>
+  <h3>Cadastrar Usuário</h3>
+  <form [formGroup]='registerForm' (ngSubmit)="registerUser(registerForm.value)">
+    <hr>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom01">Nome</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupPrependFirstName">
+                    <i class="fa fa-user"></i>
+                  </span>
+            </div>
+          <input type="text" class="form-control has-error" id="validationCustom01" placeholder="Nome" 
+          aria-describedby="inputGroupPrependFirstName" autofocus
+          [formControl]="registerForm.controls['firstName']" >
+        </div>
+        <div [ngClass]="{
+            'valid-feedback':registerForm.controls['firstName'].valid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['firstName'].touched &&
+            registerForm.controls['firstName'].valid) ? 'block' : 'none' )
+          }"><i class="fa fa-check"></i>
+        </div>
+        <div [ngClass]="{
+          'invalid-feedback':registerForm.controls['firstName'].invalid
+        }" [ngStyle]="{
+          'display' : ( (registerForm.controls['firstName'].touched &&
+          !registerForm.controls['firstName'].pristine &&
+          registerForm.controls['firstName'].invalid) ? 'block' : 'none' )
+        }"> Digite um nome
+        </div>
+      </div>  
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom02">Sobrenome</label>
+        <input type="text" class="form-control" id="validationCustom02" placeholder="Sobrenome" [formControl]="registerForm.controls['lastName']">
+        <div [ngClass]="{
+            'valid-feedback':registerForm.controls['lastName'].valid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['lastName'].touched &&
+            registerForm.controls['lastName'].valid) ? 'block' : 'none' )
+          }"><i class="fa fa-check"></i>
+        </div>
+        <div [ngClass]="{
+          'invalid-feedback':registerForm.controls['lastName'].invalid
+        }" [ngStyle]="{
+          'display' : ( (registerForm.controls['lastName'].touched &&
+          !registerForm.controls['lastName'].pristine &&
+          registerForm.controls['lastName'].invalid) ? 'block' : 'none' )
+        }"> Digite um sobrenome
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationCustomEmail">E-Mail</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          <input type="text" class="custom-control-readonly form-control" id="validationCustomEmail" placeholder="E-mail" aria-describedby="inputGroupPrepend"
+          [formControl]="registerForm.controls['email']" readonly> 
+          <div [ngClass]="{
+            'valid-feedback':registerForm.controls['email'].valid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['email'].touched &&
+            registerForm.controls['email'].valid) ? 'block' : 'none' )
+          }"><i class="fa fa-check"></i>
+        </div>
+        <div [ngClass]="{
+          'invalid-feedback':registerForm.controls['email'].invalid
+        }" [ngStyle]="{
+          'display' : ( (registerForm.controls['email'].touched &&
+          !registerForm.controls['email'].pristine &&
+          registerForm.controls['email'].invalid) ? 'block' : 'none' )
+        }"> Digite um e-mail válido
+        </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="form-row">
+        <div class="col-md-6 mb-3">
+          <label for="newPassword">Senha</label>
+          <div class="input-group">
+              <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroupPrependNewPassword">
+                      <i class="fa fa-key"></i>
+                    </span>
+              </div>
+            <input type="password" class="form-control has-error" id="newPassword" placeholder="Senha" 
+              aria-describedby="inputGroupPrependPassword" [formControl]="registerForm.controls['newPassword']" >
+          </div>
+          <div [ngClass]="{
+              'valid-feedback':registerForm.controls['newPassword'].valid
+            }" [ngStyle]="{
+              'display' : ( (registerForm.controls['newPassword'].touched &&
+              registerForm.controls['newPassword'].valid) ? 'block' : 'none' )
+            }"><i class="fa fa-check"></i>
+          </div>
+          <div [ngClass]="{
+            'invalid-feedback':registerForm.controls['newPassword'].invalid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['newPassword'].touched &&
+            !registerForm.controls['newPassword'].pristine &&
+            registerForm.controls['newPassword'].invalid) ? 'block' : 'none' )
+          }"> Digite uma senha com 4 caracteres ou mais
+          </div>
+        </div>  
+        <div class="col-md-6 mb-3">
+          <label for="confPassword">Confirmação de Senha</label>
+          <input type="password" class="form-control" id="confPassword" placeholder="Confirmação de senha" 
+            [formControl]="registerForm.controls['confPassword']" name='confPassword'>
+          <div [ngClass]="{
+              'valid-feedback':registerForm.controls['confPassword'].valid
+            }" [ngStyle]="{
+              'display' : ( (registerForm.controls['confPassword'].touched &&
+              registerForm.controls['newPassword'].value === registerForm.controls['confPassword'].value &&
+              registerForm.controls['confPassword'].valid) ? 'block' : 'none' )
+            }"><i class="fa fa-check"></i>
+          </div>
+          <div [ngClass]="{
+            'invalid-feedback':registerForm.controls['confPassword'].invalid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['confPassword'].touched &&
+            !registerForm.controls['confPassword'].pristine &&
+            registerForm.controls['newPassword'].value != registerForm.controls['confPassword'].value &&
+            registerForm.controls['confPassword'].invalid) ? 'block' : 'none' )
+          }"> Senhas não conferem
+          </div>
+        </div>
+      </div>  
+    <hr>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationCustom03">Telefone</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependPhone">
+                <i class="fa fa-phone"></i>
+              </span>
+          </div>
+        <input type="text" class="form-control" id="validationCustom03" placeholder="Telefone"  aria-describedby="inputGroupPrepend" [formControl]="registerForm.controls['phone']" >
+          <div [ngClass]="{
+            'valid-feedback':registerForm.controls['phone'].valid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['phone'].touched &&
+            registerForm.controls['phone'].valid) ? 'block' : 'none' )
+          }"><i class="fa fa-check"></i>
+          </div>
+          <div [ngClass]="{
+            'invalid-feedback':registerForm.controls['phone'].invalid
+          }" [ngStyle]="{
+            'display' : ( (registerForm.controls['phone'].touched &&
+            !registerForm.controls['phone'].pristine &&
+            registerForm.controls['phone'].invalid) ? 'block' : 'none' )
+          }"> Digite um telefone
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class='alert' *ngIf="registerResponse" [ngClass]="{
+      'alert-success' : registerSent,
+      'alert-danger' : !registerSent
+     }">
+      {{ registerResponse }}
+    </div>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" [disabled]="!registerForm.valid || sendingRegister">Cadastrar Usuário</button>
+    </div>
+ </form>
+</div>

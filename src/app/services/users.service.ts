@@ -15,7 +15,8 @@ export class UsersService {
   api_url = Globals.ENPI_SERVER_URL
   usersUrl = `${this.api_url}/users`;
   userUrl = `${this.api_url}/user/`;
-  registerUrl = `${this.api_url}/users`;
+  registerPendingUserUrl = `${this.api_url}/users/register`;
+  completeRegistrationUrl = `${this.api_url}/complete-registration/`;
 
   constructor( private http: HttpClient ) {}
   
@@ -31,9 +32,19 @@ export class UsersService {
     .shareReplay();
   }
 
-  registerUser(user: User): Observable<any> {
+  registerPendingUser(user: User): Observable<any> {
     console.log('registering user');
-    return this.http.post(this.usersUrl, user);
+    return this.http.post(this.registerPendingUserUrl, user);
+  }
+  
+  reSendRegisterToken(userId: String): Observable<any> {
+    console.log('registering user');
+    return this.http.put(this.registerPendingUserUrl, {userId});
+  }
+
+  completeRegistration(registerToken : String, user: User): Observable<any> {
+    console.log('completing user registration');
+    return this.http.put(this.completeRegistrationUrl+registerToken, user);
   }
   
   updateUser(userId, user: User): Observable<any> {

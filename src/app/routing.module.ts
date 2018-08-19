@@ -15,6 +15,7 @@ import { CreateComponent } from './npi/create/create.component';
 
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
+import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo : '/home', pathMatch : 'full' },
@@ -60,6 +61,14 @@ const appRoutes: Routes = [
       AccessGuard
     ],
     data: { allowedLevel: 2 }
+  },
+  {
+    path: 'complete-registration/:registerToken', component: CompleteRegistrationComponent,
+    canActivate: 
+    [
+      AuthGuard,
+    ],
+    data: { mustNotBeLogged: true }
   },
   { 
     path: 'forgot', component: ForgotComponent ,

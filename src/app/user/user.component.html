@@ -15,6 +15,13 @@
       *ngIf='userLevel>1'>
       <span class='fa fa-edit'></span>
     </div>
+    <div class='float-right user user-edit nomargin' (click)='editUser()'
+      data-toggle="tooltip" data-placement="top" title='Editar detalhes'
+      *ngIf='userLevel>1 && user.status=="pending"'>
+      <button type='button' class='btn btn-light' (click)='reSendRegisterToken()'>
+        Reenviar e-mail de cadastro
+      </button>
+    </div>
   </span>
   <div class='float-left col-12 nomargin nopadding' *ngIf='userResponse'>
     <div class='alert' 

@@ -18,6 +18,7 @@ export class AuthService {
     loginUrl = `${this.api_url}/login`;
     resetUrl = `${this.api_url}/reset/`;
     forgotUrl = `${this.api_url}/forgot/`;
+    verifyRegisterTokenUrl = `${this.api_url}/complete-registration/`;
     verifyResetTokenUrl = `${this.api_url}/reset/`;
     verifySessionTokenUrl = `${this.api_url}/`;
 
@@ -80,6 +81,11 @@ export class AuthService {
 
   getFirstName() {
     return localStorage.getItem("first_name");
+  }
+  
+  verifyRegisterToken(token: String){
+    console.log(token)
+    return this.http.get(this.verifyRegisterTokenUrl+token);
   }
 
   verifyResetToken(token: String){

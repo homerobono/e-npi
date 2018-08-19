@@ -139,4 +139,20 @@ export class UserComponent implements OnInit {
       this.deleteResponse = 'Usuário não removido: '+err;
     });
   }
+  
+  reSendRegisterToken(){
+    this.userService.reSendRegisterToken(this.user._id)
+    .subscribe( res => {
+      console.log(res);
+      this.messenger.set(
+        {
+          type: 'success', 
+          message: 'E-mail enviado com sucesso'
+        }
+      )
+      this.router.navigate(['/users'])
+    }, err => {
+      this.deleteResponse = 'E-mail não enviado: '+err;
+    });
+  }
 }
