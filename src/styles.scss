@@ -39,12 +39,14 @@ body {
 }
 
 .alert-space {
-    height: 100px;
-    z-index: 9
+    height: 0px;
+    z-index: 9;
 }
+
 
 .body-main {
     position: relative;
+    margin-top: 60px;
     margin-bottom: 30px;
     padding : 40px;
     background-color : white;
