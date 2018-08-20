@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from '../services/message.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-error',
@@ -14,7 +15,8 @@ export class ErrorComponent implements OnInit {
   constructor( 
     private router: Router,
     private route: ActivatedRoute,
-    private messenger : MessageService
+    private messenger : MessageService,
+    private location : Location
   ) { 
   }
 
@@ -33,7 +35,7 @@ export class ErrorComponent implements OnInit {
   }
 
   back(){
-    this.router.navigate(['']);
+    this.location.back()
   }
 
 }

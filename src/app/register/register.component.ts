@@ -6,6 +6,7 @@ import { ValidatePasswordMatch } from '../validate-password-match'
 import { NavbarComponent } from '../navbar/navbar.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-register',
@@ -17,10 +18,11 @@ export class RegisterComponent implements OnInit {
   
   sendingRegister: Boolean = false;
   registerSent: Boolean = false;
-  registerResponse: String;
+  triedToSubmit = false
 
   registerForm : FormGroup;
-  departments = [ 'Comercial',
+  departments = [ null,
+    'Comercial',
     'Compras',
     'Engenharia de Produção',
     'Engenharia de Processos',
@@ -32,41 +34,66 @@ export class RegisterComponent implements OnInit {
   constructor( fb : FormBuilder,
               private userService: UsersService,
               private authService: AuthService,
-              private router: Router
+              private router: Router,
+              private messenger: MessageService
             ) { 
     this.registerForm = fb.group({
       'email' : 
       [
         null, Validators.compose([
-        Validators.pattern('.+@.+\\..+'),
+        Validators.email,
         Validators.required
         ])
       ],
-      'department' : [ 'Comercial', Validators.required],
-      'level' : ['0', Validators.required],
+      'department' : [null, Validators.required],
+      'level' : ['0'],
     },
     )}
 
   ngOnInit() {}
 
   registerUser(userForm : any): void {
+    this.triedToSubmit = true
     this.sendingRegister = true
+    this.registerForm.disable()
     this.userService.registerPendingUser(userForm).
     subscribe(res => {
-      this.registerResponse = 'Usuário cadastrado com sucesso';
+      this.triedToSubmit = false
+      this.messenger.set(
+        {
+          type: 'success',
+          message: 'Usuário cadastrado com sucesso'
+        }
+      )
       this.registerSent = true;
       this.sendingRegister = false;
       this.clearFields();
+      this.registerForm.enable()
+      document.getElementById('email').focus()
     }, err => {
       console.log(err);
-      if ((err.error.message).includes("Error, expected `email` to be unique."))
-        this.registerResponse = "Já existe uma conta cadastrada com e-mail " +
-        this.registerForm.get('email').value + "."
-      else
-        this.registerResponse = err.error.message;
+      if ((err.error.message).includes("email")) {
+        this.messenger.set(
+          {
+            type: 'error',
+            message: "Já existe uma conta cadastrada com o e-mail " + 
+              this.registerForm.get('email').value + "."
+          })
+        this.registerForm.controls['email'].setErrors({notUnique: true})
+      }
+      else {
+        this.messenger.set(
+          {
+            type: 'error',
+            message: err.error.message
+          })
+      }
+      this.triedToSubmit = false
       this.registerSent = false;
       this.sendingRegister = false;
-    });
+      this.registerForm.enable()
+    }
+    );
   }
 
   clearFields(){
@@ -77,5 +104,14 @@ export class RegisterComponent implements OnInit {
     });
     this.registerForm.markAsPristine();
     this.registerForm.markAsUntouched();
+  }
+
+  isFieldValid(controlName){
+    return (!(
+      this.registerForm.controls[controlName].invalid &&
+      this.registerForm.controls[controlName].touched &&
+      this.registerForm.controls[controlName].dirty &&
+      !this.registerForm.controls[controlName].pending
+    ))
   }
 }

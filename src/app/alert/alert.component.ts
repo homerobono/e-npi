@@ -18,7 +18,8 @@ export class AlertComponent implements OnInit {
   route : String
   constructor(
     private messenger : MessageService,
-    private location : Location
+    private location : Location,
+    private router : Router
   ) { }
 
   ngOnInit(): void {

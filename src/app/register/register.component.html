@@ -1,55 +1,39 @@
 <div class="body-frame col-sm-10 col-md-9 col-lg-6">
   <app-nav-buttons></app-nav-buttons>
   <h3>Cadastrar Usuário</h3>
-  <form [formGroup]='registerForm' (ngSubmit)="registerUser(registerForm.value)">
+  <div class='description'><b>Cadastro inicial:</b> os dados fornecidos nesse formulário serão cadastrados no sistema
+  e um e-mail com um link para completar o cadastro será enviado para o endreço especificado.
+  Só após o usuário finalizar o seu cadastro que este terá acesso ao sistema.
+  </div>
+  <form [formGroup]='registerForm' (ngSubmit)="registerUser(registerForm.value)" 
+  novalidate>
     <hr>
     <div class="form-row">
-      <div class="col-md-12 mb-3">
+      <div class="col-md-12 mb-4">
         <label for="validationCustomEmail">E-Mail</label>
         <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text" id="inputGroupPrepend">@</span>
           </div>
-          <input type="text" class="form-control" id="validationCustomEmail" placeholder="E-mail" aria-describedby="inputGroupPrepend" [formControl]="registerForm.controls['email']" > 
-          <div [ngClass]="{
-            'valid-feedback':registerForm.controls['email'].valid
-          }" [ngStyle]="{
-            'display' : ( (registerForm.controls['email'].touched &&
-            registerForm.controls['email'].valid) ? 'block' : 'none' )
-          }"><i class="fa fa-check"></i>
-        </div>
-        <div [ngClass]="{
-          'invalid-feedback':registerForm.controls['email'].invalid
-        }" [ngStyle]="{
-          'display' : ( (registerForm.controls['email'].touched &&
-          !registerForm.controls['email'].pristine &&
-          registerForm.controls['email'].invalid) ? 'block' : 'none' )
-        }"> Digite um e-mail válido
-        </div>
+          <input type="text" class="form-control" id="validationCustomEmail" placeholder="E-mail" 
+          aria-describedby="inputGroupPrepend" formControlName='email' id='email'
+          [ngClass]="{'is-invalid': !isFieldValid('email')}" autofocus>
+          <div class='invalid-feedback'>
+            Digite um e-mail válido
+          </div>
         </div>
       </div>
     </div>
-    <hr>
     <div class="form-row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-6 mb-4">
         <label for="validationCustom04">Departamento</label>
-        <select class="form-control" id="validationCustom04" placeholder="Departamento" [formControl]="registerForm.controls['department']">
+        <select class="form-control" id="validationCustom04" placeholder="Departamento" 
+          formControlName='department'
+          [ngClass]="{'is-invalid': !isFieldValid('department')}">
           <option *ngFor="let dept of departments">{{ dept }}</option>
-        </select>  
-        <div [ngClass]="{
-            'valid-feedback':registerForm.controls['department'].valid
-          }" [ngStyle]="{
-            'display' : ( (registerForm.controls['department'].touched &&
-            registerForm.controls['department'].valid) ? 'block' : 'none' )
-        }"><i class="fa fa-check"></i>
-        </div>
-        <div [ngClass]="{
-            'invalid-feedback':registerForm.controls['department'].invalid
-          }" [ngStyle]="{
-            'display' : ( (registerForm.controls['department'].touched &&
-            !registerForm.controls['department'].pristine &&
-            registerForm.controls['department'].invalid) ? 'block' : 'none' )
-          }"> Escolha um departamento
+        </select>
+        <div class='invalid-feedback'>
+          Escolha um departamento
         </div>
       </div>
     </div>
@@ -119,7 +103,11 @@
       {{ registerResponse }}
     </div>
     <div class="row align-items-center justify-content-center">
-      <button type="submit" class="btn btn-success" [disabled]="!registerForm.valid || sendingRegister">Cadastrar Usuário</button>
+      <button type="submit" class="btn btn-success" *ngIf='!sendingRegister'
+      [disabled]="!registerForm.valid || sendingRegister">
+        Cadastrar Usuário
+      </button>
+      <span class='fa fa-circle-o-notch fa-spin text-secondary' *ngIf='sendingRegister'></span>
     </div>
  </form>
 </div>
