@@ -68,6 +68,7 @@ export class ResetComponent implements OnInit {
 
   resetPassword(){
     this.sendingPassword = true;
+    this.resetForm.disable()
     this.authService.resetPassword(this.resetToken, this.resetForm.value)
     .subscribe(res => {
       console.log(res);

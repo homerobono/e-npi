@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-forgot',
@@ -17,7 +18,8 @@ tokenResponse : String
 actionLabel : String = "Solicitar Alteração de Senha"
 
   constructor( private authService : AuthService,
-              fb : FormBuilder ) { 
+              private messenger : MessageService,
+              fb : FormBuilder, ) { 
     this.emailForm = fb.group({
       'email' :
       [
@@ -25,7 +27,7 @@ actionLabel : String = "Solicitar Alteração de Senha"
         Validators.compose(
           [
             Validators.required,
-            Validators.pattern('.+@.+\\..+')
+            Validators.email
           ]
         )
       ],
@@ -38,19 +40,32 @@ actionLabel : String = "Solicitar Alteração de Senha"
   sendResetToken(){
     this.tokenResponse = null;
     this.authService.sendToken(this.emailForm.value.email)
-    .subscribe(res => {
+    .subscribe(() => {
       this.tokenResponse='Um e-mail foi enviado para o endereço especificado com um link e instruções para alterar sua senha.';
       this.tokenSent = true;
       this.sendingToken = false;
       this.actionLabel = "Enviar Novamente";
     },
     err => {
-      this.tokenResponse = err.error.error;
+      this.messenger.set({
+          type: 'error',
+          message: 'Token não enviado: '+ err.error.error
+      }
+      )
       this.tokenSent = false;
       this.sendingToken = false;
     }
     );  
     this.sendingToken = true;
+  }
+
+  isFieldValid(controlName){
+    return (!(
+      this.emailForm.controls[controlName].invalid &&
+      this.emailForm.controls[controlName].touched &&
+      this.emailForm.controls[controlName].dirty &&
+      !this.emailForm.controls[controlName].pending
+    ))
   }
 
 }

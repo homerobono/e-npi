@@ -2,27 +2,15 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { trigger, style, animate, transition } from '@angular/animations';
 import { MessageService } from '../services/message.service';
 import { Observable, Observer } from 'rxjs/Rx';
+import { slideInOutAnimation, scaleUpDownAnimation } from '../_animations/slide_in_out.animation'
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  animations: [
-    trigger(
-      'enterAnimation', [
-        transition(':enter', [
-          style({height: 0}),
-          animate('1000ms ease-in-out', style({transform: '100px'}))
-        ]),
-        transition(':leave', [
-          animate('500ms ease-in-out', style({height: '30px'}))
-        ])
-      ]
-    )
-  ],
+  animations: [slideInOutAnimation, scaleUpDownAnimation],
 })
 
 export class LoginComponent {
@@ -35,6 +23,7 @@ export class LoginComponent {
       private router: Router,
       private messenger : MessageService
     ) { 
+    this.operationResponse = messenger.getAndClear()
     this.messenger.response.subscribe(
         (res) => { this.operationResponse = res},
         (err) => { this.messenger.set(

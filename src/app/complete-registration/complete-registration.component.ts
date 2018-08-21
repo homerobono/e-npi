@@ -110,7 +110,7 @@ export class CompleteRegistrationComponent implements OnInit {
     this.sendingRegister = true
     userForm.userId = this.user._id
     this.userService.completeRegistration(this.registerToken, userForm).
-    subscribe(res => {
+    subscribe(() => {
       this.messenger.set(
         {
           type: 'success',

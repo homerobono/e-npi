@@ -18,3 +18,32 @@ export const slideInOutAnimation =
             )
         ])
     ]);
+
+    export const scaleUpDownAnimation =
+    trigger('scaleUpDownAnimation', [
+        transition(':enter', [
+          style(
+              {
+                  height: '0px',
+                  paddingBottom: '0px',
+                  overflow: 'hidden'
+                }
+            ),
+          animate(
+              '200ms ease-out', 
+              style({height: 'auto'})
+            )
+        ]),
+        transition(':leave', [
+          style(
+                {
+                   height: '!',
+                   opacity: 1
+                }
+            ),
+          animate(
+              '500ms ease-in-out', 
+              style({height: '0px'})
+            )
+        ])
+    ]);
