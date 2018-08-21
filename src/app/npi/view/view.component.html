@@ -1,3 +1,47 @@
-<p>
-  view works!
-</p>
+      <form [formGroup]='viewForm'>
+        <hr>
+        <div class=row>
+          <div class="col-sm-6 col-md-4 col-lg-2 align-items-center p-auto" *ngIf='_npi.npiRef'>
+            <div class="form-group row">
+              <label for='npiRef' class='col-auto col-form-label pr-0'>
+                NPI Ref.:
+              </label>
+              <div class='col col-form-label pl-2'>
+                <a id='npiRef' routerLink="../{{ _npi.npiRef }}">#{{ _npi.npiRef }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" *ngIf='_npi.entry!="internal" &&
+          _npi.entry!="oem"'>
+          <div class='col-md-3 form-group'>
+            <label for="cost">Custo</label>
+            <input class='form-control form-control-plaintext' type='text' [textMask]="currencyMask" 
+            formControlName='cost' name='cost' placeholder='Custo' readonly
+              aria-describedby="Custo">
+          </div>
+          <div class='col-md-3 form-group'>
+            <label for="price">Preço</label>
+            <input class='form-control form-control-plaintext' type='text' [textMask]="currencyMask" 
+            formControlName='price' name='price' placeholder='Preço de Venda'
+              readonly aria-describedby="Preço">
+          </div>
+        </div>
+        <div class="form-row" *ngIf='_npi.investment'>
+          <div class='col-md-3 form-group'>
+            <label for="investment">Investimento</label>
+            <input class='form-control form-control-plaintext' type='text' [textMask]="currencyMask" 
+            formControlName='investment' name='investment' placeholder='Investimento' readonly
+              aria-describedby="Investimento">
+          </div>
+        </div>
+        <div class="form-row" *ngIf='_npi.inStockDate'>
+          <div class='col-md-3 form-group' *ngIf='_npi.entry!="internal" &&
+            _npi.entry!="oem"'>
+            <label for="inStockDate">Data em Estoque</label>
+            <input type='text' class='form-control form-control-plaintext' formControlName='inStockDate' 
+            readonly name='inStockDate' aria-describedby="Data em estoque">
+          </div>
+        </div>
+        <hr>
+      </form>

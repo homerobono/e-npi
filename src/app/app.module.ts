@@ -28,8 +28,14 @@ import { MessageService } from './services/message.service';
 import { NpiService } from './services/npi.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
+import { EditComponent } from './npi/edit/edit.component';
+import { OemComponent } from './npi/edit/oem/oem.component';
+import { InternalComponent } from './npi/edit/internal/internal.component';
+import { CustomComponent } from './npi/edit/custom/custom.component';
+import { PixelComponent } from './npi/edit/pixel/pixel.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
+import { ViewComponent } from './npi/view/view.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +54,12 @@ import { CompleteRegistrationComponent } from './complete-registration/complete-
     NavButtonsComponent,
     CreateComponent,
     NpiComponent,
+    ViewComponent,
+    EditComponent,
+    OemComponent,
+    PixelComponent,
+    CustomComponent,
+    InternalComponent,
     AlertComponent
   ],
   imports: [

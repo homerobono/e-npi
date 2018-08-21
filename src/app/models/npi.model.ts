@@ -55,6 +55,21 @@ class Npi {
                     this.entryLabel = null
             }
             console.log(npiModel.requester)
+        } else {
+            this.id = null
+            this.number = null
+            this.name = null
+            this.requester = null
+            this.status = null
+            this.created = null
+            this.createdString = null
+            this.npiRef = null
+            this.entry = null
+            this.entry = null
+            this.price = null
+            this.cost = null
+            this.investment = null
+            this.inStockDate = null
         }
     }
 }

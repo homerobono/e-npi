@@ -1,0 +1,83 @@
+<form [formGroup]='npiForm' (ngSubmit)="editNpi(npiForm.value)">
+    <hr>
+    <div class="form-row">
+      <div class="form-group col-sm-3 col-md-2 col-lg-2">
+        <label for="npiref">NPI Ref.</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="npiRefPrepend">
+              <i class='fa fa-fw'>#</i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="npiRef" formControlName='npiRef'
+          name='npiRef'>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class='col-md-3 form-group'>
+        <label for="investment">Investimento</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="investmentPrepend">
+              R$
+            </span>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" 
+          formControlName='investment' name='investment' placeholder='00,00'
+            aria-describedby="Investimento">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class='col-md-6 form-group'>
+        <label for="inStockDateType">Data em Estoque</label>
+        <div class="form-row">
+          <div class="form-group col" id='inStockDate-group'>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' 
+              name='inStockDateType' formControlName="inStockDateType">
+              <label for="fixed-date" class='custom-control-label'>
+                Data fixa
+              </label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" class="custom-control-input" id="offset-date" value='offset' 
+              name='inStockDateType' formControlName="inStockDateType">
+              <label for="offset-date" class='custom-control-label'>
+                Prazo após aprovação
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="input-group"
+          [style.display]='npiForm.controls["inStockDateType"].value=="fixed"?"flex":"none"'>
+            <input type='text' class='form-control' formControlName='inStockFixedDate' 
+            name='inStockFixedDate' aria-describedby="Data em Estoque"
+              #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+            <div class="input-group-append">
+              <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                <i class='fa fa-calendar fa-fw'></i>
+              </li>
+            </div>
+          </div>
+          <div class="input-group col-xs-6 col-sm-3 col-md-4" 
+          [style.display]='npiForm.controls["inStockDateType"].value=="offset"?"inherit":"none"'>
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inStockDatePrepend">
+                +N
+              </span>
+            </div>
+            <input type='number' class='form-control' formControlName='inStockOffsetDate' 
+            name='inStockOffsetDate' aria-describedby="Data em Estoque">
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" 
+      [disabled]="!npiForm.valid || sendingCreate">Submeter NPI</button>
+    </div>
+  </form>

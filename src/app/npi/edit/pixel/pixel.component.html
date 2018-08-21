@@ -1,0 +1,97 @@
+<form [formGroup]='npiForm' (ngSubmit)="editNpi(npiForm.value)">
+    <hr>
+    <div class="form-row">
+      <div class="form-group col-sm-3 col-md-2 col-lg-2">
+        <label for="npiref">NPI Ref.</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="npiRefPrepend">
+              <i class='fa fa-fw'>#</i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="npiRef" formControlName='npiRef'>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class='col form-group'>
+        <div class='row align-items-end'>
+          <div class='col form-group mr-0 pr-0'>
+            <label for="cost">Custo</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="costPrepend">
+                  R$
+                </span>
+              </div>
+              <input class='form-control' type='text' [textMask]="currencyMask" 
+                formControlName='cost' name='cost' placeholder='00,00'
+                aria-describedby="Custo">
+            </div>
+          </div>
+          <div class='col col-auto form-group'>
+            <label for=costAnnex class='m-0 p-0 pb-1 upload-button'>
+              <i class='fa fa-upload m-0 p-0 pr-1'></i>
+            </label>
+            <input type="file" name="costAnnex" ng2FileSelect hidden 
+            [uploader]="uploadService.uploader" id='costAnnex'>
+            <button type="button" class="btn btn-success btn-s" 
+              (click)="uploadService.uploader.uploadAll()"
+              [disabled]="!uploadService.uploader.getNotUploadedItems().length">
+              Upload with ng-2 file uploader
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class='col form-group'>
+        <label for="price">Preço</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="pricePrepend">
+              R$
+            </span>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" 
+          formControlName='price' name='price' placeholder='00,00'
+            aria-describedby="Preço">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class='col-md-3 form-group'>
+        <label for="investment">Investimento</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="investmentPrepend">
+              R$
+            </span>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" 
+          formControlName='investment' name='investment' placeholder='00,00'
+            aria-describedby="Investimento">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class='col-md-6 form-group'>
+        <label for="inStockDateType">Data em Estoque</label>
+        <div class="form-row">
+          <div class="input-group">
+            <input type='text' class='form-control' formControlName='inStockDate' 
+            name='inStockDate' aria-describedby="Data em Estoque"
+              #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+            <div class="input-group-append">
+              <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                <i class='fa fa-calendar fa-fw'></i>
+              </li>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" 
+      [disabled]="!npiForm.valid || sendingCreate">Submeter NPI</button>
+    </div>
+  </form>

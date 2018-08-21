@@ -11,6 +11,7 @@ import { MessageService } from '../services/message.service';
 import Npi from '../models/npi.model';
 import { Location } from '@angular/common';
 import User from '../models/user.model';
+import { Subject } from 'rxjs/Rx';
 
 @Component({
   selector: 'app-npi',
@@ -18,13 +19,17 @@ import User from '../models/user.model';
   styleUrls: ['./npi.component.scss']
 })
 export class NpiComponent implements OnInit {
-
+  path: String
   response: any
   date: Date
   npiNumber: Number
+  npiSubject = new Subject<Npi>()
   npi: Npi
   authorName: String
   authorId: String
+
+  titleEdit = false
+
   currency = createNumberMask({
     prefix: '',
     includeThousandsSeparator: true,
@@ -54,6 +59,7 @@ export class NpiComponent implements OnInit {
     private location: Location
   ) {
     this.npi = new Npi(null)
+    //this.npiSubject.next(this.npi)
     this.viewForm = fb.group({
       'date': null,
       'entry': null,
@@ -77,6 +83,8 @@ export class NpiComponent implements OnInit {
         this.getNpi(this.npiNumber)
       }
     )
+    //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
+    console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
 
   getNpi(npiNumber) {
@@ -85,15 +93,11 @@ export class NpiComponent implements OnInit {
       .subscribe(
         npi => {
           console.log(npi)
-          this.npi = npi;
+          this.npiSubject.next(npi);
+          this.npi = npi
           this.authorId = npi.requester._id
           this.authorName = npi.requester.firstName + 
           (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
-          try {
-            this.fillFormData();
-          } catch (e) {
-            console.log(e)
-          }
         }, err => {
           this.location.replaceState(null)
           this.router.navigateByUrl('/error')
@@ -101,35 +105,22 @@ export class NpiComponent implements OnInit {
       )
   }
 
-  fillFormData() {
-    console.log(typeof this.npi.inStockDate)
-    this.viewForm.patchValue({
-      date: this.npi.createdString,
-      npiRef: this.npi.npiRef ? this.npi.npiRef : null,
-      inStockDate: this.npi.inStockDate ?
-        this.npi.inStockDate instanceof (Date || String) ?
-          new Date(this.npi.inStockDate).toLocaleDateString('pt-br') :
-          this.npi.inStockDate.fixed ?
-            new Date(this.npi.inStockDate.fixed).toLocaleDateString('pt-br') :
-            this.npi.inStockDate.offset +
-            (this.npi.inStockDate.offset > 1 ? ' dias' : ' dia') +
-            " após aprovação"
-        : null
+  toggleTitleEdit(event){
+    this.titleEdit = !this.titleEdit
+  }
 
-    });
-    if (this.npi.entry != 'internal' && this.npi.entry != 'oem')
-      this.viewForm.patchValue({
-        price:
-          this.npi.price.toFixed(2).toString().replace('.', ','),
-        cost:
-          this.npi.cost.toFixed(2).toString().replace('.', ','),
-      })
-
-    if (this.npi.investment)
-      this.viewForm.patchValue({
-        investment:
-          this.npi.investment.toFixed(2).toString().replace('.', ','),
-      })
+  changeTitle(event: KeyboardEvent) {
+    switch(event.key){
+      case "Enter":
+        console.log('saving title')
+        this.titleEdit = false
+        break
+      case "Escape":
+        console.log('Escape')
+        this.titleEdit = false
+        break
+      default:
+    } 
   }
 
 }

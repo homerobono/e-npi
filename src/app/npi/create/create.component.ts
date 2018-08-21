@@ -45,7 +45,6 @@ export class CreateComponent implements OnInit {
   }
 
   datePickerConfig: Partial<BsDatepickerConfig>;
-
   createForm : FormGroup;
 
   constructor( fb : FormBuilder,
@@ -102,11 +101,6 @@ export class CreateComponent implements OnInit {
       this.createSent = false;
       this.sendingCreate = false;
     });
-  }
-
-  toNpiModel(){
-    var model = new Npi(this.createForm.value)
-    return model
   }
 
   clearFields(){

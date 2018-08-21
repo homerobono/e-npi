@@ -16,6 +16,8 @@ import { CreateComponent } from './npi/create/create.component';
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
+import { ViewComponent } from './npi/view/view.component';
+import { EditComponent } from './npi/edit/edit.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo : '/home', pathMatch : 'full' },
@@ -96,6 +98,27 @@ const appRoutes: Routes = [
     path: 'npi/:npiNumber',
     canActivate: [AuthGuard],
     component: NpiComponent,
+    children :
+    [{
+      path: '',
+      component: ViewComponent,
+    },
+    {
+      path: 'view',
+      redirectTo: '',
+    },
+    {
+      path: 'edit',
+      component: EditComponent,
+      canActivate: [
+        AuthGuard,
+        AccessGuard
+      ],
+      data: { 
+        allowedLevel: 0,
+        allowedNormalUser: ['self', 'department']
+      }
+    }]
   },
   { path: 'error', component: ErrorComponent },
   { path: '**', redirectTo: '/home' }

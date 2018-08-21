@@ -27,7 +27,7 @@
         <div *ngIf='npisList.length && !gettingNpis'>
           <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
             <div class='col-lg-1 col-md-2 col'>
-              <b>Número</b>
+              <b>#</b>
             </div>
             <div class='col'>
               <b>Nome</b>
@@ -41,19 +41,19 @@
             <div class='col-lg-1 col-md-2 col-md col'>
               <b>Criado em</b>
             </div>
-            <div class='d-none d-md-block col-auto ml-auto mr-0 pr-0 justify-content-right invisible'>
-              <button class='btn m-0 p-1'>
+            <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start invisible'>
+              <a class='pl-1 pt-2 pb-2 pr-0'>
                 <i class='fa fa-fw'></i>
-              </button>
-              <button class='btn m-0 p-1'>
+              </a>
+              <a class='pl-0 pt-2 pb-2'>
                 <i class='fa fa-fw'></i>
-              </button>
+              </a>
             </div> 
           </div>
           <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList'
             (click)='goToNpi(npi.number)'>
             <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
-              <span class='d-none d-md-block col-lg-1'>{{ npi.number }}</span>
+              <span class='d-none d-md-block col-lg-1 pl-0'>{{ npi.number }}</span>
               <div class='row d-flex d-md-none'>
                 <span class='col-3 pl-0'>
                   <b>Número: </b>
@@ -75,7 +75,7 @@
                 </div>
                 <span class=col>{{ npi.name }} </span>
                 <div class='col-auto ml-auto mr-0 pr-0 justify-content-right'>
-                  <button routerLink='/npis' class='btn btn-info m-0 shadow-sm p-0'>
+                  <button routerLink='/npi/{{npi.number}}/edit' class='btn btn-info m-0 shadow-sm p-0'>
                     <i class='fa fa-pencil fa-fw'></i>
                   </button>
                 </div>
@@ -113,7 +113,7 @@
               <div class='w-100'></div>
             </div>            
             <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start'>
-              <a routerLink='/npis' class='pl-1 pt-2 pb-2 pr-0 text-info'>
+              <a routerLink='/npi/{{npi.number}}/edit' class='pl-1 pt-2 pb-2 pr-0 text-info'>
                 <i class='fa fa-pencil fa-fw'></i>
               </a>
               <a routerLink=# (click)='cancelNPI(npi.id, npi.number, $event)' class='pl-0 pt-2 pb-2 text-danger'>

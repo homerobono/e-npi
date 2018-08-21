@@ -11,7 +11,7 @@ export class NavbarComponent implements OnInit {
   
   nameOfUser: String;
   userIsLogged: Boolean = false;
-  userLevel: Number = 0;
+  userLevel: Number;
   path: String
 
   constructor(
