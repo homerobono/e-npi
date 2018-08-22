@@ -11,7 +11,8 @@ import { MessageService } from '../services/message.service';
 import Npi from '../models/npi.model';
 import { Location } from '@angular/common';
 import User from '../models/user.model';
-import { Subject } from 'rxjs/Rx';
+import { Subject, Observable } from 'rxjs/Rx';
+import 'rxjs/add/operator/map';
 
 @Component({
   selector: 'app-npi',
@@ -105,8 +106,27 @@ export class NpiComponent implements OnInit {
       )
   }
 
+  updateNpi(npiForm): Observable<Boolean> {
+    //npiForm.name = 
+    return this.npiService.updateNpi(npiForm).
+      map(res => {
+        this.messenger.set({
+          'type' : 'success',
+          'message' : 'NPI: NPI atualizada com sucesso' 
+        });
+        this.getNpi(this.npiNumber)
+        return true
+      }, err => {
+        console.log(err);
+        return false
+      }).share()
+  }
+
   toggleTitleEdit(event){
-    this.titleEdit = !this.titleEdit
+    if (this.route.firstChild.snapshot.routeConfig.path=="edit")
+      this.titleEdit = !this.titleEdit
+    else
+      this.titleEdit = false
   }
 
   changeTitle(event: KeyboardEvent) {

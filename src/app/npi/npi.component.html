@@ -41,7 +41,7 @@
                 <i class='fa fa-pencil fa-2x' style='text-shadow: 1px 3px 10px #ccc'></i>
               </a>
             </div>
-            <div class='col text-right' *ngIf='route.firstChild.snapshot.routeConfig.path.includes("edit")'>
+            <div class='col text-right' *ngIf='route.firstChild.snapshot.routeConfig.path=="edit"'>
               <a routerLink='/npi/{{ npi.number }}/' class='text-info'>
                 <i class='fa fa-search fa-2x' style='text-shadow: 1px 3px 10px #ccc'></i>
               </a>

@@ -36,8 +36,7 @@
           </div>
         </div>
         <div class="form-row" *ngIf='_npi.inStockDate'>
-          <div class='col-md-3 form-group' *ngIf='_npi.entry!="internal" &&
-            _npi.entry!="oem"'>
+          <div class='col-md-3 form-group' *ngIf='_npi.entry!="internal"'>
             <label for="inStockDate">Data em Estoque</label>
             <input type='text' class='form-control form-control-plaintext' formControlName='inStockDate' 
             readonly name='inStockDate' aria-describedby="Data em estoque">

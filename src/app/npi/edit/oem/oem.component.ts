@@ -99,12 +99,21 @@ export class OemComponent implements OnInit {
 
   editNpi(npiForm): void {
     this.sendingEdit = true
-    this.npiService.createNpi(npiForm).
+
+    npiForm.inStockDate = 
+    {
+      'fixed' : npiForm.inStockFixedDate,
+      'offset' : npiForm.inStockOffsetDate
+    }
+    npiForm.id = this.npi.id
+
+    this.npiComponent.updateNpi(npiForm).
     subscribe(res => {
       this.messenger.set({
          'type' : 'success',
-         'message' : 'NPI atualizada com sucesso' 
+         'message' : 'Edit: NPI atualizada com sucesso' 
       });
+      console.log(res)
       this.editSent = true;
       this.sendingEdit = false;
     }, err => {

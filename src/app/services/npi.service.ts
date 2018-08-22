@@ -46,9 +46,11 @@ export class NpiService {
     return this.http.post(this.npiUrl, npi);
   }
   
-  updateNpi(npiId, npi: Npi): Observable<any> {
+  updateNpi(npiForm): Observable<any> {
     console.log('updating npi');
-    return this.http.put(this.npisUrl, {npiId, npi});
+    var npi = this.formToModel(npiForm)
+    console.log(npi);
+    return this.http.put(this.npiUrl, npi);
   }
 
   deleteNpi(npiId: String): Observable<any> {

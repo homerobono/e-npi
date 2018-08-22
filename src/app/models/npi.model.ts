@@ -19,6 +19,7 @@ class Npi {
     constructor( npiModel : any | null) {
         if (npiModel) {
             if(npiModel._id) this.id = npiModel._id
+            if(npiModel.id) this.id = npiModel.id
             if(npiModel.number) this.number = npiModel.number
             if(npiModel.name) this.name = npiModel.name
             if(npiModel.requester) this.requester = npiModel.requester
@@ -36,7 +37,6 @@ class Npi {
                 npiModel.inStockDate instanceof String)?
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
-                    
             
             switch(this.entry){
                 case('pixel'):

@@ -81,7 +81,7 @@ export class CreateComponent implements OnInit {
 
   ngOnInit() {
     this.localeService.use('pt-br');
-    setTimeout( () => window.scroll(0,500) , 1000 )
+    //setTimeout( () => window.scroll(0,500) , 1000 )
   }
 
   createNpi(npiForm): void {
@@ -95,7 +95,8 @@ export class CreateComponent implements OnInit {
       this.createSent = true;
       this.sendingCreate = false;
       this.clearFields();
-      this.router.navigateByUrl('home')
+      console.log(res)
+      this.router.navigateByUrl('/npi/'+res.data.number)
     }, err => {
       console.log(err);
       this.createSent = false;
