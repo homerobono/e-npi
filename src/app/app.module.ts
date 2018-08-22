@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
 import { TextMaskModule } from 'angular2-text-mask';
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
+import { ClickOutsideModule } from 'ng4-click-outside'
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -73,7 +74,8 @@ import { ViewComponent } from './npi/view/view.component';
     TextMaskModule,
     DatepickerModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    FileUploadModule
+    FileUploadModule,
+    ClickOutsideModule
   ],
   providers: [
     UsersService,

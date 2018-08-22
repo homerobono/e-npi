@@ -78,13 +78,13 @@ export class OemComponent implements OnInit {
       }
     )
     this.npiForm = fb.group({
-      'cost': '',
-      'price': '',
-      'investment': '',
-      'inStockDateType': '',
-      'inStockFixedDate': '',
-      'inStockOffsetDate': '',
-      'npiRef': ''
+      'cost': null,
+      'price': null,
+      'investment': null,
+      'inStockDateType': null,
+      'inStockFixedDate': null,
+      'inStockOffsetDate': null,
+      'npiRef': null
     })
   }
 
@@ -102,20 +102,19 @@ export class OemComponent implements OnInit {
 
     npiForm.inStockDate = 
     {
-      'fixed' : npiForm.inStockFixedDate,
-      'offset' : npiForm.inStockOffsetDate
+      'fixed' : npiForm.inStockDateType=='fixed' ? 
+        npiForm.inStockFixedDate: null,
+      'offset' : npiForm.inStockDateType=='offset' ? 
+        npiForm.inStockOffsetDate: null
     }
     npiForm.id = this.npi.id
+    console.log(npiForm)
 
     this.npiComponent.updateNpi(npiForm).
-    subscribe(res => {
-      this.messenger.set({
-         'type' : 'success',
-         'message' : 'Edit: NPI atualizada com sucesso' 
-      });
-      console.log(res)
+    subscribe(() => {
       this.editSent = true;
       this.sendingEdit = false;
+      this.router.navigate(['../view'], { relativeTo: this.route })
     }, err => {
       console.log(err);
       this.editSent = false;
@@ -124,10 +123,10 @@ export class OemComponent implements OnInit {
   }
 
   fillFormData() {
-    console.log(this.npi)
+    //console.log(this.npi)
     this.npiForm.patchValue({
-      npiRef: this.npi.npiRef ? this.npi.npiRef : null,
-      investment: this.npi.investment ?
+      npiRef: this.npi.npiRef!=null ? this.npi.npiRef : null,
+      investment: this.npi.investment!=null ?
         this.npi.investment.toFixed(2).toString().replace('.', ','): null,
       inStockDateType: this.npi.inStockDate ?
         this.npi.inStockDate instanceof (Date || String) ? null :

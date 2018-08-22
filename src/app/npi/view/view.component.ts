@@ -69,17 +69,17 @@ export class ViewComponent implements OnInit {
     ngOnInit() {
       this._npi = this.npiComponent.npi
       this.fillFormData()
-      console.log(this._npi)
+      //console.log(this._npi)
       this.npiComponent.npiSubject.subscribe( 
         npi => {
           this._npi = npi
-          console.log(this._npi)
+          //console.log(this._npi)
           this.fillFormData()
         })
     }
   
     fillFormData() {
-      console.log(typeof this._npi.inStockDate)
+      //console.log(typeof this._npi.inStockDate)
       this.viewForm.patchValue({
         npiRef: this._npi.npiRef ? this._npi.npiRef : null,
         inStockDate: this._npi.inStockDate ?

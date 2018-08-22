@@ -20,19 +20,19 @@ class Npi {
         if (npiModel) {
             if(npiModel._id) this.id = npiModel._id
             if(npiModel.id) this.id = npiModel.id
-            if(npiModel.number) this.number = npiModel.number
-            if(npiModel.name) this.name = npiModel.name
-            if(npiModel.requester) this.requester = npiModel.requester
-            if(npiModel.status) this.status = npiModel.status
-            if(npiModel.created) { this.created = new Date(npiModel.created)
+            if(npiModel.number != null) this.number = npiModel.number
+            if(npiModel.name != null) this.name = npiModel.name
+            if(npiModel.requester != null) this.requester = npiModel.requester
+            if(npiModel.status != null) this.status = npiModel.status
+            if(npiModel.created != null) { this.created = new Date(npiModel.created)
             this.createdString = this.created.toLocaleDateString('pt-br') }
-            if(npiModel.npiRef) this.npiRef = npiModel.npiRef
-            if(npiModel.entry) this.entry = npiModel.entry
-            if(npiModel.__t) this.entry = npiModel.__t
-            if(npiModel.price) this.price = npiModel.price
-            if(npiModel.cost) this.cost = npiModel.cost
-            if(npiModel.investment) this.investment = npiModel.investment
-            if(npiModel.inStockDate) this.inStockDate = 
+            if(npiModel.npiRef != null) this.npiRef = npiModel.npiRef
+            if(npiModel.entry != null) this.entry = npiModel.entry
+            if(npiModel.__t != null) this.entry = npiModel.__t
+            if(npiModel.price != null) this.price = npiModel.price
+            if(npiModel.cost != null) this.cost = npiModel.cost
+            if(npiModel.investment != null) this.investment = npiModel.investment
+            if(npiModel.inStockDate != null) this.inStockDate = 
                 (typeof npiModel.inStockDate === 'string' ||
                 npiModel.inStockDate instanceof String)?
                     new Date(npiModel.inStockDate) :

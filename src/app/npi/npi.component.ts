@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
@@ -31,26 +31,9 @@ export class NpiComponent implements OnInit {
 
   titleEdit = false
 
-  currency = createNumberMask({
-    prefix: '',
-    includeThousandsSeparator: true,
-    thousandsSeparatorSymbol: '.',
-    requireDecimal: true,
-    decimalSymbol: ',',
-    allowNegative: false,
-  })
+  titleField : String
 
-  public currencyMask = {
-    mask: this.currency,
-    guide: false,
-  }
-  public dateMask = {
-    mask: ['/\d/', '/', '/\d/', '/']
-  }
-
-  viewForm: FormGroup;
-
-  constructor(fb: FormBuilder,
+  constructor(
     private npiService: NpiService,
     private authService: AuthService,
     private router: Router,
@@ -60,17 +43,7 @@ export class NpiComponent implements OnInit {
     private location: Location
   ) {
     this.npi = new Npi(null)
-    //this.npiSubject.next(this.npi)
-    this.viewForm = fb.group({
-      'date': null,
-      'entry': null,
-      'cost': '',
-      'price': '',
-      'investment': '',
-      'inStockDateType': '',
-      'inStockDate': '',
-      'npiRef': ''
-    })
+    //this.titleField = this.npi.name
   }
 
   ngOnInit() {
@@ -85,17 +58,18 @@ export class NpiComponent implements OnInit {
       }
     )
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
-    console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
+    //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
 
   getNpi(npiNumber) {
-    console.log('getting npi ' + npiNumber)
+    //console.log('getting npi ' + npiNumber)
     this.npiService.getNpi(npiNumber)
       .subscribe(
         npi => {
-          console.log(npi)
+          //console.log(npi)
           this.npiSubject.next(npi);
           this.npi = npi
+          this.titleField = npi.name
           this.authorId = npi.requester._id
           this.authorName = npi.requester.firstName + 
           (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
@@ -107,13 +81,21 @@ export class NpiComponent implements OnInit {
   }
 
   updateNpi(npiForm): Observable<Boolean> {
-    //npiForm.name = 
+    npiForm.name = this.titleField
+    console.log(npiForm)
     return this.npiService.updateNpi(npiForm).
       map(res => {
-        this.messenger.set({
-          'type' : 'success',
-          'message' : 'NPI: NPI atualizada com sucesso' 
-        });
+        console.log(res)
+        if (Object.keys(res.data.changedFields).length>0)
+          this.messenger.set({
+            'type' : 'success',
+            'message' : 'NPI atualizada com sucesso' 
+          });
+        else
+          this.messenger.set({
+            'type' : 'info',
+            'message' : 'Nenhuma modificação feita' 
+          });
         this.getNpi(this.npiNumber)
         return true
       }, err => {
@@ -124,9 +106,10 @@ export class NpiComponent implements OnInit {
 
   toggleTitleEdit(event){
     if (this.route.firstChild.snapshot.routeConfig.path=="edit")
-      this.titleEdit = !this.titleEdit
-    else
-      this.titleEdit = false
+      if (event.target.id=='titleLabel')
+        this.titleEdit = true
+      else 
+        this.titleEdit = false
   }
 
   changeTitle(event: KeyboardEvent) {
@@ -138,6 +121,7 @@ export class NpiComponent implements OnInit {
       case "Escape":
         console.log('Escape')
         this.titleEdit = false
+        this.titleField = this.npi.name
         break
       default:
     } 

@@ -37,7 +37,7 @@ export class EditComponent implements OnInit {
     private npiComponent : NpiComponent,
   ) {
     this.npi = this.npiComponent.npi
-    console.log(this.npi)
+    //console.log(this.npi)
   }
 
   ngOnInit() {  
@@ -45,7 +45,7 @@ export class EditComponent implements OnInit {
       npi => {
         this.npi = npi
         this.npiNumber = npi.number
-        console.log(this.npi)
+        //console.log(this.npi)
       }
     )
   }

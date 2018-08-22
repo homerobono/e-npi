@@ -5,17 +5,24 @@
       <div class='row justify-content-left pb-0'>
         <div class='col'>
           <div class='row justify-content-left pb-0 align-items-center'>
-            <h3 class='col-auto mb-0 pr-0'>
+            <h3 class='mb-0 pr-0' [ngClass]='{"col":!titleEdit,"col-auto":titleEdit}'>
                   NPI #{{ npi.number }} - 
-                <span (click)='toggleTitleEdit($event)'
-                  *ngIf='!titleEdit'>
-                  {{ npi.name }}
+                <span id='titleLabel'
+                  *ngIf='!titleEdit' #name [ngClass]='
+                  {"text-primary": titleField != npi.name && 
+                    route.firstChild.snapshot.routeConfig.path=="edit"
+                  }'>
+                  {{
+                    this.route.firstChild.snapshot.routeConfig.path=="edit" ? 
+                    titleField : npi.name
+                  }}
                 </span>
             </h3>
             <div class="col input-group input-group-lg"
             [style.display]='titleEdit?"flex":"none"'>
-              <input type=text class='form-control' value='{{ npi.name }}'
-              (keyup)="changeTitle($event)" autofocus id='title'>
+              <input type=text class='form-control' (keyup)="changeTitle($event)" 
+              (clickOutside)="toggleTitleEdit($event)" name='titleInput'
+              autofocus id='titleInput' [(ngModel)]='titleField'>
             </div>
             <div class='col-auto mt-1 align-self-center'>
               <span class='badge mt-1 col-auto' [ngClass]='{
@@ -42,7 +49,7 @@
               </a>
             </div>
             <div class='col text-right' *ngIf='route.firstChild.snapshot.routeConfig.path=="edit"'>
-              <a routerLink='/npi/{{ npi.number }}/' class='text-info'>
+              <a routerLink='/npi/{{ npi.number }}/' class='text-secondary'>
                 <i class='fa fa-search fa-2x' style='text-shadow: 1px 3px 10px #ccc'></i>
               </a>
             </div>

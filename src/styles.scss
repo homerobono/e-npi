@@ -34,11 +34,19 @@ body {
     padding-bottom: 4px;
 }
 
+.btn-orange {
+    color: white;
+    background-color: darkorange
+}
+
+.btn-orange:hover {
+    background-color: darken($color: darkorange, $amount: 5)
+}
+
 .alert-space {
     height: 0px;
     z-index: 9;
 }
-
 
 .body-main {
     position: relative;
