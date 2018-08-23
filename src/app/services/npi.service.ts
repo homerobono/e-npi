@@ -63,7 +63,8 @@ export class NpiService {
     var toUnmaskFields = [
       'cost',
       'price',
-      'investment'
+      'investment',
+      'projectCost'
     ]
     
     toUnmaskFields.forEach(prop => {
@@ -85,7 +86,8 @@ export class NpiService {
       }
       if (npiForm.inStockDate == null || npiForm.inStockDate == '')
         model.inStockDate = null
-        
+      console.log('date: ')
+      console.log(model.inStockDate)
     }
     return model
   }

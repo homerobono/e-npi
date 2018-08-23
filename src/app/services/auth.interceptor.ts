@@ -18,7 +18,7 @@ export class AuthInterceptor implements HttpInterceptor{
         const idToken = localStorage.getItem("id_token");
 
         if (idToken) {
-            console.log("Added auth token");
+            //console.log("Added auth token");
             const cloned = req.clone({
                 headers: req.headers.set("Authorization", idToken)
               }
@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor{
             () => {}, 
             (err) => {
                 if (err instanceof HttpErrorResponse ) {
-                    console.log(err)
+                    //console.log(err)
                     if (err.status === 0) {
                         console.log(err)
                         this.messenger.set(

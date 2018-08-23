@@ -28,9 +28,29 @@ export class AlertComponent implements OnInit {
       err => { console.log('error on subscribe') }
     )
   }
+  
   clearMessages(){
     console.log('clearing messages')
     this.messenger.clear()
+  }
+
+  alertContent():{class, icon}{
+    switch(this.response.type){
+      case 'success':
+        return { class:'alert-success', icon:'fa-check' }
+        //break;
+      case 'info':
+        return { class:'alert-info', icon:'fa-info' }
+        //break;
+      case 'error':
+        return { class:'alert-danger', icon:'fa-times' }
+        //break;
+      case 'warning':
+        return { class:'alert-warning', icon:'fa-exclamation-triangle' }
+        //break;
+      default:
+        return { class:'alert-info', icon:'fa-info' }
+    }
   }
 
 }

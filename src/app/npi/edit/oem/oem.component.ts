@@ -103,7 +103,7 @@ export class OemComponent implements OnInit {
     npiForm.inStockDate = 
     {
       'fixed' : npiForm.inStockDateType=='fixed' ? 
-        npiForm.inStockFixedDate: null,
+        new Date(npiForm.inStockFixedDate): null,
       'offset' : npiForm.inStockDateType=='offset' ? 
         npiForm.inStockOffsetDate: null
     }

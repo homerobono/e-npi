@@ -3,8 +3,11 @@ import User from "./user.model";
 class Npi {
     id: String;
     number: Number;
+    complexity : Number;
+    client : String;
     name: String;
     requester: User;
+    stage: Number;
     status: String;
     created : Date;
     createdString : String;
@@ -14,12 +17,15 @@ class Npi {
     price : Number;
     cost : Number;
     investment : Number;
+    projectCost : Number;
     inStockDate : Date | { fixed: Date, offset: Number };
 
     constructor( npiModel : any | null) {
         if (npiModel) {
             if(npiModel._id) this.id = npiModel._id
             if(npiModel.id) this.id = npiModel.id
+            if(npiModel.client != null) this.client = npiModel.client
+            if(npiModel.complexity != null) this.complexity = npiModel.complexity
             if(npiModel.number != null) this.number = npiModel.number
             if(npiModel.name != null) this.name = npiModel.name
             if(npiModel.requester != null) this.requester = npiModel.requester
@@ -32,6 +38,7 @@ class Npi {
             if(npiModel.price != null) this.price = npiModel.price
             if(npiModel.cost != null) this.cost = npiModel.cost
             if(npiModel.investment != null) this.investment = npiModel.investment
+            if(npiModel.projectCost != null) this.projectCost = npiModel.projectCost
             if(npiModel.inStockDate != null) this.inStockDate = 
                 (typeof npiModel.inStockDate === 'string' ||
                 npiModel.inStockDate instanceof String)?
@@ -54,7 +61,25 @@ class Npi {
                 default :
                     this.entryLabel = null
             }
-            console.log(npiModel.requester)
+            switch(this.stage){
+                case(0):
+                    this.status = 'Cancelado'
+                    break
+                case(1):
+                    this.status = 'Rascunho'
+                    break
+                case(2):
+                    this.status = 'Análise Crítica'
+                    break
+                case(3):
+                    this.status = 'Desenvolvimento'
+                    break
+                case(4):
+                    this.status = 'Concluído'
+                    break
+                default :
+                    this.status = 'Rascunho'
+            }
         } else {
             this.id = null
             this.number = null
@@ -68,6 +93,7 @@ class Npi {
             this.entry = null
             this.price = null
             this.cost = null
+            this.projectCost = null
             this.investment = null
             this.inStockDate = null
         }

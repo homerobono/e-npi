@@ -66,7 +66,7 @@ export class NpiComponent implements OnInit {
     this.npiService.getNpi(npiNumber)
       .subscribe(
         npi => {
-          //console.log(npi)
+          console.log(npi)
           this.npiSubject.next(npi);
           this.npi = npi
           this.titleField = npi.name
@@ -125,6 +125,11 @@ export class NpiComponent implements OnInit {
         break
       default:
     } 
+  }
+    
+  submitToAnalisys(npiForm){
+    npiForm.stage = 2
+    this.updateNpi(npiForm)
   }
 
 }

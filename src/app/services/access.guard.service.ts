@@ -14,13 +14,13 @@ export class AccessGuardService implements CanActivate{
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    console.log('verifying');
+    //console.log('verifying');
     let userLevel = this.auth.getUserLevel();
     if (userLevel >= route.data.allowedLevel){
-      console.log('allowed');
+      //console.log('allowed');
       return true;
     }
-    console.log('not allowed');
+    //console.log('not allowed');
     this.router.navigate([
       '/error', 
       {

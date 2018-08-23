@@ -20,18 +20,18 @@ export class AuthGuardService implements CanActivate{
     var notLogged : Boolean = this.auth.isLoggedOut();
     var mustNot : Boolean = route.data.mustNotBeLogged;
     if ( (notLogged && mustNot) || !(notLogged || mustNot) ){
-      console.log('auth allowed')
+      //console.log('auth allowed')
       return true;
     }
     if(notLogged){
-      console.log('not logged')  
+      //console.log('not logged')  
       this.messenger.set({
         type : 'error',
         message : 'É preciso efetuar o login para acessar essa página'
       })
       this.router.navigate(['/login'])
     } else {
-      console.log('must be logged') 
+      //console.log('must be logged') 
       this.messenger.set({
         type : 'error',
         message : 'É necessário encerrar a sua sessão para acessar essa página'

@@ -24,8 +24,8 @@ defineLocale('pt-br', ptBrLocale)
 
 export class CreateComponent implements OnInit {
   
-  sendingCreate: Boolean = false;
-  createSent: Boolean = false;
+  sendingForm: Boolean = false;
+  formSent: Boolean = false;
   createResponse: String;
 
   public currencyMask = {
@@ -65,55 +65,91 @@ export class CreateComponent implements OnInit {
         minDate: new Date()
       }
     )
-
+    var oemDefaultDeadLine = new Date(Date.now()+3600000*24*30)
     this.createForm = fb.group({
       'date' : new Date().toLocaleDateString('pt-br'),
-      'name' : 'Projetinho',
-      'entry' : 'pixel',
+      'complexity' : '',
+      'client' : 'Pixel',
+      'name' : 'Validação no Servidor',
+      'entry' : 'oem',
       'cost' : '',
       'price' : '',
-      'investment' : '',
+      'investment' : null,
+      'projectCost' : null,
       'inStockDateType' : 'fixed',
       'inStockDate' : null,
-      'npiRef' : ''
+      'npiRef' : '',
+      'oemActivities' : fb.group({
+        'activityOneDate' : oemDefaultDeadLine,
+        'activityOneComment' : '',
+        'activityTwoDate' : oemDefaultDeadLine,
+        'activityTwoComment' : '',
+        'activityThreeDate' : oemDefaultDeadLine,
+        'activityThreeComment' : '',
+        'activityFourDate' : oemDefaultDeadLine,
+        'activityFourComment' : '',
+        'activityFiveDate' : oemDefaultDeadLine,
+        'activityFiveComment' : '',
+        'activitySixDate' : oemDefaultDeadLine,
+        'activitySixComment' : '',
+        'activitySevenDate' : oemDefaultDeadLine,
+        'activitySevenComment' : '',
+        'activityEightDate' : oemDefaultDeadLine,
+        'activityEightComment' : ''
+      })
     })
   }
 
   ngOnInit() {
     this.localeService.use('pt-br');
-    //setTimeout( () => window.scroll(0,500) , 1000 )
+    setTimeout( () => window.scroll(0,500) , 100 )
+    this.createForm.controls['investment'].setErrors({'required':true})
+    console.log(this.createForm.controls['investment'].hasError('required'))
   }
 
   createNpi(npiForm): void {
-    this.sendingCreate = true
+    this.sendingForm = true
     this.npiService.createNpi(npiForm).
     subscribe(res => {
       this.messenger.set({
          'type' : 'success',
          'message' : 'NPI cadastrado com sucesso' 
       });
-      this.createSent = true;
-      this.sendingCreate = false;
+      this.formSent = true;
+      this.sendingForm = false;
       this.clearFields();
       console.log(res)
       this.router.navigateByUrl('/npi/'+res.data.number)
     }, err => {
-      console.log(err);
-      this.createSent = false;
-      this.sendingCreate = false;
+      for (let prop in err.error.message.invalidFields){
+        console.log(prop)
+        this.createForm.controls[prop].setErrors({'required':true})
+      }
+      //this.createForm.updateValueAndValidity()
+      console.log(err)
+      console.log(err.error.message)
+      console.log(err.error.message.invalidFields)
+      this.formSent = false;
+      this.sendingForm = false;
     });
+  }
+
+  saveNpi(npiForm){
+    npiForm.stage = 1
+    this.createNpi(npiForm)
+  }
+  
+  submitToAnalisys(npiForm){
+    npiForm.stage = 2
+    this.createNpi(npiForm)
+  }
+
+  cancelNpi(){
+    this.clearFields()
   }
 
   clearFields(){
     this.createForm.patchValue({
-      firstName : null,
-      lastName : null,
-      email : null,
-      phone : null,
-      department : 'Comercial',
-      newPassword : null,
-      confPassword : null,
-      level: '0'
     });
     this.createForm.markAsPristine();
     this.createForm.markAsUntouched();
@@ -121,5 +157,9 @@ export class CreateComponent implements OnInit {
 
   selectFiles(event){
     event.stopPropagation()
+  }
+
+  fieldHasErrors(field){
+    return this.createForm.controls[field].hasError('required')
   }
 }

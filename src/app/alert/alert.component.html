@@ -1,12 +1,9 @@
 <div class='container-fluid sticky-top alert-space' *ngIf='!location.isCurrentPathEqualTo("/login")'>
   <div class='row align-itens-center'>
-    <div class='mb-auto col alert alert-dismissible shadow' 
-    *ngIf='response' [@slideInOutAnimation]
-    [ngClass]="{'alert-success' : response.type == 'success',
-                'alert-warning' : response.type == 'warning',
-                'alert-info' : response.type == 'info',
-                'alert-danger' : response.type == 'error' }">
-                {{ response.message }}
+    <div class='mb-auto col alert alert-dismissible shadow' *ngIf='response' [@slideInOutAnimation]
+    [ngClass]="alertContent().class">
+      <i class='fa fa-fw' [ngClass]='alertContent().icon'></i>
+      {{ response.message }}
       <button type="button" class="close" (click)="messenger.clear()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
