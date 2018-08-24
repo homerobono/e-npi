@@ -7,6 +7,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+import { Globals } from 'config';
 
 @Component({
   selector: 'app-register',
@@ -21,15 +22,7 @@ export class RegisterComponent implements OnInit {
   triedToSubmit = false
 
   registerForm : FormGroup;
-  departments = [ null,
-    'Comercial',
-    'Compras',
-    'Engenharia de Produção',
-    'Engenharia de Processos',
-    'Financeiro',
-    'P&D',
-    'Produção',
-    'R.H.' ]
+  departments = [ null ].push(Globals.DEPARTMENTS)
 
   constructor( fb : FormBuilder,
               private userService: UsersService,

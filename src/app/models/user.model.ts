@@ -13,7 +13,9 @@ class User {
     status: String;
     lastUpdate: Date;
     resetToken: String;
-    resetExpires: Date
+    resetExpires: Date;
+    notify: Boolean
+
     constructor() {
         this.firstName = "";
         this.lastName = "";
@@ -22,6 +24,7 @@ class User {
         this.phone = "";
         this.department = "";
         this.level = 0;
+        this.notify = false;
     }   
 }
 

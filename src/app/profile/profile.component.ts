@@ -5,6 +5,8 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { ValidatePasswordMatch } from '../validate-password-match'
 import User from '../models/user.model';
+import { Globals } from 'config';
+import { MessageService } from '../services/message.service';
 
 @Component({
   selector: 'app-profile',
@@ -22,14 +24,7 @@ export class ProfileComponent implements OnInit {
   profileResponse: String
   sendingProfile: Boolean = false
 
-  departments = [ 'Comercial',
-    'Compras',
-    'Engenharia de Produção',
-    'Engenharia de Processos',
-    'Financeiro',
-    'P&D',
-    'Produção',
-    'R.H.' ]
+  departments = Globals.DEPARTMENTS
 
   passwordSent: Boolean = false
   passwordResponse: String
@@ -37,7 +32,8 @@ export class ProfileComponent implements OnInit {
  constructor( private fb : FormBuilder ,
               private userService: UsersService,
               private authService: AuthService,
-              private router: Router
+              private router: Router,
+              private messenger: MessageService
             ) {
     this.userLevel = authService.getUserLevel();
     console.log(authService.getUserLevel());
@@ -47,12 +43,13 @@ export class ProfileComponent implements OnInit {
       'lastName': [null, Validators.required],
       'email' : 
       [
-        {value:null, disabled: this.userLevel<2 }, Validators.compose([
-        Validators.pattern('.+@.+\\..+'),
-        Validators.required
+        { value:null, disabled: true }, 
+        Validators.compose([
+          Validators.email,
+          Validators.required
         ])
       ],
-      'department' : [{value: 'Comercial', disabled: this.userLevel<2}, Validators.required],
+      'department' : [{value: null, disabled: this.userLevel<2}, Validators.required],
       'phone' : 
       [
         null, Validators.compose
@@ -61,16 +58,17 @@ export class ProfileComponent implements OnInit {
             Validators.required
           ])
       ],
+      'notify' : null,
       'level' : [{value: null, disabled: this.userLevel<2}, Validators.required],
     });
+    
     this.passwordForm = fb.group({
       'password' : 
       [
         null,
         Validators.compose(
           [
-            Validators.required,
-            Validators.minLength(4)
+            Validators.required
           ])
       ],
       'newPassword' : 
@@ -98,16 +96,17 @@ export class ProfileComponent implements OnInit {
     )}
 
   ngOnInit() {
-    /*let session_token = localStorage.getItem('id_token');
-    if (!session_token) this.router.navigate(['login']);
-    this.authService.verifySessionToken().do(
-      null,
-      err => {this.router.navigate(['/login'])}
-    );*/
+    this.getMyProfile()
+  }
+
+  getMyProfile() {
     this.userService.getUser('').subscribe(
       res => { 
-        this.user = res; 
-        this.autoFillData();
+        this.user = res;
+        if (this.user.email == 'admin') 
+          this.profileForm.disable()
+        else 
+          this.autoFillData();
       },
       err => { console.log(err) }
     );
@@ -120,17 +119,29 @@ export class ProfileComponent implements OnInit {
       email : this.user.email,
       phone : this.user.phone,
       department : this.user.department,
+      notify : this.user.notify,
       level : this.user.level.toString(),
     }
     );
   }
 
   updateUser(profileForm) {
+    if (this.profileForm.invalid) {
+      this.messenger.set({
+        type: 'error',
+        message: 'Preencha todos os campos antes de salvar as alterações'
+      })
+      return
+    }
     this.sendingProfile = true;
     this.userService.updateUser(this.user._id, profileForm).
     subscribe(res => {
       console.log(res);
-      this.profileResponse = "Perfil alterado com sucesso";
+      this.getMyProfile()
+      this.messenger.set({
+        type: 'success',
+        message: 'Perfil alterado com sucesso'
+      })
       this.profileSent = true;
       this.profileForm.markAsPristine();
       this.profileForm.markAsUntouched();
@@ -159,11 +170,22 @@ export class ProfileComponent implements OnInit {
       this.passwordForm.markAsUntouched()
     }, err => {
       console.log(err);
-      if (err.error.message == "Wrong password")
-      this.passwordResponse = 'Senha incorreta'
+      this.passwordResponse = err.error.message
       this.passwordSent = false;
     }
     );
+  }
+
+  fieldHasErrors(field){
+    if (field == 'confPassword')
+      return (
+        (this.passwordForm.controls[field].touched || this.passwordForm.controls[field].dirty) &&
+        this.passwordForm.controls['newPassword'].value != this.passwordForm.controls[field].value &&
+        this.passwordForm.controls[field].invalid
+      )
+    return this.profileForm.controls[field].touched &&
+      this.profileForm.controls[field].dirty &&
+      this.profileForm.controls[field].invalid
   }
 
 }
