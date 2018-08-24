@@ -1,4 +1,5 @@
 import User from "./user.model";
+import { Globals } from 'config'
 
 class Npi {
     id: String;
@@ -17,9 +18,18 @@ class Npi {
     price : Number;
     cost : Number;
     investment : Number;
-    projectCost : Number;
+    projectCost : {
+        cost: Number;
+        annex: String
+    };
     inStockDate : Date | { fixed: Date, offset: Number };
-
+    oemActivities : [
+        {
+            date : Date,
+            comment : String,
+            annex: String
+        }
+    ]
     constructor( npiModel : any | null) {
         if (npiModel) {
             if(npiModel._id) this.id = npiModel._id
@@ -29,9 +39,14 @@ class Npi {
             if(npiModel.number != null) this.number = npiModel.number
             if(npiModel.name != null) this.name = npiModel.name
             if(npiModel.requester != null) this.requester = npiModel.requester
-            if(npiModel.status != null) this.status = npiModel.status
-            if(npiModel.created != null) { this.created = new Date(npiModel.created)
-            this.createdString = this.created.toLocaleDateString('pt-br') }
+            if(npiModel.stage != null) {
+                this.stage = npiModel.stage
+                this.status = Globals.STATUS[npiModel.status]
+            }
+            if(npiModel.created != null) { 
+                this.created = new Date(npiModel.created)
+                this.createdString = this.created.toLocaleDateString('pt-br')
+            }
             if(npiModel.npiRef != null) this.npiRef = npiModel.npiRef
             if(npiModel.entry != null) this.entry = npiModel.entry
             if(npiModel.__t != null) this.entry = npiModel.__t
@@ -44,6 +59,15 @@ class Npi {
                 npiModel.inStockDate instanceof String)?
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
+            if(npiModel.oemActivities != null) {
+                this.oemActivities = npiModel.oemActivities
+                for (var i=0; i<npiModel.oemActivities.length; i++){       
+                    this.oemActivities[i].date = 
+                        new Date(npiModel.oemActivities[i].date)
+                        console.log(npiModel.oemActivities[i].date)
+                        console.log(this.oemActivities[i].date)
+                }
+            }
             
             switch(this.entry){
                 case('pixel'):

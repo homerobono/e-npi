@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker' 
@@ -14,6 +14,7 @@ import { FileUploader } from 'ng2-file-upload';
 import Npi from '../../models/npi.model';
 
 import { ptBrLocale } from 'ngx-bootstrap/locale';
+import { UtilService } from '../../services/util.service';
 defineLocale('pt-br', ptBrLocale)
 
 @Component({
@@ -53,7 +54,8 @@ export class CreateComponent implements OnInit {
               private router: Router,
               private messenger: MessageService,
               private localeService: BsLocaleService,
-              private uploadService: UploadService
+              private uploadService: UploadService,
+              private utils: UtilService
             ) 
   {
     this.datePickerConfig = Object.assign(
@@ -75,29 +77,20 @@ export class CreateComponent implements OnInit {
       'cost' : '',
       'price' : '',
       'investment' : null,
-      'projectCost' : null,
+      'projectCost' : fb.group({
+        'cost' : null,
+        'annex' : String
+      }),
       'inStockDateType' : 'fixed',
       'inStockDate' : null,
       'npiRef' : '',
-      'oemActivities' : fb.group({
-        'activityOneDate' : oemDefaultDeadLine,
-        'activityOneComment' : '',
-        'activityTwoDate' : oemDefaultDeadLine,
-        'activityTwoComment' : '',
-        'activityThreeDate' : oemDefaultDeadLine,
-        'activityThreeComment' : '',
-        'activityFourDate' : oemDefaultDeadLine,
-        'activityFourComment' : '',
-        'activityFiveDate' : oemDefaultDeadLine,
-        'activityFiveComment' : '',
-        'activitySixDate' : oemDefaultDeadLine,
-        'activitySixComment' : '',
-        'activitySevenDate' : oemDefaultDeadLine,
-        'activitySevenComment' : '',
-        'activityEightDate' : oemDefaultDeadLine,
-        'activityEightComment' : ''
-      })
+      'oemActivities' : fb.array([])
     })
+
+    for (var i=0; i<utils.getOemActivities().length; i++){
+      (this.createForm.get('oemActivities') as FormArray).
+      push(fb.group({date: oemDefaultDeadLine, comment: ''}))
+    }
   }
 
   ngOnInit() {

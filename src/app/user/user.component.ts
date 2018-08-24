@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { Observable } from 'rxjs';
 import { MessageService } from '../services/message.service';
+import { UtilService } from '../services/util.service';
 
 @Component({
   selector: 'app-user',
@@ -27,14 +28,7 @@ export class UserComponent implements OnInit {
   sendingUser: Boolean = false
   deleteResponse: String
 
-  departments = [ 'Comercial',
-    'Compras',
-    'Engenharia de Produção',
-    'Engenharia de Processos',
-    'Financeiro',
-    'P&D',
-    'Produção',
-    'R.H.' ]
+  departments = []
 
   constructor( private fb : FormBuilder ,
     private userService: UsersService,
@@ -42,9 +36,10 @@ export class UserComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private location: Location,
-    private messenger: MessageService
+    private messenger: MessageService,
+    private utils : UtilService
   ) { 
-
+    this.departments = this.utils.getDepartments()
     this.user = new User();
     this.userLevel = authService.getUserLevel();
     this.userForm = fb.group({

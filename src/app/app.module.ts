@@ -27,6 +27,7 @@ import { NavButtonsComponent } from './nav-buttons/nav-buttons.component';
 import { RoutingModule } from './routing.module';
 import { MessageService } from './services/message.service';
 import { NpiService } from './services/npi.service';
+import { UtilService } from './services/util.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
 import { EditComponent } from './npi/edit/edit.component';
@@ -82,6 +83,7 @@ import { ViewComponent } from './npi/view/view.component';
     AuthService,
     NpiService,
     MessageService,
+    UtilService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

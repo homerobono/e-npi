@@ -64,7 +64,6 @@ export class NpiService {
       'cost',
       'price',
       'investment',
-      'projectCost'
     ]
     
     toUnmaskFields.forEach(prop => {
@@ -77,6 +76,11 @@ export class NpiService {
         )  
       }
     })
+    if (npiForm.projectCost)
+      if (npiForm.projectCost.cost)
+        model.projectCost.cost = parseFloat(
+          npiForm.projectCost.cost.replace(/\./g,'').replace(/,/,'.')
+        )
 
     if(model.entry=='oem'){
       model.inStockDate = 
@@ -86,8 +90,8 @@ export class NpiService {
       }
       if (npiForm.inStockDate == null || npiForm.inStockDate == '')
         model.inStockDate = null
-      console.log('date: ')
-      console.log(model.inStockDate)
+      //console.log('date: ')
+      //console.log(model.inStockDate)
     }
     return model
   }

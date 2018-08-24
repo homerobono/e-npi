@@ -88,7 +88,7 @@
         </div>
         <div class="form-row" *ngIf='createForm.controls["entry"].value!="internal" &&
             createForm.controls["entry"].value!="oem"'>
-          <div class='col form-group'>
+          <div class='col'>
             <div class='row align-items-end'>
               <div class='col form-group mr-0 pr-0 mb-2'>
                 <label for="cost">Custo</label>
@@ -106,15 +106,15 @@
                     </div>
                 </div>
               </div>
-              <div class='col col-auto form-group'>
+              <!--div class='col col-auto form-group'>
                 <label for=costAnnex class='m-0 p-0 pb-1 upload-button'>
                   <i class='fa fa-upload m-0 p-0 pr-1'></i>
                 </label>
                 <input type="file" name="costAnnex" ng2FileSelect hidden [uploader]="uploadService.uploader" id='costAnnex'>
-                <!--button type="button" class="btn btn-success btn-s" (click)="uploadService.uploader.uploadAll()" [disabled]="!uploadService.uploader.getNotUploadedItems().length">
+                <button type="button" class="btn btn-success btn-s" (click)="uploadService.uploader.uploadAll()" [disabled]="!uploadService.uploader.getNotUploadedItems().length">
                       Upload with ng-2 file uploader
-                  </button-->
-              </div>
+                  </button>
+              </div-->
             </div>
           </div>
           <div class='col form-group'>
@@ -151,7 +151,7 @@
                 </div>
             </div>
           </div>
-          <div class='col-md-3 form-group'>
+          <div class='col-md-3 form-group' formGroupName='projectCost'>
             <label for="projectCost">Custo do Projeto</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
@@ -159,7 +159,7 @@
                   R$
                 </span>
               </div>
-              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='projectCost' 
+              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='cost' 
               name='projectCost' placeholder='00,00'
                 aria-describedby="Custo do Projeto" 
                 [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
@@ -216,7 +216,7 @@
               <div class="input-group col-xs-6 col-sm-3 col-md-4">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inStockDatePrepend">
-                    +N
+                    Dias
                   </span>
                 </div>
                 <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque">
@@ -224,7 +224,7 @@
             </div>
           </div>
         </div>
-        <div class="form-row" *ngIf='createForm.controls["entry"].value=="oem"' formGroupName='oemActivities'>
+        <div class="form-row" *ngIf='createForm.controls["entry"].value=="oem"' formArrayName='oemActivities'>
           <div class='col'>
             <div class='table-responsive'>
               <table class="table table-sm table-bordered">
@@ -239,121 +239,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Solicitação Documentos (BOM, Gerbers, etc)</td>
-                    <td>COM</td>
+                  <tr *ngFor='let activity of utils.getOemActivities(); index as i' formGroupName='{{ i }}'>
+                    <th scope="row">{{ i }}</th>
+                    <td>{{ activity.title }}</td>
+                    <td>{{ activity.dept }}</td>
                     <td>
-                      <input type='text' class='form-control' formControlName='activityOneDate' aria-describedby="Prazo para Atividade O&M 1" #dp="bsDatepicker"
-                        bsDatepicker [bsConfig]='datePickerConfig'>
+                      <input type='text' class='form-control' formControlName='date' 
+                      aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
                     </td>
                     <td>
-                      <textarea class="form-control" rows=1 formControlName='activityOneComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Solicitação do NCM</td>
-                    <td>COM</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activityTwoDate' aria-describedby="Prazo para Atividade O&M 2" #dp="bsDatepicker"
-                        bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activityTwoComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cotação da BOM</td>
-                    <td>MSC</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activityThreeDate' aria-describedby="Prazo para Atividade O&M 3"
-                        #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activityThreeComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">4</th>
-                    <td>Estimativa de Capacidade Produtiva</td>
-                    <td>OPR</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activityFourDate' aria-describedby="Prazo para Atividade O&M 4"
-                        #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activityFourComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">5</th>
-                    <td>Definição de RMA/Garantia</td>
-                    <td>COM</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activityFiveDate' aria-describedby="Prazo para Atividade O&M 5"
-                        #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activityFiveComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">6</th>
-                    <td>Formação de Preço</td>
-                    <td>COM</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activitySixDate' aria-describedby="Prazo para Atividade O&M 6" #dp="bsDatepicker"
-                        bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activitySixComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">7</th>
-                    <td>Avaliação de Capacidade Financeira</td>
-                    <td>FIN</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activitySevenDate' aria-describedby="Prazo para Atividade O&M 7"
-                        #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activitySevenComment'></textarea>
-                    </td>
-                    <td>
-                      <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">8</th>
-                    <td>Data da Proposta</td>
-                    <td>COM</td>
-                    <td>
-                      <input type='text' class='form-control' formControlName='activityEightDate' aria-describedby="Prazo para Atividade O&M 8"
-                        #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                    </td>
-                    <td>
-                      <textarea class="form-control" rows=1 formControlName='activityEightComment'></textarea>
+                      <textarea class="form-control" rows=1 formControlName='comment'></textarea>
                     </td>
                     <td>
                       <i class='fa fa-upload m-0 p-0 pr-1'></i>

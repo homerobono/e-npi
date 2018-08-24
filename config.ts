@@ -5,6 +5,15 @@ export const Globals = Object.freeze ({
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
 	ENPI_SERVER_URL : 'http://127.0.0.1:1110/e-npi/v2',
 	LOCAL_ENPI_URL : 'http://127.0.0.1:1110/e-npi/v2',
+
+	STATUS : [
+		'Cancelado',
+		'Rascunho',
+		'Análise Crítica',
+		'Desenvolvimento',
+		'Concluído'
+	],
+
 	DEPARTMENTS : [ 
 		{ value: 'COM', label: 'Comercial' },
 		{ value: 'COMP', label: 'Compras' },
@@ -15,5 +24,16 @@ export const Globals = Object.freeze ({
 		{ value: 'P&D', label: 'P&D' },
 		{ value: 'PROD', label: 'Produção' },
 		{ value: 'RH', label: 'R.H.' }
-	  ]
+	],
+	
+	OEM_ACTIVITIES : [
+		{ title: 'Solicitação de Documentos (BOM, Gerbers, etc)', dept: 'COM' },
+		{ title: 'Solicitação do NCM', dept: 'COM' },
+		{ title: 'Cotação da BOM', dept: 'MSC' },
+		{ title: 'Estimativa de Capacidade Produtiva', dept: 'OPR' },
+		{ title: 'Definição de RMA/Garantia', dept: 'COM' },
+		{ title: 'Formação de Preço', dept: 'COM' },
+		{ title: 'Avaliação de Capacidade Financeira', dept: 'FIN' },
+		{ title: 'Data da Proposta', dept: 'COM' }
+	]
 })

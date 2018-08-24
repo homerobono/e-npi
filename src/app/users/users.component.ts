@@ -6,6 +6,7 @@ import User from '../models/user.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
+import { UtilService } from '../services/util.service'
 
 @Component({
   selector: 'app-users',
@@ -23,9 +24,11 @@ export class UsersComponent implements OnInit {
     private usersService : UsersService,
     private router : Router,
     private route : ActivatedRoute,
-    private messenger : MessageService
+    private messenger : MessageService,
+    private utils : UtilService
   ) { 
     this.response = this.messenger.getAndClear();
+    console.log(utils.getDepartment('COM'))
   }
 
   ngOnInit(): void {
