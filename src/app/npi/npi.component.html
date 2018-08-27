@@ -34,11 +34,22 @@
                 {{ npi.entryLabel }}
               </span>
             </div>
-            <div class='w-100'></div>
+          </div>
+          <div class='row justify-content-between'>
             <small class='col mb-0 mt-0'>
               <a routerLink='/users/{{ authorId }}'>
                 {{ authorName }}</a>, {{ npi.createdString }}
             </small>
+            <div class='col mb-0 mt-0 text-right'>
+              <span class='fa fa-circle' [ngClass]='{
+              "text-danger" : npi.stage == 0,
+              "text-secondary" : npi.stage == 1,
+              "text-warning" : npi.stage == 2,
+              "text-success" : npi.stage == 3,
+              "text-info" : npi.stage == 4
+              }'></span>
+              <i class='text-secondary'> {{ npi.status }} </i>
+            </div>
           </div>
         </div>
         <div class='col-auto pl-0 ml-0'>

@@ -15,6 +15,7 @@ export const Globals = Object.freeze ({
 	],
 
 	DEPARTMENTS : [ 
+		{ value: 'ADM', label: 'Administrativo' },
 		{ value: 'COM', label: 'Comercial' },
 		{ value: 'COMP', label: 'Compras' },
 		{ value: 'EPROD', label: 'Engenharia de Produção' },
@@ -23,7 +24,9 @@ export const Globals = Object.freeze ({
 		{ value: 'MKT', label: 'Marketing' },
 		{ value: 'P&D', label: 'P&D' },
 		{ value: 'PROD', label: 'Produção' },
-		{ value: 'RH', label: 'R.H.' }
+		{ value: 'PRD', label: 'Produto' },
+		{ value: 'RH', label: 'R.H.' },
+		{ value: 'OPR', label: 'Operações' }
 	],
 	
 	OEM_ACTIVITIES : [
@@ -35,5 +38,5 @@ export const Globals = Object.freeze ({
 		{ title: 'Formação de Preço', dept: 'COM' },
 		{ title: 'Avaliação de Capacidade Financeira', dept: 'FIN' },
 		{ title: 'Data da Proposta', dept: 'COM' }
-	]
+	],
 })

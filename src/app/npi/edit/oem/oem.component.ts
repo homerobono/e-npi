@@ -32,8 +32,8 @@ export class OemComponent implements OnInit {
   authorName: String
   authorId: String
 
-  sendingEdit: Boolean = false;
-  editSent: Boolean = false;
+  sendingForm: Boolean = false;
+  formSent: Boolean = false;
   editResponse: String
 
   currency = createNumberMask({
@@ -57,7 +57,8 @@ export class OemComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
   npiForm: FormGroup;
 
-  constructor(fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     private npiService: NpiService,
     private authService: AuthService,
     private router: Router,
@@ -93,12 +94,9 @@ export class OemComponent implements OnInit {
       'inStockFixedDate': null,
       'inStockOffsetDate': null,
       'npiRef': null,
-      'oemActivities': fb.array([])
-    })
-    var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
-    for (var i = 0; i < utils.getOemActivities().length; i++) {
-      oemActivitiesArray.push(fb.group({ date: '', comment: '' }))
-    }
+      'oemActivities': fb.array([]),
+      'criticalAnalisys': fb.array([])
+    })    
   }
 
   ngOnInit() {
@@ -107,11 +105,43 @@ export class OemComponent implements OnInit {
     )
 
     this.npiNumber = this.npi.number
+    console.log(this.npi)
+    this.insertOemActivities();
+    if (this.npi.stage > 1){
+      if (this.npi.critical)
+        this.insertCriticalAnalisys();
+    }
     this.fillFormData(this.npiForm, this.npi)
   }
 
+  insertOemActivities(){
+    var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
+    var arrLength = this.utils.getOemActivities().length
+    for (var i = 0; i < arrLength; i++) {
+      oemActivitiesArray.push(this.fb.group({ date: '', comment: '' }))
+    }
+  }
+  
+  insertCriticalAnalisys(){
+    var criticalForm = this.npiForm.get('criticalAnalisys') as FormArray
+    var criticalModelArray = this.npi.critical
+    var criticalLength = this.npi.critical.length
+
+    criticalModelArray.forEach(analisys => {
+      criticalForm.push(this.fb.group(
+        { 
+          status: analisys.status, 
+          dept: this.utils.getDepartment(analisys.dept),
+          comment: analisys.comment, 
+          signature: analisys.signature 
+        }
+      ))      
+    });
+    console.log((this.npiForm.controls.criticalAnalisys[0]))
+  }
+
   editNpi(npiForm): void {
-    this.sendingEdit = true
+    this.sendingForm = true
 
     npiForm.inStockDate =
       {
@@ -125,8 +155,8 @@ export class OemComponent implements OnInit {
 
     this.npiComponent.updateNpi(npiForm).
       subscribe(() => {
-        this.editSent = true;
-        this.sendingEdit = false;
+        this.formSent = true;
+        this.sendingForm = false;
         this.router.navigate(['../view'], { relativeTo: this.route })
       }, err => {
         for (let prop in err.error.message.invalidFields) {
@@ -134,8 +164,8 @@ export class OemComponent implements OnInit {
           this.npiForm.controls[prop].setErrors({ 'required': true })
         }
         console.log(err);
-        this.editSent = false;
-        this.sendingEdit = false;
+        this.formSent = false;
+        this.sendingForm = false;
       });
   }
 
@@ -143,10 +173,8 @@ export class OemComponent implements OnInit {
     //console.log(model)
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
-      if (control instanceof FormGroup || control instanceof FormArray) {
-        //console.log('group/array')
-        //console.log(control)
-        //console.log('nesting ' + field)
+      if ((control instanceof FormGroup || control instanceof FormArray)
+        && model[field]) {
         this.fillFormData(control, model[field])
       } else
         if (model[field] != null && model[field] != undefined) {
@@ -191,4 +219,14 @@ export class OemComponent implements OnInit {
   fieldHasErrors(field) {
     return this.npiForm.controls[field].hasError('required')
   }
+  
+  submitToAnalisys(npiForm){
+    npiForm.stage = 2
+    this.editNpi(npiForm)
+  }
+
+  cancelNpi(){
+    //this.clearFields()
+  }
+
 }
