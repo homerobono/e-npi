@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { BsLocaleService, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 
 import { NpiService } from '../services/npi.service';
@@ -13,13 +13,19 @@ import { Location } from '@angular/common';
 import User from '../models/user.model';
 import { Subject, Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
+import { UtilService } from '../services/util.service';
+import { OemComponent } from './oem/oem.component';
+import { PixelComponent } from './pixel/pixel.component';
+import { Globals } from 'config';
 
 @Component({
   selector: 'app-npi',
   templateUrl: './npi.component.html',
   styleUrls: ['./npi.component.scss']
 })
+
 export class NpiComponent implements OnInit {
+
   path: String
   response: any
   date: Date
@@ -33,20 +39,49 @@ export class NpiComponent implements OnInit {
 
   titleField : String
 
+  sendingForm: Boolean = false;
+  formSent: Boolean = false;
+  editResponse: String
+
+  currency = createNumberMask({
+    prefix: '',
+    includeThousandsSeparator: true,
+    thousandsSeparatorSymbol: '.',
+    requireDecimal: true,
+    decimalSymbol: ',',
+    allowNegative: false,
+  })
+
+  public currencyMask = {
+    mask: this.currency,
+    guide: false,
+  }
+
+  public dateMask = {
+    mask: ['/\d/', '/', '/\d/', '/']
+  }
+
+  datePickerConfig: Partial<BsDatepickerConfig>;
+  npiForm: FormGroup;
+
   constructor(
+    private fb : FormBuilder,
     private npiService: NpiService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
+    public route: ActivatedRoute,
     private messenger: MessageService,
     private localeService: BsLocaleService,
-    private location: Location
+    private location: Location,
+    private utils: UtilService
   ) {
     this.npi = new Npi(null)
+    this.npiForm = fb.group({})
     //this.titleField = this.npi.name
   }
 
   ngOnInit() {
+    //console.log(this.route.snapshot)
     this.messenger.response.subscribe(
       res => { this.response = res }
     )
@@ -60,6 +95,8 @@ export class NpiComponent implements OnInit {
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
+
+  ngAfterViewInit() {}
 
   getNpi(npiNumber) {
     //console.log('getting npi ' + npiNumber)
@@ -80,32 +117,52 @@ export class NpiComponent implements OnInit {
       )
   }
 
-  updateNpi(npiForm): Observable<Boolean> {
+  submitNpi(npiForm): void {
+    this.sendingForm = true
+
     npiForm.name = this.titleField
+    
+    if (this.npi.entry == 'oem')
+      npiForm.inStockDate =
+      {
+        'fixed': npiForm.inStockDateType == 'fixed' ?
+          new Date(npiForm.inStockFixedDate) : null,
+        'offset': npiForm.inStockDateType == 'offset' ?
+          npiForm.inStockOffsetDate : null
+      }
+      
+    npiForm.id = this.npi.id
     console.log(npiForm)
-    return this.npiService.updateNpi(npiForm).
-      map(res => {
+    this.npiService.updateNpi(npiForm).
+      subscribe(res => {
         console.log(res)
         if (Object.keys(res.data.changedFields).length>0)
           this.messenger.set({
             'type' : 'success',
             'message' : 'NPI atualizada com sucesso' 
-          });
-        else
+          });this.formSent = true;
+          this.sendingForm = false;
+          this.router.navigate(['/npi/'+this.npi.number], { relativeTo: this.route })
+        }, err => {
+          var invalidFieldsMessage = 'Preencha os seguintes campos: '
+          for (let prop in err.error.message.invalidFields) {
+            console.log(prop)
+            this.npiForm.controls[prop].setErrors({ 'required': true })
+            invalidFieldsMessage += Globals.LABELS[prop] + ', '
+          }
+          console.log(err);
           this.messenger.set({
-            'type' : 'info',
-            'message' : 'Nenhuma modificação feita' 
-          });
-        this.getNpi(this.npiNumber)
-        return true
-      }, err => {
-        console.log(err);
-        return false
-      }).share()
+            type: 'error',
+            message: invalidFieldsMessage
+          })
+          this.formSent = false;
+          this.sendingForm = false;
+        }
+      )
   }
 
   toggleTitleEdit(event){
-    if (this.route.firstChild.snapshot.routeConfig.path=="edit")
+    if (this.route.snapshot.routeConfig.path.includes("/edit"))
       if (event.target.id=='titleLabel')
         this.titleEdit = true
       else 
@@ -129,7 +186,22 @@ export class NpiComponent implements OnInit {
     
   submitToAnalisys(npiForm){
     npiForm.stage = 2
-    this.updateNpi(npiForm)
+    this.submitNpi(npiForm)
+  }
+
+  fieldHasErrors(field) {
+    return this.npiForm.controls[field].hasError('required')
+  }
+
+  cancelNpi(){
+    //this.clearFields()
+  }
+
+  setChild(form){
+    Object.keys(form.controls).forEach((field: string) => {
+      //console.log('adding '+field)
+      this.npiForm.addControl(field, form.get(field))
+    });
   }
 
 }

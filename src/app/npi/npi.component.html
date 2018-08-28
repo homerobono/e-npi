@@ -6,23 +6,17 @@
         <div class='col'>
           <div class='row justify-content-left pb-0 align-items-center'>
             <h3 class='mb-0 pr-0' [ngClass]='{"col":!titleEdit,"col-auto":titleEdit}'>
-                  NPI #{{ npi.number }} - 
-                <span id='titleLabel'
-                  *ngIf='!titleEdit' #name [ngClass]='
+              NPI #{{ npi.number }} -
+              <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
                   {"text-primary": titleField != npi.name && 
-                    route.firstChild.snapshot.routeConfig.path=="edit"
+                    route.snapshot.routeConfig.path.includes("/edit")
                   }'>
-                  {{
-                    this.route.firstChild.snapshot.routeConfig.path=="edit" ? 
-                    titleField : npi.name
-                  }}
-                </span>
+                {{ this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name }}
+              </span>
             </h3>
-            <div class="col input-group input-group-lg"
-            [style.display]='titleEdit?"flex":"none"'>
-              <input type=text class='form-control' (keyup)="changeTitle($event)" 
-              (clickOutside)="toggleTitleEdit($event)" name='titleInput'
-              autofocus id='titleInput' [(ngModel)]='titleField'>
+            <div class="col input-group input-group-lg" [style.display]='titleEdit?"flex":"none"'>
+              <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)" name='titleInput'
+                autofocus id='titleInput' [(ngModel)]='titleField'>
             </div>
             <div class='col-auto mt-1 align-self-center'>
               <span class='badge mt-1 col-auto' [ngClass]='{
@@ -54,12 +48,12 @@
         </div>
         <div class='col-auto pl-0 ml-0'>
           <div class='row justify-content-left pb-0'>
-            <div class='col text-right' *ngIf='route.firstChild.snapshot.routeConfig.path==""'>
+            <div class='col text-right' *ngIf='!route.snapshot.routeConfig.path.includes("/edit")'>
               <a routerLink='edit' class='text-info'>
                 <i class='fa fa-pencil fa-2x' style='text-shadow: 1px 3px 10px #ccc'></i>
               </a>
             </div>
-            <div class='col text-right' *ngIf='route.firstChild.snapshot.routeConfig.path=="edit"'>
+            <div class='col text-right' *ngIf='route.snapshot.routeConfig.path.includes("/edit")'>
               <a routerLink='/npi/{{ npi.number }}/' class='text-secondary'>
                 <i class='fa fa-search fa-2x' style='text-shadow: 1px 3px 10px #ccc'></i>
               </a>
@@ -67,7 +61,34 @@
           </div>
         </div>
       </div>
-      <router-outlet></router-outlet>
+      <form [formGroup]='npiForm' (ngSubmit)="submitNpi(npiForm.value)">
+        <hr>
+        <app-oem [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
+        <app-pixel [npi]='npi' *ngIf='npi.entry=="pixel"'></app-pixel>
+        <app-internal [npi]='npi' *ngIf='npi.entry=="internal"'></app-internal>
+        <app-custom [npi]='npi' *ngIf='npi.entry=="custom"'></app-custom>
+        <app-critical [npi]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
+        <hr>
+        <div class="row align-items-center justify-content-between"
+        *ngIf='!route.snapshot.data["readOnly"]'>
+          <div class='col'>
+            <button type="button" class="btn btn-outline-danger shadow-none" [disabled]="sendingForm" (click)='cancelNpi()'>
+              Cancelar
+            </button>
+          </div>
+          <div class='col text-center'>
+            <button type="button" class="btn btn-default btn-orange" [disabled]="sendingForm" (click)='submitToAnalisys(npiForm.value)'
+              *ngIf='npi.stage == 1'>
+              Análise Crítica
+            </button>
+          </div>
+          <div class='col text-right'>
+            <button type="submit" class="btn btn-success" [disabled]="sendingForm">
+              {{ npi.stage == 1 ? 'Salvar' : 'Atualizar NPI' }}
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
   </div>
 </div>

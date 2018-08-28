@@ -31,14 +31,13 @@ import { UtilService } from './services/util.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
 import { EditComponent } from './npi/edit/edit.component';
-import { OemComponent } from './npi/edit/oem/oem.component';
-import { InternalComponent } from './npi/edit/internal/internal.component';
-import { CustomComponent } from './npi/edit/custom/custom.component';
-import { PixelComponent } from './npi/edit/pixel/pixel.component';
+import { OemComponent } from './npi/oem/oem.component';
+import { InternalComponent } from './npi/internal/internal.component';
+import { CustomComponent } from './npi/custom/custom.component';
+import { PixelComponent } from './npi/pixel/pixel.component';
+import { CriticalComponent } from './npi/critical/critical.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
-import { ViewComponent } from './npi/view/view.component';
-import { CriticalComponent } from './npi/edit/critical/critical.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +56,6 @@ import { CriticalComponent } from './npi/edit/critical/critical.component';
     NavButtonsComponent,
     CreateComponent,
     NpiComponent,
-    ViewComponent,
     EditComponent,
     OemComponent,
     PixelComponent,

@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import { UtilService } from '../../../services/util.service';
+import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -10,10 +10,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class CriticalComponent implements OnInit {
 
-  @Output() criticalForm = new EventEmitter<FormArray>()
+  @Output() criticalForm = new EventEmitter<FormGroup>()
   @Input() npi
 
   criticalFormGroup : FormGroup
+  signatures : Array<any>
 
   constructor(
     private fb: FormBuilder,
@@ -23,12 +24,35 @@ export class CriticalComponent implements OnInit {
     this.criticalFormGroup = fb.group({
       'critical' : fb.array([])
     })
+    this.signatures = new Array<String>(5)
    }
 
   ngOnInit() {
     this.insertCriticalAnalisys()
-    if (this.route.snapshot.data['readOnly']) this.criticalFormGroup.disable()
-    
+    if (this.route.snapshot.data['readOnly']) 
+      this.criticalFormGroup.disable()
+    this.updateParentForm()
+
+    this.loadSignatures()
+
+    console.log(this.signatures)
+  }
+
+  loadSignatures(){
+    for (var i=0; i<this.npi.critical.length; i++){
+      var row = this.npi.critical[i]
+      if (row.signature) {
+        console.log('loading signature')
+        var signature = row.signature.user.firstName + 
+          (row.signature.user.lastName ? 
+            ' '+row.signature.user.lastName :
+            ''
+          ) + ', ' + new Date(row.signature.date).toLocaleDateString() +
+          ', às ' + new Date(row.signature.date).toLocaleTimeString()
+
+        this.signatures[i] = signature
+        }
+    }
   }
 
   insertCriticalAnalisys(){
@@ -38,14 +62,14 @@ export class CriticalComponent implements OnInit {
     criticalModelArray.forEach(analisys => {
       var criticalControl = this.fb.group(
         { 
+          dept: analisys.dept,
           status: analisys.status,
-          comment: analisys.comment, 
-          signature: analisys.signature 
+          comment: analisys.comment
+          //signature: analisys.signature 
         }
       )
       criticalControl.valueChanges.subscribe(
         () => {
-          console.log('form changed ')
           this.updateParentForm()
         }
       )
@@ -54,8 +78,7 @@ export class CriticalComponent implements OnInit {
   }
 
   updateParentForm(){
-    console.log('called update parent')
-    this.criticalForm.emit(this.criticalFormGroup.get('critical') as FormArray)
+    this.criticalForm.emit(this.criticalFormGroup)
   }
 
   toggleStatus(i, event){

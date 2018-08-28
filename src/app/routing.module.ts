@@ -16,119 +16,109 @@ import { CreateComponent } from './npi/create/create.component';
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
-import { ViewComponent } from './npi/view/view.component';
 import { EditComponent } from './npi/edit/edit.component';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo : '/home', pathMatch : 'full' },
-  { path: 'home',  component: HomeComponent, canActivate: [AuthGuard] },
-  { 
-    path: 'login',  component: LoginComponent,
-    canActivate: 
-    [
-      AuthGuard,
-    ],
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  {
+    path: 'login', component: LoginComponent,
+    canActivate:
+      [
+        AuthGuard,
+      ],
     data: { mustNotBeLogged: true }
   },
-  { path: 'profile',  component: ProfileComponent, canActivate: [AuthGuard] },
-  { 
-    path: 'users', 
-    component: UsersComponent, 
-    children: 
-    [{ 
-      path: ':userId', 
-      redirectTo: '/user/:userId' 
-    }],
-    canActivate: 
-    [
-      AuthGuard,
-      AccessGuard
-    ],
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  {
+    path: 'users',
+    component: UsersComponent,
+    children:
+      [{
+        path: ':userId',
+        redirectTo: '/user/:userId'
+      }],
+    canActivate:
+      [
+        AuthGuard,
+        AccessGuard
+      ],
     data: { allowedLevel: 1 }
   },
-  { 
+  {
     path: 'user/:userId', component: UserComponent,
-    canActivate: 
-    [
-      AuthGuard, 
-      AccessGuard
-    ],
+    canActivate:
+      [
+        AuthGuard,
+        AccessGuard
+      ],
     data: { allowedLevel: 1 }
   },
   {
     path: 'register', component: RegisterComponent,
-    canActivate: 
-    [
-      AuthGuard, 
-      AccessGuard
-    ],
+    canActivate:
+      [
+        AuthGuard,
+        AccessGuard
+      ],
     data: { allowedLevel: 2 }
   },
   {
     path: 'complete-registration/:registerToken', component: CompleteRegistrationComponent,
-    canActivate: 
-    [
-      AuthGuard,
-    ],
+    canActivate:
+      [
+        AuthGuard,
+      ],
     data: { mustNotBeLogged: true }
   },
-  { 
-    path: 'forgot', component: ForgotComponent ,
-    canActivate: 
-    [
-      AuthGuard,
-    ],
+  {
+    path: 'forgot', component: ForgotComponent,
+    canActivate:
+      [
+        AuthGuard,
+      ],
     data: { mustNotBeLogged: true }
   },
-  { 
+  {
     path: 'reset/:resetToken', component: ResetComponent,
-    canActivate: 
-    [
-      AuthGuard,
-    ],
+    canActivate:
+      [
+        AuthGuard,
+      ],
     data: { mustNotBeLogged: true }
   },
   { path: 'npis', redirectTo: '/home' },
-  { 
-    path: 'npi/create', 
+  {
+    path: 'npi/create',
     canActivate: [AuthGuard],
-    component: CreateComponent 
+    component: CreateComponent
   },
-  { 
+  {
     path: 'npi/:npiNumber',
     canActivate: [AuthGuard],
     component: NpiComponent,
-    children :
-    [{
-      path: '',
-      component: EditComponent,
-      data: {
-        readOnly : true
-      }
-    },
-    {
-      path: 'view',
-      redirectTo: '',
-    },
-    {
-      path: 'edit',
-      component: EditComponent,
-      canActivate: [
-        AuthGuard,
-        AccessGuard
-      ],
-      data: { 
-        allowedLevel: 0,
-        allowedNormalUser: ['self', 'department']
-      }
-    }]
+    data: {
+      readOnly: true
+    }
+  },
+  {
+    path: 'npi/:npiNumber/edit',
+    component: NpiComponent,
+    canActivate: [
+      AuthGuard,
+      AccessGuard
+    ],
+    data: {
+      allowedLevel: 0,
+      allowedNormalUser: ['self', 'department']
+    }
   },
   { path: 'error', component: ErrorComponent },
   { path: '**', redirectTo: '/home' }
 ];
 
-@NgModule({  
-  imports: [ RouterModule.forRoot(appRoutes) ],
-  exports: [ RouterModule ],
+@NgModule({
+  imports: [RouterModule.forRoot(appRoutes)],
+  exports: [RouterModule],
 })
 export class RoutingModule { }

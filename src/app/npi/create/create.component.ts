@@ -70,12 +70,12 @@ export class CreateComponent implements OnInit {
     var oemDefaultDeadLine = new Date(Date.now()+3600000*24*30)
     this.createForm = fb.group({
       'date' : new Date().toLocaleDateString('pt-br'),
-      'complexity' : '',
+      'complexity' : null,
       'client' : 'Pixel',
       'name' : 'Validação no Servidor',
       'entry' : 'oem',
-      'cost' : '',
-      'price' : '',
+      'cost' : null,
+      'price' : null,
       'investment' : null,
       'projectCost' : fb.group({
         'cost' : null,
@@ -83,7 +83,7 @@ export class CreateComponent implements OnInit {
       }),
       'inStockDateType' : 'fixed',
       'inStockDate' : null,
-      'npiRef' : '',
+      'npiRef' : null,
       'oemActivities' : fb.array([])
     })
 

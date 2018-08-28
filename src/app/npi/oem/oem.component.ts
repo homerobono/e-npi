@@ -1,24 +1,24 @@
-import { Component, Inject, OnInit, Input } from '@angular/core';
+import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
 import { defineLocale } from 'ngx-bootstrap/chronos';
 
-import { AuthService } from '../../../services/auth.service';
-import { MessageService } from '../../../services/message.service';
-import { NpiService } from '../../../services/npi.service'
-import { UploadService } from '../../../services/upload.service'
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
+import { NpiService } from '../../services/npi.service'
+import { UploadService } from '../../services/upload.service'
 import { FileUploader } from 'ng2-file-upload';
 
-import Npi from '../../../models/npi.model';
+import Npi from '../../models/npi.model';
 import { Location } from '@angular/common';
-import { NpiComponent } from '../../npi.component';
-import { UtilService } from '../../../services/util.service';
+import { NpiComponent } from '../npi.component';
+import { UtilService } from '../../services/util.service';
 import { Globals } from 'config';
 
 @Component({
-  selector: 'app-edit-oem',
+  selector: 'app-oem',
   templateUrl: './oem.component.html',
   styleUrls: ['./oem.component.scss']
 })
@@ -26,6 +26,7 @@ import { Globals } from 'config';
 export class OemComponent implements OnInit {
 
   @Input() npi: Npi
+  @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   response: any
   date: Date
@@ -67,9 +68,9 @@ export class OemComponent implements OnInit {
     private messenger: MessageService,
     private localeService: BsLocaleService,
     private location: Location,
-    private npiComponent: NpiComponent,
     private uploadService: UploadService,
     private utils: UtilService,
+    private npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
     this.datePickerConfig = Object.assign(
@@ -95,8 +96,7 @@ export class OemComponent implements OnInit {
       'inStockFixedDate': null,
       'inStockOffsetDate': null,
       'npiRef': null,
-      'oemActivities': fb.array([]),
-      'critical': fb.array([])
+      'oemActivities': fb.array([])
     })
   }
 
@@ -104,14 +104,19 @@ export class OemComponent implements OnInit {
     this.messenger.response.subscribe(
       res => { this.response = res }
     )
-
     this.npiNumber = this.npi.number
     console.log(this.npi)
+
+    console.log(this.npiComponent.route.snapshot.data)
+    if (this.route.snapshot.data['readOnly']) 
+      this.npiForm.disable()
+
+    this.npiForm.valueChanges.subscribe(
+      () => { 
+        this.updateParentForm() 
+      }
+    )
     this.insertOemActivities();
-    if (this.npi.stage > 1){
-      if (this.npi.critical)
-        this.insertCriticalAnalisys();
-    }
     this.fillFormData(this.npiForm, this.npi)
   }
 
@@ -128,22 +133,7 @@ export class OemComponent implements OnInit {
     }
   }
   
-  insertCriticalAnalisys(){
-    var criticalForm = this.npiForm.get('critical') as FormArray
-    var criticalModelArray = this.npi.critical
-
-    criticalModelArray.forEach(analisys => {
-      criticalForm.push(this.fb.group(
-        { 
-          status: analisys.status,
-          comment: analisys.comment, 
-          signature: analisys.signature 
-        }
-      ))      
-    });
-  }
-
-  editNpi(npiForm): void {
+  /*editNpi(npiForm): void {
     this.sendingForm = true
 
     npiForm.inStockDate =
@@ -153,10 +143,11 @@ export class OemComponent implements OnInit {
         'offset': npiForm.inStockDateType == 'offset' ?
           npiForm.inStockOffsetDate : null
       }
+      
     npiForm.id = this.npi.id
     console.log(npiForm)
 
-    this.npiComponent.updateNpi(npiForm).
+    this.npiComponent.submitNpi(npiForm).
       subscribe(() => {
         this.formSent = true;
         this.sendingForm = false;
@@ -176,7 +167,7 @@ export class OemComponent implements OnInit {
         this.formSent = false;
         this.sendingForm = false;
       });
-  }
+  }*/
 
   fillFormData(form: FormGroup | FormArray, model) {
     if (this.route.snapshot.data['readOnly']) form.disable()
@@ -232,20 +223,9 @@ export class OemComponent implements OnInit {
   fieldHasErrors(field) {
     return this.npiForm.controls[field].hasError('required')
   }
-  
-  submitToAnalisys(npiForm){
-    npiForm.stage = 2
-    this.editNpi(npiForm)
-  }
 
-  cancelNpi(){
-    //this.clearFields()
-  }
-
-  setCriticalForm(form){
-    console.log(form)
-    this.npiForm.setControl('critical', form)
-    console.log(this.npiForm)
+  updateParentForm(){
+    this.npiFormOutput.emit(this.npiForm)
   }
 
 }

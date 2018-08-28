@@ -1,19 +1,22 @@
 import { Component, Inject, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
-import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker' 
+import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
 import { defineLocale } from 'ngx-bootstrap/chronos';
 
-import { AuthService } from '../../../services/auth.service';
-import { MessageService } from '../../../services/message.service';
-import { NpiService } from '../../../services/npi.service'
-import { UploadService } from '../../../services/upload.service'
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
+import { NpiService } from '../../services/npi.service'
+import { UploadService } from '../../services/upload.service'
 import { FileUploader } from 'ng2-file-upload';
 
-import Npi from '../../../models/npi.model';
+import Npi from '../../models/npi.model';
 import { Location } from '@angular/common';
-import { NpiComponent } from '../../npi.component';
+import { NpiComponent } from '../npi.component';
+import { UtilService } from '../../services/util.service';
+import { Globals } from 'config';
+
 
 @Component({
   selector: 'app-pixel',
