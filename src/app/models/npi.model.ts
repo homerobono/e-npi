@@ -30,7 +30,7 @@ class Npi {
             annex: String
         }>;
     critical: Array<{
-            status: Boolean,
+            status: String,
             dept: String,
             comment: String,
             signature: String

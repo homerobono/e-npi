@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
 import { defineLocale } from 'ngx-bootstrap/chronos';
@@ -15,6 +15,7 @@ import Npi from '../../../models/npi.model';
 import { Location } from '@angular/common';
 import { NpiComponent } from '../../npi.component';
 import { UtilService } from '../../../services/util.service';
+import { Globals } from 'config';
 
 @Component({
   selector: 'app-edit-oem',
@@ -68,7 +69,7 @@ export class OemComponent implements OnInit {
     private location: Location,
     private npiComponent: NpiComponent,
     private uploadService: UploadService,
-    private utils: UtilService
+    private utils: UtilService,
   ) {
     this.npi = new Npi(null)
     this.datePickerConfig = Object.assign(
@@ -95,8 +96,8 @@ export class OemComponent implements OnInit {
       'inStockOffsetDate': null,
       'npiRef': null,
       'oemActivities': fb.array([]),
-      'criticalAnalisys': fb.array([])
-    })    
+      'critical': fb.array([])
+    })
   }
 
   ngOnInit() {
@@ -118,26 +119,28 @@ export class OemComponent implements OnInit {
     var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
     var arrLength = this.utils.getOemActivities().length
     for (var i = 0; i < arrLength; i++) {
-      oemActivitiesArray.push(this.fb.group({ date: '', comment: '' }))
+      oemActivitiesArray.push(this.fb.group(
+        { 
+          date: this.npi.oemActivities[i].date,
+          comment: 'asd' 
+        }
+      ))
     }
   }
   
   insertCriticalAnalisys(){
-    var criticalForm = this.npiForm.get('criticalAnalisys') as FormArray
+    var criticalForm = this.npiForm.get('critical') as FormArray
     var criticalModelArray = this.npi.critical
-    var criticalLength = this.npi.critical.length
 
     criticalModelArray.forEach(analisys => {
       criticalForm.push(this.fb.group(
         { 
-          status: analisys.status, 
-          dept: this.utils.getDepartment(analisys.dept),
+          status: analisys.status,
           comment: analisys.comment, 
           signature: analisys.signature 
         }
       ))      
     });
-    console.log((this.npiForm.controls.criticalAnalisys[0]))
   }
 
   editNpi(npiForm): void {
@@ -159,18 +162,24 @@ export class OemComponent implements OnInit {
         this.sendingForm = false;
         this.router.navigate(['../view'], { relativeTo: this.route })
       }, err => {
+        var invalidFieldsMessage = 'Preencha os seguintes campos: '
         for (let prop in err.error.message.invalidFields) {
           console.log(prop)
           this.npiForm.controls[prop].setErrors({ 'required': true })
+          invalidFieldsMessage += Globals.LABELS[prop] + ', '
         }
         console.log(err);
+        this.messenger.set({
+          type: 'error',
+          message: invalidFieldsMessage
+        })
         this.formSent = false;
         this.sendingForm = false;
       });
   }
 
   fillFormData(form: FormGroup | FormArray, model) {
-    //console.log(model)
+    if (this.route.snapshot.data['readOnly']) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
       if ((control instanceof FormGroup || control instanceof FormArray)
@@ -179,12 +188,16 @@ export class OemComponent implements OnInit {
       } else
         if (model[field] != null && model[field] != undefined) {
           try {
-              control.setValue(model[field])
-            }
-            catch { }
+            control.setValue(model[field])
+          }
+          catch { }
         }
     })
 
+    this.npiForm.get('projectCost').patchValue({
+      cost: this.npi.projectCost.cost != null ?
+        this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
+    })
     this.npiForm.patchValue({
       investment: this.npi.investment != null ?
         this.npi.investment.toFixed(2).toString().replace('.', ',') : null,
@@ -227,6 +240,12 @@ export class OemComponent implements OnInit {
 
   cancelNpi(){
     //this.clearFields()
+  }
+
+  setCriticalForm(form){
+    console.log(form)
+    this.npiForm.setControl('critical', form)
+    console.log(this.npiForm)
   }
 
 }

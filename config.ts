@@ -39,4 +39,34 @@ export const Globals = Object.freeze ({
 		{ title: 'Avaliação de Capacidade Financeira', dept: 'FIN' },
 		{ title: 'Data da Proposta', dept: 'COM' }
 	],
+	
+	LABELS : {
+		number: 'Número',
+		created: 'Data de Criação',
+		stage: 'Status',
+		status: 'Status',
+		npiRef: 'NPI de Referência',
+		complexity: 'Complexidade',
+		annex: 'Anexos',
+		client: 'Cliente',
+		requester: 'Solicitante',
+		name: 'Nome da NPI',
+		cost: 'Custo',
+		price: 'Preço',
+		resources: 'Recursos',
+		norms: 'Normas Aplicáveis',
+		investment: 'Valor de Investimento',
+		fiscals: 'Inc. Fiscais',
+		projectCost: 'Custo do Projeto',
+		activities: 'Atividades',
+		inStockDate: 'Data em Estoque',
+		regulations: 'Regulamentações',
+		demand: 'Demanda',
+		OemActivities: 'Atividades O&M',
+		critical: 'Análise Crítica',
+		dev: 'Desenvolvimento',
+		finished: 'Concluído',
+		canceled: 'Cancelado',
+		draft: 'Rascunho'
+	  }
 })

@@ -38,6 +38,7 @@ import { PixelComponent } from './npi/edit/pixel/pixel.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 import { ViewComponent } from './npi/view/view.component';
+import { CriticalComponent } from './npi/edit/critical/critical.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { ViewComponent } from './npi/view/view.component';
     PixelComponent,
     CustomComponent,
     InternalComponent,
-    AlertComponent
+    AlertComponent,
+    CriticalComponent
   ],
   imports: [
     BrowserModule,

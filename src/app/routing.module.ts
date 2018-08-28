@@ -101,7 +101,10 @@ const appRoutes: Routes = [
     children :
     [{
       path: '',
-      component: ViewComponent,
+      component: EditComponent,
+      data: {
+        readOnly : true
+      }
     },
     {
       path: 'view',

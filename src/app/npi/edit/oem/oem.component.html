@@ -147,7 +147,7 @@
     </div>
   </div>
   <hr>
-  <div class="form-row" formArrayName='criticalAnalisys' *ngIf='npi.stage==2'>
+  <!--div class="form-row" formArrayName='critical' *ngIf='npi.stage==2'>
     <div class='col'>
       <label for='criticalAnalisys' class=col>
         <center>
@@ -165,15 +165,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor='let analisys of npiForm.get("criticalAnalisys").controls; index as i' [formGroupName]='i'>
+            <tr *ngFor='let analisys of npiForm.get("critical").controls; index as i' [formGroupName]='i'>
               <td>
-                {{ analisys.dept }}
+                {{ utils.getDepartment(npi.critical[i].dept) }}
               </td>
               <td>
-                  <span class='fa fa-check-circle-o fa-2x fa-fw text-secondary'
-                  [ngClass]='{"text-success": analisys.status == true}'></span>
-                  <span class='fa fa-times-circle-o fa-2x fa-fw text-secondary'
-                  [ngClass]='{"text-danger": analisys.status == false}'></span>
+                <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-accept' 
+                  value='accept' formControlName='status' id='accept-{{i}}'>
+                  <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
+                </label>
+                <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-deny' 
+                  value='deny' formControlName='status' id='deny-{{i}}'>
+                  <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
+                </label>
               </td>
               <td>
                 <textarea class="form-control" rows=1 formControlName='comment'></textarea>
@@ -186,7 +192,9 @@
         </table>
       </div>
     </div>
-  </div>
+  </div-->
+  <app-critical [npi]='npi' (criticalForm)='setCriticalForm($event)' 
+  *ngIf='npi.stage > 1'></app-critical>
   <hr>
   <div class="row align-items-center justify-content-between">
     <div class='col'>
