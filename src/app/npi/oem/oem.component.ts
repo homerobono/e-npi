@@ -83,10 +83,8 @@ export class OemComponent implements OnInit {
       }
     )
     this.npiForm = fb.group({
-      'complexity': '',
-      'client': 'Pixel',
-      'cost': '',
-      'price': '',
+      'complexity': null,
+      'client': null,
       'investment': null,
       'projectCost': fb.group({
         'cost': null,
@@ -107,10 +105,6 @@ export class OemComponent implements OnInit {
     this.npiNumber = this.npi.number
     console.log(this.npi)
 
-    console.log(this.npiComponent.route.snapshot.data)
-    if (this.route.snapshot.data['readOnly']) 
-      this.npiForm.disable()
-
     this.npiForm.valueChanges.subscribe(
       () => { 
         this.updateParentForm() 
@@ -118,56 +112,22 @@ export class OemComponent implements OnInit {
     )
     this.insertOemActivities();
     this.fillFormData(this.npiForm, this.npi)
+
+    if (this.npi.isCriticallyAnalised()) 
+      this.npiForm.disable()
   }
 
   insertOemActivities(){
     var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
     var arrLength = this.utils.getOemActivities().length
     for (var i = 0; i < arrLength; i++) {
-      oemActivitiesArray.push(this.fb.group(
-        { 
-          date: this.npi.oemActivities[i].date,
-          comment: 'asd' 
-        }
-      ))
+      oemActivitiesArray.push(this.fb.group({
+          _id : this.npi.oemActivities[i]._id,
+          date : this.npi.oemActivities[i].date,
+          comment : this.npi.oemActivities[i].comment,
+      }))
     }
   }
-  
-  /*editNpi(npiForm): void {
-    this.sendingForm = true
-
-    npiForm.inStockDate =
-      {
-        'fixed': npiForm.inStockDateType == 'fixed' ?
-          new Date(npiForm.inStockFixedDate) : null,
-        'offset': npiForm.inStockDateType == 'offset' ?
-          npiForm.inStockOffsetDate : null
-      }
-      
-    npiForm.id = this.npi.id
-    console.log(npiForm)
-
-    this.npiComponent.submitNpi(npiForm).
-      subscribe(() => {
-        this.formSent = true;
-        this.sendingForm = false;
-        this.router.navigate(['../view'], { relativeTo: this.route })
-      }, err => {
-        var invalidFieldsMessage = 'Preencha os seguintes campos: '
-        for (let prop in err.error.message.invalidFields) {
-          console.log(prop)
-          this.npiForm.controls[prop].setErrors({ 'required': true })
-          invalidFieldsMessage += Globals.LABELS[prop] + ', '
-        }
-        console.log(err);
-        this.messenger.set({
-          type: 'error',
-          message: invalidFieldsMessage
-        })
-        this.formSent = false;
-        this.sendingForm = false;
-      });
-  }*/
 
   fillFormData(form: FormGroup | FormArray, model) {
     if (this.route.snapshot.data['readOnly']) form.disable()

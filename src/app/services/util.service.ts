@@ -8,6 +8,14 @@ export class UtilService {
 
   constructor() { }
 
+  getEntry(entry){
+    return Globals.ENTRIES[entry]
+  }
+
+  getEntries(){
+    return Globals.ENTRIES
+  }
+
   getOemActivities(){
     return Globals.OEM_ACTIVITIES
   }

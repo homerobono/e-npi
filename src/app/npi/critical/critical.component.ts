@@ -47,8 +47,8 @@ export class CriticalComponent implements OnInit {
           (row.signature.user.lastName ? 
             ' '+row.signature.user.lastName :
             ''
-          ) + ', ' + new Date(row.signature.date).toLocaleDateString() +
-          ', às ' + new Date(row.signature.date).toLocaleTimeString()
+          ) + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
+          ', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
         this.signatures[i] = signature
         }
@@ -62,7 +62,7 @@ export class CriticalComponent implements OnInit {
     criticalModelArray.forEach(analisys => {
       var criticalControl = this.fb.group(
         { 
-          dept: analisys.dept,
+          _id: analisys._id,
           status: analisys.status,
           comment: analisys.comment
           //signature: analisys.signature 

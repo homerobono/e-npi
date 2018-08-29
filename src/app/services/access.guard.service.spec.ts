@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { AccessGuardService } from './services/access.guard.service';
+import { AccessGuardService } from './access.guard.service';
 
 describe('Access.GuardService', () => {
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe('Access.GuardService', () => {
     });
   });
 
-  it('should be created', inject([AccessGuardService], (service: Access.GuardService) => {
+  it('should be created', inject([AccessGuardService], (service: AccessGuardService) => {
     expect(service).toBeTruthy();
   }));
 });

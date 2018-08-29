@@ -16,7 +16,6 @@ import { CreateComponent } from './npi/create/create.component';
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
-import { EditComponent } from './npi/edit/edit.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },

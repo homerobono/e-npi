@@ -83,22 +83,22 @@
               </div>
             </div>
             <div class='col-xs-12 col-lg-2 col-md-2 col-md'>
-              <span class='d-none d-md-block'>{{ npi.entryLabel }}</span>
+              <span class='d-none d-md-block'>{{ utils.getEntry(npi.entry) }}</span>
               <div class='row d-flex d-md-none'>
                 <div class='col-3 pl-0'>
                   <b>Entrada: </b>
                 </div>
-                <span class=col>{{ npi.entryLabel }}</span>
+                <span class=col>{{ utils.getEntry(npi.entry) }}</span>
               </div>
               <div class='w-100'></div>
             </div>
             <div class='col-xs-12 col-md'>
-              <span class='d-none d-md-block'>{{ npi.status }}</span>
+              <span class='d-none d-md-block'>{{ utils.getStatus(npi.stage) }}</span>
               <div class='row d-flex d-md-none'>
                 <div class='col-3 pl-0'>
                   <b>Status: </b>
                 </div>
-                <span class=col>{{ npi.status }}</span>
+                <span class=col>{{ utils.getStatus(npi.stage) }}</span>
               </div>
               <div class='w-100'></div>
             </div>

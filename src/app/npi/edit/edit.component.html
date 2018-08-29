@@ -1,7 +1,0 @@
-<app-edit-oem [npi]='npi' *ngIf='npi.entry=="oem"'></app-edit-oem>
-<app-pixel [npi]='npi' *ngIf='npi.entry=="pixel"'></app-pixel>
-<app-internal [npi]='npi' *ngIf='npi.entry=="internal"'></app-internal>
-<app-custom [npi]='npi' *ngIf='npi.entry=="custom"'></app-custom>
-<div *ngIf='npi.entry!=="custom" && npi.entry!=="internal" && npi.entry!=="oem" && npi.entry!=="pixel"'>
-  Erro: NPI tipo {{ npi.entry }} x_x
-</div>

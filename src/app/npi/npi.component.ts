@@ -10,12 +10,9 @@ import { MessageService } from '../services/message.service';
 
 import Npi from '../models/npi.model';
 import { Location } from '@angular/common';
-import User from '../models/user.model';
 import { Subject, Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { UtilService } from '../services/util.service';
-import { OemComponent } from './oem/oem.component';
-import { PixelComponent } from './pixel/pixel.component';
 import { Globals } from 'config';
 
 @Component({
@@ -37,7 +34,7 @@ export class NpiComponent implements OnInit {
 
   titleEdit = false
 
-  titleField : String
+  titleField: String
 
   sendingForm: Boolean = false;
   formSent: Boolean = false;
@@ -65,7 +62,7 @@ export class NpiComponent implements OnInit {
   npiForm: FormGroup;
 
   constructor(
-    private fb : FormBuilder,
+    private fb: FormBuilder,
     private npiService: NpiService,
     private authService: AuthService,
     private router: Router,
@@ -92,11 +89,12 @@ export class NpiComponent implements OnInit {
         this.getNpi(this.npiNumber)
       }
     )
+    if (this.route.snapshot.data['readOnly'])
+      this.npiForm.disable()
+
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
-
-  ngAfterViewInit() {}
 
   getNpi(npiNumber) {
     //console.log('getting npi ' + npiNumber)
@@ -108,8 +106,8 @@ export class NpiComponent implements OnInit {
           this.npi = npi
           this.titleField = npi.name
           this.authorId = npi.requester._id
-          this.authorName = npi.requester.firstName + 
-          (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
+          this.authorName = npi.requester.firstName +
+            (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
         }, err => {
           this.location.replaceState(null)
           this.router.navigateByUrl('/error')
@@ -121,56 +119,56 @@ export class NpiComponent implements OnInit {
     this.sendingForm = true
 
     npiForm.name = this.titleField
-    
+
     if (this.npi.entry == 'oem')
       npiForm.inStockDate =
-      {
-        'fixed': npiForm.inStockDateType == 'fixed' ?
-          new Date(npiForm.inStockFixedDate) : null,
-        'offset': npiForm.inStockDateType == 'offset' ?
-          npiForm.inStockOffsetDate : null
-      }
-      
+        {
+          'fixed': npiForm.inStockDateType == 'fixed' ?
+            new Date(npiForm.inStockFixedDate) : null,
+          'offset': npiForm.inStockDateType == 'offset' ?
+            npiForm.inStockOffsetDate : null
+        }
+
     npiForm.id = this.npi.id
     console.log(npiForm)
     this.npiService.updateNpi(npiForm).
       subscribe(res => {
         console.log(res)
-        if (Object.keys(res.data.changedFields).length>0)
+        if (Object.keys(res.data.changedFields).length > 0)
           this.messenger.set({
-            'type' : 'success',
-            'message' : 'NPI atualizada com sucesso' 
-          });this.formSent = true;
-          this.sendingForm = false;
-          this.router.navigate(['/npi/'+this.npi.number], { relativeTo: this.route })
-        }, err => {
-          var invalidFieldsMessage = 'Preencha os seguintes campos: '
-          for (let prop in err.error.message.invalidFields) {
-            console.log(prop)
-            this.npiForm.controls[prop].setErrors({ 'required': true })
-            invalidFieldsMessage += Globals.LABELS[prop] + ', '
-          }
-          console.log(err);
-          this.messenger.set({
-            type: 'error',
-            message: invalidFieldsMessage
-          })
-          this.formSent = false;
-          this.sendingForm = false;
+            'type': 'success',
+            'message': 'NPI atualizada com sucesso'
+          }); this.formSent = true;
+        this.sendingForm = false;
+        this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
+      }, err => {
+        var invalidFieldsMessage = 'Preencha os seguintes campos: '
+        for (let prop in err.error.message.invalidFields) {
+          console.log(prop)
+          this.npiForm.controls[prop].setErrors({ 'required': true })
+          invalidFieldsMessage += Globals.LABELS[prop] + ', '
         }
+        console.log(err);
+        this.messenger.set({
+          type: 'error',
+          message: invalidFieldsMessage
+        })
+        this.formSent = false;
+        this.sendingForm = false;
+      }
       )
   }
 
-  toggleTitleEdit(event){
+  toggleTitleEdit(event) {
     if (this.route.snapshot.routeConfig.path.includes("/edit"))
-      if (event.target.id=='titleLabel')
+      if (event.target.id == 'titleLabel')
         this.titleEdit = true
-      else 
+      else
         this.titleEdit = false
   }
 
   changeTitle(event: KeyboardEvent) {
-    switch(event.key){
+    switch (event.key) {
       case "Enter":
         console.log('saving title')
         this.titleEdit = false
@@ -181,10 +179,10 @@ export class NpiComponent implements OnInit {
         this.titleField = this.npi.name
         break
       default:
-    } 
+    }
   }
-    
-  submitToAnalisys(npiForm){
+
+  submitToAnalisys(npiForm) {
     npiForm.stage = 2
     this.submitNpi(npiForm)
   }
@@ -193,11 +191,11 @@ export class NpiComponent implements OnInit {
     return this.npiForm.controls[field].hasError('required')
   }
 
-  cancelNpi(){
+  cancelNpi() {
     //this.clearFields()
   }
 
-  setChild(form){
+  setChild(form) {
     Object.keys(form.controls).forEach((field: string) => {
       //console.log('adding '+field)
       this.npiForm.addControl(field, form.get(field))

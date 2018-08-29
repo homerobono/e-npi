@@ -9,12 +9,10 @@ class Npi {
     name: String;
     requester: User;
     stage: Number;
-    status: String;
     created: Date;
     createdString: String;
     npiRef: Number;
     entry: String;
-    entryLabel: String;
     price: Number;
     cost: Number;
     investment: Number;
@@ -25,18 +23,29 @@ class Npi {
     inStockDate: Date | { fixed: Date, offset: Number };
     oemActivities: Array<
         {
+            _id: String,
+            dept: String,
             date: Date,
             comment: String,
             annex: String
         }>;
-    critical: Array<{
+    critical: Array<
+        {
+            _id: String,
             status: String,
             dept: String,
             comment: String,
-            signature: String
+            signature: {
+                user: any,
+                date: Date
+            }
         }>;
+    clientApproval: {
+        approval: String,
+        comment: String
+    };
     constructor(npiModel: any | null) {
-        
+        /*
         this.id = null
         this.number = null
         this.name = null
@@ -54,7 +63,7 @@ class Npi {
         this.inStockDate = null
         this.oemActivities = null;
         this.critical = null
-
+*/
         if (npiModel) {
             if (npiModel._id) this.id = npiModel._id
             if (npiModel.id) this.id = npiModel.id
@@ -63,10 +72,7 @@ class Npi {
             if (npiModel.number != null) this.number = npiModel.number
             if (npiModel.name != null) this.name = npiModel.name
             if (npiModel.requester != null) this.requester = npiModel.requester
-            if (npiModel.stage != null) {
-                this.stage = npiModel.stage
-                this.status = Globals.STATUS[npiModel.status]
-            }
+            if (npiModel.stage != null) this.stage = npiModel.stage
             if (npiModel.created != null) {
                 this.created = new Date(npiModel.created)
                 this.createdString = this.created.toLocaleDateString('pt-br')
@@ -89,44 +95,15 @@ class Npi {
                     this.oemActivities[i].date = new Date(npiModel.oemActivities[i].date)
                 }
             }
-            if (npiModel.critical != null) this.critical = npiModel.critical
-
-            switch (this.entry) {
-                case ('pixel'):
-                    this.entryLabel = 'Pixel'
-                    break
-                case ('oem'):
-                    this.entryLabel = 'O&M'
-                    break
-                case ('internal'):
-                    this.entryLabel = 'Interno'
-                    break
-                case ('custom'):
-                    this.entryLabel = 'Customização'
-                    break
-                default:
-                    this.entryLabel = null
+            if (npiModel.critical != null) {
+                this.critical = npiModel.critical
+                for (let i = 0; i < npiModel.critical; i++) {
+                    this.critical[i].signature.date = new Date(npiModel.critical[i].signature.date)
+                }
             }
-            switch (this.stage) {
-                case (0):
-                    this.status = 'Cancelado'
-                    break
-                case (1):
-                    this.status = 'Rascunho'
-                    break
-                case (2):
-                    this.status = 'Análise Crítica'
-                    break
-                case (3):
-                    this.status = 'Desenvolvimento'
-                    break
-                case (4):
-                    this.status = 'Concluído'
-                    break
-                default:
-                    this.status = 'Rascunho'
-            }
-        } else {
+            if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
+            
+        } else {/*
             this.id = null
             this.number = null
             this.name = null
@@ -142,7 +119,37 @@ class Npi {
             this.projectCost = null
             this.investment = null
             this.inStockDate = null
-            this.oemActivities = null;
+            this.oemActivities = null;*/
+        }
+    }
+
+    public isCriticallyAnalised(): Boolean {
+        if (this.critical) {
+            return this.critical.some(
+                (analisys) => {
+                    return analisys.status != null
+                }
+            )
+        }
+    }
+
+    public isCriticallyDisapproved(): Boolean {
+        if (this.critical) {
+            return this.critical.some(
+                (analisys) => {
+                    return analisys.status == 'deny'
+                }
+            )
+        }
+    }
+
+    public isCriticallyApproved(): Boolean {
+        if (this.critical) {
+            return this.critical.every(
+                (analisys) => {
+                    return analisys.status == 'accept'
+                }
+            )
         }
     }
 }

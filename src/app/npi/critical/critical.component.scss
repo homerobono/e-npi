@@ -4,7 +4,7 @@
     cursor: pointer;
     font-size: 32px;
     padding: 0;
-    margin: 4px;
+    margin: 0;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -26,10 +26,12 @@
 
 .radio-accept:after {
     content: '\f05d';
+    margin: 4px
 }
 
 .radio-deny:after {
     content: "\f05c";
+    margin: 4px
 }
 
 .radio-container:hover input ~ 
@@ -37,12 +39,36 @@
     color: #666
 }
 
+.radio-container input:disabled ~
+.radio-deny:after {
+    display: none;
+    cursor: default;
+}
+
+.radio-container input:disabled ~
+.radio-accept:after {
+    display: none;
+    cursor: default;
+}
+
+.radio-container input:enabled ~
+.radio-deny:after {
+    display: inherit;
+}
+
+.radio-container input:enabled ~
+.radio-accept:after {
+    display: inherit;
+}
+
 .radio-container input:checked ~
 .radio-accept:after {
+    display: inherit;
     color: green;
 }
 
 .radio-container input:checked ~
 .radio-deny:after {
+    display: inherit;
     color: red;
 }

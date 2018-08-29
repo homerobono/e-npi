@@ -1,0 +1,26 @@
+<div [formGroup]='npiForm'>
+  <h4>
+    <b>Aprovação do Cliente</b>
+  </h4>
+  <div class="form-row" formGroupName='clientApproval'>
+    <div class='form-group col-auto'>
+      <label for='approval'>Aprovado?</label>
+      <div class='form-group' id='approval'>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" id="accept" class="custom-control-input" 
+          formControlName='approval' value='accept'>
+          <label class="custom-control-label" for="accept">Sim</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" id="deny" class="custom-control-input" 
+          formControlName='approval' value='deny'>
+          <label class="custom-control-label" for="deny">Não</label>
+        </div>
+      </div>
+    </div>
+    <div class='form-group col' *ngIf='deny.value=="deny"'>
+      <label for='comment'>Justificativa</label>
+      <textarea class='form-control' id='comment' formControlName='comment' rows='1'></textarea>
+    </div>
+  </div>
+</div>

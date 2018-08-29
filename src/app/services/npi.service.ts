@@ -76,8 +76,11 @@ export class NpiService {
         )  
       }
     })
+
     if (npiForm.projectCost)
-      if (npiForm.projectCost.cost)
+      if (npiForm.projectCost.cost && 
+        (npiForm.projectCost.cost instanceof String || 
+        typeof npiForm.projectCost.cost == 'string'))
         model.projectCost.cost = parseFloat(
           npiForm.projectCost.cost.replace(/\./g,'').replace(/,/,'.')
         )

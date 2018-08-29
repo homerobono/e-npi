@@ -239,10 +239,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor='let activity of utils.getOemActivities(); index as i' formGroupName='{{ i }}'>
+                  <tr *ngFor='let activity of createForm.get("oemActivities").controls; index as i' formGroupName='{{ i }}'>
                     <th scope="row">{{ i }}</th>
-                    <td>{{ activity.title }}</td>
-                    <td>{{ activity.dept }}</td>
+                    <td>{{ activity.get('title').value }}</td>
+                    <td>{{ activity.get('dept').value }}</td>
                     <td>
                       <input type='text' class='form-control' formControlName='date' 
                       aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>

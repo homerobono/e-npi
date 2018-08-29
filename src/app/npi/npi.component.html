@@ -25,7 +25,7 @@
                 "badge-secondary" : npi.entry=="internal",
                 "badge-info" : npi.entry=="custom"
                 }'>
-                {{ npi.entryLabel }}
+                {{ utils.getEntry(npi.entry) }}
               </span>
             </div>
           </div>
@@ -42,7 +42,7 @@
               "text-success" : npi.stage == 3,
               "text-info" : npi.stage == 4
               }'></span>
-              <i class='text-secondary'> {{ npi.status }} </i>
+              <i class='text-secondary'> {{ utils.getStatus(npi.stage) }} </i>
             </div>
           </div>
         </div>
@@ -67,8 +67,10 @@
         <app-pixel [npi]='npi' *ngIf='npi.entry=="pixel"'></app-pixel>
         <app-internal [npi]='npi' *ngIf='npi.entry=="internal"'></app-internal>
         <app-custom [npi]='npi' *ngIf='npi.entry=="custom"'></app-custom>
+        <hr>
         <app-critical [npi]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
         <hr>
+        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.isCriticallyApproved()'></app-client>
         <div class="row align-items-center justify-content-between"
         *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col'>

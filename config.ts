@@ -68,5 +68,12 @@ export const Globals = Object.freeze ({
 		finished: 'Concluído',
 		canceled: 'Cancelado',
 		draft: 'Rascunho'
-	  }
+	  },
+
+	ENTRIES : {
+		pixel : 'Pixel',
+			oem : 'O&M',
+			internal : 'Interno',
+			custom : 'Customização'
+	},
 })

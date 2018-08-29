@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { MessageService } from '../services/message.service';
 import { NpiService } from '../services/npi.service';
 import Npi from '../models/npi.model';
+import { UtilService } from '../services/util.service';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,7 @@ export class HomeComponent implements OnInit {
                private router : Router,
                private authService : AuthService,
                private messenger : MessageService,
+               private utils : UtilService
   ) { 
     this.userLevel = this.authService.getUserLevel();
     this.sortParam = 'number'

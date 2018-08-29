@@ -87,17 +87,23 @@ export class CreateComponent implements OnInit {
       'oemActivities' : fb.array([])
     })
 
-    for (var i=0; i<utils.getOemActivities().length; i++){
+    var oemActivities = utils.getOemActivities()
+    for (var i=0; i<oemActivities.length; i++){
       (this.createForm.get('oemActivities') as FormArray).
-      push(fb.group({date: oemDefaultDeadLine, comment: ''}))
+      push(fb.group({
+        date: oemDefaultDeadLine, 
+        comment: null,
+        dept: oemActivities[i].dept,
+        title: oemActivities[i].title,
+      }))
     }
   }
 
   ngOnInit() {
     this.localeService.use('pt-br');
-    setTimeout( () => window.scroll(0,500) , 100 )
-    this.createForm.controls['investment'].setErrors({'required':true})
-    console.log(this.createForm.controls['investment'].hasError('required'))
+    //setTimeout( () => window.scroll(0,500) , 100 )
+    //this.createForm.controls['investment'].setErrors({'required':true})
+    //console.log(this.createForm.controls['investment'].hasError('required'))
   }
 
   createNpi(npiForm): void {

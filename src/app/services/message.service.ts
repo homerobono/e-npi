@@ -16,6 +16,7 @@ export class MessageService {
     localStorage.setItem('message', response.message)
     localStorage.setItem('type', response.type)
     localStorage.setItem('log', response.log)
+    setTimeout( () => this.clear(), 6000 )
   }
 
   public get(){
