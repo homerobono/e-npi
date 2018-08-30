@@ -69,15 +69,19 @@
     <div class='col-md-6 form-group'>
       <label for="inStockDateType">Data em Estoque</label>
       <div class="form-row">
-        <div class="form-group col" id='inStockDate-group'>
+        <div class="form-group col" id='inStockDateType'>
           <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType' formControlName="inStockDateType">
+            <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' 
+            name='inStockDateType' formControlName="inStockDateType"
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
             <label for="fixed-date" class='custom-control-label'>
               Data fixa
             </label>
           </div>
           <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType' formControlName="inStockDateType">
+            <input type="radio" class="custom-control-input" id="offset-date" value='offset' 
+            name='inStockDateType' formControlName="inStockDateType"
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
             <label for="offset-date" class='custom-control-label'>
               Prazo após aprovação
             </label>
@@ -85,25 +89,38 @@
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group col-xs-6 col-lg-4" [style.display]='npiForm.controls["inStockDateType"].value=="fixed"?"flex":"none"'>
+        <div class="form-group col-xs-6 col-lg-4" 
+        [style.display]='npiForm.controls["inStockDateType"].value=="fixed"?"flex":"none"'>
           <div class="input-group">
             <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
-              #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
+              #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig'
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockFixedDate")}'>
+            <input type='text' class='form-control' formControlName='inStockFixedDate' 
+            name='inStockFixedDate' aria-describedby="Data em Estoque"
             <div class="input-group-append">
               <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                 <i class='fa fa-calendar fa-fw'></i>
               </li>
             </div>
           </div>
+          <div class='invalid-feedback'>
+            Defina uma data
+          </div>
         </div>
-        <div class="form-group col-xs-6 col-lg-4" [style.display]='npiForm.controls["inStockDateType"].value=="offset"?"inherit":"none"'>
+        <div class="form-group col-xs-6 col-lg-4" 
+        [style.display]='npiForm.controls["inStockDateType"].value=="offset"?"inherit":"none"'>
           <div class='input-group'>
             <div class="input-group-prepend">
               <span class="input-group-text" id="inStockDatePrepend">
                 Dias
               </span>
             </div>
-            <input type='number' class='form-control' formControlName='inStockOffsetDate' name='inStockOffsetDate' aria-describedby="Data em Estoque">
+            <input type='number' class='form-control' formControlName='inStockOffsetDate' 
+            name='inStockOffsetDate' aria-describedby="Data em Estoque"
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockOffsetDate")}'>
+            <div class='invalid-feedback'>
+              Defina uma data
+            </div>
           </div>
         </div>
       </div>
@@ -128,8 +145,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor='let activity of npiForm.get("oemActivities").controls; index as i' formGroupName='{{ i }}'
-            class='align-middle'>
+            <tr *ngFor='let activity of npiForm.get("oemActivities").controls; index as i' formGroupName='{{ i }}' class='align-middle'>
               <th class='align-middle' scope="row">{{ i }}</th>
               <td>{{ npi.oemActivities[i].title }}</td>
               <td>{{ npi.oemActivities[i].dept }}</td>

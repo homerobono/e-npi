@@ -137,7 +137,8 @@ export class NpiComponent implements OnInit {
       npiForm.inStockDate =
         {
           'fixed': npiForm.inStockDateType == 'fixed' ?
-            new Date(npiForm.inStockFixedDate) : null,
+            npiForm.inStockFixedDate ?
+              new Date(npiForm.inStockFixedDate) : null : null,
           'offset': npiForm.inStockDateType == 'offset' ?
             npiForm.inStockOffsetDate : null
         }
@@ -147,11 +148,18 @@ export class NpiComponent implements OnInit {
     this.npiService.updateNpi(npiForm).
       subscribe(res => {
         console.log(res)
+        this.formSent = true;
+
         if (Object.keys(res.data.changedFields).length > 0)
           this.messenger.set({
             'type': 'success',
             'message': 'NPI atualizada com sucesso'
-          }); this.formSent = true;
+          });
+        else
+          this.messenger.set({
+            'type': 'info',
+            'message': 'Nenhum campo modificado'
+          });
         this.sendingForm = false;
         this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
       }, err => {
@@ -201,6 +209,10 @@ export class NpiComponent implements OnInit {
         break
       default:
     }
+  }
+
+  saveNpi(npiForm) {
+    this.npiForm.setErrors(null)
   }
 
   submitToAnalisys(npiForm) {
