@@ -28,35 +28,6 @@ export class OemComponent implements OnInit {
   @Input() npi: Npi
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
-  response: any
-  date: Date
-  npiNumber: Number
-  authorName: String
-  authorId: String
-
-  sendingForm: Boolean = false;
-  formSent: Boolean = false;
-  editResponse: String
-
-  currency = createNumberMask({
-    prefix: '',
-    includeThousandsSeparator: true,
-    thousandsSeparatorSymbol: '.',
-    requireDecimal: true,
-    decimalSymbol: ',',
-    allowNegative: false,
-  })
-
-  public currencyMask = {
-    mask: this.currency,
-    guide: false,
-  }
-
-  public dateMask = {
-    mask: ['/\d/', '/', '/\d/', '/']
-  }
-
-  datePickerConfig: Partial<BsDatepickerConfig>;
   npiForm: FormGroup;
 
   constructor(
@@ -73,15 +44,7 @@ export class OemComponent implements OnInit {
     private npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
-    this.datePickerConfig = Object.assign(
-      {},
-      {
-        containerClass: 'theme-default',
-        showWeekNumbers: false,
-        dateInputFormat: 'DD/MM/YYYY',
-        minDate: new Date()
-      }
-    )
+
     this.npiForm = fb.group({
       'complexity': null,
       'client': null,
@@ -99,43 +62,39 @@ export class OemComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.messenger.response.subscribe(
-      res => { this.response = res }
-    )
-    this.npiNumber = this.npi.number
     console.log(this.npi)
 
-    this.npiForm.valueChanges.subscribe(
-      () => { 
-        this.updateParentForm() 
-      }
-    )
+    this.npiFormOutput.emit(this.npiForm)
     this.insertOemActivities();
-    this.fillFormData(this.npiForm, this.npi)
+    this.fillFormData()
 
-    if (this.npi.isCriticallyAnalised()) 
+    if (this.npi.isCriticallyAnalised())
       this.npiForm.disable()
+
+    this.npiComponent.resetFormFlagSubject.subscribe(
+      () => { this.fillFormData() }
+    )
   }
 
-  insertOemActivities(){
+  insertOemActivities() {
     var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
     var arrLength = this.utils.getOemActivities().length
     for (var i = 0; i < arrLength; i++) {
       oemActivitiesArray.push(this.fb.group({
-          _id : this.npi.oemActivities[i]._id,
-          date : this.npi.oemActivities[i].date,
-          comment : this.npi.oemActivities[i].comment,
+        _id: this.npi.oemActivities[i]._id,
+        date: this.npi.oemActivities[i].date,
+        comment: this.npi.oemActivities[i].comment,
       }))
     }
   }
 
-  fillFormData(form: FormGroup | FormArray, model) {
+  fillNestedFormData(form: FormGroup | FormArray, model) {
     if (this.route.snapshot.data['readOnly']) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
       if ((control instanceof FormGroup || control instanceof FormArray)
         && model[field]) {
-        this.fillFormData(control, model[field])
+        this.fillNestedFormData(control, model[field])
       } else
         if (model[field] != null && model[field] != undefined) {
           try {
@@ -144,12 +103,18 @@ export class OemComponent implements OnInit {
           catch { }
         }
     })
+  }
+
+  fillFormData() {
+    this.fillNestedFormData(this.npiForm, this.npi)
 
     this.npiForm.get('projectCost').patchValue({
       cost: this.npi.projectCost.cost != null ?
         this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
     })
     this.npiForm.patchValue({
+      npiRef: this.npi.npiRef ?
+        this.npi.npiRef.number : null,
       investment: this.npi.investment != null ?
         this.npi.investment.toFixed(2).toString().replace('.', ',') : null,
       inStockDateType: this.npi.inStockDate ?
@@ -158,7 +123,7 @@ export class OemComponent implements OnInit {
             this.npi.inStockDate.offset ? 'offset' : null : null,
       inStockFixedDate: this.npi.inStockDate ?
         this.npi.inStockDate instanceof (Date || String) ?
-          new Date(this.npi.inStockDate):
+          new Date(this.npi.inStockDate) :
           this.npi.inStockDate.fixed ?
             new Date(this.npi.inStockDate.fixed) :
             null : null,
@@ -184,7 +149,7 @@ export class OemComponent implements OnInit {
     return this.npiForm.controls[field].hasError('required')
   }
 
-  updateParentForm(){
+  updateParentForm() {
     this.npiFormOutput.emit(this.npiForm)
   }
 

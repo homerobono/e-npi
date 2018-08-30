@@ -63,14 +63,29 @@
       </div>
       <form [formGroup]='npiForm' (ngSubmit)="submitNpi(npiForm.value)">
         <hr>
-        <app-oem [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
-        <app-pixel [npi]='npi' *ngIf='npi.entry=="pixel"'></app-pixel>
-        <app-internal [npi]='npi' *ngIf='npi.entry=="internal"'></app-internal>
-        <app-custom [npi]='npi' *ngIf='npi.entry=="custom"'></app-custom>
-        <hr>
-        <app-critical [npi]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
-        <hr>
-        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.isCriticallyApproved()'></app-client>
+        <app-oem [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
+        <app-pixel [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
+        <app-internal [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
+        <app-custom [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
+
+        <app-critical [npi]='npi' [resetForm]='resetFormFlag' (criticalForm)='setChild($event)' 
+        *ngIf='npi.stage > 1'></app-critical>
+
+        <app-client [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' 
+          *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
+
+        <app-activities [npi]='npi' (npiFormOutput)='setChild($event)'
+         *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
+         
+        <div class="row align-items-center justify-content-between"
+        *ngIf='!route.snapshot.data["readOnly"]'>
+          <div class='col-auto text-secondary'>
+            <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top"
+            title="Desfazer alterações" [ngClass]='{"reset-disabled":npi===npiForm.value}'>
+              <i class="fa fa-undo fa-2x"></i>
+            </div>
+          </div>
+        </div>
         <div class="row align-items-center justify-content-between"
         *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col'>

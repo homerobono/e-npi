@@ -42,6 +42,7 @@ export class AuthInterceptor implements HttpInterceptor{
                         })
                         this.router.navigate(['/error'])
                     } else {
+                        console.log(err)
                         this.messenger.set(
                         {
                             head: 'Erro ' + err.status,

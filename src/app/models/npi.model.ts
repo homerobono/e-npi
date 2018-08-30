@@ -5,13 +5,13 @@ class Npi {
     id: String;
     number: Number;
     complexity: Number;
+    npiRef: Npi;
     client: String;
     name: String;
     requester: User;
     stage: Number;
     created: Date;
     createdString: String;
-    npiRef: Number;
     entry: String;
     price: Number;
     cost: Number;

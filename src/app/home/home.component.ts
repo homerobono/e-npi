@@ -73,6 +73,26 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/npi/'+npiNumber]);
   }
 
+  removeAll(){
+    if (!confirm(
+      "ATENÇÃO: Essa operação irá remover todas as NPI's. Tem certeza que deseja apagar todos os registros do banco de dados?")
+    ) return;
+    console.log('REMOVING ALL NPI\'s')
+    this.npiService.removeAll().subscribe(
+      res => { 
+        console.log(res)
+        this.getNpis();
+        this.messenger.set(
+          {
+            type: 'warning',
+            message : 'NPI\'s removidas'
+          }
+        ) 
+      },
+      err => {console.log('failed to remove')}
+    );
+  }
+
   cancelNPI(npiId : String, npiNumber : Number, event: Event) {
     event.stopPropagation()
     if (!confirm(

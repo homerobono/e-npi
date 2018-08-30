@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
+import { NpiComponent } from '../npi.component';
 
 @Component({
   selector: 'app-critical',
@@ -19,7 +20,8 @@ export class CriticalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private utils : UtilService,
-    private route: ActivatedRoute
+    private route : ActivatedRoute,
+    private npiComponent : NpiComponent
   ) {
     this.criticalFormGroup = fb.group({
       'critical' : fb.array([])
@@ -35,14 +37,15 @@ export class CriticalComponent implements OnInit {
 
     this.loadSignatures()
 
-    console.log(this.signatures)
+    this.npiComponent.resetFormFlagSubject.subscribe(
+      () => { this.fillFormData() }
+    )
   }
 
   loadSignatures(){
     for (var i=0; i<this.npi.critical.length; i++){
       var row = this.npi.critical[i]
-      if (row.signature) {
-        console.log('loading signature')
+      if (row.signature && row.signature.date && row.signature.user) {
         var signature = row.signature.user.firstName + 
           (row.signature.user.lastName ? 
             ' '+row.signature.user.lastName :
@@ -75,6 +78,32 @@ export class CriticalComponent implements OnInit {
       )
       criticalFormArray.push(criticalControl)      
     });    
+  }
+
+  fillFormData(){
+    var criticalFormArray = 
+      (this.criticalFormGroup.get('critical') as FormArray).controls
+
+    criticalFormArray.forEach(analisys => {
+      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
+      console.log(criticalRow)
+      analisys.setValue(
+        { 
+          status: criticalRow.status,
+          comment: criticalRow.comment
+          //signature: analisys.signature 
+        }
+      )
+          });    
+  }
+
+  getCriticalRow(id){
+    for (let i=0; i<this.npi.critical; i++){
+      let critical = this.npi.critical[i]
+      console.log(critical)
+      if (critical._id == id)
+        return critical
+    }
   }
 
   updateParentForm(){

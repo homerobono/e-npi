@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import Npi from '../../../models/npi.model';
 import { ActivatedRoute } from '@angular/router';
+import { NpiComponent } from '../../npi.component';
 
 @Component({
   selector: 'app-client',
@@ -18,7 +19,8 @@ export class ClientComponent implements OnInit {
 
   constructor(
     private fb : FormBuilder,
-    private route : ActivatedRoute
+    private route : ActivatedRoute,
+    private npiComponent : NpiComponent
   ) { 
     this.npiForm = fb.group({
       'clientApproval' : fb.group({
@@ -35,6 +37,11 @@ export class ClientComponent implements OnInit {
     this.deny = (this.npiForm.get("clientApproval") as FormGroup).controls['approval'] as FormControl
 
     this.fillFormData()
+
+    this.npiComponent.resetFormFlagSubject.subscribe(
+      () => { this.fillFormData() }
+    )
+
   }
 
   fillFormData(){

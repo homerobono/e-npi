@@ -36,6 +36,7 @@ import { CustomComponent } from './npi/custom/custom.component';
 import { PixelComponent } from './npi/pixel/pixel.component';
 import { CriticalComponent } from './npi/critical/critical.component';
 import { ClientComponent } from './npi/oem/client/client.component';
+import { ActivitiesComponent } from './npi/activities/activities.component'
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 
@@ -62,6 +63,7 @@ import { CompleteRegistrationComponent } from './complete-registration/complete-
     InternalComponent,
     AlertComponent,
     CriticalComponent,
+    ActivitiesComponent,
     ClientComponent
   ],
   imports: [

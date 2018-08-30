@@ -58,6 +58,11 @@ export class NpiService {
     return this.http.delete(this.npiUrl+npiId);
   }
 
+  removeAll(): Observable<any> {
+    console.log('deleting npi');
+    return this.http.delete(this.npisUrl);
+  }
+
   formToModel(npiForm): Npi {
     var model = new Npi(npiForm)
     var toUnmaskFields = [

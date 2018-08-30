@@ -1,0 +1,46 @@
+<div class="form-row" [formGroup]='activitiesFormGroup' *ngIf='npi.stage>2'>
+    <div class='col'>
+      <label for='activities' class=col>
+        <center>
+          <h4>Análise Crítica</h4>
+        </center>
+      </label>
+      <div class='table-responsive' id='activities' formArrayName='activities'>
+        <table class="table table-bordered">
+          <thead class='thead-dark'>
+            <tr>
+              <th scope="col">Atividade</th>
+              <th scope="col">Responsável</th>
+              <th scope="col">Prazo</th>
+              <th scope="col">Documento/Registro</th>
+              <th scope="col">Arquivos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
+              <td>
+                {{ utils.getDepartment(npi.activities[i].dept) }}
+              </td>
+              <td>
+                <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept-{{i}}'>
+                  <span class='fa radio-approval radio-accept' name='activitiesApprove'></span>
+                </label>
+                <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
+                  <span class='fa radio-approval radio-deny' name='activitiesApprove'></span>
+                </label>
+              </td>
+              <td>
+                <textarea class="form-control" rows=1 formControlName='comment'></textarea>
+              </td>
+              <td>
+                <div class='radio-level-legend'><i>{{ signatures[i] }}</i></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <hr>

@@ -23,6 +23,9 @@ import { Globals } from 'config';
 
 export class NpiComponent implements OnInit {
 
+  resetFormFlagSubject = new Subject<Boolean>()
+  resetFormFlag = true
+
   path: String
   response: any
   date: Date
@@ -33,7 +36,6 @@ export class NpiComponent implements OnInit {
   authorId: String
 
   titleEdit = false
-
   titleField: String
 
   sendingForm: Boolean = false;
@@ -75,6 +77,15 @@ export class NpiComponent implements OnInit {
     this.npi = new Npi(null)
     this.npiForm = fb.group({})
     //this.titleField = this.npi.name
+    this.datePickerConfig = Object.assign(
+      {},
+      {
+        containerClass: 'theme-default',
+        showWeekNumbers: false,
+        dateInputFormat: 'DD/MM/YYYY',
+        minDate: new Date()
+      }
+    )
   }
 
   ngOnInit() {
@@ -92,6 +103,7 @@ export class NpiComponent implements OnInit {
     if (this.route.snapshot.data['readOnly'])
       this.npiForm.disable()
 
+    setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
@@ -120,7 +132,8 @@ export class NpiComponent implements OnInit {
 
     npiForm.name = this.titleField
 
-    if (this.npi.entry == 'oem')
+    console.log(npiForm)
+    if (this.npi.entry == 'oem' && npiForm.inStockDateType)
       npiForm.inStockDate =
         {
           'fixed': npiForm.inStockDateType == 'fixed' ?
@@ -142,17 +155,19 @@ export class NpiComponent implements OnInit {
         this.sendingForm = false;
         this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
       }, err => {
-        var invalidFieldsMessage = 'Preencha os seguintes campos: '
-        for (let prop in err.error.message.invalidFields) {
-          console.log(prop)
-          this.npiForm.controls[prop].setErrors({ 'required': true })
-          invalidFieldsMessage += Globals.LABELS[prop] + ', '
+        if (err.error.message.errors) {
+          var invalidFieldsMessage = 'Corrija os campos '
+          for (let prop in err.error.message.errors) {
+            console.log(prop)
+            this.npiForm.controls[prop].setErrors({ 'required': true })
+            invalidFieldsMessage += Globals.LABELS[prop] + ', '
+          }
+          console.log(err);
+          this.messenger.set({
+            type: 'error',
+            message: invalidFieldsMessage
+          })
         }
-        console.log(err);
-        this.messenger.set({
-          type: 'error',
-          message: invalidFieldsMessage
-        })
         this.formSent = false;
         this.sendingForm = false;
       }
@@ -195,9 +210,14 @@ export class NpiComponent implements OnInit {
     //this.clearFields()
   }
 
+  reset(){
+    this.resetFormFlagSubject.next(!this.resetFormFlag)
+    this.resetFormFlag = !this.resetFormFlag
+    console.log(this.resetFormFlag)
+  }
+
   setChild(form) {
     Object.keys(form.controls).forEach((field: string) => {
-      //console.log('adding '+field)
       this.npiForm.addControl(field, form.get(field))
     });
   }
