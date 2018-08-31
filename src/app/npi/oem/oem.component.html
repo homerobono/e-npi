@@ -88,7 +88,7 @@
         <div class="form-group col-xs-6 col-lg-4" [style.display]='npiForm.controls["inStockDateType"].value=="fixed"?"flex":"none"'>
           <div class="input-group">
             <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
-              #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+              #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
             <div class="input-group-append">
               <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                 <i class='fa fa-calendar fa-fw'></i>
@@ -134,8 +134,9 @@
               <td>{{ npi.oemActivities[i].title }}</td>
               <td>{{ npi.oemActivities[i].dept }}</td>
               <td>
-                <input type='text' class='form-control' formControlName='date' aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker"
-                  bsDatepicker [bsConfig]='datePickerConfig'>
+                <input type='text' class='form-control' formControlName='date' 
+                aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker"
+                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
               </td>
               <td>
                 <textarea class="form-control" rows=1 formControlName='comment'></textarea>

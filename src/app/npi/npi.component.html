@@ -2,24 +2,42 @@
   <div class='row justify-content-center'>
     <div class='col body-main'>
       <app-nav-buttons></app-nav-buttons>
-      <div class='row justify-content-left pb-0'>
+      <div class='row pb-0'>
         <div class='col'>
-          <div class='row justify-content-left pb-0 align-items-center'>
-            <h3 class='mb-0 pr-0' [ngClass]='{"col":!titleEdit,"col-auto":titleEdit}'>
-              NPI #{{ npi.number }} -
-              <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
+          <div class='row pb-0 align-items-end'>
+            <div class='col-xs col-md-auto mb-0 mr-0 pr-0'>
+              <h3 class='mb-0'>
+                NPI #{{ npi.number }} -
+                <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
                   {"text-primary": titleField != npi.name && 
                     route.snapshot.routeConfig.path.includes("/edit")
                   }'>
-                {{ this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name }}
-              </span>
-            </h3>
+                  {{ this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name }}
+                </span>
+              </h3>
+            </div>
             <div class="col input-group input-group-lg" [style.display]='titleEdit?"flex":"none"'>
               <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)" name='titleInput'
                 autofocus id='titleInput' [(ngModel)]='titleField'>
             </div>
-            <div class='col-auto mt-1 align-self-center'>
-              <span class='badge mt-1 col-auto' [ngClass]='{
+            <div class='col-auto'>
+              <span class='fa fa-circle' [ngClass]='{
+                "text-danger" : npi.stage == 0,
+                "text-secondary" : npi.stage == 1,
+                "text-warning" : npi.stage == 2,
+                "text-success" : npi.stage == 3,
+                "text-info" : npi.stage == 4
+                }'></span>
+              <i class='text-secondary'> {{ utils.getStatus(npi.stage) }} </i>
+            </div>
+          </div>
+          <div class='row align-items-end'>
+            <small class='col-auto mb-0 mt-0 pr-0'>
+              <a routerLink='/users/{{ authorId }}'>
+                {{ authorName }}</a>, {{ npi.createdString }}
+            </small>
+            <div class='col-auto align-self-center'>
+              <span class='badge mt-1' [ngClass]='{
                 "badge-success" : npi.entry=="pixel",
                 "badge-purple" : npi.entry=="oem",
                 "badge-secondary" : npi.entry=="internal",
@@ -27,22 +45,6 @@
                 }'>
                 {{ utils.getEntry(npi.entry) }}
               </span>
-            </div>
-          </div>
-          <div class='row justify-content-between'>
-            <small class='col mb-0 mt-0'>
-              <a routerLink='/users/{{ authorId }}'>
-                {{ authorName }}</a>, {{ npi.createdString }}
-            </small>
-            <div class='col mb-0 mt-0 text-right'>
-              <span class='fa fa-circle' [ngClass]='{
-              "text-danger" : npi.stage == 0,
-              "text-secondary" : npi.stage == 1,
-              "text-warning" : npi.stage == 2,
-              "text-success" : npi.stage == 3,
-              "text-info" : npi.stage == 4
-              }'></span>
-              <i class='text-secondary'> {{ utils.getStatus(npi.stage) }} </i>
             </div>
           </div>
         </div>
@@ -68,26 +70,21 @@
         <app-internal [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
         <app-custom [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
 
-        <app-critical [npi]='npi' [resetForm]='resetFormFlag' (criticalForm)='setChild($event)' 
-        *ngIf='npi.stage > 1'></app-critical>
+        <app-critical [npi]='npi' [resetForm]='resetFormFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
 
-        <app-client [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' 
-          *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
+        <app-client [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
 
-        <app-activities [npi]='npi' (npiFormOutput)='setChild($event)'
-         *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
-         
-        <div class="row align-items-center justify-content-between"
-        *ngIf='!route.snapshot.data["readOnly"]'>
+        <app-activities [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
+
+        <div class="row align-items-center justify-content-between" *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col-auto text-secondary'>
-            <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top"
-            title="Desfazer alterações" [ngClass]='{"reset-disabled":npi===npiForm.value}'>
+            <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top" title="Desfazer alterações"
+              [ngClass]='{"reset-disabled":npi===npiForm.value}'>
               <i class="fa fa-undo fa-2x"></i>
             </div>
           </div>
         </div>
-        <div class="row align-items-center justify-content-between"
-        *ngIf='!route.snapshot.data["readOnly"]'>
+        <div class="row align-items-center justify-content-between" *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col'>
             <button type="button" class="btn btn-outline-danger shadow-none" [disabled]="sendingForm" (click)='cancelNpi()'>
               Cancelar

@@ -68,11 +68,12 @@ export class OemComponent implements OnInit {
     this.insertOemActivities();
     this.fillFormData()
 
-    if (this.npi.isCriticallyAnalised())
+    if (this.npi.isCriticallyAnalised() ||
+      this.route.snapshot.data['readOnly'])
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => { this.fillFormData() }
+      () => this.fillFormData()
     )
   }
 
@@ -89,7 +90,6 @@ export class OemComponent implements OnInit {
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
-    if (this.route.snapshot.data['readOnly']) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
       if ((control instanceof FormGroup || control instanceof FormArray)
@@ -108,13 +108,13 @@ export class OemComponent implements OnInit {
   fillFormData() {
     this.fillNestedFormData(this.npiForm, this.npi)
 
-    this.npiForm.get('projectCost').patchValue({
-      cost: this.npi.projectCost.cost != null ?
-        this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
-    })
     this.npiForm.patchValue({
-      npiRef: this.npi.npiRef ?
-        this.npi.npiRef.number : null,
+      npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
+      projectCost: {
+        cost: this.npi.projectCost.cost != null ?
+          this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
+        annex: this.npi.projectCost.annex
+      },
       investment: this.npi.investment != null ?
         this.npi.investment.toFixed(2).toString().replace('.', ',') : null,
       inStockDateType: this.npi.inStockDate ?
@@ -132,17 +132,6 @@ export class OemComponent implements OnInit {
           this.npi.inStockDate.offset ?
             this.npi.inStockDate.offset : null : null : null
     });
-    if (this.npi.entry != 'internal' && this.npi.entry != 'oem')
-      this.npiForm.patchValue({
-        price:
-          this.npi.price.toFixed(2).toString().replace('.', ','),
-        cost:
-          this.npi.cost.toFixed(2).toString().replace('.', ','),
-      })
-
-    if (this.npi.investment)
-      this.npiForm.patchValue({
-      })
   }
 
   fieldHasErrors(field) {

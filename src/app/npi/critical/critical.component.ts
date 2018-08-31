@@ -14,25 +14,27 @@ export class CriticalComponent implements OnInit {
   @Output() criticalForm = new EventEmitter<FormGroup>()
   @Input() npi
 
-  criticalFormGroup : FormGroup
-  signatures : Array<any>
+  criticalFormGroup: FormGroup
+  signatures: Array<any>
 
   constructor(
     private fb: FormBuilder,
-    private utils : UtilService,
-    private route : ActivatedRoute,
-    private npiComponent : NpiComponent
+    private utils: UtilService,
+    private route: ActivatedRoute,
+    private npiComponent: NpiComponent
   ) {
     this.criticalFormGroup = fb.group({
-      'critical' : fb.array([])
+      'critical': fb.array([])
     })
     this.signatures = new Array<String>(5)
-   }
+  }
 
   ngOnInit() {
     this.insertCriticalAnalisys()
-    if (this.route.snapshot.data['readOnly']) 
+    
+    if (this.route.snapshot.data['readOnly'])
       this.criticalFormGroup.disable()
+
     this.updateParentForm()
 
     this.loadSignatures()
@@ -42,29 +44,29 @@ export class CriticalComponent implements OnInit {
     )
   }
 
-  loadSignatures(){
-    for (var i=0; i<this.npi.critical.length; i++){
+  loadSignatures() {
+    for (var i = 0; i < this.npi.critical.length; i++) {
       var row = this.npi.critical[i]
       if (row.signature && row.signature.date && row.signature.user) {
-        var signature = row.signature.user.firstName + 
-          (row.signature.user.lastName ? 
-            ' '+row.signature.user.lastName :
+        var signature = row.signature.user.firstName +
+          (row.signature.user.lastName ?
+            ' ' + row.signature.user.lastName :
             ''
           ) + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
           ', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
         this.signatures[i] = signature
-        }
+      }
     }
   }
 
-  insertCriticalAnalisys(){
+  insertCriticalAnalisys() {
     var criticalFormArray = (this.criticalFormGroup.get('critical') as FormArray).controls
     var criticalModelArray = this.npi.critical
 
     criticalModelArray.forEach(analisys => {
       var criticalControl = this.fb.group(
-        { 
+        {
           _id: analisys._id,
           status: analisys.status,
           comment: analisys.comment
@@ -72,49 +74,45 @@ export class CriticalComponent implements OnInit {
         }
       )
       criticalControl.valueChanges.subscribe(
-        () => {
-          this.updateParentForm()
-        }
-      )
-      criticalFormArray.push(criticalControl)      
-    });    
+        () => this.updateParentForm())
+        
+      criticalFormArray.push(criticalControl)
+    });
   }
 
-  fillFormData(){
-    var criticalFormArray = 
+  fillFormData() {
+    var criticalFormArray =
       (this.criticalFormGroup.get('critical') as FormArray).controls
 
     criticalFormArray.forEach(analisys => {
       var criticalRow = this.getCriticalRow(analisys.get('_id').value)
       console.log(criticalRow)
-      analisys.setValue(
-        { 
+      analisys.patchValue(
+        {
           status: criticalRow.status,
           comment: criticalRow.comment
           //signature: analisys.signature 
         }
       )
-          });    
+    });
   }
 
-  getCriticalRow(id){
-    for (let i=0; i<this.npi.critical; i++){
+  getCriticalRow(id) {
+    for (let i = 0; i < this.npi.critical.length; i++) {
       let critical = this.npi.critical[i]
-      console.log(critical)
-      if (critical._id == id)
-        return critical
+      if (critical._id == id) return critical
     }
   }
 
-  updateParentForm(){
+  updateParentForm() {
     this.criticalForm.emit(this.criticalFormGroup)
   }
 
-  toggleStatus(i, event){
+  toggleStatus(i, event) {
     event.stopPropagation()
-    var statusControl = 
+    var statusControl =
       ((this.criticalFormGroup.get('critical') as FormArray)
-      .controls[i] as FormGroup).get('status')
-    if(event.target.value == statusControl.value) statusControl.setValue(null)
+        .controls[i] as FormGroup).get('status')
+    if (event.target.value == statusControl.value) statusControl.setValue(null)
   }
 }

@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   triedToSubmit = false
 
   registerForm : FormGroup;
-  departments = [ null ].push(Globals.DEPARTMENTS)
+  departments = [{value:null, label:null}].concat(Globals.DEPARTMENTS)
 
   constructor( fb : FormBuilder,
               private userService: UsersService,

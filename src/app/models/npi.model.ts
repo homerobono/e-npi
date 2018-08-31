@@ -13,6 +13,20 @@ class Npi {
     created: Date;
     createdString: String;
     entry: String;
+    description: String;
+    resources: {
+        description,
+        annex
+    };
+    regulations: Array<String>;
+    norms: {
+        description,
+        annex
+    };
+    demand: {
+        amount: Number,
+        period: String,
+    };
     price: Number;
     cost: Number;
     investment: Number;
@@ -21,6 +35,7 @@ class Npi {
         annex: String
     };
     inStockDate: Date | { fixed: Date, offset: Number };
+    fiscals: String;
     oemActivities: Array<
         {
             _id: String,
@@ -44,26 +59,16 @@ class Npi {
         approval: String,
         comment: String
     };
+    activities: Array<{
+        _id: String,
+        date: Date,
+        dept: String,
+        comment: String,
+        registry: String,
+    }>;
+
     constructor(npiModel: any | null) {
-        /*
-        this.id = null
-        this.number = null
-        this.name = null
-        this.requester = null
-        this.status = null
-        this.created = null
-        this.createdString = null
-        this.npiRef = null
-        this.entry = null
-        this.entry = null
-        this.price = null
-        this.cost = null
-        this.projectCost = null
-        this.investment = null
-        this.inStockDate = null
-        this.oemActivities = null;
-        this.critical = null
-*/
+
         if (npiModel) {
             if (npiModel._id) this.id = npiModel._id
             if (npiModel.id) this.id = npiModel.id
@@ -80,6 +85,13 @@ class Npi {
             if (npiModel.npiRef != null) this.npiRef = npiModel.npiRef
             if (npiModel.entry != null) this.entry = npiModel.entry
             if (npiModel.__t != null) this.entry = npiModel.__t
+
+            if (npiModel.description != null) this.description = npiModel.description
+            if (npiModel.resources != null) this.resources = npiModel.resources
+            if (npiModel.regulations != null) this.regulations = npiModel.regulations
+            if (npiModel.norms != null) this.norms = npiModel.norms
+            if (npiModel.demand != null) this.demand = npiModel.demand
+
             if (npiModel.price != null) this.price = npiModel.price
             if (npiModel.cost != null) this.cost = npiModel.cost
             if (npiModel.investment != null) this.investment = npiModel.investment
@@ -89,37 +101,26 @@ class Npi {
                     npiModel.inStockDate instanceof String) ?
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
+            if (npiModel.fiscals != null) this.fiscals = npiModel.fiscals
             if (npiModel.oemActivities != null) {
                 this.oemActivities = npiModel.oemActivities
-                for (var i = 0; i < npiModel.oemActivities.length; i++) {
-                    this.oemActivities[i].date = new Date(npiModel.oemActivities[i].date)
-                }
+                this.oemActivities.forEach(activity => {
+                    activity.date = new Date(activity.date)
+                });
             }
             if (npiModel.critical != null) {
                 this.critical = npiModel.critical
-                for (let i = 0; i < npiModel.critical; i++) {
-                    this.critical[i].signature.date = new Date(npiModel.critical[i].signature.date)
-                }
+                this.critical.forEach(critical => {
+                    if (critical.signature && critical.signature.date)
+                        critical.signature.date = new Date(critical.signature.date);
+                });
             }
             if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
-            
-        } else {/*
-            this.id = null
-            this.number = null
-            this.name = null
-            this.requester = null
-            this.status = null
-            this.created = null
-            this.createdString = null
-            this.npiRef = null
-            this.entry = null
-            this.entry = null
-            this.price = null
-            this.cost = null
-            this.projectCost = null
-            this.investment = null
-            this.inStockDate = null
-            this.oemActivities = null;*/
+            if (npiModel.activities != null) {
+                this.activities = npiModel.activities
+                npiModel.activities.forEach(activity =>
+                    activity = new Date(activity.date));
+            }
         }
     }
 

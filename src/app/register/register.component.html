@@ -30,7 +30,7 @@
         <select class="form-control" id="validationCustom04" placeholder="Departamento" 
           formControlName='department'
           [ngClass]="{'is-invalid': !isFieldValid('department')}">
-          <option *ngFor="let dept of departments">{{ dept }}</option>
+          <option *ngFor="let dept of departments" value='{{ dept.label }}'>{{ dept.label }}</option>
         </select>
         <div class='invalid-feedback'>
           Escolha um departamento

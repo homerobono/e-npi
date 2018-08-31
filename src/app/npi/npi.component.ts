@@ -155,23 +155,29 @@ export class NpiComponent implements OnInit {
         this.sendingForm = false;
         this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
       }, err => {
-        if (err.error.message.errors) {
-          var invalidFieldsMessage = 'Corrija os campos '
-          for (let prop in err.error.message.errors) {
-            console.log(prop)
-            this.npiForm.controls[prop].setErrors({ 'required': true })
-            invalidFieldsMessage += Globals.LABELS[prop] + ', '
-          }
-          console.log(err);
-          this.messenger.set({
-            type: 'error',
-            message: invalidFieldsMessage
-          })
-        }
+        if (err.error.message.errors) this.invalidFieldsError(err.error.message.errors)
         this.formSent = false;
         this.sendingForm = false;
       }
       )
+  }
+
+  invalidFieldsError(errors) {
+    var errorFields = Object.keys(errors)
+    var invalidFieldsMessage = 'Corrija o' +
+      (errorFields.length == 1 ? ' campo ' : 's campos ')
+    for (let i = 0; i < errorFields.length; i++) {
+      let prop = errorFields[i]
+      console.log(prop)
+      this.npiForm.controls[prop].setErrors({ 'required': true })
+      invalidFieldsMessage += Globals.LABELS[prop] +
+        (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
+    }
+    console.log(errors);
+    this.messenger.set({
+      type: 'error',
+      message: invalidFieldsMessage
+    })
   }
 
   toggleTitleEdit(event) {
@@ -210,7 +216,7 @@ export class NpiComponent implements OnInit {
     //this.clearFields()
   }
 
-  reset(){
+  reset() {
     this.resetFormFlagSubject.next(!this.resetFormFlag)
     this.resetFormFlag = !this.resetFormFlag
     console.log(this.resetFormFlag)

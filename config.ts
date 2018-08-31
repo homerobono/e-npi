@@ -1,12 +1,12 @@
-export const Globals = Object.freeze ({
-	SERVER_BASE_URL : 'http://201.77.131.165:1110',
-	LOCAL_BASE_URL : 'http://127.0.0.1:3000',
+export const Globals = Object.freeze({
+	SERVER_BASE_URL: 'http://201.77.131.165:1110',
+	LOCAL_BASE_URL: 'http://127.0.0.1:3000',
 	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
-	ENPI_SERVER_URL : 'http://127.0.0.1:1110/e-npi/v2',
-	LOCAL_ENPI_URL : 'http://127.0.0.1:1110/e-npi/v2',
+	ENPI_SERVER_URL: 'http://127.0.0.1:1110/e-npi/v2',
+	LOCAL_ENPI_URL: 'http://127.0.0.1:1110/e-npi/v2',
 
-	STATUS : [
+	STATUS: [
 		'Cancelado',
 		'Rascunho',
 		'Análise Crítica',
@@ -14,7 +14,7 @@ export const Globals = Object.freeze ({
 		'Concluído'
 	],
 
-	DEPARTMENTS : [ 
+	DEPARTMENTS: [
 		{ value: 'ADM', label: 'Administrativo' },
 		{ value: 'COM', label: 'Comercial' },
 		{ value: 'COMP', label: 'Compras' },
@@ -26,10 +26,12 @@ export const Globals = Object.freeze ({
 		{ value: 'PROD', label: 'Produção' },
 		{ value: 'PRD', label: 'Produto' },
 		{ value: 'RH', label: 'R.H.' },
-		{ value: 'OPR', label: 'Operações' }
+		{ value: 'OPR', label: 'Operações' },
+		{ value: 'MEP', label: 'Ministério de Engenharia Privada' },
+		{ value: 'CSC', label: 'Controle Seccionado de Capacidade' }
 	],
-	
-	OEM_ACTIVITIES : [
+
+	OEM_ACTIVITIES: [
 		{ title: 'Solicitação de Documentos (BOM, Gerbers, etc)', dept: 'COM' },
 		{ title: 'Solicitação do NCM', dept: 'COM' },
 		{ title: 'Cotação da BOM', dept: 'MSC' },
@@ -39,14 +41,15 @@ export const Globals = Object.freeze ({
 		{ title: 'Avaliação de Capacidade Financeira', dept: 'FIN' },
 		{ title: 'Data da Proposta', dept: 'COM' }
 	],
-	
-	LABELS : {
+
+	LABELS: {
 		number: 'Número',
 		created: 'Data de Criação',
 		stage: 'Status',
 		status: 'Status',
 		npiRef: 'NPI de Referência',
 		complexity: 'Complexidade',
+		description: 'Requisitos',
 		annex: 'Anexos',
 		client: 'Cliente',
 		requester: 'Solicitante',
@@ -68,12 +71,12 @@ export const Globals = Object.freeze ({
 		finished: 'Concluído',
 		canceled: 'Cancelado',
 		draft: 'Rascunho'
-	  },
+	},
 
-	ENTRIES : {
-		pixel : 'Pixel',
-			oem : 'O&M',
-			internal : 'Interno',
-			custom : 'Customização'
+	ENTRIES: {
+		pixel: 'Pixel',
+		oem: 'O&M',
+		internal: 'Interno',
+		custom: 'Customização'
 	},
 })
