@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import Npi from '../../../models/npi.model';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../../npi.component';
+import { OemComponent } from '../oem.component';
 
 @Component({
   selector: 'app-client',
@@ -49,6 +50,11 @@ export class ClientComponent implements OnInit {
       'approval' : this.npi.clientApproval.approval,
       'comment' : this.npi.clientApproval.comment
     })
+  }
+
+  newVersion(){
+    this.npiComponent.allowFormEdit.next(true)
+    this.npiComponent.newFormVersion = true
   }
 
 }

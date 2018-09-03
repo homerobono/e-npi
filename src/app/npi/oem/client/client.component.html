@@ -7,13 +7,11 @@
       <label for='approval'>Aprovado?</label>
       <div class='form-group' id='approval'>
         <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="accept" class="custom-control-input" 
-          formControlName='approval' value='accept'>
+          <input type="radio" id="accept" class="custom-control-input" formControlName='approval' value='accept'>
           <label class="custom-control-label" for="accept">Sim</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" id="deny" class="custom-control-input" 
-          formControlName='approval' value='deny'>
+          <input type="radio" id="deny" class="custom-control-input" formControlName='approval' value='deny'>
           <label class="custom-control-label" for="deny">Não</label>
         </div>
       </div>
@@ -22,6 +20,10 @@
       <label for='comment'>Justificativa</label>
       <textarea class='form-control' id='comment' formControlName='comment' rows='1'></textarea>
     </div>
+    <hr>
+    <div class='col-auto'>
+      <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='newVersion()'>Alterar Projeto</button>
+    </div>
   </div>
-  <hr>
 </div>
+<hr>

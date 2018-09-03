@@ -33,6 +33,105 @@
       </div>
     </div>
   </div>
+
+  <div class="form-group mb-4">
+    <label for='description'>
+      <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
+    </label>
+    <textarea class="form-control" rows=5 formControlName='description' id='description' [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+  </textarea>
+    <div class='invalid-feedback'>
+      Forneça os requisitos gerais do projeto
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-sm-12 col-md-6 mb-4" formGroupName='resources'>
+      <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
+      <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
+    </textarea>
+      <div class='invalid-feedback'>
+        Defina os recursos necessários
+      </div>
+    </div>
+    <div class="form-group col-sm-12 col-md-6 mb-4" formGroupName='norms'>
+      <label for="normsDescription">Leis/Normas Aplicáveis</label>
+      <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
+      </textarea>
+      <div class='invalid-feedback'>
+        Defina as leis e/ou normas aplicáveis
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class='form-group col-md-6 mb-4'>
+      <label for="fiscals">Incentivos Fiscais</label>
+      <input type='text' class='form-control' formControlName='fiscals' name='fiscals' aria-describedby="Incentivos Fiscais" placeholder='Incentivos Fiscais'
+        [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
+      <div class='invalid-feedback'>
+        Defina os incentivos fiscais
+      </div>
+    </div>
+
+    <div class='col-md-6'>
+      <div class="form-row">
+        <label for="inStockDateType" class=col-auto>Data em Estoque: </label>
+        <div class="col-auto mb-0">
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType' formControlName="inStockDateType"
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <label for="fixed-date" class='custom-control-label'>
+              Data fixa
+            </label>
+          </div>
+          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="fixed"?"visible":"hidden"'>
+            <div class="input-group">
+              <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
+                #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'
+                size=8>
+              <div class="input-group-append">
+                <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                  <i class='fa fa-calendar fa-fw'></i>
+                </li>
+              </div>
+            </div>
+            <div class='invalid-feedback'>
+              Defina uma data
+            </div>
+          </div>
+        </div>
+        <div class="col-auto mb-0">
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType' formControlName="inStockDateType"
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}' size=10>
+            <label for="offset-date" class='custom-control-label'>
+              Prazo após aprovação
+            </label>
+          </div>
+          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="offset"?"visible":"hidden"'>
+            <div class='input-group'>
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="inStockDatePrepend">
+                  Dias
+                </span>
+              </div>
+              <input type='number' class='form-control' formControlName='inStockOffsetDate' name='inStockOffsetDate' aria-describedby="Data em Estoque"
+                [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}' style='width: 25px'>
+              <div class='invalid-feedback'>
+                Defina uma data
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+
   <div class="form-row">
     <div class='col-md-3 form-group'>
       <label for="investment">Investimento</label>
@@ -42,8 +141,8 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='investment' name='investment' placeholder='00,00'
-          aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='investment' name='investment'
+          placeholder='00,00' aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class='invalid-feedback'>
           Defina o investimento
         </div>
@@ -57,69 +156,10 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='cost' name='projectCost' placeholder='00,00'
-          aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='cost' name='projectCost'
+          placeholder='00,00' aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class='invalid-feedback'>
           Defina o custo do projeto
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class='col-md-6 form-group'>
-      <label for="inStockDateType">Data em Estoque</label>
-      <div class="form-row">
-        <div class="form-group col" id='inStockDateType'>
-          <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' 
-            name='inStockDateType' formControlName="inStockDateType"
-            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
-            <label for="fixed-date" class='custom-control-label'>
-              Data fixa
-            </label>
-          </div>
-          <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input" id="offset-date" value='offset' 
-            name='inStockDateType' formControlName="inStockDateType"
-            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
-            <label for="offset-date" class='custom-control-label'>
-              Prazo após aprovação
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group col-xs-6 col-lg-4" 
-        [style.display]='npiForm.controls["inStockDateType"].value=="fixed"?"flex":"none"'>
-          <div class="input-group">
-            <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
-              #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig'
-              [ngClass]='{"is-invalid": fieldHasErrors("inStockFixedDate")}'>
-            <div class="input-group-append">
-              <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
-                <i class='fa fa-calendar fa-fw'></i>
-              </li>
-            </div>
-          </div>
-          <div class='invalid-feedback'>
-            Defina uma data
-          </div>
-        </div>
-        <div class="form-group col-xs-6 col-lg-4" 
-        [style.display]='npiForm.controls["inStockDateType"].value=="offset"?"inherit":"none"'>
-          <div class='input-group'>
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inStockDatePrepend">
-                Dias
-              </span>
-            </div>
-            <input type='number' class='form-control' formControlName='inStockOffsetDate' 
-            name='inStockOffsetDate' aria-describedby="Data em Estoque"
-            [ngClass]='{"is-invalid": fieldHasErrors("inStockOffsetDate")}'>
-            <div class='invalid-feedback'>
-              Defina uma data
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -148,8 +188,7 @@
               <td>{{ npi.oemActivities[i].title }}</td>
               <td>{{ npi.oemActivities[i].dept }}</td>
               <td>
-                <input type='text' class='form-control' formControlName='date' 
-                aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker"
+                <input type='text' class='form-control' formControlName='date' aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker"
                   bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
               </td>
               <td>
