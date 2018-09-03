@@ -163,7 +163,8 @@ export class NpiComponent implements OnInit {
         this.sendingForm = false;
         this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
       }, err => {
-        if (err.error.message.errors) this.invalidFieldsError(err.error.message.errors)
+        if (err.error.message.errors)
+          this.invalidFieldsError(err.error.message.errors)
         this.formSent = false;
         this.sendingForm = false;
       }

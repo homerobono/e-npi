@@ -95,8 +95,6 @@
             <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
               #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig'
               [ngClass]='{"is-invalid": fieldHasErrors("inStockFixedDate")}'>
-            <input type='text' class='form-control' formControlName='inStockFixedDate' 
-            name='inStockFixedDate' aria-describedby="Data em Estoque"
             <div class="input-group-append">
               <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                 <i class='fa fa-calendar fa-fw'></i>

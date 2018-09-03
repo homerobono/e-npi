@@ -228,13 +228,15 @@
               </div>
             </div>
             <div class="form-row" *ngIf='createForm.controls["inStockDateType"].value=="fixed"'>
-              <div class="input-group">
-                <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-                  #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
-                <div class="input-group-append">
-                  <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
-                    <i class='fa fa-calendar fa-fw'></i>
-                  </li>
+              <div class="form-group col">
+                <div class="input-group">
+                  <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
+                    #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+                  <div class="input-group-append">
+                    <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                      <i class='fa fa-calendar fa-fw'></i>
+                    </li>
+                  </div>
                 </div>
               </div>
             </div>
@@ -258,7 +260,7 @@
               Defina os incentivos fiscais
             </div>
           </div>
-          
+
         </div>
         <div class="form-row" *ngIf='createForm.controls["entry"].value=="oem"' formArrayName='oemActivities'>
           <div class='col'>

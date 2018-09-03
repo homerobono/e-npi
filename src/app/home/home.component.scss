@@ -8,10 +8,6 @@
     transition: width 2s linear 1s;
 }
 
-.npi:hover {
-    background-color: #eee;
-}
-
 .btn-create {
     box-shadow: 0 5px 20px #ccc;
     background-color: #ff6500;
@@ -47,4 +43,46 @@
 
 .text-shadow{
     text-shadow: 2px 4px 7px #ddd
+}
+
+.npi:hover {
+    background-color: #eee;
+}
+
+.npi:hover .action-btns {
+    visibility: inherit;
+}
+
+.npi .action-btns {
+    visibility: hidden;
+}
+
+.sort-btns {
+    width: 12px;
+}
+
+.sort-btn:hover {
+    cursor: pointer;
+}
+
+.sort-btn {
+    height: 14px;
+    width: 32px;
+}
+.sort-up {
+    position: relative;
+    top: 2px;
+    vertical-align: middle !important;
+    z-index: 1 !important;
+    overflow: hidden;
+    margin: 0;
+    padding: 0
+}
+.sort-down {
+    display: block;
+    line-height: 10px;
+    z-index: -1 !important;
+    overflow: hidden;
+    margin: 0;
+    padding: 0
 }

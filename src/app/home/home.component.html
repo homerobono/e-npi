@@ -8,8 +8,7 @@
         </div>
         <div class='col-auto text-danger' (click)='refresh()'>
           <a routerLink=# (click)='removeAll()' class='pl-0 pt-2 pb-2 text-danger'>
-            <i class='fa fa-trash-o fa-2x text-shadow' data-toggle="tooltip" data-placement="top"
-              title="Remover todas NPI's"></i>
+            <i class='fa fa-trash-o fa-2x text-shadow' data-toggle="tooltip" data-placement="top" title="Remover todas NPI's"></i>
           </a>
         </div>
       </div>
@@ -33,7 +32,17 @@
       <div *ngIf='npisList.length && !gettingNpis'>
         <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
           <div class='col-lg-1 col-md-2 col'>
-            <b>#</b>
+            <div class='row'>
+              <div class='col-auto pr-1'>
+                <b>#</b>
+              </div>
+              <div class='sort-btns p-0 m-0 clearfix'>
+                <div class='fa fa-sort-up bg-warning float-left sort-btn sort-up'
+                data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
+                <div class='fa fa-sort-down bg-danger float-left sort-btn sort-down'
+                data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
+              </div>
+            </div>
           </div>
           <div class='col'>
             <b>Nome</b>
@@ -117,7 +126,7 @@
             </div>
             <div class='w-100'></div>
           </div>
-          <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start'>
+          <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start action-btns'>
             <a routerLink='/npi/{{npi.number}}/edit' class='pl-1 pt-2 pb-2 pr-0 text-info'>
               <i class='fa fa-pencil fa-fw'></i>
             </a>

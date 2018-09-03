@@ -54,6 +54,8 @@ export class HomeComponent implements OnInit {
   }
 
   sortBy(property, sortOrder) {
+    this.sortOrder = sortOrder
+    console.log(sortOrder ? 'Up' : 'Down')
     return function (a,b) {
         var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
         return result * sortOrder;
