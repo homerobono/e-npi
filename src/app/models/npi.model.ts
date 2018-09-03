@@ -3,6 +3,7 @@ import { Globals } from 'config'
 
 class Npi {
     id: String;
+    version: Number;
     number: Number;
     complexity: Number;
     npiRef: Npi;
@@ -34,7 +35,7 @@ class Npi {
         cost: Number;
         annex: String
     };
-    inStockDate: Date | { fixed: Date, offset: Number };
+    inStockDate: any;
     fiscals: String;
     oemActivities: Array<
         {

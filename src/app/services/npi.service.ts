@@ -15,28 +15,41 @@ export class NpiService {
   api_url = Globals.ENPI_SERVER_URL
   npisUrl = `${this.api_url}/npis`;
   npiUrl = `${this.api_url}/npi/`;
-  newNpiUrl = `${this.api_url}/npis`;
 
   constructor(private http: HttpClient) { }
 
-  getNpi(npiNumber: Number): Observable<Npi> {
+  getNpi(npiNumber: Number): Observable<Npi[]> {
     return this.http.get(this.npiUrl + npiNumber)
-      .map(res => { return new Npi(res) as Npi })
-      .shareReplay();
-  }
-
-  getNpis(): Observable<Npi[]> {
-    return this.http.get(this.npisUrl)
       .map(res => {
+        console.log(res)
         var Npis: Npi[] = []
-        res['data'].docs.forEach(npi => {
+        res['data'].forEach(npi => {
           console.log('converting npis')
           try {
             var transNpi = new Npi(npi)
             Npis.push(transNpi)
           } catch (e) {
             console.log(e)
-          } 
+          }
+        });
+        return Npis;
+      })
+      .shareReplay();
+  }
+
+  getNpis(): Observable<Npi[]> {
+    return this.http.get(this.npisUrl)
+      .map(res => {
+        console.log(res)
+        var Npis: Npi[] = []
+        res['data'].forEach(npi => {
+          console.log('converting npis')
+          try {
+            var transNpi = new Npi(npi)
+            Npis.push(transNpi)
+          } catch (e) {
+            console.log(e)
+          }
         });
         return Npis;
       })
@@ -48,7 +61,12 @@ export class NpiService {
     console.log(npiForm);
     var npi = this.formToModel(npiForm)
     console.log(npi);
-    return this.http.post(this.npiUrl, npi);
+    return this.http.post(this.npisUrl, npi);
+  }
+
+  newNpiVersion(id): Observable<any> {
+    console.log('creating new npi version from '+ id);
+    return this.http.post(this.npiUrl, {id});
   }
 
   updateNpi(npiForm): Observable<any> {
@@ -94,7 +112,16 @@ export class NpiService {
         )
 
     if (model.entry == 'oem') {
+
       model.inStockDate =
+        {
+          'fixed': npiForm.inStockDateType == 'fixed' ?
+            npiForm.inStockFixedDate ?
+              new Date(npiForm.inStockFixedDate) : null : null,
+          'offset': npiForm.inStockDateType == 'offset' ?
+            npiForm.inStockOffsetDate : null
+        }
+      /*model.inStockDate =
         {
           'fixed': npiForm.inStockDate instanceof Date ? npiForm.inStockDate : null,
           'offset': !(npiForm.inStockDate instanceof Date) ? npiForm.inStockDate as Number : null
@@ -103,6 +130,7 @@ export class NpiService {
         model.inStockDate = null
       //console.log('date: ')
       //console.log(model.inStockDate)
+      */
     }
     return model
   }

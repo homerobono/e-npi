@@ -65,14 +65,15 @@
       </div>
       <form [formGroup]='npiForm' (ngSubmit)="submitNpi(npiForm.value)">
         <hr>
-        <app-oem [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
+        <app-oem [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
         <app-pixel [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
         <app-internal [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
         <app-custom [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
 
-        <app-critical [npi]='npi' [resetForm]='resetFormFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
+        <app-critical [npi]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
 
-        <app-client [npi]='npi' [resetFormFlag]='resetFormFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
+        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' 
+        *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
 
         <app-activities [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
 
@@ -98,7 +99,7 @@
           </div>
           <div class='col text-right'>
             <button type="submit" class="btn btn-success" [disabled]="sendingForm">
-              {{ npi.stage == 1 ? 'Salvar' : 'Atualizar NPI' }}
+              {{ npi.stage == 1 ? 'Salvar' : newFormVersion ? 'Salvar Nova Versão' : 'Atualizar NPI' }}
             </button>
           </div>
         </div>

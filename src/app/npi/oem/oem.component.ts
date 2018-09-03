@@ -1,10 +1,7 @@
 import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
-import { defineLocale } from 'ngx-bootstrap/chronos';
-
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { NpiService } from '../../services/npi.service'
@@ -32,22 +29,27 @@ export class OemComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private npiService: NpiService,
-    private authService: AuthService,
-    private router: Router,
     private route: ActivatedRoute,
     private messenger: MessageService,
-    private localeService: BsLocaleService,
-    private location: Location,
-    private uploadService: UploadService,
     private utils: UtilService,
     private npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
 
     this.npiForm = fb.group({
+      'npiRef': null,
       'complexity': null,
       'client': null,
+      'description': null,
+      'norms': fb.group({
+        'description': null,
+        'annex': null
+      }),
+      'resources': fb.group({
+        'description': null,
+        'annex': null
+      }),
+      'fiscals': null,
       'investment': null,
       'projectCost': fb.group({
         'cost': null,
@@ -56,7 +58,6 @@ export class OemComponent implements OnInit {
       'inStockDateType': null,
       'inStockFixedDate': null,
       'inStockOffsetDate': null,
-      'npiRef': null,
       'oemActivities': fb.array([])
     })
   }
@@ -74,6 +75,11 @@ export class OemComponent implements OnInit {
 
     this.npiComponent.resetFormFlagSubject.subscribe(
       () => this.fillFormData()
+    )
+
+    this.npiComponent.allowFormEdit.subscribe(
+      (flag) => { if (flag) this.npiForm.enable()
+      else  this.npiForm.disable() }
     )
   }
 
@@ -122,15 +128,12 @@ export class OemComponent implements OnInit {
           this.npi.inStockDate.fixed ? 'fixed' :
             this.npi.inStockDate.offset ? 'offset' : null : null,
       inStockFixedDate: this.npi.inStockDate ?
-        this.npi.inStockDate instanceof (Date || String) ?
-          new Date(this.npi.inStockDate) :
-          this.npi.inStockDate.fixed ?
-            new Date(this.npi.inStockDate.fixed) :
+        this.npi.inStockDate.fixed ?
+          new Date(this.npi.inStockDate.fixed) :
             null : null,
       inStockOffsetDate: this.npi.inStockDate ?
-        (!(this.npi.inStockDate instanceof (Date || String))) ?
           this.npi.inStockDate.offset ?
-            this.npi.inStockDate.offset : null : null : null
+            this.npi.inStockDate.offset : null : null
     });
   }
 
@@ -140,6 +143,16 @@ export class OemComponent implements OnInit {
 
   updateParentForm() {
     this.npiFormOutput.emit(this.npiForm)
+  }
+
+  setChild(form) {
+    Object.keys(form.controls).forEach((field: string) => {
+      this.npiForm.addControl(field, form.get(field))
+    });
+  }
+  
+  changeForm(){
+    this.npiForm.enable()
   }
 
 }

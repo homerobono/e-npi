@@ -26,6 +26,9 @@ export class NpiComponent implements OnInit {
   resetFormFlagSubject = new Subject<Boolean>()
   resetFormFlag = true
 
+  allowFormEdit = new Subject<Boolean>()
+  newFormVersion: Boolean = false
+
   path: String
   response: any
   date: Date
@@ -95,15 +98,12 @@ export class NpiComponent implements OnInit {
     )
     this.localeService.use('pt-br');
     this.route.params.subscribe(
-      params => {
-        this.npiNumber = params.npiNumber
-        this.getNpi(this.npiNumber)
-      }
+      params => this.getNpi(params.npiNumber)
     )
     if (this.route.snapshot.data['readOnly'])
       this.npiForm.disable()
 
-    setTimeout(() => console.log(this.npiForm.value), 1000)
+    //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
@@ -113,13 +113,13 @@ export class NpiComponent implements OnInit {
     this.npiService.getNpi(npiNumber)
       .subscribe(
         npi => {
-          console.log(npi)
-          this.npiSubject.next(npi);
-          this.npi = npi
-          this.titleField = npi.name
-          this.authorId = npi.requester._id
-          this.authorName = npi.requester.firstName +
-            (npi.requester.lastName ? ' ' + npi.requester.lastName : '')
+          this.npiSubject.next(npi[0]);
+          this.npi = npi[0]
+          this.titleField = npi[0].name + (npi[0].version ? ' - v' + npi[0].version : '')
+          this.authorId = npi[0].requester._id
+          this.authorName = npi[0].requester.firstName +
+            (npi[0].requester.lastName ? ' ' + npi[0].requester.lastName : '')
+          console.log(this.npi)
         }, err => {
           this.location.replaceState(null)
           this.router.navigateByUrl('/error')
@@ -132,8 +132,7 @@ export class NpiComponent implements OnInit {
 
     npiForm.name = this.titleField
 
-    console.log(npiForm)
-    if (this.npi.entry == 'oem' && npiForm.inStockDateType)
+    /*if (this.npi.entry == 'oem' && npiForm.inStockDateType)
       npiForm.inStockDate =
         {
           'fixed': npiForm.inStockDateType == 'fixed' ?
@@ -142,50 +141,71 @@ export class NpiComponent implements OnInit {
           'offset': npiForm.inStockDateType == 'offset' ?
             npiForm.inStockOffsetDate : null
         }
+    */
 
     npiForm.id = this.npi.id
-    console.log(npiForm)
-    this.npiService.updateNpi(npiForm).
-      subscribe(res => {
-        console.log(res)
-        this.formSent = true;
+    npiForm.entry = this.npi.entry
 
-        if (Object.keys(res.data.changedFields).length > 0)
-          this.messenger.set({
-            'type': 'success',
-            'message': 'NPI atualizada com sucesso'
-          });
-        else
-          this.messenger.set({
-            'type': 'info',
-            'message': 'Nenhum campo modificado'
-          });
-        this.sendingForm = false;
-        this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
-      }, err => {
-        if (err.error.message.errors) this.invalidFieldsError(err.error.message.errors)
-        this.formSent = false;
-        this.sendingForm = false;
-      }
-      )
+    console.log(npiForm)
+
+    if (this.newFormVersion){
+    console.log('creating NPI version')
+      this.npiService.createNpi(npiForm).
+        subscribe(
+          res => this.successResponse(res),
+          err => this.invalidFieldsError(err)
+        )
+      }else
+      this.npiService.updateNpi(npiForm).
+        subscribe(
+          res => this.successResponse(res),
+          err => this.invalidFieldsError(err)
+        )
   }
 
-  invalidFieldsError(errors) {
-    var errorFields = Object.keys(errors)
-    var invalidFieldsMessage = 'Corrija o' +
-      (errorFields.length == 1 ? ' campo ' : 's campos ')
-    for (let i = 0; i < errorFields.length; i++) {
-      let prop = errorFields[i]
-      console.log(prop)
-      this.npiForm.controls[prop].setErrors({ 'required': true })
-      invalidFieldsMessage += Globals.LABELS[prop] +
-        (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
+  successResponse(res) {
+    console.log(res)
+    this.formSent = true;
+
+    if (Object.keys(res.data.changedFields).length > 0)
+      this.messenger.set({
+        'type': 'success',
+        'message': 'NPI atualizada com sucesso'
+      });
+    else
+      this.messenger.set({
+        'type': 'info',
+        'message': 'Nenhum campo modificado'
+      });
+    this.sendingForm = false;
+    this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
+  }
+
+  invalidFieldsError(err) {
+    console.log(err)
+    if (err.error.message.errors) {
+      var errors = err.error.message.errors
+      var errorFields = Object.keys(errors)
+      var invalidFieldsMessage = 'Corrija o' +
+        (errorFields.length == 1 ? ' campo ' : 's campos ')
+      try {
+        for (let i = 0; i < errorFields.length; i++) {
+          let prop = errorFields[i]
+          console.log(prop)
+          this.npiForm.controls[prop].setErrors({ 'required': true })
+          invalidFieldsMessage += Globals.LABELS[prop] +
+            (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      this.messenger.set({
+        type: 'error',
+        message: invalidFieldsMessage
+      })
     }
-    console.log(errors);
-    this.messenger.set({
-      type: 'error',
-      message: invalidFieldsMessage
-    })
+    this.formSent = false;
+    this.sendingForm = false;
   }
 
   toggleTitleEdit(event) {
@@ -231,7 +251,6 @@ export class NpiComponent implements OnInit {
   reset() {
     this.resetFormFlagSubject.next(!this.resetFormFlag)
     this.resetFormFlag = !this.resetFormFlag
-    console.log(this.resetFormFlag)
   }
 
   setChild(form) {
@@ -240,4 +259,20 @@ export class NpiComponent implements OnInit {
     });
   }
 
+  newOemVersion(): void {
+
+    this.npiService.newNpiVersion(this.npiForm.value).
+      subscribe(res => {
+        console.log(res)
+        this.formSent = true;
+        this.sendingForm = false;
+        //this.router.navigate(['/npi/' + this.npi.number + '/edit'], { relativeTo: this.route })
+      }, err => {
+        console.log(err)
+        this.formSent = false;
+        this.sendingForm = false;
+      }
+      )
+  }
 }
+
