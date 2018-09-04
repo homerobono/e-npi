@@ -73,6 +73,7 @@ class Npi {
         if (npiModel) {
             if (npiModel._id) this.id = npiModel._id
             if (npiModel.id) this.id = npiModel.id
+            if (npiModel.version != null) this.version = npiModel.version
             if (npiModel.client != null) this.client = npiModel.client
             if (npiModel.complexity != null) this.complexity = npiModel.complexity
             if (npiModel.number != null) this.number = npiModel.number

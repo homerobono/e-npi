@@ -33,19 +33,25 @@
         <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
           <div class='col-lg-1 col-md-2 col'>
             <div class='row'>
-              <div class='col-auto pr-1'>
+              <div class='col-auto pr-3'>
                 <b>#</b>
               </div>
               <div class='sort-btns p-0 m-0 clearfix'>
-                <div class='fa fa-sort-up bg-warning float-left sort-btn sort-up'
-                data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
-                <div class='fa fa-sort-down bg-danger float-left sort-btn sort-down'
-                data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
+                <div class='fa fa-sort-up float-left sort-btn sort-up' data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
+                <div class='fa fa-sort-down float-left sort-btn sort-down' data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
               </div>
             </div>
           </div>
           <div class='col'>
-            <b>Nome</b>
+            <div class='row'>
+              <div class='col-auto pr-3'>
+                <b>Nome</b>
+              </div>
+              <div class='sort-btns p-0 m-0 clearfix'>
+                <div class='fa fa-sort-up float-left sort-btn sort-up' data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
+                <div class='fa fa-sort-down float-left sort-btn sort-down' data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
+              </div>
+            </div>
           </div>
           <div class='col col-lg-2 col-md-2 col'>
             <b>Tipo</b>
@@ -65,7 +71,7 @@
             </a>
           </div>
         </div>
-        <div class='row npi rounded align-items-center m-0 pr-0' *ngFor='let npi of npisList' (click)='goToNpi(npi.number)'>
+        <div class='row rounded align-items-center m-0 pr-0 npi' *ngFor='let npi of npisList' (click)='goToNpi(npi.number)'>
           <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
             <span class='d-none d-md-block col-lg-1 pl-0'>{{ npi.number }}</span>
             <div class='row d-flex d-md-none'>

@@ -12,7 +12,10 @@
                   {"text-primary": titleField != npi.name && 
                     route.snapshot.routeConfig.path.includes("/edit")
                   }'>
-                  {{ this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name }}
+                  {{ 
+                    this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name
+                  }}
+                  <i class='text-secondary'>{{ npi.version > 1 ? ' (v' + npi.version + ')' : '' }}</i>
                 </span>
               </h3>
             </div>

@@ -115,7 +115,7 @@ export class NpiComponent implements OnInit {
         npi => {
           this.npiSubject.next(npi[0]);
           this.npi = npi[0]
-          this.titleField = npi[0].name
+          this.titleField = npi[0].name + (npi[0].version ? ' - v' + npi[0].version : '')
           this.authorId = npi[0].requester._id
           this.authorName = npi[0].requester.firstName +
             (npi[0].requester.lastName ? ' ' + npi[0].requester.lastName : '')
@@ -146,16 +146,37 @@ export class NpiComponent implements OnInit {
     npiForm.id = this.npi.id
     npiForm.entry = this.npi.entry
 
-    if (this.newFormVersion) {
-      console.log('creating NPI version: ')
-      npiForm.number = this.npi.number
-      console.log(npiForm)
+    console.log(npiForm)
+
+<<<<<<< HEAD
+        if (Object.keys(res.data.changedFields).length > 0)
+          this.messenger.set({
+            'type': 'success',
+            'message': 'NPI atualizada com sucesso'
+          });
+        else
+          this.messenger.set({
+            'type': 'info',
+            'message': 'Nenhum campo modificado'
+          });
+        this.sendingForm = false;
+        this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
+      }, err => {
+        if (err.error.message.errors)
+          this.invalidFieldsError(err.error.message.errors)
+        this.formSent = false;
+        this.sendingForm = false;
+      }
+      )
+=======
+    if (this.newFormVersion){
+    console.log('creating NPI version')
       this.npiService.createNpi(npiForm).
         subscribe(
           res => this.successResponse(res),
           err => this.invalidFieldsError(err)
         )
-    } else
+      }else
       this.npiService.updateNpi(npiForm).
         subscribe(
           res => this.successResponse(res),
@@ -167,7 +188,7 @@ export class NpiComponent implements OnInit {
     console.log(res)
     this.formSent = true;
 
-    if (res.data.changedFields && Object.keys(res.data.changedFields).length > 0)
+    if (Object.keys(res.data.changedFields).length > 0)
       this.messenger.set({
         'type': 'success',
         'message': 'NPI atualizada com sucesso'
@@ -179,6 +200,7 @@ export class NpiComponent implements OnInit {
       });
     this.sendingForm = false;
     this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
+>>>>>>> ba9db0ba29c7be82b836ec6776c5f0b105002979
   }
 
   invalidFieldsError(err) {

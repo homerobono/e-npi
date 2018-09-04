@@ -65,7 +65,6 @@ export class OemComponent implements OnInit {
   ngOnInit() {
     console.log(this.npi)
 
-    this.npiFormOutput.emit(this.npiForm)
     this.insertOemActivities();
     this.fillFormData()
 
@@ -78,20 +77,22 @@ export class OemComponent implements OnInit {
     )
 
     this.npiComponent.allowFormEdit.subscribe(
-      (flag) => { if (flag) this.npiForm.enable()
-      else  this.npiForm.disable() }
+      (flag) => { 
+        if (flag) this.editForm()
+        else  this.npiForm.disable()
+        }
     )
+
+    this.npiFormOutput.emit(this.npiForm)
   }
 
   insertOemActivities() {
     var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
     var arrLength = this.utils.getOemActivities().length
     for (var i = 0; i < arrLength; i++) {
-      oemActivitiesArray.push(this.fb.group({
-        _id: this.npi.oemActivities[i]._id,
-        date: this.npi.oemActivities[i].date,
-        comment: this.npi.oemActivities[i].comment,
-      }))
+      oemActivitiesArray.push(this.fb.group(
+        this.npi.oemActivities[i]
+      ))
     }
   }
 
@@ -145,14 +146,9 @@ export class OemComponent implements OnInit {
     this.npiFormOutput.emit(this.npiForm)
   }
 
-  setChild(form) {
-    Object.keys(form.controls).forEach((field: string) => {
-      this.npiForm.addControl(field, form.get(field))
-    });
-  }
-  
-  changeForm(){
+  editForm(){
     this.npiForm.enable()
+    this.updateParentForm()
   }
 
 }
