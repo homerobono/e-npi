@@ -67,6 +67,11 @@ class Npi {
         comment: String,
         registry: String,
     }>;
+    validation: {
+        pilot: String,
+        product: String,
+        final: String,
+    }
 
     constructor(npiModel: any | null) {
 
@@ -121,7 +126,7 @@ class Npi {
             if (npiModel.activities != null) {
                 this.activities = npiModel.activities
                 npiModel.activities.forEach(activity =>
-                    activity = new Date(activity.date));
+                    activity.date = new Date(activity.date));
             }
         }
     }

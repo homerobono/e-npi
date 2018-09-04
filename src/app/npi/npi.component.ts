@@ -26,8 +26,8 @@ export class NpiComponent implements OnInit {
   resetFormFlagSubject = new Subject<Boolean>()
   resetFormFlag = true
 
-  allowFormEdit = new Subject<Boolean>()
-  newFormVersion: Boolean = false
+  newFormVersion = new Subject<Boolean>()
+  newFormVersionFlag: Boolean = false
 
   path: String
   response: any
@@ -146,11 +146,13 @@ export class NpiComponent implements OnInit {
     npiForm.id = this.npi.id
     npiForm.entry = this.npi.entry
 
-    if (this.newFormVersion) {
+    console.log(npiForm)
+
+    if (this.newFormVersionFlag) {
       console.log('creating NPI version: ')
       npiForm.number = this.npi.number
-      console.log(npiForm)
-      this.npiService.createNpi(npiForm).
+      npiForm.stage = this.npi.stage
+      this.npiService.newNpiVersion(npiForm).
         subscribe(
           res => this.successResponse(res),
           err => this.invalidFieldsError(err)
@@ -245,7 +247,16 @@ export class NpiComponent implements OnInit {
   }
 
   cancelNpi() {
-    //this.clearFields()
+    this.npiService.deleteNpi(this.npi.id).subscribe(
+      res => {
+        this.messenger.set({
+          'type': 'success',
+          'message': 'NPI #'+this.npi.number+' cancelada'
+        });
+        this.router.navigate(['/home'])
+      },
+      err => { }
+    )
   }
 
   reset() {

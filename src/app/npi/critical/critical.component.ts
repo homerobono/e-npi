@@ -16,6 +16,7 @@ export class CriticalComponent implements OnInit {
 
   criticalFormGroup: FormGroup
   signatures: Array<any>
+  isFormEnabled: Boolean
 
   constructor(
     private fb: FormBuilder,
@@ -31,16 +32,28 @@ export class CriticalComponent implements OnInit {
 
   ngOnInit() {
     this.insertCriticalAnalisys()
-    
-    if (this.route.snapshot.data['readOnly'])
+
+    this.isFormEnabled = 
+      !this.route.snapshot.data['readOnly'] && 
+      this.npi.stage == 2
+      
+    if (!this.isFormEnabled)
       this.criticalFormGroup.disable()
 
     this.updateParentForm()
 
-    this.loadSignatures()
-
     this.npiComponent.resetFormFlagSubject.subscribe(
       () => { this.fillFormData() }
+    )
+
+    this.npiComponent.newFormVersion.subscribe(
+      (flag) => {
+        if (flag) {
+          this.clearForm()
+          this.criticalFormGroup.disable()
+        }
+        else this.fillFormData()
+      }
     )
   }
 
@@ -70,7 +83,6 @@ export class CriticalComponent implements OnInit {
           _id: analisys._id,
           status: analisys.status,
           comment: analisys.comment
-          //signature: analisys.signature 
         }
       )
       criticalControl.valueChanges.subscribe(
@@ -78,6 +90,8 @@ export class CriticalComponent implements OnInit {
         
       criticalFormArray.push(criticalControl)
     });
+
+    this.loadSignatures()
   }
 
   fillFormData() {
@@ -91,10 +105,11 @@ export class CriticalComponent implements OnInit {
         {
           status: criticalRow.status,
           comment: criticalRow.comment
-          //signature: analisys.signature 
         }
       )
     });
+
+    this.loadSignatures()
   }
 
   getCriticalRow(id) {
@@ -114,5 +129,22 @@ export class CriticalComponent implements OnInit {
       ((this.criticalFormGroup.get('critical') as FormArray)
         .controls[i] as FormGroup).get('status')
     if (event.target.value == statusControl.value) statusControl.setValue(null)
+  }
+
+  clearForm(){
+    var criticalFormArray =
+      (this.criticalFormGroup.get('critical') as FormArray).controls
+
+    criticalFormArray.forEach(analisys => {
+      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
+      console.log(criticalRow)
+      analisys.patchValue(
+        {
+          status: null,
+          comment: null,
+          signature: null
+        }
+      )
+    });
   }
 }

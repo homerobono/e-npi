@@ -22,7 +22,10 @@
     </div>
     <hr>
     <div class='col-auto'>
-      <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='newVersion()'>Alterar Projeto</button>
+      <button class='btn btn-outline-info shadow-none ml-auto' type='button' 
+      (click)='toggleNewVersion()' *ngIf='isFormEnabled'>
+      Alterar Projeto
+    </button>
     </div>
   </div>
 </div>

@@ -64,9 +64,12 @@ export class NpiService {
     return this.http.post(this.npisUrl, npi);
   }
 
-  newNpiVersion(id): Observable<any> {
-    console.log('creating new npi version from '+ id);
-    return this.http.post(this.npiUrl, {id});
+  newNpiVersion(npiForm): Observable<any> {
+    console.log('creating new npi version from ' + npiForm.id);
+    console.log(npiForm);
+    var npi = this.formToModel(npiForm)
+    console.log(npi);
+    return this.http.post(this.npiUrl, npi);
   }
 
   updateNpi(npiForm): Observable<any> {
@@ -113,25 +116,74 @@ export class NpiService {
 
     if (model.entry == 'oem') {
 
-      model.inStockDate =
-        {
-          'fixed': npiForm.inStockDateType == 'fixed' ?
-            npiForm.inStockFixedDate ?
-              new Date(npiForm.inStockFixedDate) : null : null,
-          'offset': npiForm.inStockDateType == 'offset' ?
-            npiForm.inStockOffsetDate : null
+      if (npiForm.inStockDateType && npiForm.inStockDate != null) {
+        if (npiForm.inStockDateType == 'offset') {
+          if (typeof npiForm.inStockDate == 'number' ||
+            npiForm.inStockDate instanceof Number) {
+            model.inStockDate = {
+              fixed: null,
+              offset: npiForm.inStockDate
+            }
+          } else {
+            model.inStockDate = {
+              fixed: null,
+              offset: npiForm.inStockDate.offset
+            }
+          }
+        } else if (npiForm.inStockDateType == 'fixed') {
+          if (npiForm.inStockDate instanceof Date) {
+            model.inStockDate = {
+              fixed: new Date(npiForm.inStockDate),
+              offset: null
+            }
+          } else {
+            model.inStockDate = {
+              fixed: npiForm.inStockDate.fixed,
+              offset: null
+            }
+          }
         }
-      /*model.inStockDate =
-        {
-          'fixed': npiForm.inStockDate instanceof Date ? npiForm.inStockDate : null,
-          'offset': !(npiForm.inStockDate instanceof Date) ? npiForm.inStockDate as Number : null
+      }
+      /* else {
+        model.inStockDate = {
+          fixed: null,
+          offset: null
         }
-      if (npiForm.inStockDate == null || npiForm.inStockDate == '')
-        model.inStockDate = null
-      //console.log('date: ')
-      //console.log(model.inStockDate)
-      */
+      }
+
+      /*
+              model.inStockDate =
+                {
+                  'fixed': npiForm.inStockDateType == 'fixed' ?
+                    npiForm.inStockFixedDate ?
+                      new Date(npiForm.inStockFixedDate) : null : null,
+                  'offset': npiForm.inStockDateType == 'offset' ?
+                    npiForm.inStockOffsetDate : null
+                }
+      
+              if (model.inStockDate.fixed == null && model.inStockDate.offset == null) {
+                console.log('trying todo the right thing')
+                model.inStockDate =
+                  {
+                    'fixed': npiForm.inStockDateType == 'fixed' ?
+                      npiForm.inStockDate instanceof Date ?
+                        npiForm.inStockDate : null : null,
+                    'offset': npiForm.inStockDateType == 'offset' ?
+                      npiForm.inStockDate instanceof Number ||
+                        npiForm.inStockDate instanceof String ||
+                        typeof npiForm.inStockDate == 'string' ||
+                        typeof npiForm.inStockDate == 'number' ?
+                        npiForm.inStockDate as Number : null : null
+                  }
+              }
+      
+              //if (npiForm.inStockDate == null || npiForm.inStockDate == '')
+              //model.inStockDate = null
+              //console.log('date: ')
+     */ 
     }
+
+    console.log(model.inStockDate)
     return model
   }
 

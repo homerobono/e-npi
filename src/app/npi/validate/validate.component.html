@@ -1,0 +1,26 @@
+<div [formGroup]='validateForm'>
+  <h4>
+    <b>Validação do Projeto/Produto</b>
+  </h4>
+  <div class="form-row" formGroupName='validation'>
+    <div class='form-group col-6'>
+      <label for='pilot'>Aprovação do Lote Piloto</label>
+      <input type='text' class='form-control' formControlName='pilot' id='pilot'>
+    </div>
+    <div class='form-group col-6'>
+      <label for='product'>Resultado da Verificação do Projeto/Produto</label>
+      <input type='text' class='form-control' formControlName='product' id='product'>
+    </div>
+  </div>
+  <div class='form-group col' formGroupName='validation'>
+    <label for='final'>ANÁLISE FINAL</label>
+    <textarea class='form-control' id='final' formControlName='final' rows='5'></textarea>
+  </div>
+  <hr>
+  <div class='col-auto'>
+    <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='toggleNewVersion()' *ngIf='isFormEnabled'>
+      Alterar Projeto
+    </button>
+  </div>
+</div>
+<hr>

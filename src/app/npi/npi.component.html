@@ -6,7 +6,7 @@
         <div class='col'>
           <div class='row pb-0 align-items-end'>
             <div class='col-xs col-md-auto mb-0 mr-0 pr-0'>
-              <h3 class='mb-0'>
+              <h3 class='mb-0' [ngClass]='{strike: npi.stage == 0}'>
                 NPI #{{ npi.number }} -
                 <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
                   {"text-primary": titleField != npi.name && 
@@ -15,7 +15,7 @@
                   {{ 
                     this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name
                   }}
-                  <i class='text-secondary'>{{ npi.version > 1 ? ' (v' + npi.version + ')' : '' }}</i>
+                  <small class='text-secondary'>{{ npi.version > 1 ? ' (v' + npi.version + ')' : '' }}</small>
                 </span>
               </h3>
             </div>
@@ -79,6 +79,8 @@
         *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
 
         <app-activities [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
+        
+        <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >2 && npi.isCriticallyApproved()'></app-validate>
 
         <div class="row align-items-center justify-content-between" *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col-auto text-secondary'>
@@ -91,7 +93,7 @@
         <div class="row align-items-center justify-content-between" *ngIf='!route.snapshot.data["readOnly"]'>
           <div class='col'>
             <button type="button" class="btn btn-outline-danger shadow-none" [disabled]="sendingForm" (click)='cancelNpi()'>
-              Cancelar
+              {{ npi.stage < 2 ? 'Remover' : 'Cancelar' }}
             </button>
           </div>
           <div class='col text-center'>
@@ -102,7 +104,7 @@
           </div>
           <div class='col text-right'>
             <button type="submit" class="btn btn-success" [disabled]="sendingForm">
-              {{ npi.stage == 1 ? 'Salvar' : newFormVersion ? 'Salvar Nova Versão' : 'Atualizar NPI' }}
+              {{ npi.stage == 1 ? 'Salvar' : newFormVersionFlag ? 'Salvar Nova Versão' : 'Atualizar NPI' }}
             </button>
           </div>
         </div>

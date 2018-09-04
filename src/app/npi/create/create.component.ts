@@ -70,30 +70,30 @@ export class CreateComponent implements OnInit {
     var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * 30)
     this.createForm = fb.group({
       'date': new Date().toLocaleDateString('pt-br'),
-      'complexity': null,
+      'complexity': 2,
       'client': 'Pixel',
-      'name': 'Validação no Servidor',
+      'name': 'Versões',
       'entry': 'oem',
-      'cost': null,
-      'price': null,
-      'investment': null,
+      'cost': 30,
+      'price': 99,
+      'investment': 50000,
       'projectCost': fb.group({
-        'cost': null,
+        'cost': 10000,
         'annex': String
       }),
-      'inStockDateType': 'fixed',
-      'inStockDate': null,
+      'inStockDateType': 'offset',
+      'inStockDate': 60,
       'npiRef': null,
-      'description': null,
+      'description': 'Requisitos gerais',
       'norms': fb.group({
-        'description': null,
+        'description': 'Normas aplicáveis',
         'annex': null
       }),
       'resources': fb.group({
-        'description': null,
+        'description': 'Recursos necessários',
         'annex': null
       }),
-      'fiscals': null,
+      'fiscals': 'Incentivos fiscais disponíveis',
       'oemActivities': fb.array([])
     })
 
@@ -151,6 +151,7 @@ export class CreateComponent implements OnInit {
       message: invalidFieldsMessage
     })
   }
+
   saveNpi(npiForm) {
     npiForm.stage = 1
     this.createNpi(npiForm)

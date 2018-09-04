@@ -201,7 +201,7 @@
             <label for="inStockDate">Data em Estoque</label>
             <div class="input-group">
               <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDate")}'>
               <div class="input-group-append">
                 <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                   <i class='fa fa-calendar fa-fw'></i>
@@ -214,13 +214,15 @@
             <div class="form-row">
               <div class="form-group col" id='inStockDate-group'>
                 <div class="custom-control custom-radio custom-control-inline">
-                  <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType' formControlName="inStockDateType">
+                  <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType' formControlName="inStockDateType"
+                  [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
                   <label for="fixed-date" class='custom-control-label'>
                     Data fixa
                   </label>
                 </div>
                 <div class="custom-control custom-radio custom-control-inline">
-                  <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType' formControlName="inStockDateType">
+                  <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType' formControlName="inStockDateType"
+                  [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
                   <label for="offset-date" class='custom-control-label'>
                     Prazo após aprovação
                   </label>
@@ -231,7 +233,7 @@
               <div class="form-group col">
                 <div class="input-group">
                   <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-                    #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+                    #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
                   <div class="input-group-append">
                     <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                       <i class='fa fa-calendar fa-fw'></i>
@@ -247,7 +249,8 @@
                     Dias
                   </span>
                 </div>
-                <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque">
+                <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque" 
+                [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
               </div>
             </div>
           </div>

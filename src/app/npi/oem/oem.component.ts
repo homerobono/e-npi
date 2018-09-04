@@ -56,8 +56,10 @@ export class OemComponent implements OnInit {
         'annex': null
       }),
       'inStockDateType': null,
-      'inStockFixedDate': null,
-      'inStockOffsetDate': null,
+      'inStockDate': fb.group({
+        'fixed': null,
+        'offset': null
+      }),
       'oemActivities': fb.array([])
     })
   }
@@ -76,11 +78,11 @@ export class OemComponent implements OnInit {
       () => this.fillFormData()
     )
 
-    this.npiComponent.allowFormEdit.subscribe(
-      (flag) => { 
+    this.npiComponent.newFormVersion.subscribe(
+      (flag) => {
         if (flag) this.editForm()
-        else  this.npiForm.disable()
-        }
+        else this.npiForm.disable()
+      }
     )
 
     this.npiFormOutput.emit(this.npiForm)
@@ -128,13 +130,17 @@ export class OemComponent implements OnInit {
         this.npi.inStockDate instanceof (Date || String) ? null :
           this.npi.inStockDate.fixed ? 'fixed' :
             this.npi.inStockDate.offset ? 'offset' : null : null,
-      inStockFixedDate: this.npi.inStockDate ?
-        this.npi.inStockDate.fixed ?
-          new Date(this.npi.inStockDate.fixed) :
-            null : null,
-      inStockOffsetDate: this.npi.inStockDate ?
-          this.npi.inStockDate.offset ?
-            this.npi.inStockDate.offset : null : null
+      inStockDate: {
+        fixed:
+          this.npi.inStockDate ?
+            this.npi.inStockDate.fixed ?
+              new Date(this.npi.inStockDate.fixed) :
+              null : null,
+        offset:
+          this.npi.inStockDate ?
+            this.npi.inStockDate.offset ?
+              this.npi.inStockDate.offset : null : null
+      }
     });
   }
 
@@ -146,7 +152,7 @@ export class OemComponent implements OnInit {
     this.npiFormOutput.emit(this.npiForm)
   }
 
-  editForm(){
+  editForm() {
     this.npiForm.enable()
     this.updateParentForm()
   }

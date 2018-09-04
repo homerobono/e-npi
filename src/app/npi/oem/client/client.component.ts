@@ -17,6 +17,7 @@ export class ClientComponent implements OnInit {
   
   npiForm : FormGroup
   deny : FormControl
+  isFormEnabled: Boolean
 
   constructor(
     private fb : FormBuilder,
@@ -32,8 +33,14 @@ export class ClientComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.route.snapshot.data['readOnly']) 
+    this.isFormEnabled = 
+      !this.route.snapshot.data['readOnly'] && 
+      this.npi.stage == 2 &&
+      this.npi.isCriticallyApproved()
+      
+    if (!this.isFormEnabled) 
       this.npiForm.disable()
+
     this.npiFormOutput.emit(this.npiForm)
     this.deny = (this.npiForm.get("clientApproval") as FormGroup).controls['approval'] as FormControl
 
@@ -52,9 +59,9 @@ export class ClientComponent implements OnInit {
     })
   }
 
-  newVersion(){
-    this.npiComponent.allowFormEdit.next(true)
-    this.npiComponent.newFormVersion = true
+  toggleNewVersion(){
+    this.npiComponent.newFormVersionFlag = !this.npiComponent.newFormVersionFlag
+    this.npiComponent.newFormVersion.next(this.npiComponent.newFormVersionFlag)
   }
 
 }

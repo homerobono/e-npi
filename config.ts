@@ -63,6 +63,7 @@ export const Globals = Object.freeze({
 		projectCost: 'Custo do Projeto',
 		activities: 'Atividades',
 		inStockDate: 'Data em Estoque',
+		inStockDateType: 'Data em Estoque',
 		regulations: 'Regulamentações',
 		demand: 'Demanda',
 		OemActivities: 'Atividades O&M',

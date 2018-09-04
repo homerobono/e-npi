@@ -85,9 +85,9 @@
               Data fixa
             </label>
           </div>
-          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="fixed"?"visible":"hidden"'>
+          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="fixed"?"visible":"hidden"' formGroupName='inStockDate'>
             <div class="input-group">
-              <input type='text' class='form-control' formControlName='inStockFixedDate' name='inStockFixedDate' aria-describedby="Data em Estoque"
+              <input type='text' class='form-control' formControlName='fixed' aria-describedby="Data em Estoque"
                 #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'
                 size=8>
               <div class="input-group-append">
@@ -109,14 +109,14 @@
               Prazo após aprovação
             </label>
           </div>
-          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="offset"?"visible":"hidden"'>
+          <div class="form-group mt-2" [style.visibility]='npiForm.controls["inStockDateType"].value=="offset"?"visible":"hidden"' formGroupName='inStockDate'>
             <div class='input-group'>
               <div class="input-group-prepend">
                 <span class="input-group-text" id="inStockDatePrepend">
                   Dias
                 </span>
               </div>
-              <input type='number' class='form-control' formControlName='inStockOffsetDate' name='inStockOffsetDate' aria-describedby="Data em Estoque"
+              <input type='number' class='form-control' formControlName='offset' aria-describedby="Data em Estoque"
                 [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}' style='width: 25px'>
               <div class='invalid-feedback'>
                 Defina uma data
