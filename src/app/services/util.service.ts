@@ -47,4 +47,18 @@ export class UtilService {
     }
     return depts;
   }
+
+  getActivities(){
+    return Globals.MACRO_STAGES
+  }
+
+  getActivity(value){
+    for (var i = 0; i < Globals.MACRO_STAGES.length; i++) {
+      var activity = Globals.MACRO_STAGES[i]
+      if (activity.value == value)
+        return activity.label
+    }
+    return ''
+  }
+
 }

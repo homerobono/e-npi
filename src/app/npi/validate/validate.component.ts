@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import Npi from '../../models/npi.model';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
@@ -25,9 +25,9 @@ export class ValidateComponent implements OnInit {
   ) {
     this.validateForm = fb.group({
       'validation': fb.group({
-        'pilot': null,
-        'product': null,
-        'final': null
+        'pilot': ['Aprovação Piloto', Validators.required],
+        'product': ['Aprovação Produto', Validators.required],
+        'final': ['Parecer Final', Validators.required],
       })
     })
   }
@@ -40,6 +40,13 @@ export class ValidateComponent implements OnInit {
 
     if (!this.isFormEnabled)
       this.validateForm.disable()
+
+    this.validateForm.get('validation').valueChanges.subscribe(
+      () => {
+        this.validateForm.updateValueAndValidity()
+        this.updateParentForm()
+      }
+    )
 
     this.fillFormData()
 
@@ -57,6 +64,20 @@ export class ValidateComponent implements OnInit {
         'product': this.npi.validation.product ? this.npi.validation.product : null,
         'final': this.npi.validation.final ? this.npi.validation.final : null,
       })
+  }
+
+  fieldHasErrors(field) {
+    this.validateForm.updateValueAndValidity()
+    return (this.validateForm.get("validation") as FormGroup)
+    .controls[field].hasError('required')
+  }
+
+  finalizeNpi(){
+    this.npiComponent.finalizeNpi()
+  }
+
+  updateParentForm() {
+    this.npiFormOutput.emit(this.validateForm)
   }
 
 }

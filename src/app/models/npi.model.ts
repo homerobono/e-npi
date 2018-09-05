@@ -128,6 +128,7 @@ class Npi {
                 npiModel.activities.forEach(activity =>
                     activity.date = new Date(activity.date));
             }
+            if (npiModel.validation != null) this.validation = npiModel.validation
         }
     }
 

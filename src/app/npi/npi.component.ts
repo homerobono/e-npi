@@ -45,6 +45,16 @@ export class NpiComponent implements OnInit {
   formSent: Boolean = false;
   editResponse: String
 
+  motivations = [
+    { value: 'CLIENT', label: 'Solicitação de Cliente' },
+    { value: 'UPDATE', label: 'Atualização' },
+    { value: 'CORRECTION', label: 'Correção' }
+  ]
+
+  afectedFields = [
+    { value: '', label: ''}
+  ]
+
   currency = createNumberMask({
     prefix: '',
     includeThousandsSeparator: true,
@@ -131,17 +141,6 @@ export class NpiComponent implements OnInit {
     this.sendingForm = true
 
     npiForm.name = this.titleField
-
-    /*if (this.npi.entry == 'oem' && npiForm.inStockDateType)
-      npiForm.inStockDate =
-        {
-          'fixed': npiForm.inStockDateType == 'fixed' ?
-            npiForm.inStockFixedDate ?
-              new Date(npiForm.inStockFixedDate) : null : null,
-          'offset': npiForm.inStockDateType == 'offset' ?
-            npiForm.inStockOffsetDate : null
-        }
-    */
 
     npiForm.id = this.npi.id
     npiForm.entry = this.npi.entry
@@ -234,11 +233,14 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    this.npiForm.setErrors(null)
+    this.submitNpi(npiForm)
   }
 
   submitToAnalisys(npiForm) {
     npiForm.stage = 2
+    if (!confirm(
+      "Tem certeza que deseja enviar para Análise Crítica? Todos os funcionários envolvidos serão notificados da submissão.")
+    ) return;
     this.submitNpi(npiForm)
   }
 
@@ -247,11 +249,15 @@ export class NpiComponent implements OnInit {
   }
 
   cancelNpi() {
+    if (this.npi.stage < 2)
+      if (!confirm(
+        "Tem certeza que deseja REMOVER a NPI #" + this.npi.number + " do banco de dados? Essa operação não poderá ser desfeita.")
+      ) return;
     this.npiService.deleteNpi(this.npi.id).subscribe(
       res => {
         this.messenger.set({
           'type': 'success',
-          'message': 'NPI #'+this.npi.number+' cancelada'
+          'message': 'NPI #' + this.npi.number + ' cancelada'
         });
         this.router.navigate(['/home'])
       },
@@ -268,6 +274,7 @@ export class NpiComponent implements OnInit {
     Object.keys(form.controls).forEach((field: string) => {
       this.npiForm.addControl(field, form.get(field))
     });
+    this.npiForm.updateValueAndValidity()
   }
 
   newOemVersion(): void {
@@ -285,5 +292,15 @@ export class NpiComponent implements OnInit {
       }
       )
   }
+
+  finalizeNpi() {
+    if (!confirm(
+      "Tem certeza que deseja concluir a NPI? Depois de finalizada somente alguns campos poderão ser editados, mediante justificativa e posterior análise.")
+    ) return;
+    var finalForm = this.npiForm.value
+    finalForm.stage = 4
+    this.submitNpi(finalForm)
+  }
+
 }
 

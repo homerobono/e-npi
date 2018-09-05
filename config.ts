@@ -80,4 +80,24 @@ export const Globals = Object.freeze({
 		internal: 'Interno',
 		custom: 'Customização'
 	},
+
+	MACRO_STAGES : [
+		{ value: 'SCHED', label: 'Cronograma', dept: 'MEP' },
+		{ value: 'LAYOUT', label: 'Esquemático, Layout e Gerber', dept: 'MEP' },
+		{ value: 'FIRMWARE', label: 'Firmware, Software e Aplicativo', dept: 'MEP' },
+		{ value: 'MECHANICS', label: 'Mecânica', dept: 'MEP' },
+		{ value: 'SPECS', label: 'Especificação Técnica', dept: 'MEP' },
+		{ value: 'BOM', label: 'Lista de Materiais - BOM', dept: 'MEP' },
+		{ value: 'QUOTATION', label: 'Cotação', dept: 'CSC' },
+		{ value: 'REQUIRE', label: 'Validação de Requisitos de Entrada', dept: 'MEP' },
+		{ value: 'STATIONERY', label: 'Papelaria (Embalagem, Etiquetas, Manuais, Guias, etc)', dept: 'MEP' },
+		{ value: 'BOM_REG', label: 'Cadastro da BOM', dept: 'MEP' },
+		{ value: 'TEST', label: 'IT de Teste', dept: 'MEP' },
+		{ value: 'JIG', label: 'Jiga de Testes', dept: 'P&D' },
+		{ value: 'PROD', label: 'Processo Produtivo', dept: 'MEP' },
+		{ value: 'PILOT', label: 'Lote Piloto', dept: 'MEP' },
+		{ value: 'ASSEMBLY', label: 'IT de Montagem', dept: 'MEP' },
+		{ value: 'GOLD', label: 'Golden Sample', dept: 'MEP' },
+	  ]
+	  
 })

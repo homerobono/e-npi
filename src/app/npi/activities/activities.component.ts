@@ -15,6 +15,7 @@ export class ActivitiesComponent implements OnInit {
 
   activitiesFormGroup: FormGroup
   signatures: Array<any>
+  isFormEnabled: Boolean
 
   constructor(
     private fb: FormBuilder,
@@ -28,9 +29,14 @@ export class ActivitiesComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.isFormEnabled = 
+    !this.route.snapshot.data['readOnly'] && 
+      this.npi.stage == 2
+
     this.insertActivities()
 
-    if (this.route.snapshot.data['readOnly'])
+    if (!this.isFormEnabled)
       this.activitiesFormGroup.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
