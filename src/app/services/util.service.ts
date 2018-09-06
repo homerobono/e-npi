@@ -16,8 +16,16 @@ export class UtilService {
     return Globals.ENTRIES
   }
 
+  getEntriesArray(){
+    return Globals.ENTRIES_ARR
+  }
+
   getOemActivities(){
     return Globals.OEM_ACTIVITIES
+  }
+
+  getStatuses(){
+    return Globals.STATUS
   }
 
   getStatus(stage: Number){

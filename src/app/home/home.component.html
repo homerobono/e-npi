@@ -71,6 +71,39 @@
             </a>
           </div>
         </div>
+        
+        <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
+          <div class='col-lg-1 col-md-2 col'>
+            <input type=text class='form-control'>
+          </div>
+          <div class='col'>
+            <input type=text class='form-control'>
+          </div>
+          <div class='col col-lg-2 col-md-2 col'>
+            <select type=text class='form-control'>
+              <option selected value></option>
+              <option *ngFor='let entry of utils.getEntriesArray(); index as i' value='{{ entry.value }}'>{{ entry.label }}</option>
+            </select>
+          </div>
+          <div class='col'>
+            <select type=text class='form-control'>
+              <option selected value></option>
+              <option *ngFor='let status of utils.getStatuses(); index as i' value='{{ i }}'>{{ status }}</option>
+            </select>
+          </div>
+          <div class='col-lg-1 col-md-2 col-md col'>
+            <input type=text class='form-control'>
+          </div>
+          <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start invisible'>
+            <a class='pl-1 pt-2 pb-2 pr-0'>
+              <i class='fa fa-fw'></i>
+            </a>
+            <a class='pl-0 pt-2 pb-2'>
+              <i class='fa fa-fw'></i>
+            </a>
+          </div>
+        </div>
+
         <div class='row rounded align-items-center m-0 pr-0 npi' *ngFor='let npi of npisList' (click)='goToNpi(npi.number)'>
           <div class='col-xs-12 col-lg-1 col-md-2 col-md'>
             <span class='d-none d-md-block col-lg-1 pl-0'>{{ npi.number }}</span>

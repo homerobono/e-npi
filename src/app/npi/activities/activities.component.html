@@ -19,7 +19,7 @@
           <tbody>
             <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
               <td>
-                {{ utils.getActivity(npi.activities[i].value) }}
+                {{ utils.getActivity(npi.activities[i].activity) }}
               </td>
               <td>
                 {{ npi.activities[i].dept }}

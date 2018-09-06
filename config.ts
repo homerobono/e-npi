@@ -81,6 +81,13 @@ export const Globals = Object.freeze({
 		custom: 'Customização'
 	},
 
+	ENTRIES_ARR: [
+		{ value: 'pixel', label : 'Pixel'},
+		{ value: 'oem', label : 'O&M'},
+		{ value: 'internal', label : 'Interno'},
+		{ value: 'custom', label: 'Customização'},
+	],
+
 	MACRO_STAGES : [
 		{ value: 'SCHED', label: 'Cronograma', dept: 'MEP' },
 		{ value: 'LAYOUT', label: 'Esquemático, Layout e Gerber', dept: 'MEP' },

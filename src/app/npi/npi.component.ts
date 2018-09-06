@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
@@ -29,7 +29,8 @@ export class NpiComponent implements OnInit {
   newFormVersion = new Subject<Boolean>()
   newFormVersionFlag: Boolean = false
 
-  path: String
+  postConclusionEdit: Boolean = false
+
   response: any
   date: Date
   npiNumber: Number
@@ -52,8 +53,16 @@ export class NpiComponent implements OnInit {
   ]
 
   afectedFields = [
-    { value: '', label: ''}
+    'LAYOUT',
+    'FIRMWARE',
+    'MECHANICS',
+    'SPECS',
+    'BOM',
+    'QUOTATION',
+    'REQUIRE',
+    'STATIONERY'
   ]
+
 
   currency = createNumberMask({
     prefix: '',
@@ -302,5 +311,19 @@ export class NpiComponent implements OnInit {
     this.submitNpi(finalForm)
   }
 
+  togglePostConclusionEdit() {
+    this.postConclusionEdit = !this.postConclusionEdit
+  }
+
+  enablePostConclusionEditFields(field) {
+    let activitiesFormArray = (this.npiForm.get('activities') as FormArray)
+    for (let i = 0; i < activitiesFormArray.length; i++) {
+      let activity = activitiesFormArray.controls[i] as FormGroup
+      if (activity.get('activity').value == field) {
+        console.log('enabling ' + field)
+        activity.enable()
+      }
+    }
+  }
 }
 

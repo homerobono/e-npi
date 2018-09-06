@@ -51,7 +51,7 @@
             </div>
           </div>
         </div>
-        <div class='col-auto pl-md-0 ml-0'>
+        <div class='col-auto pl-md-0 ml-0' *ngIf='npi.stage != 4'>
           <div class='btn-group'>
             <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage == 2 || npi.stage == 3'
               data-toggle="tooltip" data-placement="top" title="Cancelar NPI">
@@ -84,10 +84,12 @@
               <i class='fa fa-check fa-fw'></i>
             </button>
           </div>
-          <button type="toggleEdit()" class="btn btn-outline-info shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 4'>
+        </div>
+        <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 4'>
+          <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 4 && !postConclusionEdit'>
             Alterar Campos...
           </button>
-          <div class='row'>
+          <div class='form-row' *ngIf='postConclusionEdit'>
             <div class='col-6'>
               <select class="custom-select" id="motivation" #motivation>
                 <option disabled selected value>Selecione um motivo...</option>
@@ -95,16 +97,22 @@
                   {{ mot.label }}
                 </option>
               </select>
-              </div>
-              <div class='col-6'>
-              <select class="custom-select" id="field" *ngIf='motivation.value!=""'>
-                  <option disabled selected value>Selecione o campo afetado...</option>
-                  <option *ngFor="let mot of motivations" value='{{ mot.value }}'>
-                    {{ mot.label }}
-                  </option>
-                </select>
-              <div class='invalid-feedback'>
-                Defina o motivo
+            </div>
+            <div class='col-6' *ngIf='motivation.value!=""'>
+              <div class='form-row'>
+                  <div class='input-group'>
+                    <select class="custom-select" id="field" #selectedAfectedFields>
+                      <option disabled selected value>Selecione o campo afetado...</option>
+                      <option *ngFor="let field of afectedFields" value='{{ field }}'>
+                        {{ utils.getActivity(field) }}
+                      </option>
+                      </select>
+                    <div class="input-group-append">
+                      <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none" [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
+                        <i class='fa fa-chevron-right'></i>
+                      </button>
+                    </div>
+                  </div>
               </div>
             </div>
           </div>

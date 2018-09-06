@@ -32,7 +32,7 @@ export class ActivitiesComponent implements OnInit {
 
     this.isFormEnabled = 
     !this.route.snapshot.data['readOnly'] && 
-      this.npi.stage == 2
+      this.npi.stage == 3
 
     this.insertActivities()
 
@@ -56,6 +56,7 @@ export class ActivitiesComponent implements OnInit {
         {
           _id: activity._id,
           date: activity.date,
+          activity: activity.activity,
           registry: activity.registry,
           annex: activity.annex
           //signature: activity.signature 

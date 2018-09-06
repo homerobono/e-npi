@@ -112,6 +112,7 @@ class Npi {
             if (npiModel.oemActivities != null) {
                 this.oemActivities = npiModel.oemActivities
                 this.oemActivities.forEach(activity => {
+                    if (activity.date)
                     activity.date = new Date(activity.date)
                 });
             }
@@ -125,8 +126,10 @@ class Npi {
             if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
             if (npiModel.activities != null) {
                 this.activities = npiModel.activities
-                npiModel.activities.forEach(activity =>
-                    activity.date = new Date(activity.date));
+                npiModel.activities.forEach(activity => {
+                    if (activity.date)
+                    activity.date = new Date(activity.date)
+                });
             }
             if (npiModel.validation != null) this.validation = npiModel.validation
         }
