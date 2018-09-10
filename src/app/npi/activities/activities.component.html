@@ -27,10 +27,10 @@
               <td>
                 <input type='text' class='form-control' formControlName='date' 
                 aria-describedby="Prazo para atividade {{ npi.activities[i].activity }}" #dp="bsDatepicker"
-                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
+                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors(i+".date")}'>
               </td>
               <td>
-                <textarea class="form-control" rows=1 formControlName='registry'></textarea>
+                <textarea class="form-control" rows=1 formControlName='registry' [ngClass]='{"is-invalid": fieldHasErrors(i+".registry")}'></textarea>
               </td>
               <td>
                 {{ npi.activities[i].annex }}

@@ -12,9 +12,7 @@
                   {"text-primary": titleField != npi.name && 
                     route.snapshot.routeConfig.path.includes("/edit")
                   }'>
-                  {{ 
-                    this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name
-                  }}
+                  {{ this.route.snapshot.routeConfig.path.includes("/edit") ? titleField : npi.name }}
                   <small class='text-secondary'>{{ npi.version > 1 ? ' (v' + npi.version + ')' : '' }}</small>
                 </span>
               </h3>
@@ -53,40 +51,39 @@
         </div>
         <div class='col-auto pl-md-0 ml-0' *ngIf='npi.stage != 4'>
           <div class='btn-group'>
-            <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage == 2 || npi.stage == 3'
-              data-toggle="tooltip" data-placement="top" title="Cancelar NPI">
+            <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage == 2 || npi.stage == 3' data-toggle="tooltip" data-placement="top"
+              title="Cancelar NPI">
               <i class='fa fa-times fa-fw'></i>
             </button>
-            <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2'
-            data-toggle="tooltip" data-placement="top" title="Remover NPI">
+            <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2' data-toggle="tooltip" data-placement="top" title="Remover NPI">
               <i class='fa fa-trash fa-fw'></i>
             </button>
             <button routerLink='edit' class='btn btn-info' *ngIf='!route.snapshot.routeConfig.path.includes("/edit") && npi.stage < 4'
-            data-toggle="tooltip" data-placement="top" title="Editar NPI">
+              data-toggle="tooltip" data-placement="top" title="Editar NPI">
               <i class='fa fa-pencil fa-fw'></i>
             </button>
             <button routerLink='/npi/{{ npi.number }}/' class='btn btn-secondary' *ngIf='route.snapshot.routeConfig.path.includes("/edit")'
-            data-toggle="tooltip" data-placement="top" title="Visualizar NPI">
+              data-toggle="tooltip" data-placement="top" title="Visualizar NPI">
               <i class='fa fa-eye fa-fw'></i>
             </button>
             <button (click)='submitToAnalisys(npiForm.value)' class='btn btn-warning text-white' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage == 1'
-            data-toggle="tooltip" data-placement="top" title="Submeter NPI para Análise Crítica">
+              data-toggle="tooltip" data-placement="top" title="Submeter NPI para Análise Crítica">
               <i class='fa fa-check-circle-o fa-fw'></i>
             </button>
             <button (click)='submitNpi(npiForm.value)' class='btn btn-success' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage < 4'
-            data-toggle="tooltip" data-placement="top" title="Salvar alterações">
+              data-toggle="tooltip" data-placement="top" title="Salvar alterações">
               <i class='fa fa-save fa-fw'></i>
             </button>
-            <button (click)='finalizeNpi()' class='btn btn-primary text-white' 
-            *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage == 3 && 
-            (npiForm.get("validation")!=null && npiForm.get("validation").valid)'
-            data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
+            <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage == 3 && 
+            (npiForm.get("validation")!=null && npiForm.get("validation").valid)' data-toggle="tooltip" data-placement="top"
+              title="Finalizar NPI">
               <i class='fa fa-check fa-fw'></i>
             </button>
           </div>
         </div>
         <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 4'>
-          <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 4 && !postConclusionEdit'>
+          <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm"
+            *ngIf='npi.stage == 4 && !postConclusionEdit'>
             Alterar Campos...
           </button>
           <div class='form-row' *ngIf='postConclusionEdit'>
@@ -100,19 +97,20 @@
             </div>
             <div class='col-6' *ngIf='motivation.value!=""'>
               <div class='form-row'>
-                  <div class='input-group'>
-                    <select class="custom-select" id="field" #selectedAfectedFields>
-                      <option disabled selected value>Selecione o campo afetado...</option>
-                      <option *ngFor="let field of afectedFields" value='{{ field }}'>
-                        {{ utils.getActivity(field) }}
-                      </option>
-                      </select>
-                    <div class="input-group-append">
-                      <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none" [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
-                        <i class='fa fa-chevron-right'></i>
-                      </button>
-                    </div>
+                <div class='input-group'>
+                  <select class="custom-select" id="field" #selectedAfectedFields>
+                    <option disabled selected value>Selecione o campo afetado...</option>
+                    <option *ngFor="let field of afectedFields" value='{{ field }}'>
+                      {{ utils.getActivity(field) }}
+                    </option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
+                      [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
+                      <i class='fa fa-chevron-right'></i>
+                    </button>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -127,11 +125,10 @@
 
         <app-critical [npi]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
 
-        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' 
-        *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
+        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 1 && npi.isCriticallyApproved()'></app-client>
 
         <app-activities [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-activities>
-        
+
         <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 2 && npi.isCriticallyApproved()'></app-validate>
 
         <div class="row align-items-center justify-content-between" *ngIf='!route.snapshot.data["readOnly"]'>
@@ -146,11 +143,11 @@
           <div class='col pr-0'>
             <button type="button" class="btn btn-danger" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='npi.stage == 2 || npi.stage == 3'>
               <span class='fa fa-times-circle'></span>
-                Cancelar NPI
+              Cancelar NPI
             </button>
             <button type="button" class="btn btn-outline-danger shadow-none" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='npi.stage == 0 || npi.stage == 1'>
               <span class='fa fa-trash'></span>
-                Remover NPI
+              Remover NPI
             </button>
           </div>
           <div class='col text-center' *ngIf='npi.stage == 1'>
@@ -164,9 +161,9 @@
               Salvar
             </button>
             <button type="submit" class="btn btn-outline-success" [disabled]="sendingForm" *ngIf='npi.stage < 4 && newFormVersionFlag'>
-                <i class='fa fa-save fa-fw'></i>
-                Salvar Nova Versão
-              </button>
+              <i class='fa fa-save fa-fw'></i>
+              Salvar Nova Versão
+            </button>
             <button type="toggleEdit()" class="btn btn-outline-info shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 4'>
               Alterar Campos...
             </button>
@@ -174,5 +171,33 @@
         </div>
       </form>
     </div>
+  </div>
+</div>
+<div class='fixed-bottom text-right mb-5 mr-4' style='height:0; overflow: visible'>
+  <div class='btn-group shadow' *ngIf='showNpiToolbar' [@slideInOutBottomAnimation]>
+    <button (click)='reset()' class='btn btn-default text-secondary' *ngIf='npi.stage == 2 || npi.stage == 3' data-toggle="tooltip" data-placement="top"
+      title="Desfazer alterações">
+      <i class='fa fa-undo fa-fw'></i>
+    </button>
+    <button [routerLink]="['edit', { scroll : scrollYPosition } ]" class='btn btn-info' *ngIf='!route.snapshot.routeConfig.path.includes("/edit") && npi.stage < 4'
+      data-toggle="tooltip" data-placement="top" title="Editar NPI">
+      <i class='fa fa-pencil fa-fw'></i>
+    </button>
+    <button [routerLink]="['/npi', npi.number, { scroll : scrollYPosition } ]" class='btn btn-secondary' *ngIf='route.snapshot.routeConfig.path.includes("/edit")'
+      data-toggle="tooltip" data-placement="top" title="Visualizar NPI">
+      <i class='fa fa-eye fa-fw'></i>
+    </button>
+    <button (click)='submitToAnalisys(npiForm.value)' class='btn btn-warning text-white' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage == 1'
+      data-toggle="tooltip" data-placement="top" title="Submeter NPI para Análise Crítica">
+      <i class='fa fa-check-circle-o fa-fw'></i>
+    </button>
+    <button (click)='submitNpi(npiForm.value)' class='btn btn-success' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage < 4'
+      data-toggle="tooltip" data-placement="top" title="Salvar alterações">
+      <i class='fa fa-save fa-fw'></i>
+    </button>
+    <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='route.snapshot.routeConfig.path.includes("/edit") && npi.stage == 3 && 
+      (npiForm.get("validation")!=null && npiForm.get("validation").valid)' data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
+      <i class='fa fa-check fa-fw'></i>
+    </button>
   </div>
 </div>

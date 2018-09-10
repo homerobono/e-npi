@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChildren, ViewChild, HostListener, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
@@ -14,11 +14,13 @@ import { Subject, Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { UtilService } from '../services/util.service';
 import { Globals } from 'config';
+import { slideInOutBottomAnimation } from '../_animations/slide_in_out.animation';
 
 @Component({
   selector: 'app-npi',
   templateUrl: './npi.component.html',
-  styleUrls: ['./npi.component.scss']
+  styleUrls: ['./npi.component.scss'],
+  animations: [slideInOutBottomAnimation],
 })
 
 export class NpiComponent implements OnInit {
@@ -30,6 +32,8 @@ export class NpiComponent implements OnInit {
   newFormVersionFlag: Boolean = false
 
   postConclusionEdit: Boolean = false
+
+  showNpiToolbar: Boolean = false
 
   response: any
   date: Date
@@ -45,6 +49,8 @@ export class NpiComponent implements OnInit {
   sendingForm: Boolean = false;
   formSent: Boolean = false;
   editResponse: String
+
+  scrollYPosition: Number
 
   motivations = [
     { value: 'CLIENT', label: 'Solicitação de Cliente' },
@@ -110,6 +116,15 @@ export class NpiComponent implements OnInit {
     )
   }
 
+  @HostListener('window:scroll', ['$event'])
+  handleScrollEvent(e) {
+    this.scrollYPosition = pageYOffset
+    if (pageYOffset > 200) {
+      this.showNpiToolbar = true
+    } else
+      this.showNpiToolbar = false
+  }
+
   ngOnInit() {
     //console.log(this.route.snapshot)
     this.messenger.response.subscribe(
@@ -127,6 +142,13 @@ export class NpiComponent implements OnInit {
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
 
+  scrollBackToPosition(){
+    var y = this.route.snapshot.params.scroll
+    //console.log(y)
+    if (y)
+      setTimeout(() => window.scroll(0,y), 1)
+  }
+
   getNpi(npiNumber) {
     //console.log('getting npi ' + npiNumber)
     this.npiService.getNpi(npiNumber)
@@ -138,6 +160,7 @@ export class NpiComponent implements OnInit {
           this.authorId = npi[0].requester._id
           this.authorName = npi[0].requester.firstName +
             (npi[0].requester.lastName ? ' ' + npi[0].requester.lastName : '')
+          this.scrollBackToPosition()
           console.log(this.npi)
         }, err => {
           this.location.replaceState(null)
@@ -200,10 +223,13 @@ export class NpiComponent implements OnInit {
         (errorFields.length == 1 ? ' campo ' : 's campos ')
       try {
         for (let i = 0; i < errorFields.length; i++) {
-          let prop = errorFields[i]
-          console.log(prop)
-          this.npiForm.controls[prop].setErrors({ 'required': true })
-          invalidFieldsMessage += Globals.LABELS[prop] +
+          let propsArr = errorFields[i].split(".")
+          let control = this.npiForm.get(propsArr[0])
+          for (let i = 1; i < propsArr.length; i++) {
+            control = control.get(propsArr[i])
+          }
+          control.setErrors({ 'required': true })
+          invalidFieldsMessage += Globals.LABELS[propsArr[0]] +
             (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
         }
       } catch (e) {
@@ -325,5 +351,12 @@ export class NpiComponent implements OnInit {
       }
     }
   }
+
+  showYOffset() {
+    try {
+      console.log(pageYOffset)
+    } catch (e) { console.log(e) }
+  }
+
 }
 

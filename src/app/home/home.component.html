@@ -18,49 +18,45 @@
         </div>
       </div>
       <hr>
-      <div *ngIf='!npisList.length && !gettingNpis' class='text-center'>
+      <div *ngIf='!data.length && !gettingNpis' class='text-center'>
         <i class='small text-secondary'>
           Não há NPI's cadastradas no sistema. Clique no botão acima para criar novas NPI's.</i>
       </div>
-      <div *ngIf='!npisList || gettingNpis'>
+      <div *ngIf='gettingNpis'>
         <div class='row justify-content-center'>
           <i class='fa fa-circle-o-notch fa-spin fa-4x text-primary '></i>
           <div class='w-100'></div>
           <div>Carregando NPI's...</div>
         </div>
       </div>
-      <div *ngIf='npisList.length && !gettingNpis'>
-        <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
+      <div *ngIf='!gettingNpis'>
+        <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top table-header'>
           <div class='col-lg-1 col-md-2 col'>
-            <div class='row'>
-              <div class='col-auto pr-3'>
-                <b>#</b>
-              </div>
-              <div class='sort-btns p-0 m-0 clearfix'>
-                <div class='fa fa-sort-up float-left sort-btn sort-up' data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
-                <div class='fa fa-sort-down float-left sort-btn sort-down' data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
-              </div>
-            </div>
+            <b class='sort-header' (click)='toggleSortBy("number")'>#</b>
+            <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortOrder==1 && sortParam == "number"'></span>
+            <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortOrder==-1 && sortParam == "number"'></span>
           </div>
           <div class='col'>
-            <div class='row'>
-              <div class='col-auto pr-3'>
-                <b>Nome</b>
-              </div>
-              <div class='sort-btns p-0 m-0 clearfix'>
-                <div class='fa fa-sort-up float-left sort-btn sort-up' data-toggle="tooltip" data-placement="top" title="Ordem ascendente pelo nº"></div>
-                <div class='fa fa-sort-down float-left sort-btn sort-down' data-toggle="tooltip" data-placement="top" title="Ordem descendente pelo nº"></div>
-              </div>
-            </div>
+            <b class='sort-header' (click)='toggleSortBy("name")'>Nome</b>
+            <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome" *ngIf='sortOrder==1 && sortParam == "name"'></span>
+            <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome" *ngIf='sortOrder==-1 && sortParam == "name"'></span>
           </div>
           <div class='col col-lg-2 col-md-2 col'>
-            <b>Tipo</b>
+            <b class='sort-header' (click)='toggleSortBy("entry")'>Entrada</b>
+            <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortOrder==1 && sortParam == "entry"'></span>
+            <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortOrder==-1 && sortParam == "entry"'></span>
           </div>
           <div class='col'>
-            <b>Status</b>
+            <b class='sort-header' (click)='toggleSortBy("stage")'>Status</b>
+            <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por status" *ngIf='sortOrder==1 && sortParam == "stage"'></span>
+            <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente status" *ngIf='sortOrder==-1 && sortParam == "stage"'></span>
           </div>
           <div class='col-lg-1 col-md-2 col-md col'>
-            <b>Criado em</b>
+            <b class='sort-header' (click)='toggleSortBy("created")'>Criado em</b>
+            <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por data de criação"
+              *ngIf='sortOrder==1 && sortParam == "created"'></span>
+            <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente por data de criação"
+              *ngIf='sortOrder==-1 && sortParam == "created"'></span>
           </div>
           <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start invisible'>
             <a class='pl-1 pt-2 pb-2 pr-0'>
@@ -71,28 +67,28 @@
             </a>
           </div>
         </div>
-        
-        <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top'>
+
+        <div class='row align-items-center m-0 pr-0 d-none d-md-flex sticky-top filters-header' [formGroup]='filterForm'>
           <div class='col-lg-1 col-md-2 col'>
-            <input type=text class='form-control'>
+            <input type=text class='form-control invisible'>
           </div>
           <div class='col'>
-            <input type=text class='form-control'>
+            <input type=text class='form-control' formControlName='name'>
           </div>
           <div class='col col-lg-2 col-md-2 col'>
-            <select type=text class='form-control'>
+            <select type=text class='form-control' formControlName='entry'>
               <option selected value></option>
               <option *ngFor='let entry of utils.getEntriesArray(); index as i' value='{{ entry.value }}'>{{ entry.label }}</option>
             </select>
           </div>
           <div class='col'>
-            <select type=text class='form-control'>
+            <select type=text class='form-control' formControlName='stage'>
               <option selected value></option>
               <option *ngFor='let status of utils.getStatuses(); index as i' value='{{ i }}'>{{ status }}</option>
             </select>
           </div>
           <div class='col-lg-1 col-md-2 col-md col'>
-            <input type=text class='form-control'>
+            <input type=text class='form-control' formControlName='created'>
           </div>
           <div class='col-auto ml-auto mr-0 pr-0 d-none d-md-block justify-content-right align-self-start invisible'>
             <a class='pl-1 pt-2 pb-2 pr-0'>
@@ -178,4 +174,15 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class='fixed-top text-right mt-5 pt-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("top")' [@fadeAnimation]>
+    <i class='fa fa-chevron-up m-auto p-auto' style='overflow: visible'></i>
+  </button>
+</div>
+<div class='fixed-bottom text-right mb-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToBottomButton'>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("bottom")' [@fadeAnimation]>
+    <i class='fa fa-chevron-down m-auto p-auto' style='overflow: visible'></i>
+  </button>
 </div>

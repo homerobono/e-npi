@@ -30,8 +30,8 @@ export class ActivitiesComponent implements OnInit {
 
   ngOnInit() {
 
-    this.isFormEnabled = 
-    !this.route.snapshot.data['readOnly'] && 
+    this.isFormEnabled =
+      !this.route.snapshot.data['readOnly'] &&
       this.npi.stage == 3
 
     this.insertActivities()
@@ -94,6 +94,12 @@ export class ActivitiesComponent implements OnInit {
 
   updateParentForm() {
     this.npiFormOutput.emit(this.activitiesFormGroup)
+  }
+
+  fieldHasErrors(field) {
+    let fieldsArr = field.split(".")
+    var controls = (this.activitiesFormGroup.get('activities') as FormArray)
+    return (controls.get(fieldsArr[0]) as FormGroup).get(fieldsArr[1]).hasError('required')
   }
 
 }

@@ -4,13 +4,13 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
 import { Observable, Observer } from 'rxjs/Rx';
-import { slideInOutAnimation, scaleUpDownAnimation } from '../_animations/slide_in_out.animation'
+import { slideInOutTopAnimation, scaleUpDownAnimation } from '../_animations/slide_in_out.animation'
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  animations: [slideInOutAnimation, scaleUpDownAnimation],
+  animations: [slideInOutTopAnimation, scaleUpDownAnimation],
 })
 
 export class LoginComponent {

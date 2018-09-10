@@ -189,10 +189,10 @@
               <td>{{ npi.oemActivities[i].dept }}</td>
               <td>
                 <input type='text' class='form-control' formControlName='date' aria-describedby="Prazo para Atividade O&M {{ i }}" #dp="bsDatepicker"
-                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig'>
+                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("oemActivities."+i+".date")}'>
               </td>
               <td>
-                <textarea class="form-control" rows=1 formControlName='comment'></textarea>
+                <textarea class="form-control" rows=1 formControlName='comment' [ngClass]='{"is-invalid": fieldHasErrors("oemActivities."+i+".comment")}'></textarea>
               </td>
               <td>
                 <i class='fa fa-upload m-0 p-0 pr-1'></i>

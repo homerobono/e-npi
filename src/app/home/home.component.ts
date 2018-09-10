@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -6,18 +6,21 @@ import { MessageService } from '../services/message.service';
 import { NpiService } from '../services/npi.service';
 import Npi from '../models/npi.model';
 import { UtilService } from '../services/util.service';
-import { Globals } from '../../../config'
+import { Globals } from '../../../config';
+import { fadeAnimation } from '../_animations/fade_in_out.animation'
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  animations: [fadeAnimation],
 })
 export class HomeComponent implements OnInit {
 
   userLevel: Number = 0
   response = null
   npisList: Npi[]
+  data: Array<any>
 
   sortParam: String
   sortOrder: Number
@@ -25,29 +28,23 @@ export class HomeComponent implements OnInit {
   gettingNpis: Boolean = false
   manualRefresh: Boolean = false
 
-  public rows: Array<any> = [];
-  public columns: Array<any> = [
-    { title: '#', name: 'number'},
-    { title: 'Name', name: 'name', filtering: { filterString: '', placeholder: 'Filtrar por nome' } },
-    { title: 'Entrada', name: 'entry', filtering: { filterString: '', placeholder: 'Filtrar por entrada' } },
-    { title: 'Status', name: 'stage' },
-  ];
+  filterForm: FormGroup
+
+  scrollYPosition: Number
+  showGoToBottomButton: Boolean = true
+  showGoToTopButton: Boolean
+
+  ///////////////////////
+
   page = 1;
-  public itemsPerPage: number = 10;
+  public itemsPerPage: number = 30;
   public maxSize: number = 5;
   public numPages: number = 1;
   public length: number = 0;
 
-  public config: any = {
-    paging: true,
-    sorting: { columns: this.columns },
-    filtering: { filterString: '' },
-    className: ['table-striped', 'table-bordered']
-  };
-
-  private data: Array<Npi> = [];
-
-  constructor(private npiService: NpiService,
+  constructor(
+    private fb: FormBuilder,
+    private npiService: NpiService,
     private router: Router,
     private authService: AuthService,
     private messenger: MessageService,
@@ -57,14 +54,38 @@ export class HomeComponent implements OnInit {
     this.sortParam = 'number'
     this.sortOrder = -1
     this.npisList = []
-
     this.data = []
+
+    this.filterForm = fb.group({
+      name: null,
+      entry: null,
+      stage: null,
+      created: null
+    })
+
+    this.filterForm.valueChanges.subscribe(
+      res => this.onChangeFilter(res),
+    )
   }
 
   ngOnInit(): void {
     console.log('getting npis');
     this.getNpis()
     console.log(this.npisList)
+    //console.log('y: ' + pageYOffset)
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  handleScrollEvent(e) {
+    this.scrollYPosition = pageYOffset
+    if (pageYOffset > 200) {
+      this.showGoToTopButton = true
+    } else
+      this.showGoToTopButton = false
+    if (pageYOffset < outerHeight - 160) {
+      this.showGoToBottomButton = true
+    } else
+      this.showGoToBottomButton = false
   }
 
   getNpis() {
@@ -74,20 +95,50 @@ export class HomeComponent implements OnInit {
         this.npisList = npis.sort(
           this.sortBy(this.sortParam, this.sortOrder)
         );
-
-        this.data = npis
-
+        this.data = this.npisList
         this.gettingNpis = false;
         this.manualRefresh = false;
-        this.length = this.data.length;
-        console.log(this.data)
-        this.onChangeTable(this.config);
       })
+  }
+
+  onChangeFilter(filterFields) {
+    //console.log(filterFields)
+    let filteredData: Array<any> = this.data;
+    for (let filterField in filterFields) {
+      let filterString = filterFields[filterField]
+      //console.log(filterString)
+      if (filterString != null && filterString != '') {
+        //console.log('filtering')
+        try {
+          filteredData = filteredData.filter((item: any) => {
+            return item[filterField].toString().match(new RegExp(filterString, 'i'));
+          });
+        } catch (e) {
+          console.log(e)
+        }
+      }
+    }
+    this.npisList = filteredData
+    console.log(filteredData)
+    //return filteredData
+  }
+
+  toggleSortBy(property) {
+    let sortedData: Array<any> = this.npisList;
+    //console.log(this.sortParam)
+    if (this.sortParam == property)
+      this.sortOrder = (this.sortOrder as number - 2) % 3 + 1
+    else
+      this.sortOrder = -1
+    this.sortParam = property
+    sortedData = sortedData.sort(
+      this.sortBy(property, this.sortOrder)
+    );
   }
 
   sortBy(property, sortOrder) {
     this.sortOrder = sortOrder
-    console.log(sortOrder ? 'Up' : 'Down')
+    //console.log(sortOrder ? sortOrder > 0 ? 'Up' : 'Down' : 'Unordered')
     return function (a, b) {
       var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
@@ -154,8 +205,16 @@ export class HomeComponent implements OnInit {
     this.getNpis();
   }
 
+  scrollTo(where) {
+    if (where == 'top')
+      window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+    else if (where == 'bottom')
+      window.scrollTo({ left: 0, top: outerHeight, behavior: 'smooth' });
+  }
+
+
   ////////////////////////
-  ////////////////////////
+  /*////////////////////////
 
   public changePage(page: any, data: Array<any> = this.data): Array<any> {
     let start = (page.page - 1) * page.itemsPerPage;
@@ -249,5 +308,6 @@ export class HomeComponent implements OnInit {
   public onCellClick(data: any): any {
     console.log(data);
   }
+  */
 
 }

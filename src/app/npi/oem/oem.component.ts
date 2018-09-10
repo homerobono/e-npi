@@ -145,7 +145,12 @@ export class OemComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    return this.npiForm.controls[field].hasError('required')
+    let fieldsArr = field.split(".")
+    let control = this.npiForm.get(fieldsArr[0])
+    for (let i = 1; i < fieldsArr.length; i++) {
+      control = control.get(fieldsArr[i])
+    }
+    return control.hasError('required')
   }
 
   updateParentForm() {

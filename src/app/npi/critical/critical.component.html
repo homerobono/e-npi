@@ -31,7 +31,11 @@
               </label>
             </td>
             <td>
-              <textarea class="form-control" rows=1 formControlName='comment'></textarea>
+              <textarea class="form-control" rows=1 formControlName='comment' 
+              [ngClass]='{"is-invalid": fieldHasErrors("critical."+i+".comment")}'></textarea>
+              <div class='invalid-feedback h-auto'>
+                É necessário incluir uma justificativa ao recusar uma proposta
+              </div>
             </td>
             <td>
               <div class='radio-level-legend'><i>{{ signatures[i] }}</i></div>
