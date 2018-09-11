@@ -1,11 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subject} from 'rxjs/Rx';
 import { Globals } from 'config';
 
 import Npi from '../models/npi.model';
-import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/do';
+import { timer, BehaviorSubject } from 'rxjs';
+import { concatMap, map, merge, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,19 @@ export class NpiService {
   npisUrl = `${this.api_url}/npis`;
   npiUrl = `${this.api_url}/npi/`;
 
-  constructor(private http: HttpClient) { }
+  npisList: Observable<Npi[]>
+  manualRefresh: BehaviorSubject<Boolean>
+
+  constructor(private http: HttpClient) {
+    this.npisList = new BehaviorSubject([])
+    this.manualRefresh = new BehaviorSubject(false)
+    this.npisList = this.manualRefresh.pipe(
+      switchMap(() => timer(0, 10000).pipe(
+        concatMap(() => this.getNpis()),
+        map((res: Npi[]) => res)
+      ))
+    )
+  }
 
   getNpi(npiNumber: Number): Observable<Npi[]> {
     return this.http.get(this.npiUrl + npiNumber)
@@ -40,10 +54,10 @@ export class NpiService {
   getNpis(): Observable<Npi[]> {
     return this.http.get(this.npisUrl)
       .map(res => {
-        console.log(res)
+        //console.log(res)
         var Npis: Npi[] = []
         res['data'].forEach(npi => {
-          console.log('converting npis')
+          //console.log('converting npis')
           try {
             var transNpi = new Npi(npi)
             Npis.push(transNpi)
@@ -180,7 +194,7 @@ export class NpiService {
               //if (npiForm.inStockDate == null || npiForm.inStockDate == '')
               //model.inStockDate = null
               //console.log('date: ')
-     */ 
+     */
     }
 
     console.log(model.inStockDate)

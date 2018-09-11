@@ -64,8 +64,10 @@ export class HomeComponent implements OnInit {
     })
 
     this.filterForm.valueChanges.subscribe(
-      res => this.onChangeFilter(res),
+      res => this.applyChangeFilter(res),
     )
+
+    npiService.manualRefresh.subscribe(val => this.manualRefresh = val)
   }
 
   ngOnInit(): void {
@@ -90,18 +92,19 @@ export class HomeComponent implements OnInit {
 
   getNpis() {
     this.gettingNpis = true;
-    this.npiService.getNpis()
-      .subscribe(npis => {
+    
+    this.npiService.npisList.subscribe(
+      npis => {
         this.npisList = npis.sort(
           this.sortBy(this.sortParam, this.sortOrder)
         );
-        this.data = this.npisList
+        this.data = npis
         this.gettingNpis = false;
         this.manualRefresh = false;
       })
   }
 
-  onChangeFilter(filterFields) {
+  applyChangeFilter(filterFields) {
     //console.log(filterFields)
     let filteredData: Array<any> = this.data;
     for (let filterField in filterFields) {
@@ -201,8 +204,7 @@ export class HomeComponent implements OnInit {
   }
 
   refresh() {
-    this.manualRefresh = true
-    this.getNpis();
+    this.npiService.manualRefresh.next(true)
   }
 
   scrollTo(where) {

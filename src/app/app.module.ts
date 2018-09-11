@@ -8,7 +8,6 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { TextMaskModule } from 'angular2-text-mask';
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
 import { ClickOutsideModule } from 'ng4-click-outside';
-import { Ng2TableModule } from 'ng2-table/ng2-table';
 import { PaginationModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
@@ -83,7 +82,6 @@ import { CompleteRegistrationComponent } from './complete-registration/complete-
     BsDatepickerModule.forRoot(),
     FileUploadModule,
     ClickOutsideModule,
-    Ng2TableModule,
     PaginationModule.forRoot()
   ],
   providers: [
