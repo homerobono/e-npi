@@ -1,44 +1,43 @@
 <div class="form-row" [formGroup]='activitiesFormGroup' *ngIf='npi.stage>2'>
-    <div class='col'>
-      <label for='activities' class=col>
-        <center>
-          <h4>Etapas Macro do Projeto</h4>
-        </center>
-      </label>
-      <div class='table-responsive' id='activities' formArrayName='activities'>
-        <table class="table table-bordered">
-          <thead class='thead-light'>
-            <tr>
-              <th scope="col">Atividade</th>
-              <th scope="col">Responsável</th>
-              <th scope="col">Prazo</th>
-              <th scope="col">Documento/Registro</th>
-              <th scope="col">Arquivos</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
-              <td>
-                {{ utils.getActivity(npi.activities[i].activity) }}
-              </td>
-              <td>
-                {{ npi.activities[i].dept }}
-              </td>
-              <td>
-                <input type='text' class='form-control' formControlName='date' 
-                aria-describedby="Prazo para atividade {{ npi.activities[i].activity }}" #dp="bsDatepicker"
-                  bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors(i+".date")}'>
-              </td>
-              <td>
-                <textarea class="form-control" rows=1 formControlName='registry' [ngClass]='{"is-invalid": fieldHasErrors(i+".registry")}'></textarea>
-              </td>
-              <td>
-                {{ npi.activities[i].annex }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class='col'>
+    <label for='activities' class=col>
+      <center>
+        <h4>Etapas Macro do Projeto</h4>
+      </center>
+    </label>
+    <div class='table-responsive' id='activities' formArrayName='activities'>
+      <table class="table table-bordered">
+        <thead class='thead-light'>
+          <tr>
+            <th scope="col">Atividade</th>
+            <th scope="col">Responsável</th>
+            <th scope="col">Prazo</th>
+            <th scope="col">Documento/Registro</th>
+            <th scope="col">Arquivos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
+            <td>
+              {{ utils.getActivity(npi.activities[i].activity) }}
+            </td>
+            <td>
+              {{ npi.activities[i].dept }}
+            </td>
+            <td>
+              <input type='text' class='form-control' formControlName='date' aria-describedby="Prazo para atividade {{ npi.activities[i].activity }}"
+                #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors(i+".date")}'>
+            </td>
+            <td>
+              <textarea class="form-control" rows=1 formControlName='registry' [ngClass]='{"is-invalid": fieldHasErrors(i+".registry")}'></textarea>
+            </td>
+            <td>
+              {{ npi.activities[i].annex }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
-  <hr>
+</div>
+<hr>

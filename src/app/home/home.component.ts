@@ -19,11 +19,10 @@ export class HomeComponent implements OnInit {
 
   userLevel: Number = 0
   response = null
-  npisList: Npi[]
+  filteredData: Npi[]
   data: Array<any>
 
-  sortParam: String
-  sortOrder: Number
+  sortParams: Array<any>
 
   gettingNpis: Boolean = false
   manualRefresh: Boolean = false
@@ -51,9 +50,14 @@ export class HomeComponent implements OnInit {
     private utils: UtilService,
   ) {
     this.userLevel = this.authService.getUserLevel();
-    this.sortParam = 'number'
-    this.sortOrder = -1
-    this.npisList = []
+    this.sortParams =
+      [{ field: 'number', order: 1 },
+      { field: 'name', order: 1 },
+      { field: 'entry', order: 1 },
+      { field: 'stage', order: 1 },
+      { field: 'created', order: 1 }]
+
+    this.filteredData = []
     this.data = []
 
     this.filterForm = fb.group({
@@ -64,7 +68,7 @@ export class HomeComponent implements OnInit {
     })
 
     this.filterForm.valueChanges.subscribe(
-      res => this.applyChangeFilter(res),
+      res => this.applyFilter(res),
     )
 
     npiService.manualRefresh.subscribe(val => this.manualRefresh = val)
@@ -73,7 +77,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     console.log('getting npis');
     this.getNpis()
-    console.log(this.npisList)
+    console.log(this.filteredData)
     //console.log('y: ' + pageYOffset)
   }
 
@@ -92,21 +96,21 @@ export class HomeComponent implements OnInit {
 
   getNpis() {
     this.gettingNpis = true;
-    
     this.npiService.npisList.subscribe(
       npis => {
-        this.npisList = npis.sort(
-          this.sortBy(this.sortParam, this.sortOrder)
+        this.data = npis.sort(
+          this.sortBy(this.sortParams)
         );
+        this.applyFilter(this.filterForm.value)
         this.data = npis
         this.gettingNpis = false;
         this.manualRefresh = false;
       })
   }
 
-  applyChangeFilter(filterFields) {
+  applyFilter(filterFields) {
     //console.log(filterFields)
-    let filteredData: Array<any> = this.data;
+    let filteredData: Array<Npi> = this.data;
     for (let filterField in filterFields) {
       let filterString = filterFields[filterField]
       //console.log(filterString)
@@ -121,30 +125,42 @@ export class HomeComponent implements OnInit {
         }
       }
     }
-    this.npisList = filteredData
-    console.log(filteredData)
+    this.filteredData = filteredData
+    //console.log(filteredData)
     //return filteredData
   }
 
   toggleSortBy(property) {
-    let sortedData: Array<any> = this.npisList;
     //console.log(this.sortParam)
-    if (this.sortParam == property)
-      this.sortOrder = (this.sortOrder as number - 2) % 3 + 1
+    let clickedParam = this.sortParams[0]
+    if (clickedParam.field == property)
+      clickedParam.order = (clickedParam.order as number - 2) % 3 + 1
     else
-      this.sortOrder = -1
-    this.sortParam = property
-    sortedData = sortedData.sort(
-      this.sortBy(property, this.sortOrder)
+      clickedParam.order = -1
+
+    console.log(this.sortParams)
+    let i = this.sortParams.findIndex(o => o.field === property)
+    console.log(i)
+    let sortParam = this.sortParams[i]
+    this.sortParams.splice(i, 1)
+    this.sortParams.unshift(sortParam)
+    console.log(this.sortParams)
+
+    this.data.sort(
+      this.sortBy(this.sortParams)
     );
+    this.applyFilter(this.filterForm.value)
   }
 
-  sortBy(property, sortOrder) {
-    this.sortOrder = sortOrder
+  sortBy(properties: Array<any>) {
     //console.log(sortOrder ? sortOrder > 0 ? 'Up' : 'Down' : 'Unordered')
     return function (a, b) {
-      var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
-      return result * sortOrder;
+      for (let i = 0; i < properties.length; i++) {
+        let param = properties[i]
+        if (a[param.field] > b[param.field]) return (1 * param.order)
+        if (a[param.field] < b[param.field]) return (-1 * param.order)
+      }
+      return 0
     }
   }
 
