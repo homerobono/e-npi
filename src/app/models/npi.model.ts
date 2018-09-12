@@ -119,7 +119,7 @@ class Npi {
                 this.oemActivities = npiModel.oemActivities
                 this.oemActivities.forEach(activity => {
                     if (activity.date)
-                    activity.date = new Date(activity.date)
+                        activity.date = new Date(activity.date)
                 });
             }
             if (npiModel.critical != null) {
@@ -134,7 +134,7 @@ class Npi {
                 this.activities = npiModel.activities
                 npiModel.activities.forEach(activity => {
                     if (activity.date)
-                    activity.date = new Date(activity.date)
+                        activity.date = new Date(activity.date)
                 });
             }
             if (npiModel.validation != null) this.validation = npiModel.validation
@@ -168,6 +168,16 @@ class Npi {
                     return analisys.status == 'accept'
                 }
             )
+        }
+    }
+
+    public isApproved(): Boolean {
+        if (this.critical) {
+            if (this.isCriticallyApproved())
+                if (this.entry == 'oem')
+                    return (this.clientApproval && this.clientApproval.approval == 'accept')
+                else
+                    return true
         }
     }
 }

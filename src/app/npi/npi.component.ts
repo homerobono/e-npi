@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 
 import { NpiService } from '../services/npi.service';
 import { AuthService } from '../services/auth.service';
@@ -15,6 +17,8 @@ import 'rxjs/add/operator/map';
 import { UtilService } from '../services/util.service';
 import { Globals } from 'config';
 import { slideInOutBottomAnimation } from '../_animations/slide_in_out.animation';
+import { FileManagerComponent } from '../file-manager/file-manager.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-npi',
@@ -91,6 +95,8 @@ export class NpiComponent implements OnInit {
   datePickerConfig: Partial<BsDatepickerConfig>;
   npiForm: FormGroup;
 
+  bsModalRef: BsModalRef
+
   constructor(
     private fb: FormBuilder,
     private npiService: NpiService,
@@ -100,7 +106,9 @@ export class NpiComponent implements OnInit {
     private messenger: MessageService,
     private localeService: BsLocaleService,
     private location: Location,
-    private utils: UtilService
+    private utils: UtilService,
+    private modalService: BsModalService,
+    public dialog: MatDialog,
   ) {
     console.log('constructed again')
     this.npi = new Npi(null)
@@ -334,7 +342,7 @@ export class NpiComponent implements OnInit {
       "Tem certeza que deseja concluir a NPI? Depois de finalizada somente alguns campos poderão ser editados, mediante justificativa e posterior análise.")
     ) return;
     var finalForm = this.npiForm.value
-    finalForm.stage = 4
+    finalForm.stage = 5
     this.submitNpi(finalForm)
   }
 
@@ -357,6 +365,14 @@ export class NpiComponent implements OnInit {
     try {
       console.log(pageYOffset)
     } catch (e) { console.log(e) }
+  }
+
+  openFileManager(){
+    const initialState = {
+      title: 'Modal with component'
+    };
+    let dialogRef = this.dialog.open(FileManagerComponent);
+
   }
 
 }

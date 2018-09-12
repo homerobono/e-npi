@@ -102,3 +102,31 @@
 .table-header {
     background-color: white
 }
+
+.active-filter {
+    filter: opacity(1) !important;
+}
+
+.status-order {
+    filter: opacity(0.3);
+    font-size: 0.6rem; 
+    display: inline;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.status-order:hover {
+    filter: opacity(1);
+    cursor: pointer;
+}
+
+.status-order span {
+    vertical-align: middle; 
+    margin: 0;
+    padding: 0;
+}
+
+.status-order span:hover {
+    font-size: 1rem; 
+}

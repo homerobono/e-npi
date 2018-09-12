@@ -35,7 +35,7 @@ export class ClientComponent implements OnInit {
   ngOnInit() {
     this.isFormEnabled = 
       !this.route.snapshot.data['readOnly'] && 
-      this.npi.stage == 2 &&
+      this.npi.stage == 3 &&
       this.npi.isCriticallyApproved()
       
     if (!this.isFormEnabled) 

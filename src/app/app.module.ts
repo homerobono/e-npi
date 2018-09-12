@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-import { DatepickerModule, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { DatepickerModule, BsDatepickerModule, ModalModule } from 'ngx-bootstrap';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,6 +9,10 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { PaginationModule } from 'ngx-bootstrap';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { RoutingModule } from './routing.module';
+import { FileManagerModule } from './file-manager/file-manager.module'
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -25,7 +29,6 @@ import { ErrorComponent } from './error/error.component';
 import { HomeComponent } from './home/home.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { NavButtonsComponent } from './nav-buttons/nav-buttons.component';
-import { RoutingModule } from './routing.module';
 import { MessageService } from './services/message.service';
 import { NpiService } from './services/npi.service';
 import { UtilService } from './services/util.service';
@@ -41,6 +44,7 @@ import { ActivitiesComponent } from './npi/activities/activities.component'
 import { ValidateComponent } from './npi/validate/validate.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
+import { FileManagerComponent } from './file-manager/file-manager.component';
 
 @NgModule({
   declarations: [
@@ -75,14 +79,17 @@ import { CompleteRegistrationComponent } from './complete-registration/complete-
     FormsModule, 
     ReactiveFormsModule,
     BrowserModule, BrowserAnimationsModule,
-    RoutingModule, 
+    ModalModule.forRoot(),
     JwtModule,
     TextMaskModule,
     DatepickerModule.forRoot(),
     BsDatepickerModule.forRoot(),
     FileUploadModule,
     ClickOutsideModule,
-    PaginationModule.forRoot()
+    PaginationModule.forRoot(),
+    RoutingModule,
+    FileManagerModule,
+    MatDialogModule
   ],
   providers: [
     UsersService,
@@ -97,6 +104,7 @@ import { CompleteRegistrationComponent } from './complete-registration/complete-
     },
   ],
   schemas: [ NO_ERRORS_SCHEMA ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [FileManagerComponent]
 })
 export class AppModule { }

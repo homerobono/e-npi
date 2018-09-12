@@ -36,94 +36,116 @@
                 <thead class='thead-light' class='sticky-top filters-header'>
                   <tr [formGroup]='filterForm'>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("number")'>#</b>
-                      <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortParams[0].field== "number" && sortParams[0].order==1'></span>
-                      <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortParams[0].field== "number" && sortParams[0].order==-1'></span>
+                      <div class='sort-header' (click)='toggleSortBy("number")'>
+                        <b>#</b>
+                        <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortParams[0].field=="number" && sortParams[0].order==1'></span>
+                        <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortParams[0].field=="number" && sortParams[0].order==-1'></span>
+                      </div>
                     </th>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("name")'>Nome</b>
-                      <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome" *ngIf='sortParams[0].field== "name" && sortParams[0].order==1'></span>
-                      <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome" *ngIf='sortParams[0].field== "name" && sortParams[0].order==-1'></span>
+                      <div class='sort-header' (click)='toggleSortBy("name")'>
+                        <b>Nome</b>
+                        <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome" *ngIf='sortParams[0].field=="name" && sortParams[0].order==1'></span>
+                        <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome" *ngIf='sortParams[0].field=="name" && sortParams[0].order==-1'></span>
+                      </div>
                       <input type=text class='form-control' formControlName='name'>
                     </th>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("entry")'>Entrada</b>
-                      <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortParams[0].field== "entry" && sortParams[0].order==1'></span>
-                      <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortParams[0].field== "entry" && sortParams[0].order==-1'></span>
+                      <div class='sort-header' (click)='toggleSortBy("entry")'>
+                        <b>Entrada</b>
+                        <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada" *ngIf='sortParams[0].field=="entry" && sortParams[0].order==1'></span>
+                        <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada" *ngIf='sortParams[0].field=="entry" && sortParams[0].order==-1'></span>
+                      </div>
                       <select type=text class='form-control' formControlName='entry'>
                         <option selected value></option>
                         <option *ngFor='let entry of utils.getEntriesArray(); index as i' value='{{ entry.value }}'>{{ entry.label }}</option>
                       </select>
                     </th>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("stage")'>Status</b>
-                      <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por status" *ngIf='sortParams[0].field== "stage" && sortParams[0].order==1'></span>
-                      <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente status" *ngIf='sortParams[0].field== "stage" && sortParams[0].order==-1'></span>
+                      <div class='sort-header' (click)='toggleSortBy("stage")' style='display: inline;'>
+                        <b>Status</b>
+                        <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome" *ngIf='sortParams[0].field=="stage" && sortParams[0].order==1'></span>
+                        <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome" *ngIf='sortParams[0].field=="stage" && sortParams[0].order==-1'></span>
+                      </div>
+                      <div class='status-order' [ngClass]='{"active-filter":sortParams[0].field=="stage"}'>
+                        <span class='fa fa-circle fa-xs' data-toggle="tooltip" data-placement="top" title="{{ utils.getStatus(stat) }} no topo" *ngFor='let stat of stageOrder; index as i'
+                          (click)='toggleStage(i)' [ngClass]='{
+                            "text-danger" : stat == 0,
+                            "text-secondary" : stat == 1,
+                            "text-orange" : stat == 2,
+                            "text-purple" : stat == 3,
+                            "text-success" : stat == 4,
+                            "text-info" : stat == 5
+                            }'>
+                        </span>
+                      </div>
                       <select type=text class='form-control' formControlName='stage'>
                         <option selected value></option>
                         <option *ngFor='let status of utils.getStatuses(); index as i' value='{{ i }}'>{{ status }}</option>
                       </select>
                     </th>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("updated")'>Última Modificação</b>
-                      <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por data de criação"
-                        *ngIf='sortParams[0].field== "updated" && sortParams[0].order==1'></span>
-                      <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente por data de criação"
-                        *ngIf='sortParams[0].field== "updated" && sortParams[0].order==-1'></span>
+                      <div (click)='toggleSortBy("updated")' class='sort-header'>
+                        <b>Última Modificação</b>
+                        <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por data de criação"
+                          *ngIf='sortParams[0].field== "updated" && sortParams[0].order==1'></span>
+                        <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente por data de criação"
+                          *ngIf='sortParams[0].field== "updated" && sortParams[0].order==-1'></span>
+                      </div>
                       <input type=text class='form-control' formControlName='updated'>
                     </th>
                     <th scope='col'>
-                      <i class='fa fa-undo fa-2x text-secondary' (click)='filterForm.reset()' *ngIf='filterForm.dirty'
-                      data-toggle="tooltip" data-placement="top" title="Limpar filtros" style='cursor: pointer; vertical-align: middle'></i>
+                      <i class='fa fa-undo fa-2x text-secondary' (click)='filterForm.reset()' *ngIf='filterForm.dirty' data-toggle="tooltip" data-placement="top"
+                        title="Limpar filtros" style='cursor: pointer; vertical-align: middle'></i>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor='let npi of filteredData; index as i' class='npi' routerLink='/npi/{{ npi.number }}' >
-                    <th>
+                  <tr *ngFor='let npi of filteredData; index as i' class='npi' routerLink='/npi/{{ npi.number }}' [style.opacity]='npi.stage > 1 ? 1 : 0.6'>
+                    <th [ngClass]='{"strike": !npi.stage}'>
                       {{ npi.number }}
                     </th>
-                    <td>
+                    <td [ngClass]='{"strike": !npi.stage}'>
                       {{ npi.name }}
                     </td>
                     <td>
                       <h5>
-                      <span class='badge' [ngClass]='{
+                        <span class='badge' [ngClass]='{
                           "badge-success" : npi.entry=="pixel",
                           "badge-purple" : npi.entry=="oem",
                           "badge-secondary" : npi.entry=="internal",
                           "badge-info" : npi.entry=="custom"
                           }'>
-                        {{ utils.getEntry(npi.entry) }}
-                      </span></h5>
+                          {{ utils.getEntry(npi.entry) }}
+                        </span>
+                      </h5>
                     </td>
                     <td>
-                    <div [ngClass]='{
+                      <div [ngClass]='{
                       "text-danger" : npi.stage == 0,
                       "text-secondary" : npi.stage == 1,
                       "text-orange" : npi.stage == 2,
-                      "text-success" : npi.stage == 3,
-                      "text-info" : npi.stage == 4
+                      "text-purple" : npi.stage == 3,
+                      "text-success" : npi.stage == 4,
+                      "text-info" : npi.stage == 5
                       }'>
-                      <i style="font-size: 0.8rem; vertical-align: middle" class='fa fa-circle fa-xs'></i>
-                      <i> {{ utils.getStatus(npi.stage) }} </i>
-                    </div>
-                    <div *ngIf='npi.stage == 2'>
-                      <i style="vertical-align: middle" class='fa fa-2x' *ngFor='let crit of npi.critical; index as i'
-                      data-toggle="tooltip" data-placement="top" title="{{ utils.getDepartment(crit.dept) }}"
-                      [ngClass]='{
+                        <i style="font-size: 0.8rem; vertical-align: middle" class='fa fa-circle fa-xs'></i>
+                        <i> {{ utils.getStatus(npi.stage) }} </i>
+                      </div>
+                      <div *ngIf='npi.stage == 2'>
+                        <i style="vertical-align: middle" class='fa fa-2x' *ngFor='let crit of npi.critical; index as i' data-toggle="tooltip" data-placement="top"
+                          title="{{ utils.getDepartment(crit.dept) }}" [ngClass]='{
                         "fa-check-circle text-success": crit.status == "accept",
                         "fa-times-circle text-danger": crit.status == "deny",
                         "fa-circle text-gray": !crit.status
                       }'></i>
-                      <i style="vertical-align: middle" class='fa fa-2x fa-fw' *ngIf='npi.entry == "oem"'
-                      data-toggle="tooltip" data-placement="top" title="Aprovação do cliente"
-                      [ngClass]='{
+                        <i style="vertical-align: middle" class='fa fa-2x fa-fw' *ngIf='npi.entry == "oem"' data-toggle="tooltip" data-placement="top"
+                          title="Aprovação do cliente" [ngClass]='{
                         "fa-check-circle text-purple": npi.clientApproval.approval == "accept",
                         "fa-times-circle text-purple": npi.clientApproval.approval == "deny",
                         "fa-circle text-light-purple ": !npi.clientApproval.approval
                       }'></i>
-                    </div>
+                      </div>
                     </td>
                     <td>
                       {{ npi.updatedString }}
@@ -133,7 +155,7 @@
                         <a routerLink='/npi/{{npi.number}}/edit' class='mr-2 text-info'>
                           <i class='fa fa-pencil fa-lg'></i>
                         </a>
-                        <a routerLink=# (click)='cancelNPI(npi.id, npi.number, $event)' class='text-danger'>
+                        <a (click)='cancelNPI(npi.id, npi.number, $event)' class='text-danger'>
                           <i class='fa fa-trash fa-lg'></i>
                         </a>
                       </div>
@@ -151,7 +173,7 @@
   </div>
 </div>
 
-<div class='fixed-top text-right mt-5 pt-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
+<div class='fixed-top text-right mt-5 mr-3 bg-danger' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
   <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("top")'
     [@fadeAnimation]>
     <i class='fa fa-chevron-up m-auto p-auto' style='overflow: visible'></i>
