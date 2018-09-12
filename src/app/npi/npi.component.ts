@@ -102,6 +102,7 @@ export class NpiComponent implements OnInit {
     private location: Location,
     private utils: UtilService
   ) {
+    console.log('constructed again')
     this.npi = new Npi(null)
     this.npiForm = fb.group({})
     //this.titleField = this.npi.name

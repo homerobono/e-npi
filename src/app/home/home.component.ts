@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
       { field: 'name', order: 1 },
       { field: 'entry', order: 1 },
       { field: 'stage', order: 1 },
-      { field: 'created', order: 1 }]
+      { field: 'updated', order: 1 }]
 
     this.filteredData = []
     this.data = []
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
       name: null,
       entry: null,
       stage: null,
-      created: null
+      updated: null
     })
 
     this.filterForm.valueChanges.subscribe(
@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     console.log('getting npis');
     this.getNpis()
-    console.log(this.filteredData)
+    //console.log(this.filteredData)
     //console.log('y: ' + pageYOffset)
   }
 

@@ -28,7 +28,7 @@
           <div>Carregando NPI's...</div>
         </div>
       </div>
-      <div *ngIf='!gettingNpis'>
+      <div *ngIf='!gettingNpis && data.length'>
         <div class="row">
           <div class='col'>
             <div class='table-responsive' id='npis'>
@@ -65,12 +65,12 @@
                       </select>
                     </th>
                     <th scope="col">
-                      <b class='sort-header' (click)='toggleSortBy("created")'>Última Modificação</b>
+                      <b class='sort-header' (click)='toggleSortBy("updated")'>Última Modificação</b>
                       <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por data de criação"
-                        *ngIf='sortParams[0].field== "created" && sortParams[0].order==1'></span>
+                        *ngIf='sortParams[0].field== "updated" && sortParams[0].order==1'></span>
                       <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente por data de criação"
-                        *ngIf='sortParams[0].field== "created" && sortParams[0].order==-1'></span>
-                      <input type=text class='form-control' formControlName='created'>
+                        *ngIf='sortParams[0].field== "updated" && sortParams[0].order==-1'></span>
+                      <input type=text class='form-control' formControlName='updated'>
                     </th>
                     <th scope='col'>
                       <i class='fa fa-undo fa-2x text-secondary' (click)='filterForm.reset()' *ngIf='filterForm.dirty'
@@ -126,7 +126,7 @@
                     </div>
                     </td>
                     <td>
-                      {{ npi.createdString }}
+                      {{ npi.updatedString }}
                     </td>
                     <td>
                       <div class='action-btns d-flex flex-nowrap'>

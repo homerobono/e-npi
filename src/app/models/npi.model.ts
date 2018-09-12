@@ -13,6 +13,8 @@ class Npi {
     stage: Number;
     created: Date;
     createdString: String;
+    updated: Date;
+    updatedString: String;
     entry: String;
     description: String;
     resources: {
@@ -88,6 +90,10 @@ class Npi {
             if (npiModel.created != null) {
                 this.created = new Date(npiModel.created)
                 this.createdString = this.created.toLocaleDateString('pt-br')
+            }
+            if (npiModel.updated != null) {
+                this.updated = new Date(npiModel.updated)
+                this.updatedString = this.updated.toLocaleString('pt-br')
             }
             if (npiModel.npiRef != null) this.npiRef = npiModel.npiRef
             if (npiModel.entry != null) this.entry = npiModel.entry
