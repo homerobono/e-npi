@@ -1,5 +1,16 @@
 import User from "./user.model";
 import { Globals } from 'config'
+import { UtilService } from "../services/util.service";
+
+const utils = new UtilService()
+
+var dateOptions = {
+    day: 'numeric',
+    month: 'numeric',
+    year: '2-digit',
+    hour: '2-digit', 
+    minute:'2-digit'
+}
 
 class Npi {
     id: String;
@@ -93,7 +104,7 @@ class Npi {
             }
             if (npiModel.updated != null) {
                 this.updated = new Date(npiModel.updated)
-                this.updatedString = this.updated.toLocaleString('pt-br')
+                this.updatedString = utils.getTimeDifference(new Date(),this.updated)
             }
             if (npiModel.npiRef != null) this.npiRef = npiModel.npiRef
             if (npiModel.entry != null) this.entry = npiModel.entry

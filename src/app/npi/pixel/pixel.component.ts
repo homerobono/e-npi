@@ -63,7 +63,8 @@ export class PixelComponent implements OnInit {
     this.npiFormOutput.emit(this.npiForm)
     this.fillFormData()
 
-    if (this.npi.isCriticallyAnalised())
+    if (this.npi.isCriticallyAnalised() ||
+      !this.npiComponent.editFlag)
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
@@ -72,7 +73,7 @@ export class PixelComponent implements OnInit {
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
-    if (this.route.snapshot.data['readOnly']) form.disable()
+    if (!this.npiComponent.editFlag) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
       if ((control instanceof FormGroup || control instanceof FormArray)

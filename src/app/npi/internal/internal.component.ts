@@ -68,7 +68,7 @@ export class InternalComponent implements OnInit {
     this.fillFormData()
 
     if (this.npi.isCriticallyAnalised() ||
-      this.route.snapshot.data['readOnly'])
+      !this.npiComponent.editFlag)
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(

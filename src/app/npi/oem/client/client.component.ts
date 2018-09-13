@@ -17,7 +17,7 @@ export class ClientComponent implements OnInit {
   
   npiForm : FormGroup
   deny : FormControl
-  isFormEnabled: Boolean
+  isFormEnabled: Boolean = true
 
   constructor(
     private fb : FormBuilder,
@@ -34,7 +34,7 @@ export class ClientComponent implements OnInit {
 
   ngOnInit() {
     this.isFormEnabled = 
-      !this.route.snapshot.data['readOnly'] && 
+      this.npiComponent.editFlag && 
       this.npi.stage == 3 &&
       this.npi.isCriticallyApproved()
       
@@ -62,6 +62,7 @@ export class ClientComponent implements OnInit {
   toggleNewVersion(){
     this.npiComponent.newFormVersionFlag = !this.npiComponent.newFormVersionFlag
     this.npiComponent.newFormVersion.next(this.npiComponent.newFormVersionFlag)
+    window.scrollTo({ left: 0, top: 120, behavior: 'smooth' });
   }
 
 }

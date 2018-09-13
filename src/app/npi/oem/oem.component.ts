@@ -13,6 +13,7 @@ import { Location } from '@angular/common';
 import { NpiComponent } from '../npi.component';
 import { UtilService } from '../../services/util.service';
 import { Globals } from 'config';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-oem',
@@ -21,11 +22,17 @@ import { Globals } from 'config';
 })
 
 export class OemComponent implements OnInit {
-
-  @Input() npi: Npi
+  
+  npi : Npi
+  @Input() set npiSetter(npi: Npi) {
+    this.npi = npi;
+    this.fillFormData()
+  }
+  @Input() npis: Npi[]
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
-
+  
   npiForm: FormGroup;
+  npiObservable: Observable<Npi>
 
   constructor(
     private fb: FormBuilder,
@@ -34,7 +41,8 @@ export class OemComponent implements OnInit {
     private utils: UtilService,
     private npiComponent: NpiComponent
   ) {
-    this.npi = new Npi(null)
+
+    this.npis = new Array<Npi>()
 
     this.npiForm = fb.group({
       'npiRef': null,
@@ -71,11 +79,14 @@ export class OemComponent implements OnInit {
     this.fillFormData()
 
     if (this.npi.isCriticallyAnalised() ||
-      this.route.snapshot.data['readOnly'])
+      !this.npiComponent.editFlag)
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => this.fillFormData()
+      () => {
+        console.log('Reseting, bitches')
+        this.fillFormData()
+      }
     )
 
     this.npiComponent.newFormVersion.subscribe(

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
+import Npi from '../../models/npi.model';
 
 @Component({
   selector: 'app-critical',
@@ -11,8 +12,13 @@ import { NpiComponent } from '../npi.component';
 })
 export class CriticalComponent implements OnInit {
 
+  npi : Npi
+  @Input() set npiSetter(npi: Npi) {
+    this.npi = npi;
+    console.log(npi)
+    this.fillFormData()
+  }
   @Output() criticalForm = new EventEmitter<FormGroup>()
-  @Input() npi
 
   criticalFormGroup: FormGroup
   signatures: Array<any>
@@ -27,6 +33,7 @@ export class CriticalComponent implements OnInit {
     this.criticalFormGroup = fb.group({
       'critical': fb.array([])
     })
+    this.npi = new Npi(null)
     this.signatures = new Array<String>(5)
   }
 
@@ -34,7 +41,7 @@ export class CriticalComponent implements OnInit {
     this.insertCriticalAnalisys()
 
     this.isFormEnabled = 
-      !this.route.snapshot.data['readOnly'] && 
+      this.npiComponent.editFlag && 
       this.npi.stage == 2
       
     if (!this.isFormEnabled)

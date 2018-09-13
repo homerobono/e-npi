@@ -1,4 +1,4 @@
-<div class="form-row" [formGroup]='criticalFormGroup' *ngIf='npi.stage>1'>
+<div class="form-row" [formGroup]='criticalFormGroup' *ngIf='npi.stage>1 && !this.npiComponent.newFormVersionFlag'>
   <div class='col'>
     <label for='criticalAnalisys' class=col>
       <center>

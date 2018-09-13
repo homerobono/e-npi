@@ -12,7 +12,7 @@ import { MessageService } from '../services/message.service';
 
 import Npi from '../models/npi.model';
 import { Location } from '@angular/common';
-import { Subject, Observable } from 'rxjs/Rx';
+import { Subject, Observable, BehaviorSubject } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import { UtilService } from '../services/util.service';
 import { Globals } from 'config';
@@ -36,14 +36,16 @@ export class NpiComponent implements OnInit {
   newFormVersionFlag: Boolean = false
 
   postConclusionEdit: Boolean = false
+  editForm = new BehaviorSubject<Boolean>(false)
+  editFlag: Boolean = false
 
   showNpiToolbar: Boolean = false
 
   response: any
   date: Date
   npiNumber: Number
-  npiSubject = new Subject<Npi>()
   npi: Npi
+  npiVersions: Npi[]
   authorName: String
   authorId: String
 
@@ -112,6 +114,7 @@ export class NpiComponent implements OnInit {
   ) {
     console.log('constructed again')
     this.npi = new Npi(null)
+    this.npiVersions = new Array<Npi>()
     this.npiForm = fb.group({})
     //this.titleField = this.npi.name
     this.datePickerConfig = Object.assign(
@@ -135,7 +138,6 @@ export class NpiComponent implements OnInit {
   }
 
   ngOnInit() {
-    //console.log(this.route.snapshot)
     this.messenger.response.subscribe(
       res => { this.response = res }
     )
@@ -143,9 +145,13 @@ export class NpiComponent implements OnInit {
     this.route.params.subscribe(
       params => this.getNpi(params.npiNumber)
     )
-    if (this.route.snapshot.data['readOnly'])
-      this.npiForm.disable()
-
+    this.editForm.subscribe(
+      flag => {
+        console.log(flag)
+        this.editFlag = flag
+        flag ? this.npiForm.enable() : this.npiForm.disable()
+      }
+    )
     //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
@@ -162,14 +168,13 @@ export class NpiComponent implements OnInit {
     //console.log('getting npi ' + npiNumber)
     this.npiService.getNpi(npiNumber)
       .subscribe(
-        npi => {
-          this.npiSubject.next(npi[0]);
-          this.npi = npi[0]
-          this.titleField = npi[0].name
-          this.authorId = npi[0].requester._id
-          this.authorName = npi[0].requester.firstName +
-            (npi[0].requester.lastName ? ' ' + npi[0].requester.lastName : '')
-          this.scrollBackToPosition()
+        npis => {
+          this.npi = npis[0]
+          this.npiVersions = npis
+          this.titleField = this.npi.name
+          this.authorId = this.npi.requester._id
+          this.authorName = this.npi.requester.firstName +
+            (this.npi.requester.lastName ? ' ' + this.npi.requester.lastName : '')
           console.log(this.npi)
         }, err => {
           this.location.replaceState(null)
@@ -220,7 +225,12 @@ export class NpiComponent implements OnInit {
         'message': 'Nenhum campo modificado'
       });
     this.sendingForm = false;
-    this.router.navigate(['/npi/' + this.npi.number], { relativeTo: this.route })
+    this.refresh()
+  }
+
+  refresh(){
+    this.getNpi(this.npi.number)
+    this.toggleEdit()
   }
 
   invalidFieldsError(err) {
@@ -253,8 +263,12 @@ export class NpiComponent implements OnInit {
     this.sendingForm = false;
   }
 
+  toggleEdit(){
+    this.editForm.next(!this.editFlag)
+  }
+
   toggleTitleEdit(event) {
-    if (this.route.snapshot.routeConfig.path.includes("/edit"))
+    if (this.editFlag)
       if (event.target.id == 'titleLabel')
         this.titleEdit = true
       else
@@ -372,7 +386,10 @@ export class NpiComponent implements OnInit {
       title: 'Modal with component'
     };
     let dialogRef = this.dialog.open(FileManagerComponent);
+  }
 
+  loadVersion(npi: Npi){
+    this.npi = npi
   }
 
 }
