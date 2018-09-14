@@ -33,7 +33,7 @@ export class CriticalComponent implements OnInit {
     this.criticalFormGroup = fb.group({
       'critical': fb.array([])
     })
-    this.npi = new Npi(null)
+    this.npi = npiComponent.npi
     this.signatures = new Array<String>(5)
   }
 

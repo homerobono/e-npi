@@ -3,6 +3,7 @@ export const Globals = Object.freeze({
 	LOCAL_BASE_URL: 'http://127.0.0.1:3000',
 	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
+	//ENPI_SERVER_URL: 'http://10.0.0.175:1110/e-npi/v2',
 	ENPI_SERVER_URL: 'http://127.0.0.1:1110/e-npi/v2',
 	LOCAL_ENPI_URL: 'http://127.0.0.1:1110/e-npi/v2',
 
@@ -83,13 +84,13 @@ export const Globals = Object.freeze({
 	},
 
 	ENTRIES_ARR: [
-		{ value: 'pixel', label : 'Pixel'},
-		{ value: 'oem', label : 'O&M'},
-		{ value: 'internal', label : 'Interno'},
-		{ value: 'custom', label: 'Customização'},
+		{ value: 'pixel', label: 'Pixel' },
+		{ value: 'oem', label: 'O&M' },
+		{ value: 'internal', label: 'Interno' },
+		{ value: 'custom', label: 'Customização' },
 	],
 
-	MACRO_STAGES : [
+	MACRO_STAGES: [
 		{ value: 'SCHED', label: 'Cronograma', dept: 'MEP' },
 		{ value: 'LAYOUT', label: 'Esquemático, Layout e Gerber', dept: 'MEP' },
 		{ value: 'FIRMWARE', label: 'Firmware, Software e Aplicativo', dept: 'MEP' },
@@ -106,6 +107,21 @@ export const Globals = Object.freeze({
 		{ value: 'PILOT', label: 'Lote Piloto', dept: 'MEP' },
 		{ value: 'ASSEMBLY', label: 'IT de Montagem', dept: 'MEP' },
 		{ value: 'GOLD', label: 'Golden Sample', dept: 'MEP' },
-	  ]
-	  
+	],
+
+	REGULATIONS: [
+		{ value: 'ABNT', label: 'ABNT' },
+		{ value: 'ANATEL', label: 'ANATEL' },
+		{ value: 'INMETRO', label: 'INMETRO' },
+		{ value: 'ANVISA', label: 'ANVISA' }
+	],
+
+	DEMAND_PERIOD: [
+		{ value: 'YEAR', label: 'anuais'},
+		{ value: 'MONTH', label: 'mensais'},
+		{ value: 'DAY', label: 'diárias'},
+		{ value: 'YEAR', label: 'únicas'},
+	]
+
+
 })

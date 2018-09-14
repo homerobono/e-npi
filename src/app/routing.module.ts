@@ -36,22 +36,10 @@ const appRoutes: Routes = [
       [{
         path: ':userId',
         redirectTo: '/user/:userId'
-      }],
-    canActivate:
-      [
-        AuthGuard,
-        AccessGuard
-      ],
-    data: { allowedLevel: 1 }
+      }]
   },
   {
-    path: 'user/:userId', component: UserComponent,
-    canActivate:
-      [
-        AuthGuard,
-        AccessGuard
-      ],
-    data: { allowedLevel: 1 }
+    path: 'user/:userId', component: UserComponent
   },
   {
     path: 'register', component: RegisterComponent,

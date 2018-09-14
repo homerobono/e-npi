@@ -6,7 +6,7 @@
       <form [formGroup]='createForm' (ngSubmit)="saveNpi(createForm.value)">
         <hr>
         <div class="form-row">
-          <div class="form-group col-sm-3 col-md-2">
+          <div class="form-group col-sm-2 col-md-2">
             <label for="number">Número</label>
             <input type="text" class="form-control" id="number" placeholder="(auto)" readonly>
           </div>
@@ -21,7 +21,7 @@
               <input type="text" class="form-control" id="date" formControlName='date' readonly>
             </div>
           </div>
-          <div class="form-group col-sm-3 col-md-2 col-lg-2">
+          <div class="form-group col-xs-6 col-sm-3 col-md-3 col-lg-2">
             <label for="npiref">NPI Ref.</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
@@ -29,13 +29,19 @@
                   #
                 </span>
               </div>
-              <input type="text" class="form-control" id="npiRef" formControlName='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("cost")}'>
+              <input type="text" class="form-control" id="npiRef" formControlName='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
               <div class='invalid-feedback'>
                 Defina a Npi de referência
               </div>
             </div>
           </div>
-          <div class="form-group col-sm-6 col-md-6 col-lg-3 mb-4">
+          <!--div class='col-xs-6 col-sm-3 col-md-3 align-self-end'>
+            <button type=button class='btn btn-primary w-100 mb-4' (click)='openFileManager()'>
+              <i class='fa fa-archive'></i> 
+              Anexos
+            </button>
+          </div-->
+          <div class="form-group col-xs-6 col-sm-3 col-md-3 col-lg-3 mb-4">
             <label for="complexity">Complexidade</label>
             <select class="custom-select" id="complexity" placeholder="Complexidade" formControlName='complexity' [ngClass]='{"is-invalid": fieldHasErrors("complexity")}'>
               <option value=3> Alta </option>
@@ -46,18 +52,16 @@
               Defina a complexidade do projeto
             </div>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group col-sm-4 mb-4">
+          <div class="form-group col-sm-6 col-md-6 col-lg-4 mb-4">
             <label for="client">Cliente</label>
             <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client' [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
             <div class='invalid-feedback'>
               Defina o cliente
             </div>
           </div>
-          <div class="form-group col-sm-8 mb-4">
-            <label for="name">Nome</label>
+          <div class="form-group col-sm-12 col-lg-8 mb-4">
+            <label for="name">Nome do Projeto</label>
             <input type="text" class="form-control" id="name" placeholder="Nome" formControlName='name' [ngClass]='{"is-invalid": fieldHasErrors("name")}'>
             <div class='invalid-feedback'>
               Defina o nome do projeto
@@ -69,19 +73,19 @@
         <div class="form-row">
           <div class="form-group col" id='entry-group'>
             <div class="custom-control custom-radio custom-control-inline">
-              <input type="radio" class="custom-control-input" id="pixel-npi" value='pixel' name='entry' [formControl]="createForm.controls['entry']">
+              <input type="radio" class="custom-control-input" id="pixel-npi" value='pixel' name='entry' #pixel [formControl]="createForm.controls['entry']">
               <label for="pixel-npi" class='custom-control-label'>Pixel</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-              <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem' [formControl]="createForm.controls['entry']">
+              <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem' #oem [formControl]="createForm.controls['entry']">
               <label for="oem-npi" class='custom-control-label'>O&M</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-              <input type="radio" class="custom-control-input" id="internal-npi" name='entry' value='internal' [formControl]="createForm.controls['entry']">
+              <input type="radio" class="custom-control-input" id="internal-npi" name='entry' value='internal' #internal [formControl]="createForm.controls['entry']">
               <label for="internal-npi" class='custom-control-label'>Interno</label>
             </div>
             <div class="custom-control custom-radio custom-control-inline">
-              <input type="radio" class="custom-control-input" id="custom-npi" name='entry' value='custom' [formControl]="createForm.controls['entry']">
+              <input type="radio" class="custom-control-input" id="custom-npi" name='entry' value='custom' #custom [formControl]="createForm.controls['entry']">
               <label for="custom-npi" class='custom-control-label'>Customização</label>
             </div>
           </div>
@@ -101,55 +105,75 @@
         <div class="form-row">
           <div class="form-group col-sm-12 col-md-6 mb-4" formGroupName='resources'>
             <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
-            <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
+            <div class="input-group">
+              <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
             </textarea>
-            <div class='invalid-feedback'>
-              Defina os recursos necessários
+              <div class="input-group-append">
+                <span class="input-group-text" id="costAppend">
+                  <i class='fa fa-folder-open'></i>
+                </span>
+              </div>
+              <div class='invalid-feedback'>
+                Defina os recursos necessários
+              </div>
             </div>
           </div>
           <div class="form-group col-sm-12 col-md-6 mb-4" formGroupName='norms'>
             <label for="normsDescription">Leis/Normas Aplicáveis</label>
-            <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
-              </textarea>
-            <div class='invalid-feedback'>
-              Defina as leis e/ou normas aplicáveis
+            <div class="input-group">
+              <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
+            </textarea>
+              <div class="input-group-append">
+                <span class="input-group-text" id="costAppend">
+                  <i class='fa fa-folder-open'></i>
+                </span>
+              </div>
+              <div class='invalid-feedback'>
+                Defina as leis e/ou normas aplicáveis
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12" *ngIf='!internal.checked'>
+            <label for="regulations">Homologações/Regulamentações</label>
+            <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
+              <div class="custom-control custom-checkbox custom-control-inline" formArrayName='standard' *ngFor='let reg of createForm.get("regulations").get("standard").controls; index as i'>
+                <input type="checkbox" class="custom-control-input" id="{{ i }}" formGroupName='{{ i }}'>
+                <label class="custom-control-label" for="{{ i }}">{{ objectkeys(reg.value)[0] }}</label>
+              </div>
+              <div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" checked id='other' (change)="true" #other>
+                <label class="custom-control-label" for="other">Outro(s)</label>
+              </div>
+              <input class='form-control' type='text' formControlName='additional' name='additional' aria-describedby="Homologações/Regulamentações"
+                [ngClass]='{"is-invalid": fieldHasErrors("regulations")}' *ngIf='other.checked'>
+              <div class='invalid-feedback'>
+                Descreva as homologações/regulações aplicáveis
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="form-row" *ngIf='createForm.controls["entry"].value!="internal" &&
-            createForm.controls["entry"].value!="oem"'>
-          <div class='col'>
-            <div class='row align-items-end'>
-              <div class='col form-group mr-0 pr-0 mb-2'>
-                <label for="cost">Custo</label>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="costPrepend">
-                      R$
-                    </span>
-                  </div>
-                  <input class='form-control' type='text' [textMask]="currencyMask" formControlName='cost' name='cost' placeholder='00,00'
-                    aria-describedby="Custo" [ngClass]='{"is-invalid": fieldHasErrors("cost")}'>
-                  <div class='invalid-feedback'>
-                    Defina o custo do produto
-                  </div>
-                </div>
+        <div class="form-row align-items-end">
+
+          <div class='col-3 form-group mb-4' *ngIf='!internal.checked && !oem.checked'>
+            <label for="cost">Custo do Produto</label>
+            <div class="input-group" id='price'>
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="costPrepend">
+                  R$
+                </span>
               </div>
-              <!--div class='col col-auto form-group'>
-                <label for=costAnnex class='m-0 p-0 pb-1 upload-button'>
-                  <i class='fa fa-upload m-0 p-0 pr-1'></i>
-                </label>
-                <input type="file" name="costAnnex" ng2FileSelect hidden [uploader]="uploadService.uploader" id='costAnnex'>
-                <button type="button" class="btn btn-success btn-s" (click)="uploadService.uploader.uploadAll()" [disabled]="!uploadService.uploader.getNotUploadedItems().length">
-                      Upload with ng-2 file uploader
-                  </button>
-              </div-->
+              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='cost' name='cost' placeholder='00,00'
+                aria-describedby="Custo" [ngClass]='{"is-invalid": fieldHasErrors("cost")}'>
+              <div class='invalid-feedback'>
+                Defina o custo do produto
+              </div>
             </div>
           </div>
-          <div class='col form-group'>
-            <label for="price">Preço</label>
-            <div class="input-group mb-2">
+
+          <div class='col-3 form-group mb-4 order-2' *ngIf='!internal.checked && !oem.checked'>
+            <label for="price">Preço de Venda</label>
+            <div class="input-group" id='price'>
               <div class="input-group-prepend">
                 <span class="input-group-text" id="pricePrepend">
                   R$
@@ -162,44 +186,10 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class='col-md-3 form-group'>
-            <label for="investment">Investimento</label>
-            <div class="input-group mb-2">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="investmentPrepend">
-                  R$
-                </span>
-              </div>
-              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='investment' name='investment' placeholder='00,00'
-                aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
-              <div class='invalid-feedback'>
-                Defina o investimento
-              </div>
-            </div>
-          </div>
-          <div class='col-md-3 form-group' formGroupName='projectCost'>
-            <label for="projectCost">Custo do Projeto</label>
-            <div class="input-group mb-2">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="investmentPrepend">
-                  R$
-                </span>
-              </div>
-              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='cost' name='projectCost' placeholder='00,00'
-                aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
-              <div class='invalid-feedback'>
-                Defina o custo do projeto
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class='col-md-3 form-group mb-3' *ngIf='createForm.controls["entry"].value!="internal" &&
-              createForm.controls["entry"].value!="oem"'>
+
+          <div class='col-6 form-group mb-4 order-3' *ngIf='!internal.checked'>
             <label for="inStockDate">Data em Estoque</label>
-            <div class="input-group">
+            <div class="input-group" *ngIf='!oem.checked'>
               <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
                 #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDate")}'>
               <div class="input-group-append">
@@ -208,54 +198,91 @@
                 </li>
               </div>
             </div>
-          </div>
-          <div class='col-md-6 form-group mb-3' *ngIf='createForm.controls["entry"].value=="oem"'>
-            <label for="inStockDate">Data em Estoque</label>
-            <div class="form-row">
+            <div class="form-row" *ngIf='oem.checked'>
               <div class="form-group col" id='inStockDate-group'>
                 <div class="custom-control custom-radio custom-control-inline">
                   <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType' formControlName="inStockDateType"
-                  [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+                    [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
                   <label for="fixed-date" class='custom-control-label'>
                     Data fixa
                   </label>
                 </div>
                 <div class="custom-control custom-radio custom-control-inline">
                   <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType' formControlName="inStockDateType"
-                  [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+                    [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
                   <label for="offset-date" class='custom-control-label'>
                     Prazo após aprovação
                   </label>
                 </div>
               </div>
             </div>
-            <div class="form-row" *ngIf='createForm.controls["inStockDateType"].value=="fixed"'>
-              <div class="form-group col">
-                <div class="input-group">
-                  <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-                    #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
-                  <div class="input-group-append">
-                    <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
-                      <i class='fa fa-calendar fa-fw'></i>
-                    </li>
-                  </div>
+            <div class="form-row" *ngIf='oem.checked && createForm.controls["inStockDateType"].value=="fixed"'>
+              <div class="input-group col">
+                <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
+                  #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+                <div class="input-group-append">
+                  <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                    <i class='fa fa-calendar fa-fw'></i>
+                  </li>
                 </div>
               </div>
             </div>
-            <div class="form-row" *ngIf='createForm.controls["inStockDateType"].value=="offset"'>
+            <div class="form-row" *ngIf='oem.checked && createForm.controls["inStockDateType"].value=="offset"'>
               <div class="input-group col-xs-6 col-sm-3 col-md-4">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="inStockDatePrepend">
                     Dias
                   </span>
                 </div>
-                <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque" 
-                [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+                <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
+                  [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
               </div>
             </div>
           </div>
 
-          <div class='form-group col-md-6 mb-4'>
+          <div class='col-3 form-group mb-4 order-4'>
+            <label for="investment">Investimento</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="investmentPrepend">
+                  R$
+                </span>
+              </div>
+              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='investment' name='investment' placeholder='00,00'
+                aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
+              <div class="input-group-append">
+                <span class="input-group-text" id="investmentAppend">
+                  <i class='fa fa-folder-open'></i>
+                </span>
+              </div>
+              <div class='invalid-feedback'>
+                Defina o investimento
+              </div>
+            </div>
+          </div>
+
+          <div class='col-3 order-5 form-group mb-4' formGroupName='projectCost'>
+            <label for="projectCost">Custo do Projeto</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="investmentPrepend">
+                  R$
+                </span>
+              </div>
+              <input class='form-control' type='text' [textMask]="currencyMask" formControlName='cost' name='projectCost' placeholder='00,00'
+                aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
+              <div class="input-group-append">
+                <span class="input-group-text" id="projectCostAppend">
+                  <i class='fa fa-folder-open'></i>
+                </span>
+              </div>
+              <div class='invalid-feedback'>
+                Defina o custo do projeto
+              </div>
+            </div>
+          </div>
+
+          <div class='form-group col order-12 mb-4'>
             <label for="fiscals">Incentivos Fiscais</label>
             <input type='text' class='form-control' formControlName='fiscals' name='fiscals' aria-describedby="Incentivos Fiscais" placeholder='Incentivos Fiscais'
               [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
@@ -265,8 +292,13 @@
           </div>
 
         </div>
-        <div class="form-row" *ngIf='createForm.controls["entry"].value=="oem"' formArrayName='oemActivities'>
+
+        <!-- ATIVIDADES OEM -->
+
+
+        <div class="form-row" *ngIf='oem.checked' formArrayName='oemActivities'>
           <div class='col'>
+            <h5>Atividades O&M</h5>
             <div class='table-responsive'>
               <table class="table table-sm table-bordered">
                 <thead class='thead-dark'>
@@ -301,19 +333,22 @@
           </div>
         </div>
         <hr>
-        <div class="row align-items-center justify-content-between">
+        <div class="row align-items-center">
           <div class='col'>
-            <button type="button" class="btn btn-outline-danger shadow-none" [disabled]="sendingForm" (click)='cancelNpi()'>
-              Cancelar
+            <button type="button" class="btn btn-secondary w-100" [disabled]="sendingForm || createForm.pristine" (click)='createForm.reset()'>
+              <span class='fa fa-undo'></span>
+              Limpar Campos
             </button>
           </div>
           <div class='col text-center'>
-            <button type="button" class="btn btn-default btn-orange" [disabled]="!createForm.valid || sendingForm" (click)='submitToAnalisys(createForm.value)'>
+            <button type="button" class="btn btn-warning text-light w-100 " [disabled]="!createForm.valid || sendingForm" (click)='submitToAnalisys(createForm.value)'>
+              <span class='fa fa-check-circle-o fa-fw'></span>
               Análise Crítica
             </button>
           </div>
           <div class='col text-right'>
-            <button type="submit" class="btn btn-success" [disabled]="sendingForm">
+            <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm">
+              <i class='fa fa-save fa-fw'></i>
               Salvar
             </button>
           </div>

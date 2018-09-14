@@ -2,7 +2,7 @@
   <app-nav-buttons></app-nav-buttons>
   <h3>Cadastrar Usuário</h3>
   <div class='description'><b>Cadastro inicial:</b> os dados fornecidos nesse formulário serão cadastrados no sistema
-  e um e-mail com um link para completar o cadastro será enviado para o endreço especificado.
+  e um e-mail com um link para completar o cadastro será enviado para o endereço especificado.
   Só após o usuário finalizar o seu cadastro que este terá acesso ao sistema.
   </div>
   <form [formGroup]='registerForm' (ngSubmit)="registerUser(registerForm.value)" 
@@ -25,7 +25,7 @@
       </div>
     </div>
     <div class="form-row">
-      <div class="col-md-6 mb-4">
+      <div class="col-md-12 mb-4">
         <label for="validationCustom04">Departamento</label>
         <select class="form-control" id="validationCustom04" placeholder="Departamento" 
           formControlName='department'

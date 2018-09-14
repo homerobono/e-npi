@@ -7,7 +7,7 @@
 
 .upload-button{
     text-shadow: 0 1px 10px #ddd;
-    color: crimson;
+    color: slateblue;
 }
 
 .fa-upload {
@@ -16,9 +16,9 @@
 
 .upload-button:hover{
     cursor: pointer;
-    text-shadow: 0 1px 12px lighten($color: crimson, $amount: 30)
+    text-shadow: 0 1px 12px lighten($color: slateblue, $amount: 25)
 }
 
 .upload-button:active{
-    color: darken($color: crimson, $amount: 10)
+    color: blue
 }

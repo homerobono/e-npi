@@ -30,6 +30,8 @@ export class CreateComponent implements OnInit {
   formSent: Boolean = false;
   createResponse: String;
 
+  objectkeys = Object.keys
+
   public currencyMask = {
     mask:
       createNumberMask({
@@ -73,16 +75,11 @@ export class CreateComponent implements OnInit {
       'complexity': 2,
       'client': 'Pixel',
       'name': 'Versões',
-      'entry': 'oem',
-      'cost': 30,
-      'price': 99,
-      'investment': 50000,
-      'projectCost': fb.group({
-        'cost': 10000,
-        'annex': String
-      }),
-      'inStockDateType': 'offset',
-      'inStockDate': 60,
+      'entry': 'pixel',
+      'cost': 30.00,
+      'price': 99.00,
+      'inStockDateType': 'fixed',
+      'inStockDate': oemDefaultDeadLine,
       'npiRef': null,
       'description': 'Requisitos gerais',
       'norms': fb.group({
@@ -93,7 +90,16 @@ export class CreateComponent implements OnInit {
         'description': 'Recursos necessários',
         'annex': null
       }),
+      'regulations': fb.group({
+        standard: fb.array([]),
+        additional: null
+      }),
       'fiscals': 'Incentivos fiscais disponíveis',
+      'investment': 50000.00,
+      'projectCost': fb.group({
+        'cost': 10000.00,
+        'annex': String
+      }),
       'oemActivities': fb.array([])
     })
 
@@ -107,6 +113,15 @@ export class CreateComponent implements OnInit {
           title: oemActivities[i].title,
         }))
     }
+
+    let regulations = utils.getRegulations()
+    let additionalArray = this.createForm.get('regulations').get('standard') as FormArray
+    regulations.forEach(reg => {
+      additionalArray.push(fb.control({
+        [reg.value]: false
+      }))
+    })
+    console.log(additionalArray.value)
   }
 
   ngOnInit() {

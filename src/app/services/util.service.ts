@@ -54,6 +54,14 @@ export class UtilService {
     return diff.toFixed(0) + suffix + (rest_suffix ? rest.toFixed(0) + rest_suffix : '')
   }
 
+  getRegulation(regulation){
+    return Globals.REGULATIONS.find(r => r.value == regulation)
+  }
+
+  getRegulations(){
+    return Globals.REGULATIONS
+  }
+
   getEntry(entry) {
     return Globals.ENTRIES[entry]
   }
