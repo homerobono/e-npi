@@ -32,7 +32,10 @@ class Npi {
         description,
         annex
     };
-    regulations: Array<String>;
+    regulations: {
+        standard: Object,
+        additional: String
+    };
     norms: {
         description,
         annex
@@ -41,11 +44,24 @@ class Npi {
         amount: Number,
         period: String,
     };
-    price: Number;
-    cost: Number;
-    investment: Number;
+    price: {
+        value: Number;
+        currency: String;
+        annex: String
+    };
+    cost: {
+        value: Number;
+        currency: String;
+        annex: String
+    };
+    investment: {
+        value: Number;
+        currency: String;
+        annex: String
+    };
     projectCost: {
-        cost: Number;
+        value: Number;
+        currency: String;
         annex: String
     };
     inStockDate: any;

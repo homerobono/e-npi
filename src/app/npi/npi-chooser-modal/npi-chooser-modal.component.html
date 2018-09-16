@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{title}}</h4>
+  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="list-group">
+    <span class="list-group-item">
+      Escolha uma NPI:
+    </span>
+    <button type="button" (click)='selectNpi(npi)' class="list-group-item list-group-item-action"
+    *ngFor='let npi of npisList'>{{ '#' + npi.number + ' '+ npi.name  }}</button>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" (click)="cancel()">Cancelar</button>
+  <button type="submit" class="btn btn-primary" (click)="confirm()">Ok</button>
+</div>

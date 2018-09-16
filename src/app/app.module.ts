@@ -40,7 +40,8 @@ import { CustomComponent } from './npi/custom/custom.component';
 import { PixelComponent } from './npi/pixel/pixel.component';
 import { CriticalComponent } from './npi/critical/critical.component';
 import { ClientComponent } from './npi/oem/client/client.component';
-import { ActivitiesComponent } from './npi/activities/activities.component'
+import { ActivitiesComponent } from './npi/activities/activities.component';
+import { NpiChooserModalComponent } from './npi/npi-chooser-modal/npi-chooser-modal.component';
 import { ValidateComponent } from './npi/validate/validate.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
@@ -70,6 +71,7 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
     AlertComponent,
     CriticalComponent,
     ActivitiesComponent,
+    NpiChooserModalComponent,
     ValidateComponent,
     ClientComponent
   ],
@@ -105,6 +107,9 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
   ],
   schemas: [ NO_ERRORS_SCHEMA ],
   bootstrap: [AppComponent],
-  entryComponents: [FileManagerComponent]
+  entryComponents: [
+    FileManagerComponent, 
+    NpiChooserModalComponent
+  ]
 })
 export class AppModule { }

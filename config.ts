@@ -1,10 +1,10 @@
 export const Globals = Object.freeze({
 	SERVER_BASE_URL: 'http://201.77.131.165:1110',
 	LOCAL_BASE_URL: 'http://127.0.0.1:3000',
-	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
+	ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
 	//ENPI_SERVER_URL: 'http://10.0.0.175:1110/e-npi/v2',
-	ENPI_SERVER_URL: 'http://127.0.0.1:1110/e-npi/v2',
+	//ENPI_SERVER_URL: 'http://127.0.0.1:1110/e-npi/v2',
 	LOCAL_ENPI_URL: 'http://127.0.0.1:1110/e-npi/v2',
 
 	STATUS: [
@@ -110,18 +110,23 @@ export const Globals = Object.freeze({
 	],
 
 	REGULATIONS: [
-		{ value: 'ABNT', label: 'ABNT' },
-		{ value: 'ANATEL', label: 'ANATEL' },
-		{ value: 'INMETRO', label: 'INMETRO' },
-		{ value: 'ANVISA', label: 'ANVISA' }
+		{ value: 'abnt', label: 'ABNT' },
+		{ value: 'anatel', label: 'ANATEL' },
+		{ value: 'inmetro', label: 'INMETRO' },
+		{ value: 'anvisa', label: 'ANVISA' },
+		{ value: 'other', label: 'Outro(s)' }
 	],
 
-	DEMAND_PERIOD: [
-		{ value: 'YEAR', label: 'anuais'},
-		{ value: 'MONTH', label: 'mensais'},
-		{ value: 'DAY', label: 'diárias'},
-		{ value: 'YEAR', label: 'únicas'},
+	DEMAND_PERIODS: [
+		{ value: 'year', label: 'anuais'},
+		{ value: 'month', label: 'mensais'},
+		{ value: 'day', label: 'diárias'},
+		{ value: 'year', label: 'únicas'},
+	],
+
+	CURRENCIES: [
+		{ value: 'BRL', label: 'R$'},
+		{ value: 'USD', label: 'US$'},
+		{ value: 'EUR', label: '€'},
 	]
-
-
 })

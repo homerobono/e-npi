@@ -134,7 +134,7 @@
                       </div>
                       <div *ngIf='npi.stage == 2'>
                         <i style="vertical-align: middle" class='fa fa-2x' *ngFor='let crit of npi.critical; index as i' data-toggle="tooltip" data-placement="top"
-                          title="{{ utils.getDepartment(crit.dept) }}" [ngClass]='{
+                          title="{{ utils.getDepartment(crit.dept).label }}" [ngClass]='{
                         "fa-check-circle text-success": crit.status == "accept",
                         "fa-times-circle text-danger": crit.status == "deny",
                         "fa-circle text-gray": !crit.status

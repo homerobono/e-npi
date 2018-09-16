@@ -133,7 +133,7 @@
 
 
   <div class="form-row">
-    <div class='col-md-3 form-group'>
+    <div class='col-md-3 form-group' formGroupName='investment'>
       <label for="investment">Investimento</label>
       <div class="input-group mb-2">
         <div class="input-group-prepend">
@@ -141,7 +141,7 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='investment' name='investment'
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' name='investment'
           placeholder='00,00' aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class='invalid-feedback'>
           Defina o investimento
@@ -156,7 +156,7 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='cost' name='projectCost'
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' name='projectCost'
           placeholder='00,00' aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class='invalid-feedback'>
           Defina o custo do projeto

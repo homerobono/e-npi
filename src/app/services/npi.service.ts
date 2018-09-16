@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Response } from '@angular/http';
-import { Observable, Subject} from 'rxjs/Rx';
+import { Observable, Subject } from 'rxjs/Rx';
 import { Globals } from 'config';
 
 import Npi from '../models/npi.model';
@@ -18,7 +18,7 @@ export class NpiService {
   npisUrl = `${this.api_url}/npis`;
   npiUrl = `${this.api_url}/npi/`;
 
-  npisList: Observable<Npi[]>
+  npisList: BehaviorSubject<Npi[]>
   manualRefresh: BehaviorSubject<Boolean>
 
   constructor(private http: HttpClient) {
@@ -29,7 +29,7 @@ export class NpiService {
         concatMap(() => this.getNpis()),
         map((res: Npi[]) => res)
       ))
-    )
+    ) as BehaviorSubject<Npi[]>
   }
 
   getNpi(npiNumber: Number): Observable<Npi[]> {
@@ -119,13 +119,33 @@ export class NpiService {
         )
       }
     })
-
+    if (npiForm.price)
+      if (npiForm.price.value &&
+        (npiForm.price.value instanceof String ||
+          typeof npiForm.price.value == 'string'))
+        model.price.value = parseFloat(
+          npiForm.price.value.replace(/\./g, '').replace(/,/, '.')
+        )
+    if (npiForm.cost)
+      if (npiForm.cost.value &&
+        (npiForm.cost.value instanceof String ||
+          typeof npiForm.cost.value == 'string'))
+        model.cost.value = parseFloat(
+          npiForm.cost.value.replace(/\./g, '').replace(/,/, '.')
+        )
+    if (npiForm.investment)
+      if (npiForm.investment.value &&
+        (npiForm.investment.value instanceof String ||
+          typeof npiForm.investment.value == 'string'))
+        model.investment.value = parseFloat(
+          npiForm.investment.value.replace(/\./g, '').replace(/,/, '.')
+        )
     if (npiForm.projectCost)
-      if (npiForm.projectCost.cost &&
-        (npiForm.projectCost.cost instanceof String ||
-          typeof npiForm.projectCost.cost == 'string'))
-        model.projectCost.cost = parseFloat(
-          npiForm.projectCost.cost.replace(/\./g, '').replace(/,/, '.')
+      if (npiForm.projectCost.value &&
+        (npiForm.projectCost.value instanceof String ||
+          typeof npiForm.projectCost.value == 'string'))
+        model.projectCost.value = parseFloat(
+          npiForm.projectCost.value.replace(/\./g, '').replace(/,/, '.')
         )
 
     if (model.entry == 'oem') {

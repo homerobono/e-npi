@@ -8,6 +8,81 @@ export class UtilService {
 
   constructor() { }
 
+  getCurrencies(){
+    return Globals.CURRENCIES
+  }
+  
+  getCurrency(currency){
+    return Globals.CURRENCIES.find(r => r.value == currency)
+  }
+
+  getDemandPeriod(demandPeriod){
+    return Globals.DEMAND_PERIODS.find(r => r.value == demandPeriod)
+  }
+
+  getDemandPeriods(){
+    return Globals.DEMAND_PERIODS
+  }
+
+  getDepartment(department) {
+    return Globals.DEPARTMENTS.find(d => d.value == department)
+  }
+
+  getDepartments() {
+    return Globals.DEPARTMENTS
+  }
+
+  getEntry(entry) {
+    return Globals.ENTRIES[entry]
+  }
+
+  getEntries() {
+    return Globals.ENTRIES
+  }
+
+  getEntriesArray() {
+    return Globals.ENTRIES_ARR
+  }
+
+  getOemActivities() {
+    return Globals.OEM_ACTIVITIES
+  }
+
+  getRegulation(regulation){
+    return Globals.REGULATIONS.find(r => r.value == regulation)
+  }
+
+  getRegulations(){
+    return Globals.REGULATIONS
+  }
+
+  getStatuses() {
+    return Globals.STATUS
+  }
+
+  getStatus(stage: Number) {
+    return Globals.STATUS[stage as number]
+  }
+
+  getCriticalAnalisys(dept) {
+    var depts = ['EPROC', 'OPR', 'ADM', 'COM']
+    switch (dept) {
+      case 'oem':
+        depts = ['PRD'].concat(depts)
+        break;
+      default:
+    }
+    return depts;
+  }
+
+  getActivities() {
+    return Globals.MACRO_STAGES
+  }
+
+  getActivity(activity) {
+    return Globals.MACRO_STAGES.find(s => s.value == activity)
+  }
+
   getTimeDifference(end: Date, start: Date): String {
     if (!end) end = new Date()
     if (!start) start = new Date()
@@ -52,75 +127,6 @@ export class UtilService {
       }
     }
     return diff.toFixed(0) + suffix + (rest_suffix ? rest.toFixed(0) + rest_suffix : '')
-  }
-
-  getRegulation(regulation){
-    return Globals.REGULATIONS.find(r => r.value == regulation)
-  }
-
-  getRegulations(){
-    return Globals.REGULATIONS
-  }
-
-  getEntry(entry) {
-    return Globals.ENTRIES[entry]
-  }
-
-  getEntries() {
-    return Globals.ENTRIES
-  }
-
-  getEntriesArray() {
-    return Globals.ENTRIES_ARR
-  }
-
-  getOemActivities() {
-    return Globals.OEM_ACTIVITIES
-  }
-
-  getStatuses() {
-    return Globals.STATUS
-  }
-
-  getStatus(stage: Number) {
-    return Globals.STATUS[stage as number]
-  }
-
-  getDepartment(department) {
-    for (var i = 0; i < Globals.DEPARTMENTS.length; i++) {
-      var dept = Globals.DEPARTMENTS[i]
-      if (dept.value == department)
-        return dept.label
-    }
-    return ''
-  }
-
-  getDepartments() {
-    return Globals.DEPARTMENTS
-  }
-
-  getCriticalAnalisys(dept) {
-    var depts = ['EPROC', 'OPR', 'ADM', 'COM']
-    switch (dept) {
-      case 'oem':
-        depts = ['PRD'].concat(depts)
-        break;
-      default:
-    }
-    return depts;
-  }
-
-  getActivities() {
-    return Globals.MACRO_STAGES
-  }
-
-  getActivity(value) {
-    for (var i = 0; i < Globals.MACRO_STAGES.length; i++) {
-      var activity = Globals.MACRO_STAGES[i]
-      if (activity.value == value)
-        return activity.label
-    }
-    return ''
   }
 
 }

@@ -18,7 +18,7 @@
         <tbody>
           <tr *ngFor='let analisys of criticalFormGroup.get("critical").controls; index as i' [formGroupName]='i'>
             <td>
-              {{ utils.getDepartment(npi.critical[i].dept) }}
+              {{ utils.getDepartment(npi.critical[i].dept).label }}
             </td>
             <td>
               <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>

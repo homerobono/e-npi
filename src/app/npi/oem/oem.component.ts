@@ -57,17 +57,25 @@ export class OemComponent implements OnInit {
         'description': null,
         'annex': null
       }),
-      'fiscals': null,
-      'investment': null,
-      'projectCost': fb.group({
-        'cost': null,
-        'annex': null
-      }),
       'inStockDateType': null,
       'inStockDate': fb.group({
         'fixed': null,
         'offset': null
       }),
+      'investment': fb.group({
+        value: null,
+        currency: null
+      }),
+      'projectCost': fb.group({
+        value: null,
+        currency: null,
+        annex: null
+      }),
+      'demand': fb.group({
+        'amount': null,
+        'period': null
+      }),
+      'fiscals': null,
       'oemActivities': fb.array([])
     })
   }
@@ -130,13 +138,24 @@ export class OemComponent implements OnInit {
 
     this.npiForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
-      projectCost: {
-        cost: this.npi.projectCost.cost != null ?
-          this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
-        annex: this.npi.projectCost.annex
-      },
-      investment: this.npi.investment != null ?
-        this.npi.investment.toFixed(2).toString().replace('.', ',') : null,
+      projectCost: this.npi.projectCost ?
+        {
+          value: this.npi.projectCost.value ?
+            this.npi.projectCost.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.projectCost.currency ? 
+            this.npi.projectCost.currency:null,
+          annex: null
+        } : null,
+      investment: this.npi.investment ?
+      {
+        value: this.npi.investment.value ?
+          this.npi.investment.value.toFixed(2).toString().replace('.', ',')
+          : null,
+        currency: this.npi.investment.currency ? 
+          this.npi.investment.currency:null,
+        annex: null
+      } : null,
       inStockDateType: this.npi.inStockDate ?
         this.npi.inStockDate instanceof (Date || String) ? null :
           this.npi.inStockDate.fixed ? 'fixed' :

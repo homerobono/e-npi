@@ -131,7 +131,7 @@ export class NpiComponent implements OnInit {
   @HostListener('window:scroll', ['$event'])
   handleScrollEvent(e) {
     this.scrollYPosition = pageYOffset
-    if (pageYOffset > 200) {
+    if (pageYOffset > 240) {
       this.showNpiToolbar = true
     } else
       this.showNpiToolbar = false
@@ -184,6 +184,7 @@ export class NpiComponent implements OnInit {
   }
 
   submitNpi(npiForm): void {
+    this.toggleEdit()
     this.sendingForm = true
 
     npiForm.name = this.titleField
@@ -230,10 +231,10 @@ export class NpiComponent implements OnInit {
 
   refresh(){
     this.getNpi(this.npi.number)
-    this.toggleEdit()
   }
 
   invalidFieldsError(err) {
+    this.toggleEdit()
     console.log(err)
     if (err.error.message.errors) {
       var errors = err.error.message.errors

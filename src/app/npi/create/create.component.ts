@@ -1,9 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
 import { defineLocale } from 'ngx-bootstrap/chronos';
+import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
@@ -16,183 +17,241 @@ import Npi from '../../models/npi.model';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { UtilService } from '../../services/util.service';
 import { Globals } from 'config';
+import { NpiChooserModalComponent } from '../npi-chooser-modal/npi-chooser-modal.component';
+import { createTemplateData } from '@angular/core/src/view/refs';
 defineLocale('pt-br', ptBrLocale)
 
 @Component({
-  selector: 'app-create',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss']
+    selector: 'app-create',
+    templateUrl: './create.component.html',
+    styleUrls: ['./create.component.scss']
 })
 
 export class CreateComponent implements OnInit {
 
-  sendingForm: Boolean = false;
-  formSent: Boolean = false;
-  createResponse: String;
+    sendingForm: Boolean = false;
+    formSent: Boolean = false;
+    createResponse: String;
 
-  objectkeys = Object.keys
+    npisList: Npi[]
+    modalRef: BsModalRef;
 
-  public currencyMask = {
-    mask:
-      createNumberMask({
-        prefix: '',
-        includeThousandsSeparator: true,
-        thousandsSeparatorSymbol: '.',
-        requireDecimal: true,
-        decimalSymbol: ',',
-        allowNegative: false,
-      }),
-    guide: false,
-  }
-  public dateMask = {
-    mask: ['/\d/', '/', '/\d/', '/']
-  }
+    npiRef: Npi
 
-  datePickerConfig: Partial<BsDatepickerConfig>;
-  createForm: FormGroup;
+    objectkeys = Object.keys
 
-  constructor(fb: FormBuilder,
-    private npiService: NpiService,
-    private authService: AuthService,
-    private router: Router,
-    private messenger: MessageService,
-    private localeService: BsLocaleService,
-    private uploadService: UploadService,
-    private utils: UtilService
-  ) {
-    this.datePickerConfig = Object.assign(
-      {},
-      {
-        containerClass: 'theme-default',
-        showWeekNumbers: false,
-        dateInputFormat: 'DD/MM/YYYY',
-        minDate: new Date()
-      }
-    )
-    var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * 30)
-    this.createForm = fb.group({
-      'date': new Date().toLocaleDateString('pt-br'),
-      'complexity': 2,
-      'client': 'Pixel',
-      'name': 'Versões',
-      'entry': 'pixel',
-      'cost': 30.00,
-      'price': 99.00,
-      'inStockDateType': 'fixed',
-      'inStockDate': oemDefaultDeadLine,
-      'npiRef': null,
-      'description': 'Requisitos gerais',
-      'norms': fb.group({
-        'description': 'Normas aplicáveis',
-        'annex': null
-      }),
-      'resources': fb.group({
-        'description': 'Recursos necessários',
-        'annex': null
-      }),
-      'regulations': fb.group({
-        standard: fb.array([]),
-        additional: null
-      }),
-      'fiscals': 'Incentivos fiscais disponíveis',
-      'investment': 50000.00,
-      'projectCost': fb.group({
-        'cost': 10000.00,
-        'annex': String
-      }),
-      'oemActivities': fb.array([])
-    })
-
-    var oemActivities = utils.getOemActivities()
-    for (var i = 0; i < oemActivities.length; i++) {
-      (this.createForm.get('oemActivities') as FormArray).
-        push(fb.group({
-          date: oemDefaultDeadLine,
-          comment: null,
-          dept: oemActivities[i].dept,
-          title: oemActivities[i].title,
-        }))
+    public currencyMask = {
+        mask:
+            createNumberMask({
+                prefix: '',
+                includeThousandsSeparator: true,
+                thousandsSeparatorSymbol: '.',
+                requireDecimal: true,
+                decimalSymbol: ',',
+                allowNegative: false,
+            }),
+        guide: false,
+    }
+    public dateMask = {
+        mask: ['/\d/', '/', '/\d/', '/']
     }
 
-    let regulations = utils.getRegulations()
-    let additionalArray = this.createForm.get('regulations').get('standard') as FormArray
-    regulations.forEach(reg => {
-      additionalArray.push(fb.control({
-        [reg.value]: false
-      }))
-    })
-    console.log(additionalArray.value)
-  }
+    datePickerConfig: Partial<BsDatepickerConfig>;
+    createForm: FormGroup;
 
-  ngOnInit() {
-    this.localeService.use('pt-br');
-  }
+    constructor(
+        fb: FormBuilder,
+        private npiService: NpiService,
+        private authService: AuthService,
+        private router: Router,
+        private messenger: MessageService,
+        private localeService: BsLocaleService,
+        private uploadService: UploadService,
+        private utils: UtilService,
+        private modalService: BsModalService
+    ) {
+        this.datePickerConfig = Object.assign(
+            {},
+            {
+                containerClass: 'theme-default',
+                showWeekNumbers: false,
+                dateInputFormat: 'DD/MM/YYYY',
+                minDate: new Date()
+            }
+        )
+        var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * 30)
+        this.createForm = fb.group({
+            'date': new Date().toLocaleDateString('pt-br'),
+            'complexity': 2,
+            'client': 'Pixel',
+            'name': 'Versões',
+            'entry': 'pixel',
+            'npiRef': null,
+            'description': 'Requisitos gerais',
+            'norms': fb.group({
+                'description': 'Normas aplicáveis',
+                'annex': null
+            }),
+            'resources': fb.group({
+                'description': 'Recursos necessários',
+                'annex': null
+            }),
+            'regulations': fb.group({
+                standard: fb.group({}),
+                additional: null
+            }),
+            'cost': fb.group({
+                value: '30,00',
+                currency: 'BRL'
+            }),
+            'price': fb.group({
+                value: '90,00',
+                currency: 'BRL'
+            }),
+            'inStockDateType': 'fixed',
+            'inStockDate': oemDefaultDeadLine,
+            'investment': fb.group({
+                value: '50000,00',
+                currency: 'BRL'
+            }),
+            'projectCost': fb.group({
+                value: '10000,00',
+                currency: 'BRL',
+                'annex': String
+            }),
+            'demand': fb.group({
+                'amount': 1000,
+                'period': null
+            }),
+            'fiscals': 'Incentivos fiscais disponíveis',
+            'oemActivities': fb.array([])
+        })
 
-  createNpi(npiForm): void {
-    this.sendingForm = true
-    this.npiService.createNpi(npiForm).
-      subscribe(res => {
-        this.messenger.set({
-          'type': 'success',
-          'message': 'NPI cadastrado com sucesso'
-        });
-        this.formSent = true;
-        this.sendingForm = false;
-        this.clearFields();
-        this.router.navigateByUrl('/npi/' + res.data.number)
-      }, err => {
-        if (err.error.message.errors)
-          this.invalidFieldsError(err.error.message.errors)
+        var oemActivities = utils.getOemActivities()
+        for (var i = 0; i < oemActivities.length; i++) {
+            (this.createForm.get('oemActivities') as FormArray).
+                push(fb.group({
+                    date: oemDefaultDeadLine,
+                    comment: null,
+                    dept: oemActivities[i].dept,
+                    title: oemActivities[i].title,
+                }))
+        }
+
+        npiService.npisList.subscribe(res => this.npisList = res)
+
+        let regulations = utils.getRegulations()
+        let additionalArray = this.createForm.get('regulations').get('standard') as FormGroup
+        regulations.forEach(reg => {
+            additionalArray.addControl(reg.value, fb.control(null))
+        })
+
+        this.createForm.get('npiRef').valueChanges.subscribe(res => { this.loadNpiRef(res) })
+
+    }
+
+    ngOnInit() {
+        this.localeService.use('pt-br');
+    }
+
+    createNpi(npiForm): void {
+        this.sendingForm = true
+        this.npiService.createNpi(npiForm).
+            subscribe(res => {
+                this.messenger.set({
+                    'type': 'success',
+                    'message': 'NPI cadastrado com sucesso'
+                });
+                this.formSent = true;
+                this.sendingForm = false;
+                this.clearFields();
+                this.router.navigateByUrl('/npi/' + res.data.number)
+            }, err => {
+                this.invalidFieldsError(err)
+                this.formSent = false;
+                this.sendingForm = false;
+            }
+            )
+    }
+
+    invalidFieldsError(err) {
+        console.log(err)
+        if (err.error.message.errors) {
+            var errors = err.error.message.errors
+            var errorFields = Object.keys(errors)
+            var invalidFieldsMessage = 'Corrija o' +
+                (errorFields.length == 1 ? ' campo ' : 's campos ')
+            try {
+                for (let i = 0; i < errorFields.length; i++) {
+                    let propsArr = errorFields[i].split(".")
+                    let control = this.createForm.get(propsArr[0])
+                    for (let i = 1; i < propsArr.length; i++) {
+                        control = control.get(propsArr[i])
+                    }
+                    control.setErrors({ 'required': true })
+                    invalidFieldsMessage += Globals.LABELS[propsArr[0]] +
+                        (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
+                }
+            } catch (e) {
+                console.log(e)
+            }
+            this.messenger.set({
+                type: 'error',
+                message: invalidFieldsMessage
+            })
+        }
         this.formSent = false;
         this.sendingForm = false;
-      }
-      )
-  }
-
-  invalidFieldsError(errors) {
-    var errorFields = Object.keys(errors)
-    var invalidFieldsMessage = 'Corrija o' +
-      (errorFields.length == 1 ? ' campo ' : 's campos ')
-    for (let i = 0; i < errorFields.length; i++) {
-      let prop = errorFields[i]
-      console.log(prop)
-      this.createForm.controls[prop].setErrors({ 'required': true })
-      invalidFieldsMessage += Globals.LABELS[prop] +
-        (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
     }
-    console.log(errors);
-    this.messenger.set({
-      type: 'error',
-      message: invalidFieldsMessage
-    })
-  }
 
-  saveNpi(npiForm) {
-    npiForm.stage = 1
-    this.createNpi(npiForm)
-  }
+    saveNpi(npiForm) {
+        npiForm.stage = 1
+        this.createNpi(npiForm)
+    }
 
-  submitToAnalisys(npiForm) {
-    npiForm.stage = 2
-    this.createNpi(npiForm)
-  }
+    submitToAnalisys(npiForm) {
+        npiForm.stage = 2
+        this.createNpi(npiForm)
+    }
 
-  cancelNpi() {
-    this.clearFields()
-  }
+    cancelNpi() {
+        this.clearFields()
+    }
 
-  clearFields() {
-    this.createForm.patchValue({
-    });
-    this.createForm.markAsPristine();
-    this.createForm.markAsUntouched();
-  }
+    clearFields() {
+        this.createForm.patchValue({
+        });
+        this.createForm.markAsPristine();
+        this.createForm.markAsUntouched();
+    }
 
-  selectFiles(event) {
-    event.stopPropagation()
-  }
+    selectFiles(event) {
+        event.stopPropagation()
+    }
 
-  fieldHasErrors(field) {
-    return this.createForm.controls[field].hasError('required')
-  }
+    fieldHasErrors(field) {
+        let propsArr = field.split(".")
+        let control = this.createForm.get(propsArr[0])
+        for (let i = 1; i < propsArr.length; i++) {
+            control = control.get(propsArr[i])
+        }
+        return control.hasError('required')
+    }
+
+    loadNpiRef(res) {
+        this.npiService.getNpi(res).subscribe(npi => {this.npiRef = npi[0]})
+    }
+
+    openNpiChooserModal() {
+        const initialState = {
+            npisList: this.npisList
+        }
+        this.modalRef = this.modalService.show(NpiChooserModalComponent, { initialState });
+        this.modalRef.content.onConfirm.subscribe(npi => {
+            this.npiRef = npi
+            this.createForm.patchValue({
+                npiRef: npi
+            })
+        })
+    }
 }

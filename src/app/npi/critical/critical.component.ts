@@ -15,7 +15,6 @@ export class CriticalComponent implements OnInit {
   npi : Npi
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
-    console.log(npi)
     this.fillFormData()
   }
   @Output() criticalForm = new EventEmitter<FormGroup>()
@@ -34,7 +33,7 @@ export class CriticalComponent implements OnInit {
       'critical': fb.array([])
     })
     this.npi = npiComponent.npi
-    this.signatures = new Array<String>(5)
+    this.signatures = new Array<String>(this.npi.critical.length)
   }
 
   ngOnInit() {
