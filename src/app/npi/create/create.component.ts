@@ -246,11 +246,11 @@ export class CreateComponent implements OnInit {
         const initialState = {
             npisList: this.npisList
         }
-        this.modalRef = this.modalService.show(NpiChooserModalComponent, { initialState });
+        this.modalRef = this.modalService.show(NpiChooserModalComponent, { initialState, class: "h-80" });
         this.modalRef.content.onConfirm.subscribe(npi => {
             this.npiRef = npi
             this.createForm.patchValue({
-                npiRef: npi
+                npiRef: npi.number
             })
         })
     }

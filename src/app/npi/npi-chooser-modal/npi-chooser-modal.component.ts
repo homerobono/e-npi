@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap';
 import Npi from '../../models/npi.model';
 import { Subject } from 'rxjs';
+import { UtilService } from '../../services/util.service';
 
 @Component({
   selector: 'app-npi-chooser-modal',
@@ -14,11 +15,31 @@ export class NpiChooserModalComponent implements OnInit {
   onConfirm : Subject<Npi>
   selectedNpi : Npi
 
-  constructor(public modalRef: BsModalRef) {
+  constructor(
+    public modalRef: BsModalRef,
+    private utils: UtilService) {
     this.onConfirm = new Subject<Npi>()
+    this.selectedNpi = null
   }
 
   ngOnInit() {
+    this.npisList = this.npisList.filter((item: any) => {
+      return item.stage != 1
+    });
+  }
+  
+  @HostListener('window:keyup', ['$event'])
+  keyUpEvent(e) {
+    e.stopPropagation()
+    if (e.keyCode == 13){
+      this.confirm()
+    }
+  }
+
+  @HostListener('window:dblclick', ['$event'])
+  doubleClick(e) {
+    e.stopPropagation()
+    this.confirm()
   }
 
   selectNpi(npi){

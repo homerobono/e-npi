@@ -118,10 +118,10 @@ export const Globals = Object.freeze({
 	],
 
 	DEMAND_PERIODS: [
-		{ value: 'year', label: 'anuais'},
-		{ value: 'month', label: 'mensais'},
-		{ value: 'day', label: 'diárias'},
-		{ value: 'year', label: 'únicas'},
+		{ value: 'year', label: 'por ano'},
+		{ value: 'month', label: 'por mês'},
+		{ value: 'day', label: 'por dia'},
+		{ value: 'unique', label: 'uma vez'},
 	],
 
 	CURRENCIES: [
