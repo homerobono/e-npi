@@ -1,1 +1,11 @@
-<app-explorer></app-explorer>
+
+        <app-explorer [files]="files | async" 
+            [path]="currentPath" 
+            [canNavigateUp]="canNavigateUp" 
+            (folderAdded)="addFolder($event)"
+            (elementRemoved)="removeElement($event)" 
+            (navigatedDown)="navigateToFolder($event)" 
+            (navigatedUp)="navigateUp()"
+            (elementRenamed)="renameElement($event)" 
+            (elementMoved)="moveElement($event)">
+        </app-explorer>

@@ -19,6 +19,7 @@ import { Globals } from 'config';
 import { slideInOutBottomAnimation } from '../_animations/slide_in_out.animation';
 import { FileManagerComponent } from '../file-manager/file-manager.component';
 import { MatDialog } from '@angular/material/dialog';
+import { NpiChooserModalComponent } from './npi-chooser-modal/npi-chooser-modal.component';
 
 @Component({
   selector: 'app-npi',
@@ -57,6 +58,10 @@ export class NpiComponent implements OnInit {
   editResponse: String
 
   scrollYPosition: Number
+
+  npisList: Npi[]
+    modalRef: BsModalRef;
+    npiRef: Npi
 
   motivations = [
     { value: 'CLIENT', label: 'Solicitação de Cliente' },
@@ -152,16 +157,19 @@ export class NpiComponent implements OnInit {
         flag ? this.npiForm.enable() : this.npiForm.disable()
       }
     )
+
+    this.npiService.npisList.subscribe(res => this.npisList = res)
+
     //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
   }
 
-  scrollBackToPosition(){
+  scrollBackToPosition() {
     var y = this.route.snapshot.params.scroll
     //console.log(y)
     if (y)
-      setTimeout(() => window.scroll(0,y), 1)
+      setTimeout(() => window.scroll(0, y), 1)
   }
 
   getNpi(npiNumber) {
@@ -229,7 +237,7 @@ export class NpiComponent implements OnInit {
     this.refresh()
   }
 
-  refresh(){
+  refresh() {
     this.getNpi(this.npi.number)
   }
 
@@ -264,7 +272,7 @@ export class NpiComponent implements OnInit {
     this.sendingForm = false;
   }
 
-  toggleEdit(){
+  toggleEdit() {
     this.editForm.next(!this.editFlag)
   }
 
@@ -382,15 +390,33 @@ export class NpiComponent implements OnInit {
     } catch (e) { console.log(e) }
   }
 
-  openFileManager(){
-    const initialState = {
-      title: 'Modal with component'
-    };
-    let dialogRef = this.dialog.open(FileManagerComponent);
+  openFileManager() {
+    let dialogRef = this.dialog.open(FileManagerComponent, { width: "80%", height: '80%' });
   }
 
-  loadVersion(npi: Npi){
+  loadVersion(npi: Npi) {
     this.npi = npi
+  }
+
+  loadNpiRef(res) {
+    if (res)
+    this.npiService.getNpi(res).subscribe(npi => { 
+      console.log('loading npiRef'); 
+      this.npiRef = npi[0] 
+    })
+  }
+
+  openNpiChooserModal() {
+    const initialState = {
+      npisList: this.npisList
+    }
+    this.modalRef = this.modalService.show(NpiChooserModalComponent, { initialState });
+    this.modalRef.content.onConfirm.subscribe(npi => {
+      this.npiRef = npi
+      this.npiForm.patchValue({
+        npiRef: npi.number
+      })
+    })
   }
 
 }

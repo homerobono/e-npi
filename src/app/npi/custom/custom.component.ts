@@ -24,25 +24,28 @@ import { Globals } from 'config';
   styleUrls: ['./custom.component.scss']
 })
 export class CustomComponent implements OnInit {
-
-  @Input() npi: Npi
+  
+  npi : Npi
+  @Input() set npiSetter(npi: Npi) {
+    this.npi = npi;
+    this.fillFormData()
+  }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   npiForm: FormGroup;
+  objectkeys = Object.keys
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private messenger: MessageService,
     private utils: UtilService,
     private npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
 
     this.npiForm = fb.group({
-      'npiRef': null,
       'complexity': null,
       'client': null,
+      'npiRef': null,
       'description': null,
       'norms': fb.group({
         'description': null,
@@ -52,20 +55,45 @@ export class CustomComponent implements OnInit {
         'description': null,
         'annex': null
       }),
-      'fiscals': null,
-      'investment': null,
-      'projectCost': fb.group({
-        'cost': null,
-        'annex': null
+      'regulations': fb.group({
+        standard: fb.group({}),
+        additional: null
       }),
-      'price': null,
+      'cost': fb.group({
+        value: '30,00',
+        currency: 'BRL'
+      }),
+      'price': fb.group({
+        value: null,
+        currency: null
+      }),
       'inStockDate': null,
+      'investment': fb.group({
+        value: null,
+        currency: null
+      }),
+      'projectCost': fb.group({
+        value: null,
+        currency: null,
+        annex: null
+      }),
+      'demand': fb.group({
+        'amount': null,
+        'period': null
+      }),
+      'fiscals': null,
+    })
+
+    let regulations = utils.getRegulations()
+    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
+    regulations.forEach(reg => {
+      additionalArray.addControl(reg.value, fb.control(null))
     })
   }
 
   ngOnInit() {
-
     this.npiFormOutput.emit(this.npiForm)
+    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 
     if (this.npi.isCriticallyAnalised() ||
@@ -78,13 +106,14 @@ export class CustomComponent implements OnInit {
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
+    if (!this.npiComponent.editFlag) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
       const control = form.get(field)
       if ((control instanceof FormGroup || control instanceof FormArray)
         && model[field]) {
         this.fillNestedFormData(control, model[field])
       } else
-        if (model[field] != null && model[field] != undefined) {
+        if (model[field] != null && model[field] != undefined && !(model[field] instanceof Object)) {
           try {
             control.setValue(model[field])
           }
@@ -94,22 +123,48 @@ export class CustomComponent implements OnInit {
   }
 
   fillFormData() {
+
     this.fillNestedFormData(this.npiForm, this.npi)
 
     this.npiForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
-      projectCost: {
-        cost: this.npi.projectCost.cost != null ?
-          this.npi.projectCost.cost.toFixed(2).toString().replace('.', ',') : null,
-        annex: this.npi.projectCost.annex
-      },
-      investment: this.npi.investment != null ?
-        this.npi.investment.toFixed(2).toString().replace('.', ',') : null
-    });
+      price: this.npi.price ? {
+        value: this.npi.price.value ? 
+          this.npi.price.value.toFixed(2).toString().replace('.', ',')
+          :null,
+        currency: this.npi.price.currency ? 
+          this.npi.price.currency:null,
+      } : null,
+      cost: this.npi.cost ? {
+        value: this.npi.cost.value ? 
+          this.npi.cost.value.toFixed(2).toString().replace('.', ',')
+          :null,
+        currency: this.npi.cost.currency ? 
+          this.npi.cost.currency:null,
+      } : null,
+      projectCost: this.npi.projectCost ?
+        {
+          value: this.npi.projectCost.value ?
+            this.npi.projectCost.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.projectCost.currency ? 
+            this.npi.projectCost.currency:null,
+          annex: null
+        } : null,
+      investment: this.npi.investment ?
+      {
+        value: this.npi.investment.value ?
+          this.npi.investment.value.toFixed(2).toString().replace('.', ',')
+          : null,
+        currency: this.npi.investment.currency ? 
+          this.npi.investment.currency:null,
+        annex: null
+      } : null,
+    })
   }
 
   fieldHasErrors(field) {
-    return this.npiForm.controls[field].hasError('required')
+    return this.npiForm.get(field).hasError('required')
   }
 
   updateParentForm() {

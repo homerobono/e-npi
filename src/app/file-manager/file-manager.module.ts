@@ -14,6 +14,8 @@ import { FileManagerComponent } from './file-manager.component';
 import { ExplorerComponent } from './explorer/explorer.component'
 import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
 import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { FileService } from '../services/file.service';
 //import { RoutingModule } from './routing.module'
 
 @NgModule({
@@ -29,6 +31,7 @@ import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.comp
     MatInputModule,
     FormsModule,
     MatButtonModule,
+    MatCardModule
     //RoutingModule
   ],
   declarations: [
@@ -43,6 +46,7 @@ import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.comp
   entryComponents: [
     ExplorerComponent, 
     NewFolderDialogComponent, 
-    RenameDialogComponent]
+    RenameDialogComponent],
+  providers: [FileService],
 })
 export class FileManagerModule {}

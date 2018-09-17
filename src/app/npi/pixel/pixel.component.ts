@@ -24,7 +24,8 @@ export class PixelComponent implements OnInit {
 
   objectkeys = Object.keys
 
-  constructor(fb: FormBuilder,
+  constructor(
+    fb: FormBuilder,
     private npiComponent: NpiComponent,
     private utils: UtilService
   ) {
@@ -80,6 +81,7 @@ export class PixelComponent implements OnInit {
 
   ngOnInit() {
     this.npiFormOutput.emit(this.npiForm)
+    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 
     if (this.npi.isCriticallyAnalised() ||
@@ -99,7 +101,7 @@ export class PixelComponent implements OnInit {
         && model[field]) {
         this.fillNestedFormData(control, model[field])
       } else
-        if (model[field] != null && model[field] != undefined) {
+        if (model[field] != null && model[field] != undefined && !(model[field] instanceof Object)) {
           try {
             control.setValue(model[field])
           }
@@ -113,6 +115,7 @@ export class PixelComponent implements OnInit {
     this.fillNestedFormData(this.npiForm, this.npi)
 
     this.npiForm.patchValue({
+      npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
       price: this.npi.price ? {
         value: this.npi.price.value ? 
           this.npi.price.value.toFixed(2).toString().replace('.', ',')

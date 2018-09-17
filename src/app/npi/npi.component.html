@@ -127,10 +127,10 @@
           <small>Última modificação: {{utils.getTimeDifference(null,npi.updated) }}</small>
         </div>
       </div>
-      <!--button type=button class='btn btn-primary btn-lg' (click)='openFileManager()'>
+      <button type=button class='btn btn-primary btn-lg' (click)='openFileManager()'>
         <i class='fa fa-archive'></i> 
         Anexos
-      </button-->
+      </button>
       <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
         <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
           <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
@@ -142,8 +142,8 @@
         <hr *ngIf='npiVersions.length == 1'>
         <app-oem [npiSetter]='npi' [npis]='npiVersions' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
         <app-pixel [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
-        <app-internal [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
-        <app-custom [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
+        <app-internal [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
+        <app-custom [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
 
         <app-critical [npiSetter]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
 

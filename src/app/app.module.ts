@@ -14,6 +14,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RoutingModule } from './routing.module';
 import { FileManagerModule } from './file-manager/file-manager.module'
 
+import { MessageService } from './services/message.service';
+import { NpiService } from './services/npi.service';
+import { UtilService } from './services/util.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './services/auth.service';
@@ -29,9 +32,6 @@ import { ErrorComponent } from './error/error.component';
 import { HomeComponent } from './home/home.component';
 import { ForgotComponent } from './forgot/forgot.component';
 import { NavButtonsComponent } from './nav-buttons/nav-buttons.component';
-import { MessageService } from './services/message.service';
-import { NpiService } from './services/npi.service';
-import { UtilService } from './services/util.service';
 import { CreateComponent } from './npi/create/create.component';
 import { NpiComponent } from './npi/npi.component';
 import { OemComponent } from './npi/oem/oem.component';

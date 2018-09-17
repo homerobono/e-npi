@@ -1,0 +1,18 @@
+.npis-list {
+    max-height: calc(100vh - 245px);
+    overflow-y: scroll;
+}
+
+.npis-list-item {
+    box-shadow: 0 0 0;
+    border: 0;
+    padding: 6px;
+}
+
+.npis-list-item:hover{
+    cursor: pointer;
+}
+
+.npis-list-item:active{
+    border: 0
+}

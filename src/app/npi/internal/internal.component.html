@@ -1,16 +1,31 @@
 <div [formGroup]='npiForm'>
   <div class="form-row">
-    <div class="form-group col-sm-4 mb-4">
+    <div class="form-group col-xs-6 col-sm col-md col-lg-auto">
       <label for="npiref">NPI Ref.</label>
-      <div class="input-group">
+      <div class="input-group mb-2">
         <div class="input-group-prepend">
           <span class="input-group-text" id="npiRefPrepend">
-            <i class='fa fa-fw'>#</i>
+            #
           </span>
         </div>
-        <input type="text" class="form-control" id="npiRef" formControlName='npiRef' name='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
+        <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
+        <div class="input-group-append">
+          <span class='input-group-text'>
+            <small *ngIf='npiRefField.value!=""'>
+              <a routerLink='/npi/{{ npiComponent.npiRef.number }}' *ngIf='npiComponent.npiRef' style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'>
+                {{ npiComponent.npiRef.name }}
+                <i>({{ utils.getEntry(npiComponent.npiRef.entry) }})</i>
+              </a>
+              <span class='text-danger' *ngIf='npiRefField.value!="" && !npiComponent.npiRef'>NPI inválida: {{ npiComponent.npiRef }}</span>
+            </small>
+          </span>
+          <button type='button' class="btn btn-outline-default shadow-none" id="npiRefAppend" (click)='npiComponent.openNpiChooserModal()'
+            [disabled]='npiComponent.npiForm.disabled'>
+            <span class="fa fa-search fa-sm"></span>
+          </button>
+        </div>
         <div class='invalid-feedback'>
-          Digite o nº de uma NPI válida
+          Defina a Npi de referência
         </div>
       </div>
     </div>
@@ -76,7 +91,7 @@
   </div>
 
   <div class="form-row">
-    <div class='col-md-3 form-group'>
+    <div class='col-md-3 form-group' formGroupName='investment'>
       <label for="investment">Investimento</label>
       <div class="input-group mb-2">
         <div class="input-group-prepend">
@@ -84,7 +99,7 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='investment' name='investment'
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' name='investment'
           placeholder='00,00' aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class='invalid-feedback'>
           Defina o investimento
@@ -99,7 +114,7 @@
             R$
           </span>
         </div>
-        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='cost' name='projectCost'
+        <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' name='projectCost'
           placeholder='00,00' aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class='invalid-feedback'>
           Defina o custo do projeto

@@ -6,11 +6,12 @@
 </div>
 <div class="modal-body">
   Escolha uma NPI:
-  <div class="list-group" style='overflow-y: scroll'>
-      <button type="button" (click)='selectNpi(npi)' class="list-group-item list-group-item-action p-2" 
-      *ngFor='let npi of npisList' [ngClass]='{"active": selectedNpi == npi}'>
-      <b>#{{ npi.number }}</b> {{ npi.name }} <i>({{ utils.getEntry(npi.entry)}})</i>
-    </button>
+  <div class='npis-list'>
+    <span (click)='selectNpi(npi)' class="list-group-item list-group-item-action npis-list-item" *ngFor='let npi of npisList'
+      id='{{npi.number}}'>
+      <b>#{{ npi.number }}</b> {{ npi.name }}
+      <i>({{ utils.getEntry(npi.entry)}})</i>
+  </span>
   </div>
 </div>
 <div class="modal-footer">

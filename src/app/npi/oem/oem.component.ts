@@ -31,6 +31,8 @@ export class OemComponent implements OnInit {
   @Input() npis: Npi[]
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
   
+  objectkeys = Object.keys
+
   npiForm: FormGroup;
   npiObservable: Observable<Npi>
 
@@ -57,6 +59,10 @@ export class OemComponent implements OnInit {
         'description': null,
         'annex': null
       }),
+      'regulations': fb.group({
+        standard: fb.group({}),
+        additional: null
+      }),
       'inStockDateType': null,
       'inStockDate': fb.group({
         'fixed': null,
@@ -78,12 +84,18 @@ export class OemComponent implements OnInit {
       'fiscals': null,
       'oemActivities': fb.array([])
     })
+    let regulations = utils.getRegulations()
+    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
+    regulations.forEach(reg => {
+      additionalArray.addControl(reg.value, fb.control(null))
+    })
   }
 
   ngOnInit() {
     console.log(this.npi)
 
     this.insertOemActivities();
+    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 
     if (this.npi.isCriticallyAnalised() ||
@@ -92,7 +104,6 @@ export class OemComponent implements OnInit {
 
     this.npiComponent.resetFormFlagSubject.subscribe(
       () => {
-        console.log('Reseting, bitches')
         this.fillFormData()
       }
     )

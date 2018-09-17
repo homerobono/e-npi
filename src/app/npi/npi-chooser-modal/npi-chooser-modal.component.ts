@@ -43,6 +43,9 @@ export class NpiChooserModalComponent implements OnInit {
   }
 
   selectNpi(npi){
+    if (this.selectedNpi)
+      document.getElementById(this.selectedNpi.number.toString()).classList.remove("active")
+    document.getElementById(npi.number).classList.add("active")
     this.selectedNpi = npi
   }
 

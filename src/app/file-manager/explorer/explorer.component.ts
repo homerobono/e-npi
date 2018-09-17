@@ -1,20 +1,22 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
+import { Observable } from 'rxjs/Observable';
 import { MatDialog } from '@angular/material/dialog';
 
 import { File } from '../../models/file.model'
 import { NewFolderDialogComponent } from '../modals/new-folder-dialog/new-folder-dialog.component';
 import { RenameDialogComponent } from '../modals/rename-dialog/rename-dialog.component';
-import { MatMenuTrigger } from '@angular/material/menu';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-explorer',
   templateUrl: './explorer.component.html',
   styleUrls: ['./explorer.component.scss']
 })
-export class ExplorerComponent implements OnInit {
+export class ExplorerComponent {
 
-  @Input() Files: File[];
+  constructor(public dialog: MatDialog) {}
+
+  @Input() files: File[];
   @Input() canNavigateUp: string;
   @Input() path: string;
 
@@ -25,14 +27,6 @@ export class ExplorerComponent implements OnInit {
   @Output() navigatedDown = new EventEmitter<File>();
   @Output() navigatedUp = new EventEmitter();
 
-  title: string
-
-  constructor(
-    public dialog: MatDialog,) { }
-
-  ngOnInit() {
-  }
-  
   deleteElement(element: File) {
     this.elementRemoved.emit(element);
   }
@@ -70,7 +64,7 @@ export class ExplorerComponent implements OnInit {
     });
   }
 
-  openMenu(event: MouseEvent, element: File, viewChild: MatMenuTrigger) {
+  openMenu(event: MouseEvent, viewChild: MatMenuTrigger) {
     event.preventDefault();
     viewChild.openMenu();
   }
