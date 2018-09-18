@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { File } from '../models/file.model';
+import { Component, OnInit, Inject } from '@angular/core';
+import FileElement from '../models/file.model';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../services/file.service';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { saveAs } from 'file-saver'
 
 @Component({
   selector: 'app-file-manager',
@@ -9,66 +11,71 @@ import { FileService } from '../services/file.service';
   styleUrls: ['./file-manager.component.scss']
 })
 export class FileManagerComponent implements OnInit {
-  
-  files: Observable<File[]>;
-  currentRoot: File;
+
+  files: Observable<FileElement[]>;
+  rootPath: string;
+  relativePath: string;
   currentPath: string;
   canNavigateUp = false;
 
   constructor(
-    private fileService: FileService
-  ) { }
+    private fileService: FileService,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    console.log(this.data.root)
+    this.rootPath = data.root
+    this.currentPath = this.rootPath
+    this.relativePath = '/'
+  }
 
   ngOnInit() {
-    const folderA = this.fileService.add({ name: 'Folder A', isFolder: true, parent: 'root' });
-    this.fileService.add({ name: 'Folder B', isFolder: true, parent: 'root' });
-    this.fileService.add({ name: 'Folder C', isFolder: true, parent: folderA.id });
-    this.fileService.add({ name: 'File A', isFolder: false, parent: 'root' });
-    this.fileService.add({ name: 'File B', isFolder: false, parent: 'root' });
-
     this.updateFileQuery();
   }
 
-  addFolder(folder: { name: string }) {
-    this.fileService.add({ isFolder: true, name: folder.name, parent: this.currentRoot ? this.currentRoot.id : 'root' });
+  addFolder(event: { name: string }) {
+    this.fileService.add(this.currentPath, event.name);
     this.updateFileQuery();
   }
-  
-  removeElement(element: File) {
-    this.fileService.delete(element.id);
+
+  downloadElement(event: FileElement){
+    this.fileService.download(this.currentPath, event.name).subscribe(
+      data => saveAs(data, event.name)
+    )
+  }
+
+  removeElement(element: FileElement) {
+    //this.fileService.delete(element.id);
     this.updateFileQuery();
   }
-  
-  moveElement(event: { element: File; moveTo: File }) {
-    this.fileService.update(event.element.id, { parent: event.moveTo.id });
+
+  moveElement(event: { element: FileElement; moveTo: FileElement }) {
+    //this.fileService.update(event.element.id, { parent: event.moveTo.id });
     this.updateFileQuery();
   }
-  
-  renameElement(element: File) {
-    this.fileService.update(element.id, { name: element.name });
+
+  renameElement(element: FileElement) {
+    //this.fileService.update(element.id, { name: element.name });
     this.updateFileQuery();
   }
 
   updateFileQuery() {
-    this.files = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot.id : 'root');
+    this.files = this.fileService.list(this.currentPath, null)
+    //this.files = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot : 'root');
   }
 
   navigateUp() {
-    if (this.currentRoot && this.currentRoot.parent === 'root') {
-      this.currentRoot = null;
-      this.canNavigateUp = false;
-      this.updateFileQuery();
-    } else {
-      this.currentRoot = this.fileService.get(this.currentRoot.parent);
-      this.updateFileQuery();
-    }
     this.currentPath = this.popFromPath(this.currentPath);
-  }
-  
-  navigateToFolder(element: File) {
-    this.currentRoot = element;
+    this.relativePath = this.popFromPath(this.relativePath);
     this.updateFileQuery();
-    this.currentPath = this.pushToPath(this.currentPath, element.name);
+    if (this.rootPath == this.currentPath) {
+      this.canNavigateUp = false;
+    }
+  }
+
+  navigateToFolder(path: string) {
+    this.currentPath = this.pushToPath(this.currentPath, path);
+    this.relativePath = this.pushToPath(this.relativePath, path);
+    this.updateFileQuery();
     this.canNavigateUp = true;
   }
 
@@ -77,7 +84,7 @@ export class FileManagerComponent implements OnInit {
     p += `${folderName}/`;
     return p;
   }
-  
+
   popFromPath(path: string) {
     let p = path ? path : '';
     let split = p.split('/');
@@ -85,5 +92,5 @@ export class FileManagerComponent implements OnInit {
     p = split.join('/');
     return p;
   }
-  
+
 }

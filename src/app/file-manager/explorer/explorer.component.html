@@ -18,10 +18,10 @@
         <span [matMenuTriggerFor]="rootMenu" [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
         </span>
         <div fxLayout="column" fxLayoutAlign="space-between center" (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)">
-          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="element.isFolder">
+          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="element.isFolder()">
             folder
           </mat-icon>
-          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="!element.isFolder">
+          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="!element.isFolder()">
             insert_drive_file
           </mat-icon>
           <span>{{element.name}}</span>
@@ -41,6 +41,10 @@
       <mat-icon>edit</mat-icon>
       <span>Rename</span>
     </button>
+    <button mat-menu-item (click)="downloadElement(element)">
+      <mat-icon>cloud_download</mat-icon>
+      <span>Download</span>
+    </button>
     <button mat-menu-item (click)="deleteElement(element)">
       <mat-icon>delete</mat-icon>
       <span>Delete</span>
@@ -51,7 +55,7 @@
 <mat-menu #moveToMenu="matMenu">
   <ng-template matMenuContent let-self="self">
     <ng-container *ngFor="let element of files">
-      <button *ngIf="element.isFolder && element.id !== self.id" mat-menu-item (click)="moveElement(self, element)">{{element.name}}</button>
+      <button *ngIf="element.isFolder() && element.id !== self.id" mat-menu-item (click)="moveElement(self, element)">{{element.name}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>

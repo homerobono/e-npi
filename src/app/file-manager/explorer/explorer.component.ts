@@ -3,9 +3,10 @@ import { MatMenu, MatMenuTrigger } from '@angular/material/menu';
 import { Observable } from 'rxjs/Observable';
 import { MatDialog } from '@angular/material/dialog';
 
-import { File } from '../../models/file.model'
+import FileElement from '../../models/file.model'
 import { NewFolderDialogComponent } from '../modals/new-folder-dialog/new-folder-dialog.component';
 import { RenameDialogComponent } from '../modals/rename-dialog/rename-dialog.component';
+import { element } from 'protractor';
 
 @Component({
   selector: 'app-explorer',
@@ -16,24 +17,29 @@ export class ExplorerComponent {
 
   constructor(public dialog: MatDialog) {}
 
-  @Input() files: File[];
+  @Input() files: FileElement[];
   @Input() canNavigateUp: string;
   @Input() path: string;
 
+  @Output() elementDownload = new EventEmitter<FileElement>();
   @Output() folderAdded = new EventEmitter<{ name: string }>();
-  @Output() elementRemoved = new EventEmitter<File>();
-  @Output() elementRenamed = new EventEmitter<File>();
-  @Output() elementMoved = new EventEmitter<{ element: File; moveTo: File }>();
-  @Output() navigatedDown = new EventEmitter<File>();
+  @Output() elementRemoved = new EventEmitter<string>();
+  @Output() elementRenamed = new EventEmitter<string>();
+  @Output() elementMoved = new EventEmitter<{ element: string; moveTo: string }>();
+  @Output() navigatedDown = new EventEmitter<string>();
   @Output() navigatedUp = new EventEmitter();
 
-  deleteElement(element: File) {
-    this.elementRemoved.emit(element);
+  downloadElement(element: FileElement){
+    this.elementDownload.emit(element)
   }
 
-  navigate(element: File) {
-    if (element.isFolder) {
-      this.navigatedDown.emit(element);
+  deleteElement(element: FileElement) {
+  //  this.elementRemoved.emit(element);
+  }
+
+  navigate(element: FileElement) {
+    if (element.isFolder()) {
+      this.navigatedDown.emit(element.name);
     }
   }
 
@@ -41,8 +47,8 @@ export class ExplorerComponent {
     this.navigatedUp.emit();
   }
 
-  moveElement(element: File, moveTo: File) {
-    this.elementMoved.emit({ element: element, moveTo: moveTo });
+  moveElement(element: FileElement, moveTo: FileElement) {
+    //this.elementMoved.emit({ element: element, moveTo: moveTo });
   }
 
   openNewFolderDialog() {
@@ -54,12 +60,12 @@ export class ExplorerComponent {
     });
   }
 
-  openRenameDialog(element: File) {
+  openRenameDialog(element: FileElement) {
     let dialogRef = this.dialog.open(RenameDialogComponent);
     dialogRef.afterClosed().subscribe(res => {
       if (res) {
         element.name = res;
-        this.elementRenamed.emit(element);
+        //this.elementRenamed.emit(element);
       }
     });
   }
