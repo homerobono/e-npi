@@ -118,3 +118,38 @@ td, th {
 .btn-group .btn{
     box-shadow: none
 }
+ 
+.btn-outline-orange {
+   color: orange;
+   background-color: transparent;
+   background-image: none;
+   border-color: orange;
+ }
+ 
+ .btn-outline-orange:hover {
+   color: #fff;
+   background-color: orange;
+   border-color: orange;
+ }
+ 
+ .btn-outline-orange:focus, .btn-outline-orange.focus {
+   box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+ }
+ 
+ .btn-outline-orange.disabled, .btn-outline-orange:disabled {
+   color: orange;
+   background-color: transparent;
+ }
+ 
+ .btn-outline-orange:not(:disabled):not(.disabled):active, .btn-outline-orange:not(:disabled):not(.disabled).active,
+ .show > .btn-outline-orange.dropdown-toggle {
+   color: #fff;
+   background-color: orange;
+   border-color: orange;
+ }
+ 
+.btn-outline-orange:not(:disabled):not(.disabled):active:focus, .btn-outline-orange:not(:disabled):not(.disabled).active:focus,
+ .show > .btn-outline-orange.dropdown-toggle:focus {
+   box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
+ }
+

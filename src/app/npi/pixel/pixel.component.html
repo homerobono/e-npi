@@ -16,7 +16,7 @@
                 {{ npiComponent.npiRef.name }}
                 <i>({{ utils.getEntry(npiComponent.npiRef.entry) }})</i>
               </a>
-              <span class='text-danger' *ngIf='npiRefField.value!="" && !npiComponent.npiRef'>NPI inválida: {{ npiComponent.npiRef }}</span>
+              <span class='text-danger' *ngIf='npiRefField.value!="" && !npiComponent.npiRef'>NPI inválida</span>
             </small>
           </span>
           <button type='button' class="btn btn-outline-default shadow-none" id="npiRefAppend" (click)='npiComponent.openNpiChooserModal()' 

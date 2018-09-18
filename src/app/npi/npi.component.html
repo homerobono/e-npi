@@ -2,7 +2,7 @@
   <div class='row justify-content-center'>
     <div class='col body-main'>
       <div class='sticky-top text-right' style='top:20px; height:0; overflow: visible'>
-        <div class='btn-group shadow' *ngIf='npi.stage != 5'>
+        <div class='btn-group shadow rounded' *ngIf='npi.stage != 5'>
           <button (click)='refresh()' class='btn btn-light text-primary' data-toggle="tooltip" data-placement="top" title="Atualizar">
             <i class='fa fa-refresh fa-fw'></i>
           </button>
@@ -10,11 +10,12 @@
             data-placement="top" title="Desfazer alterações">
             <i class='fa fa-undo fa-fw'></i>
           </button>
-          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag' data-toggle="tooltip" data-placement="top"
-            title="Cancelar NPI">
+          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag' data-toggle="tooltip"
+            data-placement="top" title="Cancelar NPI">
             <i class='fa fa-times fa-fw'></i>
           </button>
-          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2 && editFlag' data-toggle="tooltip" data-placement="top" title="Remover NPI">
+          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2 && editFlag' data-toggle="tooltip" data-placement="top"
+            title="Remover NPI">
             <i class='fa fa-trash fa-fw'></i>
           </button>
           <button (click)="toggleEdit()" class='btn btn-info' *ngIf='!editFlag && npi.stage < 5' data-toggle="tooltip" data-placement="top"
@@ -38,6 +39,15 @@
             <i class='fa fa-check fa-fw'></i>
           </button>
         </div>
+      </div>
+      <div class='btn-group rounded mb-2'>
+        <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top" title="Página inicial de NPI's">
+          <i class='fa fa-chevron-left'></i>
+        </button>
+        <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip"
+          data-placement="top" title="Criar NPI">
+          <i class='fa fa-plus '></i>
+        </button>
       </div>
       <div class='row pb-0'>
         <div class='col'>
@@ -72,7 +82,7 @@
           </div>
 
         </div>
-        
+
         <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
           <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm"
             *ngIf='npi.stage == 5 && !postConclusionEdit'>
@@ -128,7 +138,7 @@
         </div>
       </div>
       <button type=button class='btn btn-primary btn-lg' (click)='openFileManager()'>
-        <i class='fa fa-archive'></i> 
+        <i class='fa fa-archive'></i>
         Anexos
       </button>
       <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
