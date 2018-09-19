@@ -2,8 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import FileElement from '../models/file.model';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../services/file.service';
-import { MAT_DIALOG_DATA } from '@angular/material';
 import { saveAs } from 'file-saver'
+import { BsModalRef } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-file-manager',
@@ -13,26 +13,24 @@ import { saveAs } from 'file-saver'
 export class FileManagerComponent implements OnInit {
 
   files: Observable<FileElement[]>;
-  rootPath: string;
-  relativePath: string;
-  currentPath: string;
+  rootPath: String;
+  relativePath: String;
+  currentPath: String;
   canNavigateUp = false;
 
   constructor(
-    private fileService: FileService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    console.log(this.data.root)
-    this.rootPath = data.root
-    this.currentPath = this.rootPath
-    this.relativePath = '/'
-  }
+    public modalRef: BsModalRef,
+    private fileService: FileService
+  ) { }
 
   ngOnInit() {
+    this.currentPath = this.rootPath
+    this.relativePath = '/'
     this.updateFileQuery();
+    console.log(this.rootPath)
   }
 
-  addFolder(event: { name: string }) {
+  addFolder(event: { name: String }) {
     this.fileService.add(this.currentPath, event.name);
     this.updateFileQuery();
   }
@@ -72,20 +70,20 @@ export class FileManagerComponent implements OnInit {
     }
   }
 
-  navigateToFolder(path: string) {
+  navigateToFolder(path: String) {
     this.currentPath = this.pushToPath(this.currentPath, path);
     this.relativePath = this.pushToPath(this.relativePath, path);
     this.updateFileQuery();
     this.canNavigateUp = true;
   }
 
-  pushToPath(path: string, folderName: string) {
+  pushToPath(path: String, folderName: String) {
     let p = path ? path : '';
     p += `${folderName}/`;
     return p;
   }
 
-  popFromPath(path: string) {
+  popFromPath(path: String) {
     let p = path ? path : '';
     let split = p.split('/');
     split.splice(split.length - 2, 1);

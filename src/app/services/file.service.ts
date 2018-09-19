@@ -9,16 +9,16 @@ import { Globals } from 'config';
 import { ResponseContentType, Response } from '@angular/http';
 
 export interface IFileService {
-  add(path: string, folderName: string);
-  delete(id: string);
-  update(id: string, update: Partial<FileElement>);
-  queryInFolder(folderId: string): Observable<FileElement[]>;
-  get(id: string): FileElement;
+  add(path: String, folderName: String);
+  delete(id: String);
+  update(id: String, update: Partial<FileElement>);
+  queryInFolder(folderId: String): Observable<FileElement[]>;
+  get(id: String): FileElement;
 }
 
 @Injectable()
 export class FileService implements IFileService {
-  private map = new Map<string, FileElement>();
+  private map = new Map<String, FileElement>();
 
   apiUrl = Globals.ENPI_SERVER_URL + '/files'
   listUrl = `${this.apiUrl}/list`;
@@ -54,7 +54,7 @@ export class FileService implements IFileService {
     ) as Observable<FileElement[]>
   };
 
-  add(path: string, folderName: string) {
+  add(path: String, folderName: String) {
     console.log('adding ' + folderName)
     var data = {
       action: 'createFolder',
@@ -64,8 +64,8 @@ export class FileService implements IFileService {
     this.http.post(this.addUrl, { params: data }).subscribe()
   }
 
-  download(path: string, fileName: string) {
-    const fullFileName = path + fileName
+  download(path: String, fileName: String) {
+    const fullFileName = path as string + fileName as string
     const headers = new HttpHeaders().set('content-type', 'application/blob');
     const params = new HttpParams().set('path', fullFileName)
     console.log(fullFileName)
@@ -76,18 +76,18 @@ export class FileService implements IFileService {
     })
   }
 
-  delete(id: string) {
+  delete(id: String) {
     this.map.delete(id);
   }
 
-  update(id: string, update: Partial<FileElement>) {
+  update(id: String, update: Partial<FileElement>) {
     let element = this.map.get(id);
     element = Object.assign(element, update);
     //this.map.set(element.id, element);
   }
 
   private querySubject: BehaviorSubject<FileElement[]>;
-  queryInFolder(folderId: string) {
+  queryInFolder(folderId: String) {
     console.log('querying ' + folderId)
     const result: FileElement[] = [];
     this.map.forEach(element => {
@@ -103,11 +103,8 @@ export class FileService implements IFileService {
     return this.querySubject.asObservable();
   }
 
-  get(filePath: string) {
+  get(filePath: String) {
     return this.map.get(filePath);
   }
 
-  clone(element: FileElement) {
-    return JSON.parse(JSON.stringify(element));
-  }
 }
