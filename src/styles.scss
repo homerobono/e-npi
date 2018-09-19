@@ -1,5 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+.cdk-global-overlay-container {
+    z-index: 1000 !important;
+}
+
+.modal-backdrop {
+    z-index: 100;
+}
+
+.modal {
+  z-index: 200;
+}
+
 body {
     background: url('./assets/gray_noise.jpg');
     background-attachment: fixed;
@@ -153,3 +166,7 @@ td, th {
    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
  }
 
+ .vertically-centered{
+    width: 250px;
+    top: calc(50vh - 100px) !important
+  }

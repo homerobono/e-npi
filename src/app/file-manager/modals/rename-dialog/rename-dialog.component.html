@@ -1,12 +1,14 @@
-<h1 mat-dialog-title>Rename Element</h1>
-
-<mat-dialog-content>
-  <mat-form-field class="example-full-width">
-    <input matInput placeholder="Folder Name" [(ngModel)]="folderName">
-  </mat-form-field>
-</mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button [mat-dialog-close]="folderName" color="primary">OK</button>
-</mat-dialog-actions>
+<div class="modal-content">
+  <div class="modal-body">
+    Renomear arquivo:
+    <input type='text' class='form-control' [(ngModel)]="newName" autofocus onFocus='this.select()'>
+    <div class='row mt-2'>
+      <div class='col'>
+        <button (click)='modalRef.hide()' type=button class='btn btn-light w-100 shadow-none'>Cancelar</button>
+      </div>
+      <div class='col'>
+        <button (click)='renameConfirm()' type=button class='btn btn-primary w-100 shadow-none'>Ok</button>
+      </div>
+    </div>
+  </div>
+</div>

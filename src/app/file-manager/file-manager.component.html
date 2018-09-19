@@ -1,11 +1,46 @@
-<div class="modal-header">
-    <h5 class="modal-title pull-left">Npi de Referência</h5>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-<div class="modal-body">
-    <app-explorer [files]="files | async" 
+<div class="modal-content">
+  <div class="modal-header bg-light-gray">
+    <div class='container'>
+      <div class='row justify-content-end'>
+        <div class='col'>
+          <button type="button" class="close pb-2 mb-0" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col text-secondary text-left'>
+          <span class="pointer fa fa-arrow-left text-left p-2 pl-0 ml-0" [style.visibility]='canNavigateUp? "visible" : "hidden"' (click)="navigateUp()">
+          </span>
+          <span>
+            {{ relativePath || 'Files'}}
+          </span>
+        </div>
+        <div class='col'>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <button class="btn btn-success shadow-none" id="inputGroupFileAddon01" (click)='uploadElements()'>
+                <span class='fa fa-upload'></span>
+              </button>
+            </div>
+            <div class="custom-file">
+              <input type="file" ng2FileSelect [uploader]="uploader.getUploader()" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+              <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+            </div>
+          </div>
+        </div>
+        <div class='col-auto pointer' style="position:relative;" (click)="openNewFolderDialog()">
+          <span style="position:absolute; top:0; left:0;" class="fa fa-folder fa-2x text-primary">
+          </span>
+          <span style="position:absolute; top:9px; left:9px;" class='fa fa-plus text-light'></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body pt-0 mt-0 body">
+      <app-explorer 
+        [files]="files | async" 
+        [folders]="folders | async"
         [path]="relativePath" 
         [canNavigateUp]="canNavigateUp"
         (elementDownload)='downloadElement($event)' 
@@ -15,8 +50,9 @@
         (navigatedUp)="navigateUp()"
         (elementRenamed)="renameElement($event)" 
         (elementMoved)="moveElement($event)">
-    </app-explorer>
-</div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Concluído</button>
+      </app-explorer>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Concluído</button>
+  </div>
 </div>

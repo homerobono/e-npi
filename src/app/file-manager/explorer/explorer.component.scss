@@ -1,15 +1,7 @@
-:host {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-  
+
+.cdk-global-overlay-container {
+  z-index: 1041 !important;
+}    
   .file-or-folder {
     padding: 8px;
     overflow: hidden;
@@ -19,6 +11,13 @@
     width: 50px;
     height: 50px;
     font-size: 50px;
+    text-align: center;
+  }
+
+  .file-label {
+    overflow: hidden;
+    text-align: center;
+    width: 50px;
   }
   
   .pointer {
@@ -27,4 +26,8 @@
   
   .spacer {
     flex: 1 1 auto;
+  }
+
+  .bg-light-gray{
+    background-color: #eee
   }

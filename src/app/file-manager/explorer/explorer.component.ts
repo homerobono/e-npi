@@ -7,6 +7,7 @@ import FileElement from '../../models/file.model'
 import { NewFolderDialogComponent } from '../modals/new-folder-dialog/new-folder-dialog.component';
 import { RenameDialogComponent } from '../modals/rename-dialog/rename-dialog.component';
 import { element } from 'protractor';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-explorer',
@@ -15,9 +16,15 @@ import { element } from 'protractor';
 })
 export class ExplorerComponent {
 
-  constructor(public dialog: MatDialog) {}
+  modalRef: BsModalRef
+
+  constructor(
+    public dialog: MatDialog,
+    private modalService: BsModalService,
+  ) {}
 
   @Input() files: FileElement[];
+  @Input() folders: FileElement[];
   @Input() canNavigateUp: string;
   @Input() path: string;
 
@@ -28,6 +35,8 @@ export class ExplorerComponent {
   @Output() elementMoved = new EventEmitter<{ element: string; moveTo: string }>();
   @Output() navigatedDown = new EventEmitter<string>();
   @Output() navigatedUp = new EventEmitter();
+
+  ngOnInit(){ }
 
   downloadElement(element: FileElement){
     this.elementDownload.emit(element)
@@ -47,6 +56,9 @@ export class ExplorerComponent {
     this.navigatedUp.emit();
   }
 
+  moveToParent(element: FileElement) {
+  }
+
   moveElement(element: FileElement, moveTo: FileElement) {
     //this.elementMoved.emit({ element: element, moveTo: moveTo });
   }
@@ -61,10 +73,10 @@ export class ExplorerComponent {
   }
 
   openRenameDialog(element: FileElement) {
-    let dialogRef = this.dialog.open(RenameDialogComponent);
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        element.name = res;
+    this.modalRef = this.modalService.show(RenameDialogComponent, { initialState: { element }, class: "modal-sm shadow-lg vertically-centered"});
+    this.modalRef.content.onConfirm.subscribe(name => {
+      if (name != "") {
+        element.name = name;
         //this.elementRenamed.emit(element);
       }
     });
@@ -73,5 +85,6 @@ export class ExplorerComponent {
   openMenu(event: MouseEvent, viewChild: MatMenuTrigger) {
     event.preventDefault();
     viewChild.openMenu();
+    console.log(this.folders)
   }
 }

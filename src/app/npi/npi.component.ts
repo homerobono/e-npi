@@ -60,8 +60,9 @@ export class NpiComponent implements OnInit {
   scrollYPosition: Number
 
   npisList: Npi[]
-    modalRef: BsModalRef;
-    npiRef: Npi
+ 
+  modalRef: BsModalRef;
+  npiRef: Npi
 
   motivations = [
     { value: 'CLIENT', label: 'Solicitação de Cliente' },
@@ -160,6 +161,8 @@ export class NpiComponent implements OnInit {
 
     this.npiService.npisList.subscribe(res => this.npisList = res)
 
+    //setTimeout(() => this.openFileManager(), 400)
+
     //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
     //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
@@ -180,9 +183,11 @@ export class NpiComponent implements OnInit {
           this.npi = npis[0]
           this.npiVersions = npis
           this.titleField = this.npi.name
-          this.authorId = this.npi.requester._id
-          this.authorName = this.npi.requester.firstName +
-            (this.npi.requester.lastName ? ' ' + this.npi.requester.lastName : '')
+          if (this.npi.requester) {
+            this.authorId = this.npi.requester._id
+            this.authorName = this.npi.requester.firstName +
+              (this.npi.requester.lastName ? ' ' + this.npi.requester.lastName : '')
+          }
           console.log(this.npi)
         }, err => {
           this.location.replaceState(null)
@@ -274,6 +279,9 @@ export class NpiComponent implements OnInit {
 
   toggleEdit() {
     this.editForm.next(!this.editFlag)
+    if (this.editFlag){
+      //document.getElementById('npiRef').focus()
+    }
   }
 
   toggleTitleEdit(event) {
@@ -394,7 +402,7 @@ export class NpiComponent implements OnInit {
     const initialState = {
       rootPath: this.npi.number.toString()+'/'
     }
-    this.modalRef = this.modalService.show(FileManagerComponent, { initialState });
+    this.modalRef = this.modalService.show(FileManagerComponent, { initialState, class: "modal-lg" });
 
     /*let dialogRef = this.dialog.open(
       FileManagerComponent, 

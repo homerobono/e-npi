@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
 import { TextMaskModule } from 'angular2-text-mask';
-import { FileUploadModule } from 'ng2-file-upload/ng2-file-upload';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { PaginationModule } from 'ngx-bootstrap';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -86,7 +85,6 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
     TextMaskModule,
     DatepickerModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    FileUploadModule,
     ClickOutsideModule,
     PaginationModule.forRoot(),
     RoutingModule,

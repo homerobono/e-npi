@@ -16,6 +16,7 @@ import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-
 import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.component';
 import { MatCardModule } from '@angular/material/card';
 import { FileService } from '../services/file.service';
+import { FileUploadModule } from 'ng2-file-upload';
 //import { RoutingModule } from './routing.module'
 
 @NgModule({
@@ -31,7 +32,8 @@ import { FileService } from '../services/file.service';
     MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
+    FileUploadModule
     //RoutingModule
   ],
   declarations: [

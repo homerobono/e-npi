@@ -1,39 +1,19 @@
-<mat-toolbar>
-  <mat-icon *ngIf="canNavigateUp" class="pointer" (click)="navigateUp()">
-    arrow_back
-  </mat-icon>
-  <span style="margin-left: 8px">
-    {{path || 'Files'}}
-  </span>
-  <span class="spacer"></span>
-  <mat-icon class="pointer" (click)="openNewFolderDialog()">
-    create_new_folder
-  </mat-icon>
-</mat-toolbar>
-
-<div class="container" fxFlex fxLayout="row" fxLayoutAlign="space-between stretch">
-  <div class="content" fxFlex fxLayout="row">
-    <mat-grid-list cols="8" rowHeight="100px" fxFlex>
-      <mat-grid-tile *ngFor="let element of files" class=file-or-folder>
-        <span [matMenuTriggerFor]="rootMenu" [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
-        </span>
-        <div fxLayout="column" fxLayoutAlign="space-between center" (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)">
-          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="element.isFolder()">
-            folder
-          </mat-icon>
-          <mat-icon color="primary" class="file-or-folder-icon pointer" *ngIf="!element.isFolder()">
-            insert_drive_file
-          </mat-icon>
-          <span>{{element.name}}</span>
-        </div>
-      </mat-grid-tile>
-    </mat-grid-list>
+<div class="container-fluid">
+  <div class='row'>
+    <div class='col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1' *ngFor="let element of files" class='pointer file-or-folder' [matMenuTriggerFor]="rootMenu"
+      [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
+      <div (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)">
+        <div class="fa file-or-folder-icon text-primary" [ngClass]='element.isFolder() ? "fa-folder" : "fa-file"'></div>
+        <div class='file-label'>{{element.name}}</div>
+      </div>
+    </div>
   </div>
 </div>
 
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
-    <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}">
+    <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}"
+    [disabled]='!canNavigateUp && !folders.length'>
       <mat-icon>open_with</mat-icon>
       <span>Move To</span>
     </button>
@@ -54,8 +34,9 @@
 
 <mat-menu #moveToMenu="matMenu">
   <ng-template matMenuContent let-self="self">
-    <ng-container *ngFor="let element of files">
-      <button *ngIf="element.isFolder() && element.id !== self.id" mat-menu-item (click)="moveElement(self, element)">{{element.name}}</button>
+    <button *ngIf="canNavigateUp" mat-menu-item (click)="moveToParent(self)">..</button>
+    <ng-container *ngFor="let folder of folders">
+      <button *ngIf="folder.name !== self.name" mat-menu-item (click)="moveElement(self, element)">{{folder.name}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>

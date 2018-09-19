@@ -4,6 +4,11 @@ import { Observable } from 'rxjs/Observable';
 import { FileService } from '../services/file.service';
 import { saveAs } from 'file-saver'
 import { BsModalRef } from 'ngx-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
+import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
+import { FileUploader } from 'ng2-file-upload';
+import { Globals } from 'config';
+import { UploadService } from '../services/upload.service';
 
 @Component({
   selector: 'app-file-manager',
@@ -13,21 +18,35 @@ import { BsModalRef } from 'ngx-bootstrap';
 export class FileManagerComponent implements OnInit {
 
   files: Observable<FileElement[]>;
+  folders: Observable<FileElement[]>;
   rootPath: String;
   relativePath: String;
   currentPath: String;
   canNavigateUp = false;
 
   constructor(
+    public dialog: MatDialog,
     public modalRef: BsModalRef,
-    private fileService: FileService
-  ) { }
+    private fileService: FileService,
+    private uploader: UploadService
+  ) {
+  }
 
   ngOnInit() {
     this.currentPath = this.rootPath
     this.relativePath = '/'
     this.updateFileQuery();
     console.log(this.rootPath)
+    this.folders = this.files.filter((files, i) => files[i].isFolder() as boolean)
+  }
+
+  openNewFolderDialog() {
+    let dialogRef = this.dialog.open(NewFolderDialogComponent);
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) {
+        this.addFolder({ name: res });
+      }
+    });
   }
 
   addFolder(event: { name: String }) {
@@ -35,7 +54,11 @@ export class FileManagerComponent implements OnInit {
     this.updateFileQuery();
   }
 
-  downloadElement(event: FileElement){
+  uploadElements(){
+    this.uploader.upload(this.currentPath)
+  }
+
+  downloadElement(event: FileElement) {
     this.fileService.download(this.currentPath, event.name).subscribe(
       data => saveAs(data, event.name)
     )
@@ -62,11 +85,13 @@ export class FileManagerComponent implements OnInit {
   }
 
   navigateUp() {
-    this.currentPath = this.popFromPath(this.currentPath);
-    this.relativePath = this.popFromPath(this.relativePath);
-    this.updateFileQuery();
-    if (this.rootPath == this.currentPath) {
-      this.canNavigateUp = false;
+    if (this.canNavigateUp) {
+      this.currentPath = this.popFromPath(this.currentPath);
+      this.relativePath = this.popFromPath(this.relativePath);
+      this.updateFileQuery();
+      if (this.rootPath == this.currentPath) {
+        this.canNavigateUp = false;
+      }
     }
   }
 

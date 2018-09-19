@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Globals } from 'config';
 
-const uploadUrl = Globals.ENPI_SERVER_URL + '/files'
+const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
 
 @Injectable({
   providedIn: 'root'
@@ -24,9 +24,17 @@ export class UploadService {
     this.uploader.onCompleteItem = (item:any, response:any, status:any, headers:any) => {
       console.log("File upload: uploaded: ", item, status, response);
     };
+
   }
 
   getUploader() : FileUploader {
     return this.uploader
+  }
+  
+  upload(destinationPath: String) {
+    this.uploader.onBuildItemForm = (fileItem, form) => {
+      form.append('destination', destinationPath)
+    }
+    this.uploader.uploadAll()
   }
 }

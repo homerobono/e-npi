@@ -1,0 +1,16 @@
+.pointer {
+    cursor: pointer;
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  .bg-light-gray{
+    background-color: #eee
+  }
+  
+.body{
+    height: calc(100vh - 245px);
+    overflow-y: scroll;
+}
