@@ -24,12 +24,10 @@ export class NpiService {
   constructor(private http: HttpClient) {
     this.npisList = new BehaviorSubject([])
     this.manualRefresh = new BehaviorSubject(false)
-    this.npisList = this.manualRefresh.pipe(
+    this.npisList = this.manualRefresh.
       switchMap(() => timer(0, 10000).pipe(
-        concatMap(() => this.getNpis()),
-        map((res: Npi[]) => res)
-      ))
-    ) as BehaviorSubject<Npi[]>
+        concatMap(() => this.getNpis()))
+    ).shareReplay() as BehaviorSubject<Npi[]>
   }
 
   getNpi(npiNumber: Number): Observable<Npi[]> {
@@ -48,7 +46,7 @@ export class NpiService {
         });
         return Npis;
       })
-      .shareReplay();
+      .shareReplay()
   }
 
   getNpis(): Observable<Npi[]> {
@@ -67,7 +65,6 @@ export class NpiService {
         });
         return Npis;
       })
-      .shareReplay();
   }
 
   createNpi(npiForm): Observable<any> {
@@ -219,6 +216,10 @@ export class NpiService {
 
     console.log(model.inStockDate)
     return model
+  }
+
+  ngOnDestroy(){
+    console.log('Destroying service')
   }
 
 }

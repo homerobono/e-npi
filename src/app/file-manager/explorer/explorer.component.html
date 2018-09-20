@@ -1,9 +1,9 @@
 <div class="container-fluid">
   <div class='row'>
-    <div class='col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1' *ngFor="let element of files" class='pointer file-or-folder' [matMenuTriggerFor]="rootMenu"
+    <div class='file-or-folder text-center' *ngFor="let element of files" [matMenuTriggerFor]="rootMenu"
       [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
-      <div (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)">
-        <div class="fa file-or-folder-icon text-primary" [ngClass]='element.isFolder() ? "fa-folder" : "fa-file"'></div>
+      <div (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer'>
+        <div class="fa fa-3x file-or-folder-icon text-primary" [ngClass]='element.isFolder() ? "fa-folder" : "fa-file"'></div>
         <div class='file-label'>{{element.name}}</div>
       </div>
     </div>
@@ -13,13 +13,13 @@
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
     <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}"
-    [disabled]='!canNavigateUp && !folders.length'>
+    [disabled]='!canNavigateUp && folders && !folders.length'>
       <mat-icon>open_with</mat-icon>
-      <span>Move To</span>
+      <span>Mover Para...</span>
     </button>
     <button mat-menu-item (click)="openRenameDialog(element)">
       <mat-icon>edit</mat-icon>
-      <span>Rename</span>
+      <span>Renomear</span>
     </button>
     <button mat-menu-item (click)="downloadElement(element)">
       <mat-icon>cloud_download</mat-icon>
@@ -27,7 +27,7 @@
     </button>
     <button mat-menu-item (click)="deleteElement(element)">
       <mat-icon>delete</mat-icon>
-      <span>Delete</span>
+      <span>Remover</span>
     </button>
   </ng-template>
 </mat-menu>
@@ -36,7 +36,7 @@
   <ng-template matMenuContent let-self="self">
     <button *ngIf="canNavigateUp" mat-menu-item (click)="moveToParent(self)">..</button>
     <ng-container *ngFor="let folder of folders">
-      <button *ngIf="folder.name !== self.name" mat-menu-item (click)="moveElement(self, element)">{{folder.name}}</button>
+      <button *ngIf="folder.name !== self.name" mat-menu-item (click)="moveElement(self, folder)">{{folder.name}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>

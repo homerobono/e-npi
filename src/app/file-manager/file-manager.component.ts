@@ -9,6 +9,7 @@ import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-
 import { FileUploader } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-file-manager',
@@ -37,7 +38,6 @@ export class FileManagerComponent implements OnInit {
     this.relativePath = '/'
     this.updateFileQuery();
     console.log(this.rootPath)
-    this.folders = this.files.filter((files, i) => files[i].isFolder() as boolean)
   }
 
   openNewFolderDialog() {
@@ -50,38 +50,54 @@ export class FileManagerComponent implements OnInit {
   }
 
   addFolder(event: { name: String }) {
-    this.fileService.add(this.currentPath, event.name);
-    this.updateFileQuery();
+    this.fileService.add(this.currentPath, event.name).subscribe(
+      res => this.updateFileQuery(),
+      err => console.log(err)
+      )
   }
 
   uploadElements(){
     this.uploader.upload(this.currentPath)
+    this.uploader.onCompleteUpload.subscribe(
+      () => {
+        this.updateFileQuery()
+      }
+    )
   }
 
-  downloadElement(event: FileElement) {
-    this.fileService.download(this.currentPath, event.name).subscribe(
-      data => saveAs(data, event.name)
+  downloadElement(element: FileElement) {
+    let fileName = element.name + (element.isFolder() ? '.zip' : '')
+    this.fileService.download(this.currentPath, element.name).subscribe(
+      data => saveAs(data, fileName)
     )
   }
 
   removeElement(element: FileElement) {
-    //this.fileService.delete(element.id);
-    this.updateFileQuery();
+    this.fileService.delete(this.currentPath, element.name).subscribe(
+      res => this.updateFileQuery(),
+      err => console.log(err)
+    )
   }
 
   moveElement(event: { element: FileElement; moveTo: FileElement }) {
-    //this.fileService.update(event.element.id, { parent: event.moveTo.id });
-    this.updateFileQuery();
+    this.fileService.move(this.currentPath, event.element.name, 
+      ( moveTo ? this.currentPath : this.popFromPath(this.currentPath) ) 
+      + event.moveTo.name ).subscribe(
+      res => this.updateFileQuery(),
+      err => console.log(err)
+      )
   }
 
-  renameElement(element: FileElement) {
-    //this.fileService.update(element.id, { name: element.name });
-    this.updateFileQuery();
+  renameElement(event: {element: FileElement, newName: String}) {
+    this.fileService.rename(this.currentPath, event.element.name, event.newName).subscribe(
+      res => this.updateFileQuery(),
+      err => console.log(err)
+      )
   }
 
   updateFileQuery() {
     this.files = this.fileService.list(this.currentPath, null)
-    //this.files = this.fileService.queryInFolder(this.currentRoot ? this.currentRoot : 'root');
+    this.folders = this.files.map((files) => files.filter(e => e.isFolder()))
   }
 
   navigateUp() {

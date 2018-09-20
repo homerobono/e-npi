@@ -8,6 +8,7 @@ import Npi from '../models/npi.model';
 import { UtilService } from '../services/util.service';
 import { Globals } from '../../../config';
 import { fadeAnimation } from '../_animations/fade_in_out.animation'
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +17,8 @@ import { fadeAnimation } from '../_animations/fade_in_out.animation'
   animations: [fadeAnimation],
 })
 export class HomeComponent implements OnInit {
+
+  private ngUnsubscribe = new Subject();
 
   userLevel: Number = 0
   response = null
@@ -98,8 +101,8 @@ export class HomeComponent implements OnInit {
 
   getNpis() {
     this.gettingNpis = true;
-    this.npiService.npisList.subscribe(
-      npis => {
+    this.npiService.npisList.takeUntil(this.ngUnsubscribe)
+    .subscribe(npis => {
         this.data = npis.sort(
           this.sortBy(this.sortParams)
         );
@@ -247,6 +250,12 @@ export class HomeComponent implements OnInit {
       window.scrollTo({ left: 0, 
         top: document.body.offsetHeight - outerHeight,
         behavior: 'smooth' });
+  }
+
+  ngOnDestroy(){
+    console.log('Destroying component')
+    this.ngUnsubscribe.next()
+    this.ngUnsubscribe.complete()
   }
 
 }

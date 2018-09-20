@@ -10,8 +10,9 @@ import { ResponseContentType, Response } from '@angular/http';
 
 export interface IFileService {
   add(path: String, folderName: String);
-  delete(id: String);
-  update(id: String, update: Partial<FileElement>);
+  delete(path: String, elementName: String);
+  rename(path: String, elementName: String, newName: String);
+  move(path: String, elementName: String, newPath: String);
   queryInFolder(folderId: String): Observable<FileElement[]>;
   get(id: String): FileElement;
 }
@@ -24,6 +25,9 @@ export class FileService implements IFileService {
   listUrl = `${this.apiUrl}/list`;
   addUrl = `${this.apiUrl}/createFolder`;
   downloadUrl = `${this.apiUrl}/download`;
+  removeUrl = `${this.apiUrl}/remove`;
+  renameUrl = `${this.apiUrl}/rename`;
+  moveUrl = `${this.apiUrl}/move`;
 
   inprocess = false
   asyncSuccess = false
@@ -33,7 +37,7 @@ export class FileService implements IFileService {
     private http: HttpClient
   ) { }
 
-  list(path, exts): Observable<FileElement[]> {
+  list(path, exts) {
     var data = {
       action: 'list',
       path: path,
@@ -50,18 +54,28 @@ export class FileService implements IFileService {
           filesArray.push(new FileElement(element))
         });
         return filesArray
-      }
-    ) as Observable<FileElement[]>
+      })
   };
 
   add(path: String, folderName: String) {
     console.log('adding ' + folderName)
     var data = {
-      action: 'createFolder',
       path: path,
       name: folderName,
     };
-    this.http.post(this.addUrl, { params: data }).subscribe()
+    return this.http.post(this.addUrl, { params: data })
+  }
+  
+  downloadAll(path: String) {
+    const fullPathName = path as string
+    const headers = new HttpHeaders().set('content-type', 'application/blob');
+    const params = new HttpParams().set('path', fullPathName)
+    console.log(fullPathName)
+    return this.http.get(this.downloadUrl, { 
+      headers: headers,
+      responseType: 'blob',
+      params: params
+    })
   }
 
   download(path: String, fileName: String) {
@@ -76,14 +90,32 @@ export class FileService implements IFileService {
     })
   }
 
-  delete(id: String) {
-    this.map.delete(id);
+  delete(path: String, elementName: String) {
+    console.log('removing ' + elementName)
+    var data = {
+      action: 'remove',
+      path: path,
+      name: elementName,
+    };
+    return this.http.post(this.removeUrl, { params: data })
+  }
+  
+  rename(path: String, elementName: String, newName: String) {
+    var data = {
+      path: path,
+      name: elementName,
+      newName: newName,
+    };
+    return this.http.post(this.renameUrl, { params: data })
   }
 
-  update(id: String, update: Partial<FileElement>) {
-    let element = this.map.get(id);
-    element = Object.assign(element, update);
-    //this.map.set(element.id, element);
+  move(path: String, elementName: String, moveTo: String) {
+    var data = {
+      path: path,
+      name: elementName,
+      newPath: moveTo,
+    };
+    return this.http.post(this.moveUrl, { params: data })
   }
 
   private querySubject: BehaviorSubject<FileElement[]>;

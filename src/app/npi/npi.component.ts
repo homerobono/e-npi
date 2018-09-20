@@ -30,6 +30,8 @@ import { NpiChooserModalComponent } from './npi-chooser-modal/npi-chooser-modal.
 
 export class NpiComponent implements OnInit {
 
+  private ngUnsubscribe = new Subject();
+
   resetFormFlagSubject = new Subject<Boolean>()
   resetFormFlag = true
 
@@ -159,7 +161,9 @@ export class NpiComponent implements OnInit {
       }
     )
 
-    this.npiService.npisList.subscribe(res => this.npisList = res)
+    this.npiService.npisList.subscribe(
+      res => this.npisList = res
+    )
 
     //setTimeout(() => this.openFileManager(), 400)
 
@@ -177,7 +181,7 @@ export class NpiComponent implements OnInit {
 
   getNpi(npiNumber) {
     //console.log('getting npi ' + npiNumber)
-    this.npiService.getNpi(npiNumber)
+    this.npiService.getNpi(npiNumber).takeUntil(this.ngUnsubscribe)
       .subscribe(
         npis => {
           this.npi = npis[0]
@@ -439,6 +443,12 @@ export class NpiComponent implements OnInit {
         npiRef: npi.number
       })
     })
+  }
+
+  ngOnDestroy(){
+    console.log('Destroying npiComponent')
+    this.ngUnsubscribe.next()
+    this.ngUnsubscribe.complete()
   }
 
 }

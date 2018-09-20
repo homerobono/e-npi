@@ -4,20 +4,32 @@
 }    
   .file-or-folder {
     padding: 8px;
-    overflow: hidden;
+    width: 107px;
+    overflow: visible;
+  }
+  .file-or-folder:hover {
+    z-index: 10
+  }
+  .file-or-folder:hover .file-label {
+    white-space: normal;
+    overflow: visible;
+    cursor: pointer;
   }
   
   .file-or-folder-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 50px;
+    margin: 6px;
     text-align: center;
   }
 
   .file-label {
-    overflow: hidden;
     text-align: center;
-    width: 50px;
+    height: 20px;
+    font-size: 16px;
+    line-height: 18px;
+    overflow: hidden;
+    word-wrap: break-word;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
   
   .pointer {

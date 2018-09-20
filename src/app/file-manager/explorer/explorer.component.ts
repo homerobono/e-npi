@@ -21,7 +21,7 @@ export class ExplorerComponent {
   constructor(
     public dialog: MatDialog,
     private modalService: BsModalService,
-  ) {}
+  ) { }
 
   @Input() files: FileElement[];
   @Input() folders: FileElement[];
@@ -30,20 +30,23 @@ export class ExplorerComponent {
 
   @Output() elementDownload = new EventEmitter<FileElement>();
   @Output() folderAdded = new EventEmitter<{ name: string }>();
-  @Output() elementRemoved = new EventEmitter<string>();
-  @Output() elementRenamed = new EventEmitter<string>();
-  @Output() elementMoved = new EventEmitter<{ element: string; moveTo: string }>();
+  @Output() elementRemoved = new EventEmitter<FileElement>();
+  @Output() elementRenamed = new EventEmitter<{ element: FileElement, newName: string }>();
+  @Output() elementMoved = new EventEmitter<{ element: FileElement, moveTo: FileElement }>();
   @Output() navigatedDown = new EventEmitter<string>();
   @Output() navigatedUp = new EventEmitter();
 
-  ngOnInit(){ }
+  ngOnInit() {
+    setTimeout(() => console.log(this.folders), 400)
+    setTimeout(() => console.log(this.files), 400)
+  }
 
-  downloadElement(element: FileElement){
+  downloadElement(element: FileElement) {
     this.elementDownload.emit(element)
   }
 
   deleteElement(element: FileElement) {
-  //  this.elementRemoved.emit(element);
+    this.elementRemoved.emit(element);
   }
 
   navigate(element: FileElement) {
@@ -57,10 +60,11 @@ export class ExplorerComponent {
   }
 
   moveToParent(element: FileElement) {
+    this.elementMoved.emit({ element: element, moveTo: null });
   }
 
   moveElement(element: FileElement, moveTo: FileElement) {
-    //this.elementMoved.emit({ element: element, moveTo: moveTo });
+    this.elementMoved.emit({ element: element, moveTo: moveTo });
   }
 
   openNewFolderDialog() {
@@ -73,11 +77,10 @@ export class ExplorerComponent {
   }
 
   openRenameDialog(element: FileElement) {
-    this.modalRef = this.modalService.show(RenameDialogComponent, { initialState: { element }, class: "modal-sm shadow-lg vertically-centered"});
+    this.modalRef = this.modalService.show(RenameDialogComponent, { initialState: { element }, class: "modal-sm shadow-lg vertically-centered" });
     this.modalRef.content.onConfirm.subscribe(name => {
       if (name != "") {
-        element.name = name;
-        //this.elementRenamed.emit(element);
+        this.elementRenamed.emit({element: element, newName: name});
       }
     });
   }
