@@ -13,13 +13,10 @@ export interface IFileService {
   delete(path: String, elementName: String);
   rename(path: String, elementName: String, newName: String);
   move(path: String, elementName: String, newPath: String);
-  queryInFolder(folderId: String): Observable<FileElement[]>;
-  get(id: String): FileElement;
 }
 
 @Injectable()
 export class FileService implements IFileService {
-  private map = new Map<String, FileElement>();
 
   apiUrl = Globals.ENPI_SERVER_URL + '/files'
   listUrl = `${this.apiUrl}/list`;
@@ -116,27 +113,6 @@ export class FileService implements IFileService {
       newPath: moveTo,
     };
     return this.http.post(this.moveUrl, { params: data })
-  }
-
-  private querySubject: BehaviorSubject<FileElement[]>;
-  queryInFolder(folderId: String) {
-    console.log('querying ' + folderId)
-    const result: FileElement[] = [];
-    this.map.forEach(element => {
-      /*if (element.parent === folderId) {
-        result.push(this.clone(element));
-      }*/
-    });
-    if (!this.querySubject) {
-      this.querySubject = new BehaviorSubject(result);
-    } else {
-      this.querySubject.next(result);
-    }
-    return this.querySubject.asObservable();
-  }
-
-  get(filePath: String) {
-    return this.map.get(filePath);
   }
 
 }

@@ -12,8 +12,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { FileManagerComponent } from './file-manager.component';
 import { ExplorerComponent } from './explorer/explorer.component'
-import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
-import { RenameDialogComponent } from './modals/rename-dialog/rename-dialog.component';
+import { UploaderComponent } from './uploader/uploader.component';
+import { InputDialogComponent } from './modals/input-dialog/input-dialog.component';
 import { MatCardModule } from '@angular/material/card';
 import { FileService } from '../services/file.service';
 import { FileUploadModule } from 'ng2-file-upload';
@@ -39,16 +39,16 @@ import { FileUploadModule } from 'ng2-file-upload';
   declarations: [
     FileManagerComponent,
     ExplorerComponent, 
-    NewFolderDialogComponent, 
-    RenameDialogComponent
+    UploaderComponent, 
+    InputDialogComponent
   ],
   exports: [
     FileManagerComponent
   ],
   entryComponents: [
     ExplorerComponent, 
-    NewFolderDialogComponent, 
-    RenameDialogComponent],
+    UploaderComponent, 
+    InputDialogComponent],
   providers: [FileService],
 })
 export class FileManagerModule {}

@@ -4,8 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { MatDialog } from '@angular/material/dialog';
 
 import FileElement from '../../models/file.model'
-import { NewFolderDialogComponent } from '../modals/new-folder-dialog/new-folder-dialog.component';
-import { RenameDialogComponent } from '../modals/rename-dialog/rename-dialog.component';
+import { InputDialogComponent } from '../modals/input-dialog/input-dialog.component';
 import { element } from 'protractor';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
@@ -19,7 +18,6 @@ export class ExplorerComponent {
   modalRef: BsModalRef
 
   constructor(
-    public dialog: MatDialog,
     private modalService: BsModalService,
   ) { }
 
@@ -67,17 +65,14 @@ export class ExplorerComponent {
     this.elementMoved.emit({ element: element, moveTo: moveTo });
   }
 
-  openNewFolderDialog() {
-    let dialogRef = this.dialog.open(NewFolderDialogComponent);
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.folderAdded.emit({ name: res });
-      }
-    });
-  }
-
   openRenameDialog(element: FileElement) {
-    this.modalRef = this.modalService.show(RenameDialogComponent, { initialState: { element }, class: "modal-sm shadow-lg vertically-centered" });
+    this.modalRef = this.modalService.show(InputDialogComponent, { 
+      initialState: { 
+        element,
+        actionLabel: 'Digite o nome' + ( element.isFolder() ? 'da pasta:' : 'do arquivo:' )
+      }, 
+      class: "modal-sm shadow-lg vertically-centered" 
+    });
     this.modalRef.content.onConfirm.subscribe(name => {
       if (name != "") {
         this.elementRenamed.emit({element: element, newName: name});
@@ -89,5 +84,11 @@ export class ExplorerComponent {
     event.preventDefault();
     viewChild.openMenu();
     console.log(this.folders)
+  }
+
+  availableFolders(element : FileElement) {
+    if (this.folders)
+      return this.folders.filter(f => f.name != element.name)
+    return null
   }
 }

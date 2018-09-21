@@ -9,8 +9,6 @@ import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from '../../services/message.service';
 import { NpiService } from '../../services/npi.service'
-import { UploadService } from '../../services/upload.service'
-import { FileUploader } from 'ng2-file-upload';
 
 import Npi from '../../models/npi.model';
 
@@ -18,7 +16,10 @@ import { ptBrLocale } from 'ngx-bootstrap/locale';
 import { UtilService } from '../../services/util.service';
 import { Globals } from 'config';
 import { NpiChooserModalComponent } from '../npi-chooser-modal/npi-chooser-modal.component';
-import { createTemplateData } from '@angular/core/src/view/refs';
+import { UploaderComponent } from '../../file-manager/uploader/uploader.component';
+import { UploadService } from '../../services/upload.service';
+import { concatMap } from 'rxjs/operators';
+
 defineLocale('pt-br', ptBrLocale)
 
 @Component({
@@ -65,9 +66,9 @@ export class CreateComponent implements OnInit {
         private router: Router,
         private messenger: MessageService,
         private localeService: BsLocaleService,
-        private uploadService: UploadService,
         private utils: UtilService,
-        private modalService: BsModalService
+        private modalService: BsModalService,
+        private uploadService: UploadService
     ) {
         this.datePickerConfig = Object.assign(
             {},
@@ -151,26 +152,34 @@ export class CreateComponent implements OnInit {
 
     ngOnInit() {
         this.localeService.use('pt-br');
+        //setTimeout(() => this.openUploadModal(), 600)
     }
 
     createNpi(npiForm): void {
         this.sendingForm = true
-        this.npiService.createNpi(npiForm).
-            subscribe(res => {
-                this.messenger.set({
-                    'type': 'success',
-                    'message': 'NPI cadastrado com sucesso'
-                });
-                this.formSent = true;
-                this.sendingForm = false;
-                this.clearFields();
-                this.router.navigateByUrl('/npi/' + res.data.number)
-            }, err => {
-                this.invalidFieldsError(err)
-                this.formSent = false;
-                this.sendingForm = false;
+        this.npiService.createNpi(npiForm).subscribe(
+            createRes => {
+                console.log('NPI created');
+                createRes.npiNumber = createRes.data.number
+                this.uploadService.upload(createRes.data.number).
+                    subscribe(() => {
+                        console.log('uploads completed');
+                        console.log(createRes);
+                        this.messenger.set({
+                            'type': 'success',
+                            'message': 'NPI cadastrado com sucesso'
+                        });
+                        this.formSent = true;
+                        this.sendingForm = false;
+                        this.clearFields();
+                        this.router.navigateByUrl('/npi/' + createRes.data.number)
+                    }, err => {
+                        this.invalidFieldsError(err)
+                        this.formSent = false;
+                        this.sendingForm = false;
+                    })
             }
-            )
+        )
     }
 
     invalidFieldsError(err) {
@@ -238,7 +247,7 @@ export class CreateComponent implements OnInit {
     }
 
     loadNpiRef(res) {
-        this.npiService.getNpi(res).subscribe(npi => {this.npiRef = npi[0]})
+        this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
     }
 
     openNpiChooserModal() {
@@ -252,5 +261,11 @@ export class CreateComponent implements OnInit {
                 npiRef: npi.number
             })
         })
+    }
+
+    openUploadModal() {
+        this.modalRef = this.modalService.show(UploaderComponent, {
+            class: 'modal-lg'
+        });
     }
 }

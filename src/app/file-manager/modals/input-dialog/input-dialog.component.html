@@ -1,13 +1,13 @@
 <div class="modal-content">
   <div class="modal-body">
-    Renomear arquivo:
+    {{ actionLabel }}
     <input type='text' class='form-control' [(ngModel)]="newName" autofocus onFocus='this.select()'>
     <div class='row mt-2'>
       <div class='col'>
         <button (click)='modalRef.hide()' type=button class='btn btn-light w-100 shadow-none'>Cancelar</button>
       </div>
       <div class='col'>
-        <button (click)='renameConfirm()' type=button class='btn btn-primary w-100 shadow-none'>Ok</button>
+        <button (click)='confirm()' type=button class='btn btn-primary w-100 shadow-none'>Ok</button>
       </div>
     </div>
   </div>

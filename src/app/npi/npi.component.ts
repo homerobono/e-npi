@@ -407,17 +407,6 @@ export class NpiComponent implements OnInit {
       rootPath: this.npi.number.toString()+'/'
     }
     this.modalRef = this.modalService.show(FileManagerComponent, { initialState, class: "modal-lg" });
-
-    /*let dialogRef = this.dialog.open(
-      FileManagerComponent, 
-      { 
-        width: "80%", 
-        height: '80%' ,
-        data: {
-          root: this.npi.number.toString()+'/'
-        }
-      }
-    );*/
   }
 
   loadVersion(npi: Npi) {

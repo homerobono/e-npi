@@ -8,7 +8,9 @@ export const slideInOutTopAnimation =
             ),
             animate(
                 '200ms ease-out',
-                style({ transform: 'translateY(0%)' })
+                style({ 
+                    transform: 'translateY(0%)',
+                 })
             )
         ]),
         transition(':leave', [

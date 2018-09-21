@@ -1,0 +1,30 @@
+  .my-drop-zone { 
+    border: dashed 6px lightgray; 
+    color: lightgray;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: -20px
+  }
+  .nv-file-over { 
+    border: dotted 6px red; 
+  } /* Default class applied to drop zones on over */
+
+  td, th {
+    text-align: left;
+    vertical-align: middle !important;
+  }
+
+  .remove-item {
+    visibility: hidden;
+    display: block;
+    text-align: center;
+    color: lightgray
+  }
+
+  .remove-item:hover {
+    color: #dc3545
+  }
+
+  tr:hover .remove-item {
+    visibility: visible
+  }

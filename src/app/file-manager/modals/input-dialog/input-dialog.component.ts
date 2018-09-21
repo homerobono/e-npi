@@ -5,32 +5,34 @@ import { BsModalRef } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-rename-dialog',
-  templateUrl: './rename-dialog.component.html',
-  styleUrls: ['./rename-dialog.component.scss']
+  templateUrl: './input-dialog.component.html',
+  styleUrls: ['./input-dialog.component.scss']
 })
-export class RenameDialogComponent implements OnInit {
+export class InputDialogComponent implements OnInit {
 
   onConfirm : Subject<String>
   newName: String
   element: FileElement
+  actionLabel: String
 
   constructor(private modalRef: BsModalRef) {
     this.onConfirm = new Subject()
+    this.actionLabel = 'Digite um nome:'
   }
 
   @HostListener('window:keyup', ['$event'])
   keyUpEvent(e) {
     e.stopPropagation()
     if (e.keyCode == 13){
-      this.renameConfirm()
+      this.confirm()
     }
   }
 
   ngOnInit() {
-    this.newName = this.element.name
+    if (this.element) this.newName = this.element.name
   }
 
-  renameConfirm(){
+  confirm(){
     this.onConfirm.next(this.newName)
     this.modalRef.hide()
   }

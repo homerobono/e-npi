@@ -3,13 +3,11 @@ import FileElement from '../models/file.model';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../services/file.service';
 import { saveAs } from 'file-saver'
-import { BsModalRef } from 'ngx-bootstrap';
-import { MatDialog } from '@angular/material/dialog';
-import { NewFolderDialogComponent } from './modals/new-folder-dialog/new-folder-dialog.component';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { InputDialogComponent } from './modals/input-dialog/input-dialog.component';
 import { FileUploader } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-file-manager',
@@ -26,8 +24,8 @@ export class FileManagerComponent implements OnInit {
   canNavigateUp = false;
 
   constructor(
-    public dialog: MatDialog,
     public modalRef: BsModalRef,
+    private modalService: BsModalService,
     private fileService: FileService,
     private uploader: UploadService
   ) {
@@ -41,27 +39,41 @@ export class FileManagerComponent implements OnInit {
   }
 
   openNewFolderDialog() {
-    let dialogRef = this.dialog.open(NewFolderDialogComponent);
-    dialogRef.afterClosed().subscribe(res => {
-      if (res) {
-        this.addFolder({ name: res });
+    this.modalRef = this.modalService.show(InputDialogComponent, { 
+      initialState: {
+        actionLabel: 'Digite o nome da pasta:'
+      }, 
+      class: "modal-sm shadow-lg vertically-centered" }
+    );
+    this.modalRef.content.onConfirm.subscribe(name => {
+      if (name != "") {
+        this.addFolder({ name });
       }
     });
   }
+
 
   addFolder(event: { name: String }) {
     this.fileService.add(this.currentPath, event.name).subscribe(
       res => this.updateFileQuery(),
       err => console.log(err)
-      )
+    )
   }
 
-  uploadElements(){
+  uploadElements() {
     this.uploader.upload(this.currentPath)
     this.uploader.onCompleteUpload.subscribe(
       () => {
         this.updateFileQuery()
       }
+    )
+  }
+
+  downloadAll() {
+    let fileName = 'NPI#' + this.currentPath.replace(/\//g, '') + ' Anexos.zip'
+    console.log(fileName)
+    this.fileService.download(this.currentPath, '').subscribe(
+      data => saveAs(data, fileName)
     )
   }
 
@@ -80,19 +92,19 @@ export class FileManagerComponent implements OnInit {
   }
 
   moveElement(event: { element: FileElement; moveTo: FileElement }) {
-    this.fileService.move(this.currentPath, event.element.name, 
-      ( moveTo ? this.currentPath : this.popFromPath(this.currentPath) ) 
-      + event.moveTo.name ).subscribe(
-      res => this.updateFileQuery(),
-      err => console.log(err)
+    this.fileService.move(this.currentPath, event.element.name,
+      (event.moveTo ? this.currentPath + event.moveTo.name : this.popFromPath(this.currentPath))
+      ).subscribe(
+        res => this.updateFileQuery(),
+        err => console.log(err)
       )
   }
 
-  renameElement(event: {element: FileElement, newName: String}) {
+  renameElement(event: { element: FileElement, newName: String }) {
     this.fileService.rename(this.currentPath, event.element.name, event.newName).subscribe(
       res => this.updateFileQuery(),
       err => console.log(err)
-      )
+    )
   }
 
   updateFileQuery() {

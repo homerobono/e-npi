@@ -7,7 +7,8 @@ import { Globals } from 'config';
 import Npi from '../models/npi.model';
 import 'rxjs/add/operator/do';
 import { timer, BehaviorSubject } from 'rxjs';
-import { concatMap, map, merge, switchMap } from 'rxjs/operators';
+import { concatMap } from 'rxjs/operators';
+import { UploadService } from './upload.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,10 @@ export class NpiService {
   npisList: BehaviorSubject<Npi[]>
   manualRefresh: BehaviorSubject<Boolean>
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private uploadService: UploadService
+  ) {
     this.npisList = new BehaviorSubject([])
     this.manualRefresh = new BehaviorSubject(false)
     this.npisList = this.manualRefresh.
@@ -72,7 +76,7 @@ export class NpiService {
     console.log(npiForm);
     var npi = this.formToModel(npiForm)
     console.log(npi);
-    return this.http.post(this.npisUrl, npi);
+    return this.http.post(this.npisUrl, npi)
   }
 
   newNpiVersion(npiForm): Observable<any> {

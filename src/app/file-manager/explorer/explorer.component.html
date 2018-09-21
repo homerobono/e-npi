@@ -13,7 +13,7 @@
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
     <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}"
-    [disabled]='!canNavigateUp && folders && !folders.length'>
+    [disabled]='!canNavigateUp && !availableFolders(element)'>
       <mat-icon>open_with</mat-icon>
       <span>Mover Para...</span>
     </button>
@@ -35,8 +35,8 @@
 <mat-menu #moveToMenu="matMenu">
   <ng-template matMenuContent let-self="self">
     <button *ngIf="canNavigateUp" mat-menu-item (click)="moveToParent(self)">..</button>
-    <ng-container *ngFor="let folder of folders">
-      <button *ngIf="folder.name !== self.name" mat-menu-item (click)="moveElement(self, folder)">{{folder.name}}</button>
+    <ng-container *ngFor="let folder of availableFolders(self)">
+      <button mat-menu-item (click)="moveElement(self, folder)">{{folder.name}}</button>
     </ng-container>
   </ng-template>
 </mat-menu>

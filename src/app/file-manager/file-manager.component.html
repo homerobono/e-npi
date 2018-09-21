@@ -44,21 +44,21 @@
     </div>
   </div>
   <div class="modal-body pt-0 mt-0 body">
-      <app-explorer 
-        [files]="files | async" 
-        [folders]="folders | async"
-        [path]="relativePath" 
-        [canNavigateUp]="canNavigateUp"
-        (elementDownload)='downloadElement($event)' 
-        (folderAdded)="addFolder($event)"
-        (elementRemoved)="removeElement($event)" 
-        (navigatedDown)="navigateToFolder($event)" 
-        (navigatedUp)="navigateUp()"
-        (elementRenamed)="renameElement($event)" 
-        (elementMoved)="moveElement($event)">
-      </app-explorer>
-    </div>
-    <div class="modal-footer bg-light-gray">
-      <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Concluído</button>
+    <app-explorer 
+      [files]="files | async" 
+      [folders]="folders | async"
+      [path]="relativePath" 
+      [canNavigateUp]="canNavigateUp"
+      (elementDownload)='downloadElement($event)' 
+      (folderAdded)="addFolder($event)"
+      (elementRemoved)="removeElement($event)" 
+      (navigatedDown)="navigateToFolder($event)" 
+      (navigatedUp)="navigateUp()"
+      (elementRenamed)="renameElement($event)" 
+      (elementMoved)="moveElement($event)">
+    </app-explorer>
+  </div>
+  <div class="modal-footer bg-light-gray">
+    <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Concluído</button>
   </div>
 </div>

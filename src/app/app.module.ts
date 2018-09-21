@@ -8,7 +8,6 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ClickOutsideModule } from 'ng4-click-outside';
 import { PaginationModule } from 'ngx-bootstrap';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { RoutingModule } from './routing.module';
 import { FileManagerModule } from './file-manager/file-manager.module'
@@ -45,6 +44,7 @@ import { ValidateComponent } from './npi/validate/validate.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 import { FileManagerComponent } from './file-manager/file-manager.component';
+import { UploaderComponent } from './file-manager/uploader/uploader.component';
 
 @NgModule({
   declarations: [
@@ -89,7 +89,6 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
     PaginationModule.forRoot(),
     RoutingModule,
     FileManagerModule,
-    MatDialogModule
   ],
   providers: [
     UsersService,
@@ -107,7 +106,8 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
   bootstrap: [AppComponent],
   entryComponents: [
     FileManagerComponent, 
-    NpiChooserModalComponent
+    NpiChooserModalComponent,
+    UploaderComponent
   ]
 })
 export class AppModule { }

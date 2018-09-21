@@ -22,3 +22,20 @@
 .upload-button:active{
     color: blue
 }
+
+.npi-search-icon:before {
+    content: "\f002";
+}
+
+button:hover .npi-search-icon:before {
+    color: blue
+}
+
+.append-icon:after {
+    content: "\f07b";
+}
+
+button:hover .append-icon:after {
+    content: "\f07c";
+    color: blue
+}
