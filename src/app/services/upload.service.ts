@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { Subject, BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap';
+import { SendingFormModalComponent } from '../npi/sending-form-modal/sending-form-modal.component';
+import { isNgTemplate } from '@angular/compiler';
 
 const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
 
@@ -10,47 +13,96 @@ const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
 })
 export class UploadService {
 
-  public uploader: FileUploader
+  public uploaders: Object = new Object()
   public onCompleteUpload: Subject<any>
+  public progress: Number = 0
+  public isUploading: Boolean = false
+  public queue: Array<FileItem> = new Array()
 
-  constructor() {
-    console.log("Constructiong uploader Service")
+  constructor(
+    private modalService: BsModalService
+  ) {
+    console.log("Constructing uploader Service")
+    this.onCompleteUpload = new Subject<any>()
+  }
 
-    this.uploader = new FileUploader(
+  getUploaders() {
+    return this.uploaders
+  }
+
+  upload(npiNumber) {
+    Object.keys(this.uploaders).forEach(subject => {
+      console.log('Setting ' + subject)
+      this.uploaders[subject].onBuildItemForm = (item, form) => {
+        form.append('destination', npiNumber + '/' + subject)
+      }
+      this.uploaders[subject].uploadAll()
+      console.log('is this async?')
+    })
+    return this.onCompleteUpload
+  }
+
+  addUploader(subject: string, uploader: FileUploader) {
+    console.log('appending ' + uploader.queue.length + ' items')
+    uploader.setOptions(
       {
         url: uploadUrl,
         authToken: localStorage.getItem('id_token')
       }
     )
-    this.onCompleteUpload = new Subject<any>()
 
-    this.uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
-
-    this.uploader.onCompleteAll = () => {
-      console.log("All files uploaded.")
-      this.onCompleteUpload.next()
+    //uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
+    this.queue.concat(uploader.queue)
+    console.log(this.queue)
+    uploader.onProgressAll = () => this.updateProgress()
+    uploader.onBeforeUploadItem = () => this.isUploading = true
+    uploader.onCompleteAll = () => {
+      if (Object.values(this.uploaders).every((uploader: FileUploader) => !uploader.getNotUploadedItems.length)) {
+        console.log("All files uploaded.")
+        this.isUploading = false
+        this.onCompleteUpload.next()
+      }
     };
 
+    uploader.onErrorItem = (file, res) => { console.log(res); throw Error(res) }
+    Object.assign(this.uploaders, { [subject]: uploader })
   }
 
-  getUploader(): FileUploader {
-    return this.uploader
+  updateProgress() {
+    console.log('updating')
+    let progress = 0
+    Object.values(this.uploaders).forEach(uploader => {
+      try {
+      progress += uploader.progress * this.totalUploaderSize(uploader)
+      } catch(e) { console.error(e)}
+    })
+    this.progress = progress / (this.totalSize() *1024 * 1024)
+    console.log(progress)
   }
 
-  upload(destinationPath: String) {
-    this.uploader.onBuildItemForm = (fileItem, form) => {
-      form.append('destination', destinationPath)
+  totalUploaderSize(uploader) {
+    let totalSize = 0
+    let queue = uploader.queue
+    for (let i = 0; i < queue.length; i++)
+      totalSize += queue.file.size
+    console.log('totalSize: '+ totalSize)
+    return totalSize
+  }
+
+  totalSize() {
+    let totalSize = 0
+    let uploadersArr = Object.values(this.uploaders)
+    for (let i = 0; i < uploadersArr.length; i++) {
+      this.totalUploaderSize(uploadersArr[i])
     }
-    if (this.uploader.queue.length) {
-      this.uploader.uploadAll()
-      return this.onCompleteUpload
-    } else return new BehaviorSubject('')
+    console.log('totalSize: '+ totalSize)
+    return totalSize
   }
 
-  append(items: FileItem[]) {
-    console.log('appended ' + items.length + ' items')
-    this.uploader.addToQueue(items.map(item => item._file))
-    console.log('Total: ' + this.uploader.queue.length)
+  abort(){
+    Object.values(this.uploaders).forEach((uploader: FileUploader) => {
+      uploader.cancelAll()
+    })
   }
 
   ngOnDestroy() {

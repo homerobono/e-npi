@@ -19,6 +19,7 @@ import { NpiChooserModalComponent } from '../npi-chooser-modal/npi-chooser-modal
 import { UploaderComponent } from '../../file-manager/uploader/uploader.component';
 import { UploadService } from '../../services/upload.service';
 import { concatMap } from 'rxjs/operators';
+import { SendingFormModalComponent } from '../sending-form-modal/sending-form-modal.component';
 
 defineLocale('pt-br', ptBrLocale)
 
@@ -152,11 +153,12 @@ export class CreateComponent implements OnInit {
 
     ngOnInit() {
         this.localeService.use('pt-br');
-        //setTimeout(() => this.openUploadModal(), 600)
+        setTimeout(() => this.openUploadModal("resources"), 600)
     }
 
     createNpi(npiForm): void {
         this.sendingForm = true
+        this.openSendingFormModal()
         this.npiService.createNpi(npiForm).subscribe(
             createRes => {
                 console.log('NPI created');
@@ -263,9 +265,20 @@ export class CreateComponent implements OnInit {
         })
     }
 
-    openUploadModal() {
+    openUploadModal(field: String) {
         this.modalRef = this.modalService.show(UploaderComponent, {
-            class: 'modal-lg'
+            initialState: { field },
+            class: 'modal-lg modal-dialog-centered upload-modal'
         });
+    }
+
+    openSendingFormModal(){
+        this.modalService.show(SendingFormModalComponent, {
+            class: 'modal-sm modal-dialog-centered'
+        })
+    }
+
+    ngOnDestroy(){
+        delete this.uploadService.uploaders
     }
 }

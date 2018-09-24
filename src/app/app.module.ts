@@ -44,7 +44,9 @@ import { ValidateComponent } from './npi/validate/validate.component';
 import { AlertComponent } from './alert/alert.component';
 import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
 import { FileManagerComponent } from './file-manager/file-manager.component';
+import { SendingFormModalComponent } from './npi/sending-form-modal/sending-form-modal.component';
 import { UploaderComponent } from './file-manager/uploader/uploader.component';
+import { UploadService } from './services/upload.service';
 
 @NgModule({
   declarations: [
@@ -72,7 +74,8 @@ import { UploaderComponent } from './file-manager/uploader/uploader.component';
     ActivitiesComponent,
     NpiChooserModalComponent,
     ValidateComponent,
-    ClientComponent
+    ClientComponent,
+    SendingFormModalComponent
   ],
   imports: [
     BrowserModule,
@@ -96,6 +99,7 @@ import { UploaderComponent } from './file-manager/uploader/uploader.component';
     NpiService,
     MessageService,
     UtilService,
+    UploadService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -107,7 +111,8 @@ import { UploaderComponent } from './file-manager/uploader/uploader.component';
   entryComponents: [
     FileManagerComponent, 
     NpiChooserModalComponent,
-    UploaderComponent
+    UploaderComponent,
+    SendingFormModalComponent
   ]
 })
 export class AppModule { }

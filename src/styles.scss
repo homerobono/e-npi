@@ -171,7 +171,12 @@ td, th {
    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);
  }
 
+.upload-modal {
+    max-height: calc(100vh - 200px) !important
+}
+
  .vertically-centered{
     width: 250px;
     top: calc(50vh - 100px) !important
   }
+  

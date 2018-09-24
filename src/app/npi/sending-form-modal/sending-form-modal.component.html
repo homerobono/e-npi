@@ -1,0 +1,26 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class='modal-title'>Salvando NPI</h5>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="!this.uploadService.isUploading && finished">Npi registrada com sucesso. Redirecionando...</div>
+    <div *ngFor='let item of this.uploadService.queue'>
+      <span *ngIf='item.isUploading' style='overflow: hidden; text-overflow:ellipsis; white-space: nowrap;'>
+        {{ item.file.name }}
+      </span>
+      <span class='pull-right' *ngIf='item.isUploading'>
+        ({{ (item?.progress * item?.file?.size/1024/1024)/100 | number:'.2' }}/{{ item?.file?.size/1024/1024 | number:'.2' }} MB)
+      </span>
+    </div>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" [ngStyle]="{ 'width': this.uploadService.progress + '%' }">
+        {{ this.uploadService.progress }}% </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="abort()" [disabled]='!this.uploadService.isUploading'>
+      <i class='fa fa-times'></i>
+      Cancelar
+    </button>
+  </div>
+</div>

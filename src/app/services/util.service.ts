@@ -6,7 +6,26 @@ import { Globals } from '../../../config';
 })
 export class UtilService {
 
-  constructor() { }
+  constructor() {}
+
+  getActivities() {
+    return Globals.MACRO_STAGES
+  }
+
+  getActivity(activity) {
+    return Globals.MACRO_STAGES.find(s => s.value == activity)
+  }
+
+  getCriticalAnalisys(dept) {
+    var depts = ['EPROC', 'OPR', 'ADM', 'COM']
+    switch (dept) {
+      case 'oem':
+        depts = ['PRD'].concat(depts)
+        break;
+      default:
+    }
+    return depts;
+  }
 
   getCurrencies(){
     return Globals.CURRENCIES
@@ -64,23 +83,8 @@ export class UtilService {
     return Globals.STATUS[stage as number]
   }
 
-  getCriticalAnalisys(dept) {
-    var depts = ['EPROC', 'OPR', 'ADM', 'COM']
-    switch (dept) {
-      case 'oem':
-        depts = ['PRD'].concat(depts)
-        break;
-      default:
-    }
-    return depts;
-  }
-
-  getActivities() {
-    return Globals.MACRO_STAGES
-  }
-
-  getActivity(activity) {
-    return Globals.MACRO_STAGES.find(s => s.value == activity)
+  getLabel(word) {
+    return Globals.LABELS[word]
   }
 
   getTimeDifference(end: Date, start: Date): String {

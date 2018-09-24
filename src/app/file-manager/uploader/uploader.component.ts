@@ -6,6 +6,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { UploadService } from '../../services/upload.service';
 import { Globals } from 'config';
 import FileElement from '../../models/file.model';
+import { UtilService } from '../../services/util.service';
 
 const URL = Globals.ENPI_SERVER_URL
 
@@ -16,7 +17,8 @@ const URL = Globals.ENPI_SERVER_URL
 })
 export class UploaderComponent implements OnInit {
 
-  public uploader: FileUploader
+  public uploader: FileUploader = new FileUploader({})
+  public field: string
   public hasBaseDropZoneOver: boolean = false;
 
   public fileOverBase(e: any): void {
@@ -26,14 +28,13 @@ export class UploaderComponent implements OnInit {
   constructor(
     private uploadService: UploadService,
     private modalRef: BsModalRef,
-  ) {
-    this.uploader = new FileUploader({})
-  }
+    private utils : UtilService
+  ) {}
 
   ngOnInit() {}
 
   confirm() {
-    this.uploadService.append(this.uploader.queue)
+    this.uploadService.addUploader(this.field, this.uploader)
     this.modalRef.hide()
   }
 
