@@ -15,35 +15,58 @@ export class UploadService {
 
   public uploaders: Object = new Object()
   public onCompleteUpload: Subject<any>
+  public totalSize: number
   public progress: Number = 0
   public isUploading: Boolean = false
-  public queue: Array<FileItem> = new Array()
+  public uploadingFileItem: FileItem
+  public npiNumber: Number
+  public speed: String = '0 kB/s'
+  private prevTime: number = Date.now()
 
-  constructor(
-    private modalService: BsModalService
-  ) {
+  constructor() {
     console.log("Constructing uploader Service")
     this.onCompleteUpload = new Subject<any>()
+    this.uploaders = new Object()
   }
 
   getUploaders() {
     return this.uploaders
   }
 
+  sortByTotalSize() {
+    let sizeOfUploader = this.totalUploaderSize
+    let getUploader = (field) => { return this.uploaders[field] }
+    return function (a, b) {
+      return (sizeOfUploader(getUploader(a)) - sizeOfUploader(getUploader(b)))
+    }
+  }
+
   upload(npiNumber) {
-    Object.keys(this.uploaders).forEach(subject => {
-      console.log('Setting ' + subject)
-      this.uploaders[subject].onBuildItemForm = (item, form) => {
-        form.append('destination', npiNumber + '/' + subject)
+    this.npiNumber = npiNumber
+    let fields = Object.keys(this.uploaders)
+
+    fields.sort(this.sortByTotalSize())
+    //console.log(fields)
+
+    this.uploaders[fields[0]].uploadAll()
+    for (let i = 1; i < fields.length; i++) {
+      console.log('setting ' + fields[i])
+      let previous = fields[i - 1]
+      let actual = fields[i]
+      this.uploaders[previous].onCompleteAll = () => {
+        console.log('uploading another one')
+        setTimeout(() => this.uploaders[actual].uploadAll(), 100)
       }
-      this.uploaders[subject].uploadAll()
-      console.log('is this async?')
-    })
+    }
+    this.prevTime = Date.now()
+    this.uploaders[fields[0]].uploadAll()
+
     return this.onCompleteUpload
   }
 
   addUploader(subject: string, uploader: FileUploader) {
-    console.log('appending ' + uploader.queue.length + ' items')
+    console.log('appending ' + uploader.queue.length + ' items to ')
+    console.log(this.uploaders)
     uploader.setOptions(
       {
         url: uploadUrl,
@@ -51,55 +74,90 @@ export class UploadService {
       }
     )
 
-    //uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
-    this.queue.concat(uploader.queue)
-    console.log(this.queue)
+    uploader.onAfterAddingFile = (file) => { file.withCredentials = false; };
     uploader.onProgressAll = () => this.updateProgress()
-    uploader.onBeforeUploadItem = () => this.isUploading = true
+    uploader.onBeforeUploadItem = (fileItem) => {
+      this.isUploading = true
+      this.uploadingFileItem = fileItem
+    }
     uploader.onCompleteAll = () => {
       if (Object.values(this.uploaders).every((uploader: FileUploader) => !uploader.getNotUploadedItems.length)) {
         console.log("All files uploaded.")
         this.isUploading = false
         this.onCompleteUpload.next()
+        this.cleanUp()
       }
     };
 
-    uploader.onErrorItem = (file, res) => { console.log(res); throw Error(res) }
+    uploader.onErrorItem = (file, res) => { console.log(res) }
+    uploader.onBuildItemForm = (_, form) => {
+      form.append('destination', this.npiNumber + '/' + subject)
+    }
     Object.assign(this.uploaders, { [subject]: uploader })
+    this.updateTotalSize()
+  }
+
+  cleanUp() {
+    for (var field in this.uploaders) {
+      if (this.uploaders.hasOwnProperty(field)) {
+        this.uploaders[field].destroy()
+        delete this.uploaders[field]
+      }
+    }
+    this.progress = 0
+    this.totalSize = 0
+    delete this.speed
+    delete this.uploadingFileItem
+    delete this.npiNumber
+  }
+
+  updateSpeed(progress1, progress2) {
+    let speed = 0
+    let actTime = Date.now()
+    let timeDiff = (actTime - this.prevTime) / 1000
+    if (timeDiff > 1) {
+      this.prevTime = actTime
+      speed = Math.abs((progress2 - progress1) * this.totalSize / timeDiff / 100)
+      speed = Math.round(speed / 1024)
+      this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
+    }
   }
 
   updateProgress() {
-    console.log('updating')
+    //console.log('updating')
     let progress = 0
     Object.values(this.uploaders).forEach(uploader => {
       try {
-      progress += uploader.progress * this.totalUploaderSize(uploader)
-      } catch(e) { console.error(e)}
+        progress += uploader.progress * this.totalUploaderSize(uploader)
+      } catch (e) { console.error(e) }
     })
-    this.progress = progress / (this.totalSize() *1024 * 1024)
-    console.log(progress)
+    progress = Math.round(progress / this.totalSize)
+    this.updateSpeed(this.progress, progress)
+    this.progress = progress
+    //console.log(progress)
+    console.log(this.uploadingFileItem)
   }
 
   totalUploaderSize(uploader) {
     let totalSize = 0
     let queue = uploader.queue
     for (let i = 0; i < queue.length; i++)
-      totalSize += queue.file.size
-    console.log('totalSize: '+ totalSize)
+      totalSize += queue[i].file.size
+    //console.log('totalSize: '+ totalSize)
     return totalSize
   }
 
-  totalSize() {
+  updateTotalSize() {
     let totalSize = 0
     let uploadersArr = Object.values(this.uploaders)
     for (let i = 0; i < uploadersArr.length; i++) {
-      this.totalUploaderSize(uploadersArr[i])
+      totalSize += this.totalUploaderSize(uploadersArr[i])
     }
-    console.log('totalSize: '+ totalSize)
-    return totalSize
+    //console.log('totalSize: '+ totalSize)
+    this.totalSize = totalSize
   }
 
-  abort(){
+  abort() {
     Object.values(this.uploaders).forEach((uploader: FileUploader) => {
       uploader.cancelAll()
     })

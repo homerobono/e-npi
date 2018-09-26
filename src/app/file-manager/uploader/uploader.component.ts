@@ -28,10 +28,13 @@ export class UploaderComponent implements OnInit {
   constructor(
     private uploadService: UploadService,
     private modalRef: BsModalRef,
-    private utils : UtilService
-  ) {}
+    private utils: UtilService
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (this.uploadService.uploaders[this.field])
+      this.uploader = this.uploadService.uploaders[this.field]
+  }
 
   confirm() {
     this.uploadService.addUploader(this.field, this.uploader)

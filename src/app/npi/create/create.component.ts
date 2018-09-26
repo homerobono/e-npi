@@ -274,11 +274,11 @@ export class CreateComponent implements OnInit {
 
     openSendingFormModal(){
         this.modalService.show(SendingFormModalComponent, {
-            class: 'modal-sm modal-dialog-centered'
+            class: 'modal-md modal-dialog-centered'
         })
     }
 
     ngOnDestroy(){
-        delete this.uploadService.uploaders
+     //   delete this.uploadService.uploaders
     }
 }
