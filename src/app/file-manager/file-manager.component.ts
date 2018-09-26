@@ -39,11 +39,12 @@ export class FileManagerComponent implements OnInit {
   }
 
   openNewFolderDialog() {
-    this.modalRef = this.modalService.show(InputDialogComponent, { 
+    this.modalRef = this.modalService.show(InputDialogComponent, {
       initialState: {
         actionLabel: 'Digite o nome da pasta:'
-      }, 
-      class: "modal-sm shadow-lg vertically-centered" }
+      },
+      class: "modal-sm shadow-lg vertically-centered"
+    }
     );
     this.modalRef.content.onConfirm.subscribe(name => {
       if (name != "") {
@@ -73,14 +74,21 @@ export class FileManagerComponent implements OnInit {
     let fileName = 'NPI#' + this.currentPath.replace(/\//g, '') + ' Anexos.zip'
     console.log(fileName)
     this.fileService.download(this.currentPath, '').subscribe(
-      data => saveAs(data, fileName)
+      data => {
+        console.log('saving data')
+        saveAs(data, fileName)
+      }
     )
   }
 
   downloadElement(element: FileElement) {
     let fileName = element.name + (element.isFolder() ? '.zip' : '')
     this.fileService.download(this.currentPath, element.name).subscribe(
-      data => saveAs(data, fileName)
+      data => {
+        console.log('saving data: ', data)
+        var downloadUrl= URL.createObjectURL(data);
+        window.open(downloadUrl);
+      }
     )
   }
 
@@ -94,10 +102,10 @@ export class FileManagerComponent implements OnInit {
   moveElement(event: { element: FileElement; moveTo: FileElement }) {
     this.fileService.move(this.currentPath, event.element.name,
       (event.moveTo ? this.currentPath + event.moveTo.name : this.popFromPath(this.currentPath))
-      ).subscribe(
-        res => this.updateFileQuery(),
-        err => console.log(err)
-      )
+    ).subscribe(
+      res => this.updateFileQuery(),
+      err => console.log(err)
+    )
   }
 
   renameElement(event: { element: FileElement, newName: String }) {

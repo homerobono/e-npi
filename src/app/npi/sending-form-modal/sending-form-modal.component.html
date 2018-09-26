@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <span class='pull-left'>{{ uploadService.speed }}</span>
+    <span class='text-left float-left'> {{ uploadService.speed < 1024 ? uploadService.speed + 'kB/s' : (uploadService.speed / 1024).toFixed(1) + 'MB/s' }}</span>
     <button type="button" class="btn btn-danger" (click)="abort()" [disabled]='!this.uploadService.isUploading'>
       <i class='fa fa-times'></i>
       Cancelar

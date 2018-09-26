@@ -20,7 +20,7 @@ export class UploadService {
   public isUploading: Boolean = false
   public uploadingFileItem: FileItem
   public npiNumber: Number
-  public speed: String = '0 kB/s'
+  public speed: number = 0
   private prevTime: number = Date.now()
 
   constructor() {
@@ -65,8 +65,13 @@ export class UploadService {
   }
 
   addUploader(subject: string, uploader: FileUploader) {
-    console.log('appending ' + uploader.queue.length + ' items to ')
-    console.log(this.uploaders)
+    if (!uploader.queue.length) {
+      if (this.upload[subject])
+        this.upload[subject].destroy()
+      delete this.uploaders[subject]
+      return
+    }
+
     uploader.setOptions(
       {
         url: uploadUrl,
@@ -117,9 +122,9 @@ export class UploadService {
     let timeDiff = (actTime - this.prevTime) / 1000
     if (timeDiff > 1) {
       this.prevTime = actTime
-      speed = Math.abs((progress2 - progress1) * this.totalSize / timeDiff / 100)
-      speed = Math.round(speed / 1024)
-      this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
+      speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
+      speed = (this.speed+speed)/2
+      //this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
     }
   }
 

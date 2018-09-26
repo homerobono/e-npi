@@ -20,6 +20,8 @@ import { UploaderComponent } from '../../file-manager/uploader/uploader.componen
 import { UploadService } from '../../services/upload.service';
 import { concatMap } from 'rxjs/operators';
 import { SendingFormModalComponent } from '../sending-form-modal/sending-form-modal.component';
+import { FileItem } from 'ng2-file-upload';
+import { FileDescriptor } from '../../models/file-descriptor';
 
 defineLocale('pt-br', ptBrLocale)
 
@@ -98,27 +100,28 @@ export class CreateComponent implements OnInit {
                 'annex': null
             }),
             'regulations': fb.group({
-                standard: fb.group({}),
-                additional: null
+                'standard': fb.group({}),
+                'additional': null
             }),
             'cost': fb.group({
-                value: '30,00',
-                currency: 'BRL'
+                'value': '30,00',
+                'currency': 'BRL'
             }),
             'price': fb.group({
-                value: '90,00',
-                currency: 'BRL'
+                'value': '90,00',
+                'currency': 'BRL'
             }),
             'inStockDateType': 'fixed',
             'inStockDate': oemDefaultDeadLine,
             'investment': fb.group({
-                value: '50000,00',
-                currency: 'BRL'
+                'value': '50000,00',
+                'currency': 'BRL',
+                'annex': null
             }),
             'projectCost': fb.group({
-                value: '10000,00',
-                currency: 'BRL',
-                'annex': String
+                'value': '10000,00',
+                'currency': 'BRL',
+                'annex': null
             }),
             'demand': fb.group({
                 'amount': 1000,
@@ -148,7 +151,6 @@ export class CreateComponent implements OnInit {
         })
 
         this.createForm.get('npiRef').valueChanges.subscribe(res => { this.loadNpiRef(res) })
-
     }
 
     ngOnInit() {
@@ -157,6 +159,13 @@ export class CreateComponent implements OnInit {
     }
 
     createNpi(npiForm): void {
+        for (let field in this.uploadService.uploaders) {
+            this.createForm.get(field).get('annex').setValue(
+                (this.uploadService.uploaders[field].queue as FileItem[]).map(
+                    fI => new FileDescriptor(field, fI.file)
+                ))
+        }
+
         this.sendingForm = true
         this.openSendingFormModal()
         this.npiService.createNpi(npiForm).subscribe(
@@ -272,13 +281,13 @@ export class CreateComponent implements OnInit {
         });
     }
 
-    openSendingFormModal(){
+    openSendingFormModal() {
         this.modalService.show(SendingFormModalComponent, {
             class: 'modal-md modal-dialog-centered'
         })
     }
 
-    ngOnDestroy(){
-     //   delete this.uploadService.uploaders
+    ngOnDestroy() {
+        //   delete this.uploadService.uploaders
     }
 }

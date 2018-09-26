@@ -318,9 +318,10 @@
                 </select>
               </div>
               <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00' aria-describedby="Custo do Projeto"
-                [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
+                [ngClass]='{"is-invalid": fieldHasErrors("projectCost.value")}'>
               <div class="input-group-append">
-                <button type=button class="input-group-text btn btn-light shadow-none" id="projectCostAppend" (click)='openUploadModal("projectCost")'>
+                <button type=button class="input-group-text btn btn-light shadow-none" id="projectCostAppend" (click)='openUploadModal("projectCost")'
+                [ngClass]='{"text-primary":uploadService.uploaders.projectCost, "is-invalid": fieldHasErrors("projectCost.annex")}'>
                   <i class='fa fa-fw append-icon'></i>
                 </button>
               </div>

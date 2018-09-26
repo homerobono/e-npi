@@ -79,11 +79,12 @@ export class FileService implements IFileService {
     const fullFileName = path as string + fileName as string
     const headers = new HttpHeaders().set('content-type', 'application/blob');
     const params = new HttpParams().set('path', fullFileName)
-    console.log(fullFileName)
     return this.http.get(this.downloadUrl, { 
-      headers: headers,
+      headers,
       responseType: 'blob',
-      params: params
+      observe: 'body',
+      reportProgress: true,
+      params
     })
   }
 
