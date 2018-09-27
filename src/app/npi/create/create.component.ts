@@ -160,11 +160,12 @@ export class CreateComponent implements OnInit {
 
     createNpi(npiForm): void {
         for (let field in this.uploadService.uploaders) {
-            this.createForm.get(field).get('annex').setValue(
+            npiForm[field].annex =
                 (this.uploadService.uploaders[field].queue as FileItem[]).map(
                     fI => new FileDescriptor(field, fI.file)
-                ))
+                )
         }
+        console.log(npiForm)
 
         this.sendingForm = true
         this.openSendingFormModal()
@@ -230,6 +231,7 @@ export class CreateComponent implements OnInit {
 
     submitToAnalisys(npiForm) {
         npiForm.stage = 2
+        this.uploadService.evolve = true
         this.createNpi(npiForm)
     }
 

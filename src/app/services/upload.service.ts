@@ -20,6 +20,7 @@ export class UploadService {
   public isUploading: Boolean = false
   public uploadingFileItem: FileItem
   public npiNumber: Number
+  public evolve = false
   public speed: number = 0
   private prevTime: number = Date.now()
 
@@ -97,6 +98,8 @@ export class UploadService {
     uploader.onErrorItem = (file, res) => { console.log(res) }
     uploader.onBuildItemForm = (_, form) => {
       form.append('destination', this.npiNumber + '/' + subject)
+      form.append('npiNumber', this.npiNumber)
+      form.append('evolve', this.evolve)
     }
     Object.assign(this.uploaders, { [subject]: uploader })
     this.updateTotalSize()

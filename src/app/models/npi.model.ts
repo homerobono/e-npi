@@ -1,6 +1,7 @@
 import User from "./user.model";
 import { Globals } from 'config'
 import { UtilService } from "../services/util.service";
+import { FileDescriptor } from "./file-descriptor";
 
 const utils = new UtilService()
 
@@ -29,16 +30,16 @@ class Npi {
     entry: String;
     description: String;
     resources: {
-        description,
-        annex
+        description: String,
+        annex: [FileDescriptor]
     };
     regulations: {
         standard: Object,
         additional: String
     };
     norms: {
-        description,
-        annex
+        description: String,
+        annex: [FileDescriptor]
     };
     demand: {
         amount: Number,
@@ -57,12 +58,12 @@ class Npi {
     investment: {
         value: Number;
         currency: String;
-        annex: String
+        annex: [FileDescriptor]
     };
     projectCost: {
         value: Number;
         currency: String;
-        annex: String
+        annex: [FileDescriptor]
     };
     inStockDate: any;
     fiscals: String;
