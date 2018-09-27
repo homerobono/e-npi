@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 import { Globals } from 'config';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, of } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap';
 import { SendingFormModalComponent } from '../npi/sending-form-modal/sending-form-modal.component';
 import { isNgTemplate } from '@angular/compiler';
@@ -45,6 +45,11 @@ export class UploadService {
   upload(npiNumber) {
     this.npiNumber = npiNumber
     let fields = Object.keys(this.uploaders)
+
+    if(!fields.length) {
+      this.onCompleteUpload.next()
+      return of(['No uploads to make'])
+    }
 
     fields.sort(this.sortByTotalSize())
     //console.log(fields)
@@ -143,7 +148,7 @@ export class UploadService {
     this.updateSpeed(this.progress, progress)
     this.progress = progress
     //console.log(progress)
-    console.log(this.uploadingFileItem)
+//    console.log(this.uploadingFileItem)
   }
 
   totalUploaderSize(uploader) {

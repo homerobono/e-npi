@@ -18,10 +18,14 @@ export class SendingFormModalComponent implements OnInit {
 
   ngOnInit() {
     this.uploadService.onCompleteUpload.subscribe( 
-    () => { 
-      this.finished = true
-      this.modalRef.hide()
+    (res) => {
+      if (res){
+        this.finished = true
+        this.modalRef.hide()
+      }
     })
+    if (!this.uploadService.isUploading)
+      this.modalRef.hide()
   }
 
   abort(){

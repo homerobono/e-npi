@@ -29,8 +29,8 @@ export class NpiService {
     this.npisList = new BehaviorSubject([])
     this.manualRefresh = new BehaviorSubject(false)
     this.npisList = this.manualRefresh.
-      switchMap(() => timer(0, 10000).pipe(
-        concatMap(() => this.getNpis()))
+      switchMap(() => timer(0, 10000).
+        concatMap(() => this.getNpis())
     ).shareReplay() as BehaviorSubject<Npi[]>
   }
 
@@ -56,10 +56,8 @@ export class NpiService {
   getNpis(): Observable<Npi[]> {
     return this.http.get(this.npisUrl)
       .map(res => {
-        //console.log(res)
         var Npis: Npi[] = []
         res['data'].forEach(npi => {
-          //console.log('converting npis')
           try {
             var transNpi = new Npi(npi)
             Npis.push(transNpi)
@@ -92,6 +90,12 @@ export class NpiService {
     var npi = this.formToModel(npiForm)
     console.log(npi);
     return this.http.put(this.npiUrl, npi);
+  }
+
+  promoteNpi(npiNumber): Observable<any> {
+    console.log('promoting npi');
+    console.log(npiNumber);
+    return this.http.get(this.npiUrl + npiNumber + '/promote')
   }
 
   deleteNpi(npiId: String): Observable<any> {

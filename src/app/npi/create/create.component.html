@@ -3,7 +3,7 @@
     <div class='col body-main'>
       <app-nav-buttons></app-nav-buttons>
       <h3>Criar NPI</h3>
-      <form [formGroup]='createForm' (ngSubmit)="saveNpi(createForm.value)">
+      <form [formGroup]='createForm' (ngSubmit)="saveNpi()">
         <hr>
         <div class="form-row">
           <div class="form-group col-sm-2 col-md-2 col-xl-1">
@@ -122,7 +122,8 @@
               <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
             </textarea>
               <div class="input-group-append">
-                <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openUploadModal("resources")'>
+                <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openUploadModal("resources")'
+                [ngClass]='{"text-primary":uploadService.uploaders.resources, "border-danger": fieldHasErrors("resources.annex") && !uploadService.uploaders.resources}'>
                   <i class='fa fa-fw append-icon'></i>
                 </button>
               </div>
@@ -137,7 +138,8 @@
               <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
             </textarea>
               <div class="input-group-append">
-                <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openUploadModal("norms")'>
+                <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openUploadModal("norms")'
+                [ngClass]='{"text-primary":uploadService.uploaders.norms, "border-danger": fieldHasErrors("norms.annex") && !uploadService.uploaders.norms}'>
                   <i class='fa fa-fw append-icon'></i>
                 </button>
               </div>
@@ -299,7 +301,8 @@
               <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00' aria-describedby="Investimento"
                 [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
               <div class="input-group-append">
-                <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openUploadModal("investment")'>
+                <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openUploadModal("investment")'
+                [ngClass]='{"text-primary":uploadService.uploaders.investment, "border-danger": fieldHasErrors("investment.annex") && !uploadService.uploaders.investment}'>
                   <i class='fa fa-fw append-icon'></i>
                 </button>
               </div>
@@ -320,8 +323,8 @@
               <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00' aria-describedby="Custo do Projeto"
                 [ngClass]='{"is-invalid": fieldHasErrors("projectCost.value")}'>
               <div class="input-group-append">
-                <button type=button class="input-group-text btn btn-light shadow-none" id="projectCostAppend" (click)='openUploadModal("projectCost")'
-                [ngClass]='{"text-primary":uploadService.uploaders.projectCost, "is-invalid": fieldHasErrors("projectCost.annex")}'>
+                <button type=button class="input-group-text btn btn-light shadow-none is-invalid" id="projectCostAppend" (click)='openUploadModal("projectCost")'
+                [ngClass]='{"text-primary":uploadService.uploaders.projectCost, "border-danger": fieldHasErrors("projectCost.annex") && !uploadService.uploaders.projectCost}'>
                   <i class='fa fa-fw append-icon'></i>
                 </button>
               </div>
@@ -381,7 +384,7 @@
             </button>
           </div>
           <div class='col text-center'>
-            <button type="button" class="btn btn-warning text-light w-100 " [disabled]="!createForm.valid || sendingForm" (click)='submitToAnalisys(createForm.value)'>
+            <button type="button" class="btn btn-warning text-light w-100 " [disabled]=" sendingForm" (click)='submitToAnalisys()'>
               <span class='fa fa-check-circle-o fa-fw'></span>
               Análise Crítica
             </button>

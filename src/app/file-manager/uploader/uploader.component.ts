@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../../services/file.service';
@@ -34,6 +34,14 @@ export class UploaderComponent implements OnInit {
   ngOnInit() {
     if (this.uploadService.uploaders[this.field])
       this.uploader = this.uploadService.uploaders[this.field]
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  keyUpEvent(e) {
+    e.stopPropagation()
+    if (e.keyCode == 13){
+      this.confirm()
+    }
   }
 
   confirm() {

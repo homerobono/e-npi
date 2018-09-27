@@ -22,6 +22,8 @@ import { concatMap } from 'rxjs/operators';
 import { SendingFormModalComponent } from '../sending-form-modal/sending-form-modal.component';
 import { FileItem } from 'ng2-file-upload';
 import { FileDescriptor } from '../../models/file-descriptor';
+import { of, Observable } from 'rxjs';
+import { map } from 'rxjs-compat/operator/map';
 
 defineLocale('pt-br', ptBrLocale)
 
@@ -32,6 +34,8 @@ defineLocale('pt-br', ptBrLocale)
 })
 
 export class CreateComponent implements OnInit {
+
+    resolveSubmission: Observable<any>
 
     sendingForm: Boolean = false;
     formSent: Boolean = false;
@@ -158,7 +162,10 @@ export class CreateComponent implements OnInit {
         setTimeout(() => this.openUploadModal("resources"), 600)
     }
 
-    createNpi(npiForm): void {
+    createNpi(): void {
+        let npiForm = this.createForm.value
+        console.log(npiForm)
+
         for (let field in this.uploadService.uploaders) {
             npiForm[field].annex =
                 (this.uploadService.uploaders[field].queue as FileItem[]).map(
@@ -166,38 +173,34 @@ export class CreateComponent implements OnInit {
                 )
         }
         console.log(npiForm)
-
         this.sendingForm = true
-        this.openSendingFormModal()
-        this.npiService.createNpi(npiForm).subscribe(
-            createRes => {
-                console.log('NPI created');
-                createRes.npiNumber = createRes.data.number
-                this.uploadService.upload(createRes.data.number).
-                    subscribe(() => {
-                        console.log('uploads completed');
-                        console.log(createRes);
-                        this.messenger.set({
-                            'type': 'success',
-                            'message': 'NPI cadastrado com sucesso'
-                        });
-                        this.formSent = true;
-                        this.sendingForm = false;
-                        this.clearFields();
-                        this.router.navigateByUrl('/npi/' + createRes.data.number)
-                    }, err => {
-                        this.invalidFieldsError(err)
-                        this.formSent = false;
-                        this.sendingForm = false;
-                    })
-            }
-        )
+
+        this.resolveSubmission
+            .finally(() => {
+                this.sendingForm = false;
+                //setTimeout(()=> this.modalRef.hide(), 500)
+            })
+            .subscribe(res => {
+                console.log('All complete');
+                console.log(res);
+                this.messenger.set({
+                    'type': 'success',
+                    'message': 'NPI cadastrado com sucesso'
+                });
+                this.formSent = true;
+                this.clearFields();
+                this.router.navigateByUrl('/npi/' + res.create.data.number)
+            }, err => {
+                this.invalidFieldsError(err)
+                this.formSent = false;
+            })
     }
 
     invalidFieldsError(err) {
         console.log(err)
         if (err.error.message.errors) {
             var errors = err.error.message.errors
+            console.log(errors)
             var errorFields = Object.keys(errors)
             var invalidFieldsMessage = 'Corrija o' +
                 (errorFields.length == 1 ? ' campo ' : 's campos ')
@@ -224,15 +227,53 @@ export class CreateComponent implements OnInit {
         this.sendingForm = false;
     }
 
-    saveNpi(npiForm) {
-        npiForm.stage = 1
-        this.createNpi(npiForm)
+    saveNpi() {
+        this.createForm.value.stage = 1
+        this.resolveSubmission = this.npiService.createNpi(this.createForm.value)
+            .concatMap(create => {
+                console.log('NPI created');
+                console.log(create.data);
+                if (this.uploadService.totalSize) this.openSendingFormModal()
+                return this.uploadService.upload(create.data.number).map(
+                    upload => {
+                        var res = { create, upload }
+                        console.log(res)
+                        return res
+                    }
+                )
+            })
+
+        this.createNpi()
     }
 
-    submitToAnalisys(npiForm) {
-        npiForm.stage = 2
-        this.uploadService.evolve = true
-        this.createNpi(npiForm)
+    submitToAnalisys() {
+        this.createForm.value.stage = 2
+        this.resolveSubmission = this.npiService.createNpi(this.createForm.value)
+            .switchMap(create => {
+                console.log('NPI created');
+                console.log(create.data);
+                if (this.uploadService.totalSize) this.openSendingFormModal()
+                return this.uploadService.upload(create.data.number).map(
+                    upload => {
+                        var res = { create, upload }
+                        console.log(res)
+                        return res
+                    }
+                )
+            }).switchMap(
+                createUpload => {
+                    console.log('Promoting NPI', createUpload.create.data.number);
+                    return this.npiService.promoteNpi(createUpload.create.data.number)
+                        .map(promote => {
+                            return {
+                                promote,
+                                create: createUpload.create,
+                                upload: createUpload.upload
+                            }
+                        })
+                }
+            )
+        this.createNpi()
     }
 
     cancelNpi() {
@@ -284,12 +325,14 @@ export class CreateComponent implements OnInit {
     }
 
     openSendingFormModal() {
-        this.modalService.show(SendingFormModalComponent, {
-            class: 'modal-md modal-dialog-centered'
+        this.modalRef = this.modalService.show(SendingFormModalComponent, {
+            class: 'modal-md modal-dialog-centered',
+            backdrop: 'static',
+            keyboard: false
         })
     }
 
     ngOnDestroy() {
-        //   delete this.uploadService.uploaders
+        this.modalRef.hide()
     }
 }
