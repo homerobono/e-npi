@@ -165,7 +165,7 @@ export class NpiComponent implements OnInit {
       res => this.npisList = res
     )
 
-    //setTimeout(() => this.openFileManager(), 400)
+    setTimeout(() => this.openFileManager('resources'), 400)
 
     //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})

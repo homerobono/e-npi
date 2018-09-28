@@ -7,6 +7,7 @@ import FileElement from '../../models/file.model'
 import { InputDialogComponent } from '../modals/input-dialog/input-dialog.component';
 import { element } from 'protractor';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { PreviewComponent } from '../modals/preview/preview.component';
 
 @Component({
   selector: 'app-explorer',
@@ -27,6 +28,7 @@ export class ExplorerComponent {
   @Input() path: string;
 
   @Output() elementDownload = new EventEmitter<FileElement>();
+  @Output() preview = new EventEmitter<FileElement>();
   @Output() folderAdded = new EventEmitter<{ name: string }>();
   @Output() elementRemoved = new EventEmitter<FileElement>();
   @Output() elementRenamed = new EventEmitter<{ element: FileElement, newName: string }>();
@@ -41,6 +43,18 @@ export class ExplorerComponent {
 
   downloadElement(element: FileElement) {
     this.elementDownload.emit(element)
+  }
+
+  open(event: MouseEvent, element: FileElement): void {
+    event.stopPropagation()
+    if (element.isFolder()) {
+      this.navigate(element)
+    } else
+      this.openPreview(element)
+  }
+
+  openPreview(element: FileElement): void {
+    this.preview.emit(element)
   }
 
   deleteElement(element: FileElement) {
@@ -81,9 +95,10 @@ export class ExplorerComponent {
   }
 
   openMenu(event: MouseEvent, viewChild: MatMenuTrigger) {
-    event.preventDefault();
-    viewChild.openMenu();
-    console.log(this.folders)
+    if (event.type == 'contextmenu') {
+      event.preventDefault();
+      viewChild.openMenu();
+    }
   }
 
   availableFolders(element: FileElement) {
@@ -101,35 +116,37 @@ export class ExplorerComponent {
 
     if (['doc', 'odt'].some(ext => extension.includes(ext))) {
       returnClass += "-word-o text-primary"
-    } else
-      if (['txt', 'dat', 'log'].some(ext => extension.includes(ext))) {
-        returnClass += "-text text-secondary"
-      } else
-        if (['pdf'].some(ext => extension.includes(ext))) {
-          returnClass += "-pdf-o text-danger"
-        }
-        else if (['xls'].some(ext => extension.includes(ext))) {
-          returnClass += "-excel-o text-success"
-        }
-        else if (['ppt'].some(ext => extension.includes(ext))) {
-          returnClass += "-powerpoint-o text-orange"
-        }
-        else if (['zip', 'rar', '7z', 'tar', 'xz'].some(ext => extension.includes(ext))) {
-          returnClass += "-archive-o text-purple"
-        }
-        else if (['firm', 'rom', 'eprom', 'html', 'css', 'js', 'ts', 'json', 'conf', 'cfg'].some(ext => extension.includes(ext))) {
-          returnClass += "-code-o text-secondary"
-        }
-        else if (['jpg', 'jpeg', 'psd', 'png', 'gif', 'ai', 'cdr', 'bmp', 'svg', 'ps'].some(ext => extension.includes(ext))) {
-          returnClass += "-image-o text-success"
-        }
-        else if (['mp4', 'avi', 'mpg', 'mpeg', 'mkv', 'wmv', 'mov'].some(ext => extension.includes(ext))) {
-          returnClass += "-video-o text-warning"
-        }
-        else if (['wav', 'mp3', 'ogg', 'aac', 'flac'].some(ext => extension.includes(ext))) {
-          returnClass += "-audio-o text-warning"
-        } else
-          returnClass += "text-secondary"
+    }
+    else if (['txt', 'dat', 'log'].some(ext => extension.includes(ext))) {
+      returnClass += "-text text-secondary"
+    }
+    else if (['pdf'].some(ext => extension.includes(ext))) {
+      returnClass += "-pdf-o text-danger"
+    }
+    else if (['xls'].some(ext => extension.includes(ext))) {
+      returnClass += "-excel-o text-success"
+    }
+    else if (['ppt'].some(ext => extension.includes(ext))) {
+      returnClass += "-powerpoint-o text-orange"
+    }
+    else if (['zip', 'rar', '7z', 'tar', 'xz'].some(ext => extension.includes(ext))) {
+      returnClass += "-archive-o text-purple"
+    }
+    else if (['firm', 'rom', 'eprom', 'html', 'css', 'js', 'ts', 'json', 'conf', 'cfg'].some(ext => extension.includes(ext))) {
+      returnClass += "-code-o text-secondary"
+    }
+    else if (['jpg', 'jpeg', 'psd', 'png', 'gif', 'ai', 'cdr', 'bmp', 'svg', 'ps'].some(ext => extension.includes(ext))) {
+      returnClass += "-image-o text-success"
+    }
+    else if (['mp4', 'avi', 'mpg', 'mpeg', 'mkv', 'wmv', 'mov'].some(ext => extension.includes(ext))) {
+      returnClass += "-video-o text-warning"
+    }
+    else if (['wav', 'mp3', 'ogg', 'aac', 'flac'].some(ext => extension.includes(ext))) {
+      returnClass += "-audio-o text-warning"
+    }
+    else
+      returnClass += "-o text-secondary"
     return returnClass
   }
+
 }

@@ -1,13 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import FileElement from '../models/file.model';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../services/file.service';
 import { saveAs } from 'file-saver'
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService, ModalDirective } from 'ngx-bootstrap';
 import { InputDialogComponent } from './modals/input-dialog/input-dialog.component';
 import { FileUploader } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
+import { PreviewComponent } from './modals/preview/preview.component';
 
 @Component({
   selector: 'app-file-manager',
@@ -36,6 +37,7 @@ export class FileManagerComponent implements OnInit {
     this.relativePath = '/'
     this.updateFileQuery();
     console.log(this.rootPath)
+    //setTimeout(() => this.openPreview(files[0]), 400)
   }
 
   openNewFolderDialog() {
@@ -53,6 +55,16 @@ export class FileManagerComponent implements OnInit {
     });
   }
 
+  openPreview(element: FileElement) {
+    console.log(element)
+    this.modalRef = this.modalService.show(PreviewComponent, {
+      initialState: {
+        currentPath: this.currentPath,
+        element,
+      },
+      class: "shadow-lg mt-5 p-0 text-center preview-modal"
+    });
+  }
 
   addFolder(event: { name: String }) {
     this.fileService.add(this.currentPath, event.name).subscribe(
@@ -86,8 +98,10 @@ export class FileManagerComponent implements OnInit {
     this.fileService.download(this.currentPath, element.name).subscribe(
       data => {
         console.log('saving data: ', data)
-        var downloadUrl= URL.createObjectURL(data);
-        window.open(downloadUrl);
+        saveAs(data, fileName)
+        var downloadUrl = window.URL.createObjectURL(data);
+        window.open(downloadUrl)
+        //return downloadUrl
       }
     )
   }

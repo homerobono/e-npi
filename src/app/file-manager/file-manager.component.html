@@ -55,7 +55,8 @@
       (navigatedDown)="navigateToFolder($event)" 
       (navigatedUp)="navigateUp()"
       (elementRenamed)="renameElement($event)" 
-      (elementMoved)="moveElement($event)">
+      (elementMoved)="moveElement($event)"
+      (preview)='openPreview($event)' >
     </app-explorer>
   </div>
   <div class="modal-footer bg-light-gray">

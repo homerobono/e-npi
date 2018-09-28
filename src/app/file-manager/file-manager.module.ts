@@ -17,6 +17,8 @@ import { InputDialogComponent } from './modals/input-dialog/input-dialog.compone
 import { MatCardModule } from '@angular/material/card';
 import { FileService } from '../services/file.service';
 import { FileUploadModule } from 'ng2-file-upload';
+import { ModalModule } from 'ngx-bootstrap';
+import { PreviewComponent } from './modals/preview/preview.component';
 //import { RoutingModule } from './routing.module'
 
 @NgModule({
@@ -33,14 +35,15 @@ import { FileUploadModule } from 'ng2-file-upload';
     FormsModule,
     MatButtonModule,
     MatCardModule,
-    FileUploadModule
+    FileUploadModule,
+    ModalModule.forRoot()
     //RoutingModule
   ],
   declarations: [
     FileManagerComponent,
     ExplorerComponent, 
     UploaderComponent, 
-    InputDialogComponent
+    InputDialogComponent, PreviewComponent
   ],
   exports: [
     FileManagerComponent
@@ -48,7 +51,9 @@ import { FileUploadModule } from 'ng2-file-upload';
   entryComponents: [
     ExplorerComponent, 
     UploaderComponent, 
-    InputDialogComponent],
+    InputDialogComponent,
+    PreviewComponent
+  ],
   providers: [FileService],
 })
 export class FileManagerModule {}

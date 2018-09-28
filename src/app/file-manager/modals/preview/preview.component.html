@@ -1,0 +1,8 @@
+<div style='position: absolute; top: 20px; right: 30px; height: 0; width: 0; z-index: 10'>
+  <button type="button" class="close" aria-label="Close" (click)="modalRef.hide()">
+    <span aria-hidden="true" style='font-size: 20pt'>&times;</span>
+  </button>
+</div>
+<img [src]='dataUrl' style='max-width:100%' *ngIf='dataUrl && getFileType()=="image"'>
+<embed [src]="dataUrl" class='embeded-file text-center' *ngIf='dataUrl && getFileType()=="pdf"'>
+<i class='fa fa-circle-o-notch fa-spin fa-4x' *ngIf='!dataUrl'></i>

@@ -2,7 +2,7 @@
   <div class='row'>
     <div class='file-or-folder text-center' *ngFor="let element of files" [matMenuTriggerFor]="rootMenu"
       [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
-      <div (click)="navigate(element)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer label'>
+      <div (click)="open($event, element)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer label'>
         <div class="fa fa-3x file-or-folder-icon" [ngClass]='iconFor(element)'></div>
         <div class='file-label'>{{element.name}}</div>
         <small class='text-secondary size-label' *ngIf='!element.isFolder()'>{{ element.sizeString }}</small>
@@ -17,6 +17,10 @@
     [disabled]='!canNavigateUp && !availableFolders(element)'>
       <mat-icon>open_with</mat-icon>
       <span>Mover Para...</span>
+    </button>
+    <button mat-menu-item (click)="openPreview(element)" *ngIf='!element.isFolder()'>
+      <mat-icon>remove_red_eye</mat-icon>
+      <span>Preview</span>
     </button>
     <button mat-menu-item (click)="openRenameDialog(element)">
       <mat-icon>edit</mat-icon>
