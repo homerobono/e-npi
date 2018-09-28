@@ -59,7 +59,8 @@ export class PixelComponent implements OnInit {
       'inStockDate': null,
       'investment': fb.group({
         value: null,
-        currency: null
+        currency: null,
+        annex: null
       }),
       'projectCost': fb.group({
         value: null,
@@ -152,7 +153,16 @@ export class PixelComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    return this.npiForm.get(field).hasError('required')
+    let propsArr = field.split(".")
+    let control = this.npiForm.get(propsArr[0])
+    for (let i = 1; i < propsArr.length; i++) {
+        control = control.get(propsArr[i])
+    }
+    return control.hasError('required')
+}
+
+  openFileManager(field) {
+    this.npiComponent.openFileManager(field)
   }
 
 }

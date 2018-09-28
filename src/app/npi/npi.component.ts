@@ -62,7 +62,7 @@ export class NpiComponent implements OnInit {
   scrollYPosition: Number
 
   npisList: Npi[]
- 
+
   modalRef: BsModalRef;
   npiRef: Npi
 
@@ -283,7 +283,7 @@ export class NpiComponent implements OnInit {
 
   toggleEdit() {
     this.editForm.next(!this.editFlag)
-    if (this.editFlag){
+    if (this.editFlag) {
       //document.getElementById('npiRef').focus()
     }
   }
@@ -402,11 +402,16 @@ export class NpiComponent implements OnInit {
     } catch (e) { console.log(e) }
   }
 
-  openFileManager() {
+  openFileManager(field) {
     const initialState = {
-      rootPath: this.npi.number.toString()+'/'
+      rootPath: this.npi.number.toString() + '/' + field + '/'
     }
-    this.modalRef = this.modalService.show(FileManagerComponent, { initialState, class: "modal-lg" });
+    this.modalRef = this.modalService.show(
+      FileManagerComponent,
+      {
+        initialState,
+        class: "modal-lg"
+      });
   }
 
   loadVersion(npi: Npi) {
@@ -415,10 +420,10 @@ export class NpiComponent implements OnInit {
 
   loadNpiRef(res) {
     if (res)
-    this.npiService.getNpi(res).subscribe(npi => { 
-      console.log('loading npiRef'); 
-      this.npiRef = npi[0] 
-    })
+      this.npiService.getNpi(res).subscribe(npi => {
+        console.log('loading npiRef');
+        this.npiRef = npi[0]
+      })
   }
 
   openNpiChooserModal() {
@@ -434,7 +439,7 @@ export class NpiComponent implements OnInit {
     })
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     console.log('Destroying npiComponent')
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()

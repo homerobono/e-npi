@@ -35,8 +35,8 @@ export class ExplorerComponent {
   @Output() navigatedUp = new EventEmitter();
 
   ngOnInit() {
-    setTimeout(() => console.log(this.folders), 400)
-    setTimeout(() => console.log(this.files), 400)
+    //setTimeout(() => console.log(this.folders), 400)
+    //setTimeout(() => console.log(this.files), 400)
   }
 
   downloadElement(element: FileElement) {
@@ -66,16 +66,16 @@ export class ExplorerComponent {
   }
 
   openRenameDialog(element: FileElement) {
-    this.modalRef = this.modalService.show(InputDialogComponent, { 
-      initialState: { 
+    this.modalRef = this.modalService.show(InputDialogComponent, {
+      initialState: {
         element,
-        actionLabel: 'Digite o nome' + ( element.isFolder() ? 'da pasta:' : 'do arquivo:' )
-      }, 
-      class: "modal-sm shadow-lg vertically-centered" 
+        actionLabel: 'Digite o nome' + (element.isFolder() ? 'da pasta:' : 'do arquivo:')
+      },
+      class: "modal-sm shadow-lg vertically-centered"
     });
     this.modalRef.content.onConfirm.subscribe(name => {
       if (name != "") {
-        this.elementRenamed.emit({element: element, newName: name});
+        this.elementRenamed.emit({ element: element, newName: name });
       }
     });
   }
@@ -86,9 +86,50 @@ export class ExplorerComponent {
     console.log(this.folders)
   }
 
-  availableFolders(element : FileElement) {
+  availableFolders(element: FileElement) {
     if (this.folders)
       return this.folders.filter(f => f.name != element.name)
     return null
+  }
+
+  iconFor(element: FileElement) {
+    if (element.isFolder()) return "fa-folder text-primary"
+
+    let extension = element.name.split('.').pop();
+
+    let returnClass = "fa-file"
+
+    if (['doc', 'odt'].some(ext => extension.includes(ext))) {
+      returnClass += "-word-o text-primary"
+    } else
+      if (['txt', 'dat', 'log'].some(ext => extension.includes(ext))) {
+        returnClass += "-text text-secondary"
+      } else
+        if (['pdf'].some(ext => extension.includes(ext))) {
+          returnClass += "-pdf-o text-danger"
+        }
+        else if (['xls'].some(ext => extension.includes(ext))) {
+          returnClass += "-excel-o text-success"
+        }
+        else if (['ppt'].some(ext => extension.includes(ext))) {
+          returnClass += "-powerpoint-o text-orange"
+        }
+        else if (['zip', 'rar', '7z', 'tar', 'xz'].some(ext => extension.includes(ext))) {
+          returnClass += "-archive-o text-purple"
+        }
+        else if (['firm', 'rom', 'eprom', 'html', 'css', 'js', 'ts', 'json', 'conf', 'cfg'].some(ext => extension.includes(ext))) {
+          returnClass += "-code-o text-secondary"
+        }
+        else if (['jpg', 'jpeg', 'psd', 'png', 'gif', 'ai', 'cdr', 'bmp', 'svg', 'ps'].some(ext => extension.includes(ext))) {
+          returnClass += "-image-o text-success"
+        }
+        else if (['mp4', 'avi', 'mpg', 'mpeg', 'mkv', 'wmv', 'mov'].some(ext => extension.includes(ext))) {
+          returnClass += "-video-o text-warning"
+        }
+        else if (['wav', 'mp3', 'ogg', 'aac', 'flac'].some(ext => extension.includes(ext))) {
+          returnClass += "-audio-o text-warning"
+        } else
+          returnClass += "text-secondary"
+    return returnClass
   }
 }
