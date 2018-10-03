@@ -9,6 +9,7 @@ import { FileUploader } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
 import { PreviewComponent } from './modals/preview/preview.component';
+import { UploaderComponent } from './uploader/uploader.component';
 
 @Component({
   selector: 'app-file-manager',
@@ -20,6 +21,8 @@ export class FileManagerComponent implements OnInit {
   files: Observable<FileElement[]>;
   folders: Observable<FileElement[]>;
   rootPath: String;
+  npiNumber: String;
+  field: String;
   relativePath: String;
   currentPath: String;
   canNavigateUp = false;
@@ -33,6 +36,7 @@ export class FileManagerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.rootPath = this.npiNumber + '/' + this.field + '/'
     this.currentPath = this.rootPath
     this.relativePath = '/'
     this.updateFileQuery();
@@ -165,5 +169,13 @@ export class FileManagerComponent implements OnInit {
     p = split.join('/');
     return p;
   }
+
+  openUploadModal() {
+    this.modalRef = this.modalService.show(UploaderComponent, {
+      initialState: { field: this.field },
+      class: 'modal-lg modal-dialog-centered upload-modal'
+    });
+  }
+
 
 }

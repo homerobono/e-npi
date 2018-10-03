@@ -27,12 +27,16 @@
     content: "\f002";
 }
 
-button:hover .npi-search-icon:before {
+button:enabled:hover .npi-search-icon:before {
     color: blue
 }
 
 .append-icon:after {
     content: "\f07b";
+}
+
+.upload-icon:after {
+    content: "\f093";
 }
 
 button:hover:enabled .append-icon:after {
@@ -45,6 +49,6 @@ button:disabled {
     opacity: 1
 }
 
-button:disabled .append-icon {
+button:disabled * {
     color: lightgray
 }

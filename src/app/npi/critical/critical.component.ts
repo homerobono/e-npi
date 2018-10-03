@@ -12,7 +12,7 @@ import Npi from '../../models/npi.model';
 })
 export class CriticalComponent implements OnInit {
 
-  npi : Npi
+  npi: Npi
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
     this.fillFormData()
@@ -21,6 +21,7 @@ export class CriticalComponent implements OnInit {
 
   criticalFormGroup: FormGroup
   signatures: Array<any>
+  finalSignature: String
   isFormEnabled: Boolean
 
   constructor(
@@ -30,7 +31,11 @@ export class CriticalComponent implements OnInit {
     private npiComponent: NpiComponent
   ) {
     this.criticalFormGroup = fb.group({
-      'critical': fb.array([])
+      'critical': fb.array([]),
+      'finalApproval': fb.group({
+        status: null,
+        comment: null
+      })
     })
     this.npi = npiComponent.npi
     this.signatures = new Array<String>(this.npi.critical.length)
@@ -39,17 +44,17 @@ export class CriticalComponent implements OnInit {
   ngOnInit() {
     this.insertCriticalAnalisys()
 
-    this.isFormEnabled = 
-      this.npiComponent.editFlag && 
+    this.isFormEnabled =
+      this.npiComponent.editFlag &&
       this.npi.stage == 2
-      
+
     if (!this.isFormEnabled)
       this.criticalFormGroup.disable()
 
     this.updateParentForm()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => { this.fillFormData() }
+      () => this.fillFormData()
     )
 
     this.npiComponent.newFormVersion.subscribe(
@@ -76,7 +81,18 @@ export class CriticalComponent implements OnInit {
 
         this.signatures[i] = signature
       }
+      else this.signatures[i] = null
     }
+    var final = this.npi.finalApproval.signature
+    if (final && final.date && final.user)
+      this.finalSignature = final.user.firstName +
+        (final.user.lastName ?
+          ' ' + final.user.lastName :
+          ''
+        ) + ', ' + new Date(final.date).toLocaleDateString('pt-br') +
+        ', às ' + new Date(final.date).toLocaleTimeString('pt-br')
+    else
+      this.finalSignature = null
   }
 
   insertCriticalAnalisys() {
@@ -93,7 +109,7 @@ export class CriticalComponent implements OnInit {
       )
       criticalControl.valueChanges.subscribe(
         () => this.updateParentForm())
-        
+
       criticalFormArray.push(criticalControl)
     });
 
@@ -106,7 +122,7 @@ export class CriticalComponent implements OnInit {
 
     criticalFormArray.forEach(analisys => {
       var criticalRow = this.getCriticalRow(analisys.get('_id').value)
-      console.log(criticalRow)
+      //console.log(criticalRow)
       analisys.patchValue(
         {
           status: criticalRow.status,
@@ -137,7 +153,7 @@ export class CriticalComponent implements OnInit {
     if (event.target.value == statusControl.value) statusControl.setValue(null)
   }
 
-  clearForm(){
+  clearForm() {
     var criticalFormArray =
       (this.criticalFormGroup.get('critical') as FormArray).controls
 
@@ -161,5 +177,19 @@ export class CriticalComponent implements OnInit {
       control = control.get(fieldsArr[i])
     }
     return control.hasError('required')
+  }
+
+  cancelNpi() {
+    this.criticalFormGroup.get("finalApproval").patchValue({
+      status: 'deny'
+    })
+    this.npiComponent.cancelNpi()
+  }
+
+  finalApprove() {
+    this.criticalFormGroup.get("finalApproval").patchValue({
+      status: 'accept'
+    })
+    this.npiComponent.finalApprove()
   }
 }

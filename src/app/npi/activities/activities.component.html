@@ -6,27 +6,37 @@
       </center>
     </label>
     <div class='table-responsive' id='activities' formArrayName='activities'>
-      <table class="table table-bordered">
+      <table class="table table-sm table-bordered">
         <thead class='thead-light'>
           <tr>
-            <th scope="col">Atividade</th>
-            <th scope="col">Responsável</th>
-            <th scope="col">Prazo</th>
-            <th scope="col">Documento/Registro</th>
-            <th scope="col">Arquivos</th>
+            <th scope="col" rowspan=2>Atividade</th>
+            <th scope="col" rowspan=2>Responsável</th>
+            <th scope="col" colspan=2>Prazo</th>
+            <th scope="col" rowspan=2>Documento/Registro</th>
+            <th scope="col" rowspan=2>Arquivos</th>
+          </tr>
+          <tr>
+            <th scope=col>Início</th>
+            <th scope=Fim>Término</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
             <td>
-              {{ utils.getActivity(npi.activities[i].activity) }}
+              {{ utils.getActivity(npi.activities[i].activity).label }}
             </td>
             <td>
               {{ npi.activities[i].dept }}
             </td>
+            <td *ngIf='i == 0'>
+            </td>
+            <td *ngIf='i > 0'>
+              <input type='text' class='form-control' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
+                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i-1]' [ngClass]='{"is-invalid": fieldHasErrors(i+".deadline")}'>
+            </td>
             <td>
-              <input type='text' class='form-control' formControlName='date' aria-describedby="Prazo para atividade {{ npi.activities[i].activity }}"
-                #dp="bsDatepicker" bsDatepicker [bsConfig]='npiComponent.datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors(i+".date")}'>
+              <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
+                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid": fieldHasErrors(i+".deadline")}'>
             </td>
             <td>
               <textarea class="form-control" rows=1 formControlName='registry' [ngClass]='{"is-invalid": fieldHasErrors(i+".registry")}'></textarea>

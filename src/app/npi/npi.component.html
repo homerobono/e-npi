@@ -29,9 +29,13 @@
             data-placement="top" title="Submeter NPI para Análise Crítica">
             <i class='fa fa-check-circle-o fa-fw'></i>
           </button>
-          <button (click)='submitNpi(npiForm.value)' class='btn btn-success' *ngIf='editFlag && npi.stage < 5' data-toggle="tooltip"
-            data-placement="top" title="Salvar alterações">
+          <button (click)='saveNpi(npiForm.value)' class='btn btn-success' *ngIf='editFlag && npi.stage < 5 && !isFinalApproval()'
+            data-toggle="tooltip" data-placement="top" title="Salvar alterações">
             <i class='fa fa-save fa-fw'></i>
+          </button>
+          <button (click)='promoteNpi(npiForm.value)' class='btn btn-primary' *ngIf='editFlag && npi.stage < 5 && isFinalApproval()'
+            data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento">
+            <i class='fa fa-check fa-fw'></i>
           </button>
           <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='editFlag && npi.stage == 4 && 
                   (npiForm.get("validation")!=null && npiForm.get("validation").valid)' data-toggle="tooltip" data-placement="top"
@@ -40,12 +44,11 @@
           </button>
         </div>
       </div>
-      <div class='btn-group rounded mb-2'>
+      <div class='btn-group rounded mb-3'>
         <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top" title="Página inicial de NPI's">
           <i class='fa fa-chevron-left'></i>
         </button>
-        <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip"
-          data-placement="top" title="Criar NPI">
+        <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip" data-placement="top" title="Criar NPI">
           <i class='fa fa-plus '></i>
         </button>
       </div>
@@ -137,10 +140,6 @@
           <small>Última modificação: {{utils.getTimeDifference(null,npi.updated) }}</small>
         </div>
       </div>
-      <button type=button class='btn btn-primary btn-lg' (click)='openFileManager()'>
-        <i class='fa fa-archive'></i>
-        Anexos
-      </button>
       <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
         <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
           <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
@@ -148,7 +147,7 @@
           </a>
         </li>
       </ul>
-      <form [formGroup]='npiForm' (ngSubmit)="submitNpi(npiForm.value)">
+      <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
         <hr *ngIf='npiVersions.length == 1'>
         <app-oem [npiSetter]='npi' [npis]='npiVersions' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
         <app-pixel [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
@@ -189,9 +188,13 @@
             </button>
           </div>
           <div class='col text-right'>
-            <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag'>
+            <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
               <i class='fa fa-save fa-fw'></i>
               Salvar
+            </button>
+            <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && isFinalApproval()'>
+              <i class='fa fa-long-arrow-right fa-fw'></i>
+              Avançar para Desenvolvimento
             </button>
             <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && newFormVersionFlag'>
               <i class='fa fa-save fa-fw'></i>

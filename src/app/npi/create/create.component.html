@@ -120,7 +120,7 @@
             <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
             <div class="input-group">
               <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
-            </textarea>
+              </textarea>
               <div class="input-group-append">
                 <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openUploadModal("resources")'
                 [ngClass]='{"text-primary":uploadService.uploaders.resources, "border-danger": fieldHasErrors("resources.annex") && !uploadService.uploaders.resources}'>

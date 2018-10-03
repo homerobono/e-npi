@@ -31,7 +31,7 @@ export class NpiService {
     this.npisList = this.manualRefresh.
       switchMap(() => timer(0, 10000).
         concatMap(() => this.getNpis())
-    ).shareReplay() as BehaviorSubject<Npi[]>
+      ).shareReplay() as BehaviorSubject<Npi[]>
   }
 
   getNpi(npiNumber: Number): Observable<Npi[]> {
@@ -82,20 +82,56 @@ export class NpiService {
     console.log(npiForm);
     var npi = this.formToModel(npiForm)
     console.log(npi);
-    return this.http.post(this.npiUrl, npi);
+    return this.http.post(this.npiUrl, npi)
+      .concatMap(update => {
+        console.log('new NPI version created');
+        return this.uploadService.upload(npiForm.number).map(
+          upload => {
+            var res = { update, upload }
+            console.log(res)
+            return res
+          }
+        )
+      })
   }
 
   updateNpi(npiForm): Observable<any> {
     console.log('updating npi');
     var npi = this.formToModel(npiForm)
     console.log(npi);
-    return this.http.put(this.npiUrl, npi);
+    return this.http.put(this.npiUrl, npi)
+      .concatMap(update => {
+        console.log('NPI updated');
+        return this.uploadService.upload(npiForm.number).map(
+          upload => {
+            var res = { update, upload }
+            console.log(res)
+            return res
+          }
+        )
+      })
   }
 
   promoteNpi(npiNumber): Observable<any> {
     console.log('promoting npi');
     console.log(npiNumber);
     return this.http.get(this.npiUrl + npiNumber + '/promote')
+  }
+
+  updateAndPromoteNpi(npiForm) {
+    return this.updateNpi(npiForm).concatMap(
+      updateUpload => {
+        console.log('Promoting NPI', updateUpload);
+        return this.promoteNpi(updateUpload.update.data.npi.number)
+          .map(promote => {
+            return {
+              promote,
+              update: updateUpload.update,
+              upload: updateUpload.upload
+            }
+          })
+      }
+    )
   }
 
   deleteNpi(npiId: String): Observable<any> {
@@ -226,7 +262,7 @@ export class NpiService {
     return model
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     console.log('Destroying service')
   }
 

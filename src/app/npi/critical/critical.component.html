@@ -31,18 +31,61 @@
               </label>
             </td>
             <td>
-              <textarea class="form-control" rows=1 formControlName='comment' 
-              [ngClass]='{"is-invalid": fieldHasErrors("critical."+i+".comment")}'></textarea>
+              <textarea class="form-control" rows=1 formControlName='comment' [ngClass]='{"is-invalid": fieldHasErrors("critical."+i+".comment")}'></textarea>
               <div class='invalid-feedback h-auto'>
                 É necessário incluir uma justificativa ao recusar uma proposta
               </div>
             </td>
             <td>
-              <div class='radio-level-legend'><i>{{ signatures[i] }}</i></div>
+              <div class='signature'>
+                <i>{{ signatures[i] }}</i>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+<div class='row align-items-center mt-3 mb-4' *ngIf='npi.isCriticallyDisapproved()' [formGroup]='criticalFormGroup'>
+  <div class='col-auto text-center'>
+    <span style='font-size: 20px'>
+      <b>Aprovação Final:</b>
+    </span>
+  </div>
+  <div class='col-auto' *ngIf='npi.finalApproval?.status'>
+    <span class='fa fa-check-circle-o fa-2x text-primary' style='vertical-align: middle' *ngIf='npi.finalApproval?.status=="accept"'></span>
+  </div>
+  <div class='col' formGroupName='finalApproval'>
+    <div class='form-group'>
+      <label for='finalComment'>Justificativa</label>
+      <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval.comment")}'>
+      <div class='invalid-feedback'>
+        Descreva o motivo da aprovação
+      </div>
+    </div>
+  </div>
+  <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
+    <div class='row no-gutters'>
+      <div class='col-12 col-md-6'>
+        <button class='btn btn-primary btn-block' (click)='finalApprove()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || !comment.value'>
+          <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
+          <span> Aprovar</span>
+        </button>
+      </div>
+      <div class='col-12 col-md-6'>
+        <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2'>
+          <i class='fa fa-trash fa-2x' style='vertical-align: middle;'></i>
+          <span> Cancelar NPI</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class='col-12 col-sm text-center final-signature' *ngIf='finalSignature'>
+    <div class='rounded bg-light m-0 p-2'>
+      <i>
+        <b>{{ finalSignature }}</b>
+      </i>
     </div>
   </div>
 </div>

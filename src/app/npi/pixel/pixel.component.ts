@@ -13,7 +13,7 @@ import { UtilService } from '../../services/util.service';
 })
 export class PixelComponent implements OnInit {
 
-  npi : Npi
+  npi: Npi
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
     this.fillFormData()
@@ -36,13 +36,13 @@ export class PixelComponent implements OnInit {
       'client': null,
       'npiRef': null,
       'description': null,
-      'norms': fb.group({
-        'description': null,
-        'annex': null
-      }),
       'resources': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
+      }),
+      'norms': fb.group({
+        'description': null,
+        'annex': []
       }),
       'regulations': fb.group({
         standard: fb.group({}),
@@ -60,12 +60,12 @@ export class PixelComponent implements OnInit {
       'investment': fb.group({
         value: null,
         currency: null,
-        annex: null
+        annex: []
       }),
       'projectCost': fb.group({
         value: null,
         currency: null,
-        annex: null
+        annex: []
       }),
       'demand': fb.group({
         'amount': null,
@@ -82,15 +82,18 @@ export class PixelComponent implements OnInit {
 
   ngOnInit() {
     this.npiFormOutput.emit(this.npiForm)
-    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
+    this.npiForm.get('npiRef').valueChanges.subscribe(
+      res => this.npiComponent.loadNpiRef(res)
+    )
     this.fillFormData()
+    console.log(this.npiForm.value)
 
     if (this.npi.isCriticallyAnalised() ||
       !this.npiComponent.editFlag)
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => { this.fillFormData() }
+      () => this.fillFormData()
     )
   }
 
@@ -102,7 +105,7 @@ export class PixelComponent implements OnInit {
         && model[field]) {
         this.fillNestedFormData(control, model[field])
       } else
-        if (model[field] != null && model[field] != undefined && !(model[field] instanceof Object)) {
+        if (model[field] != null && model[field] != undefined) {
           try {
             control.setValue(model[field])
           }
@@ -118,37 +121,39 @@ export class PixelComponent implements OnInit {
     this.npiForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
       price: this.npi.price ? {
-        value: this.npi.price.value ? 
+        value: this.npi.price.value ?
           this.npi.price.value.toFixed(2).toString().replace('.', ',')
-          :null,
-        currency: this.npi.price.currency ? 
-          this.npi.price.currency:null,
+          : null,
+        currency: this.npi.price.currency ?
+          this.npi.price.currency : null,
       } : null,
       cost: this.npi.cost ? {
-        value: this.npi.cost.value ? 
+        value: this.npi.cost.value ?
           this.npi.cost.value.toFixed(2).toString().replace('.', ',')
-          :null,
-        currency: this.npi.cost.currency ? 
-          this.npi.cost.currency:null,
+          : null,
+        currency: this.npi.cost.currency ?
+          this.npi.cost.currency : null,
       } : null,
       projectCost: this.npi.projectCost ?
         {
           value: this.npi.projectCost.value ?
             this.npi.projectCost.value.toFixed(2).toString().replace('.', ',')
             : null,
-          currency: this.npi.projectCost.currency ? 
-            this.npi.projectCost.currency:null,
-          annex: null
+          currency: this.npi.projectCost.currency ?
+            this.npi.projectCost.currency : null,
+          annex: this.npi.projectCost.annex ?
+            this.npi.projectCost.annex : []
         } : null,
       investment: this.npi.investment ?
-      {
-        value: this.npi.investment.value ?
-          this.npi.investment.value.toFixed(2).toString().replace('.', ',')
-          : null,
-        currency: this.npi.investment.currency ? 
-          this.npi.investment.currency:null,
-        annex: null
-      } : null,
+        {
+          value: this.npi.investment.value ?
+            this.npi.investment.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.investment.currency ?
+            this.npi.investment.currency : null,
+          annex: this.npi.investment.annex ?
+            this.npi.investment.annex : []
+        } : null,
     })
   }
 
@@ -156,13 +161,15 @@ export class PixelComponent implements OnInit {
     let propsArr = field.split(".")
     let control = this.npiForm.get(propsArr[0])
     for (let i = 1; i < propsArr.length; i++) {
-        control = control.get(propsArr[i])
+      control = control.get(propsArr[i])
     }
     return control.hasError('required')
-}
+  }
 
-  openFileManager(field) {
-    this.npiComponent.openFileManager(field)
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.npiComponent.openUploadModal(field)
+    else this.npiComponent.openFileManager(field)
   }
 
 }

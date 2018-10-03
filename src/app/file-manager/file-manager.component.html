@@ -8,37 +8,32 @@
           </button>
         </div>
       </div>
-      <div class='row align-items-center'>
-        <div class='col text-secondary text-left'>
-          <span class="pointer fa fa-arrow-left text-left p-2 pl-0 ml-0" [style.visibility]='canNavigateUp? "visible" : "hidden"' (click)="navigateUp()">
-          </span>
-          <span>
-            {{ relativePath || 'Files'}}
-          </span>
-        </div>
-        <div class='col-auto text-primary' (click)='updateFileQuery()'>
-          <span class='pointer fa fa-refresh'></span>
-        </div>
-        <div class='col-auto text-primary' (click)='downloadAll()'>
-            <span class='pointer fa fa-download fa-2x'></span>
+      <div class="btn-toolbar" role="toolbar">
+        <div class='input-group mr-2'>
+          <div class="input-group-prepend">
+            <button type='button' class='input-group-text btn btn-light shadow-none' (click)="navigateUp()" [disabled]='!canNavigateUp'>
+              <span class='fa fa-arrow-left'></span>
+            </button>
           </div>
-        <div class='col'>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <button class="btn btn-success shadow-none" id="inputGroupFileAddon01" (click)='uploadElements()'>
-                <span class='fa fa-upload'></span>
-              </button>
-            </div>
-            <div class="custom-file">
-              <!--input id='inputFile' type="file" ng2FileSelect [uploader]="uploader.getUploader()" class="custom-file-input" aria-describedby="inputGroupFileAddon01" size=0 style='width: 5'>
-              <label class="custom-file-label" for="inputFile" aria-describedby="inputGroupFileAddon02"></label-->
-            </div>
+          <input class='form-control bg-light border-0' readonly type=text [(ngModel)]='relativePath'>
+          <div class="input-group-append">
+            <button type='button' class='btn btn-light shadow-none text-primary' (click)='updateFileQuery()'>
+              <span class='pointer fa fa-refresh'></span>
+            </button>
+            <button type='button' class='btn btn-light shadow-none pr-2' (click)="openNewFolderDialog()">
+              <span class="fa fa-folder text-primary">
+              </span>
+              <span style="position:relative; left:-10px; top: -2px; font-size: 8px" class='fa fa-plus text-light'></span>
+            </button>
           </div>
         </div>
-        <div class='col-auto pointer' (click)="openNewFolderDialog()">
-          <span class="fa fa-folder fa-2x text-primary">
-          </span>
-          <span style="position:relative; left:-20px; top: -4px" class='fa fa-plus text-light'></span>
+        <div class='btn-group' role='group'>
+          <button type='button' class='btn btn-primary' (click)='downloadAll()'>
+            <span class='fa fa-download fa-fw'></span>
+          </button>
+          <button type='button' class="btn btn-success" (click)='openUploadModal()'>
+            <span class='fa fa-upload fa-fw'></span>
+          </button>
         </div>
       </div>
     </div>

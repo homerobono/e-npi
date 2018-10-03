@@ -86,13 +86,22 @@ class Npi {
                 date: Date
             }
         }>;
+    finalApproval: {
+        _id: String,
+        status: String,
+        comment: String,
+        signature: {
+            user: any,
+            date: Date
+        }
+    };
     clientApproval: {
         approval: String,
         comment: String
     };
     activities: Array<{
         _id: String,
-        date: Date,
+        deadline: Number,
         dept: String,
         comment: String,
         registry: String,
@@ -157,14 +166,13 @@ class Npi {
                         critical.signature.date = new Date(critical.signature.date);
                 });
             }
-            if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
-            if (npiModel.activities != null) {
-                this.activities = npiModel.activities
-                npiModel.activities.forEach(activity => {
-                    if (activity.date)
-                        activity.date = new Date(activity.date)
-                });
+            if (npiModel.finalApproval != null) {
+                this.finalApproval = npiModel.finalApproval
+                if (this.finalApproval.signature && this.finalApproval.signature.date)
+                this.finalApproval.signature.date = new Date(this.finalApproval.signature.date);
             }
+            if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
+            if (npiModel.activities != null) this.activities = npiModel.activities
             if (npiModel.validation != null) this.validation = npiModel.validation
         }
     }
@@ -172,31 +180,30 @@ class Npi {
     public isCriticallyAnalised(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analisys) => {
-                    return analisys.status != null
-                }
+                (analisys) => analisys.status != null
             )
         }
+        return false
     }
 
     public isCriticallyDisapproved(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analisys) => {
-                    return analisys.status == 'deny'
-                }
+                (analisys) => analisys.status == 'deny'
+            ) && this.critical.every(
+                analisys => analisys.status != null
             )
         }
+        return false
     }
 
     public isCriticallyApproved(): Boolean {
         if (this.critical) {
             return this.critical.every(
-                (analisys) => {
-                    return analisys.status == 'accept'
-                }
-            )
+                analisys => analisys.status == 'accept'
+            ) || this.finalApproval.status == 'accept'
         }
+        return false
     }
 
     public isApproved(): Boolean {
@@ -207,6 +214,7 @@ class Npi {
                 else
                     return true
         }
+        return false
     }
 }
 

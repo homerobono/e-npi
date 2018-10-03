@@ -20,6 +20,11 @@ import { slideInOutBottomAnimation } from '../_animations/slide_in_out.animation
 import { FileManagerComponent } from '../file-manager/file-manager.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NpiChooserModalComponent } from './npi-chooser-modal/npi-chooser-modal.component';
+import { FileDescriptor } from '../models/file-descriptor';
+import { FileItem } from 'ng2-file-upload';
+import { UploadService } from '../services/upload.service';
+import { UploaderComponent } from '../file-manager/uploader/uploader.component';
+import { SendingFormModalComponent } from './sending-form-modal/sending-form-modal.component';
 
 @Component({
   selector: 'app-npi',
@@ -31,6 +36,8 @@ import { NpiChooserModalComponent } from './npi-chooser-modal/npi-chooser-modal.
 export class NpiComponent implements OnInit {
 
   private ngUnsubscribe = new Subject();
+
+  resolveSubmission: Observable<any>
 
   resetFormFlagSubject = new Subject<Boolean>()
   resetFormFlag = true
@@ -119,6 +126,7 @@ export class NpiComponent implements OnInit {
     private utils: UtilService,
     private modalService: BsModalService,
     public dialog: MatDialog,
+    private uploadService: UploadService
   ) {
     console.log('constructed again')
     this.npi = new Npi(null)
@@ -155,7 +163,6 @@ export class NpiComponent implements OnInit {
     )
     this.editForm.subscribe(
       flag => {
-        console.log(flag)
         this.editFlag = flag
         flag ? this.npiForm.enable() : this.npiForm.disable()
       }
@@ -165,7 +172,7 @@ export class NpiComponent implements OnInit {
       res => this.npisList = res
     )
 
-    setTimeout(() => this.openFileManager('resources'), 400)
+    //setTimeout(() => this.openFileManager('resources'), 400)
 
     //setTimeout(() => console.log(this.npiForm.value), 1000)
     //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
@@ -205,10 +212,18 @@ export class NpiComponent implements OnInit {
     this.sendingForm = true
 
     npiForm.name = this.titleField
-
+    npiForm.number = this.npi.number
     npiForm.id = this.npi.id
     npiForm.entry = this.npi.entry
 
+    for (let field in this.uploadService.uploaders) {
+      console.log(this.uploadService.uploaders[field].queue)
+      if (!npiForm[field].annex) npiForm[field].annex = []
+      npiForm[field].annex = npiForm[field].annex.concat(
+        (this.uploadService.uploaders[field].queue as FileItem[]).map(
+          fI => new FileDescriptor(field, fI.file)
+        ))
+    }
     console.log(npiForm)
 
     if (this.newFormVersionFlag) {
@@ -221,18 +236,38 @@ export class NpiComponent implements OnInit {
           err => this.invalidFieldsError(err)
         )
     } else
-      this.npiService.updateNpi(npiForm).
-        subscribe(
-          res => this.successResponse(res),
-          err => this.invalidFieldsError(err)
-        )
+      this.resolveSubmission.subscribe(
+        res => this.successResponse(res),
+        err => this.invalidFieldsError(err)
+      )
+  }
+
+  saveNpi(npiForm) {
+    if (this.npi.stage == 2 && this.isFinalApproval())
+      this.promoteNpi(npiForm)
+    else {
+      this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
+      this.submitNpi(npiForm)
+    }
+  }
+
+  submitToAnalisys(npiForm) {
+    if (!confirm(
+      "Tem certeza que deseja enviar para Análise Crítica? Todos os funcionários envolvidos serão notificados da submissão.")
+    ) return;
+    this.promoteNpi(npiForm)
+  }
+
+  promoteNpi(npiForm) {
+    this.resolveSubmission = this.npiService.updateAndPromoteNpi(this.npiForm.value)
+    this.submitNpi(npiForm)
   }
 
   successResponse(res) {
     console.log(res)
     this.formSent = true;
 
-    if (res.data.changedFields && Object.keys(res.data.changedFields).length > 0)
+    if (res.update.data.changedFields && Object.keys(res.update.data.changedFields).length > 0)
       this.messenger.set({
         'type': 'success',
         'message': 'NPI atualizada com sucesso'
@@ -311,18 +346,6 @@ export class NpiComponent implements OnInit {
     }
   }
 
-  saveNpi(npiForm) {
-    this.submitNpi(npiForm)
-  }
-
-  submitToAnalisys(npiForm) {
-    npiForm.stage = 2
-    if (!confirm(
-      "Tem certeza que deseja enviar para Análise Crítica? Todos os funcionários envolvidos serão notificados da submissão.")
-    ) return;
-    this.submitNpi(npiForm)
-  }
-
   fieldHasErrors(field) {
     return this.npiForm.controls[field].hasError('required')
   }
@@ -368,17 +391,21 @@ export class NpiComponent implements OnInit {
         console.log(err)
         this.formSent = false;
         this.sendingForm = false;
-      }
-      )
+      })
+  }
+
+  finalApprove() {
+    if (!confirm(
+      "Tem certeza que deseja aprovar a NPI?")
+    ) return;
+    this.promoteNpi(this.npiForm.value)
   }
 
   finalizeNpi() {
     if (!confirm(
       "Tem certeza que deseja concluir a NPI? Depois de finalizada somente alguns campos poderão ser editados, mediante justificativa e posterior análise.")
     ) return;
-    var finalForm = this.npiForm.value
-    finalForm.stage = 5
-    this.submitNpi(finalForm)
+    this.promoteNpi(this.npiForm.value)
   }
 
   togglePostConclusionEdit() {
@@ -404,7 +431,8 @@ export class NpiComponent implements OnInit {
 
   openFileManager(field) {
     const initialState = {
-      rootPath: this.npi.number.toString() + '/' + field + '/'
+      npiNumber: this.npi.number,
+      field
     }
     this.modalRef = this.modalService.show(
       FileManagerComponent,
@@ -419,11 +447,18 @@ export class NpiComponent implements OnInit {
   }
 
   loadNpiRef(res) {
-    if (res)
+    console.log(res)
+    console.log(typeof res)
+    if (res && typeof res == 'number')
       this.npiService.getNpi(res).subscribe(npi => {
         console.log('loading npiRef');
         this.npiRef = npi[0]
       })
+  }
+
+  isFinalApproval() {
+    return this.npi.stage == 2
+      && this.npiForm.value.critical.every(analysis => analysis.status == 'accept')
   }
 
   openNpiChooserModal() {
@@ -439,8 +474,24 @@ export class NpiComponent implements OnInit {
     })
   }
 
+  openUploadModal(field: String) {
+    this.modalRef = this.modalService.show(UploaderComponent, {
+      initialState: { field },
+      class: 'modal-lg modal-dialog-centered upload-modal'
+    });
+  }
+
+  openSendingFormModal() {
+    this.modalRef = this.modalService.show(SendingFormModalComponent, {
+      class: 'modal-md modal-dialog-centered',
+      backdrop: 'static',
+      keyboard: false
+    })
+  }
+
   ngOnDestroy() {
     console.log('Destroying npiComponent')
+    this.uploadService.cleanUp()
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
   }
