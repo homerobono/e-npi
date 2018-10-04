@@ -1,9 +1,13 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
 import { BsDatepickerConfig, DatepickerConfig } from 'ngx-bootstrap';
+import User from '../../models/user.model';
+import { UsersService } from '../../services/users.service';
+
+const DAYS = 24 * 3600 * 1000
 
 @Component({
   selector: 'app-activities',
@@ -15,15 +19,18 @@ export class ActivitiesComponent implements OnInit {
   @Input() npi
 
   activitiesFormGroup: FormGroup
-  signatures: Array<any>
+  signatures: Array<any> = []
   isFormEnabled: Boolean
   datePickerConfig: Array<Partial<BsDatepickerConfig>>;
+
+  users: any = {}
 
   constructor(
     private fb: FormBuilder,
     private utils: UtilService,
     private route: ActivatedRoute,
-    private npiComponent: NpiComponent
+    private npiComponent: NpiComponent,
+    private userService: UsersService
   ) {
     this.activitiesFormGroup = fb.group({
       'activities': fb.array([])
@@ -40,6 +47,16 @@ export class ActivitiesComponent implements OnInit {
 
     this.insertActivities()
 
+    this.userService.getUsers().subscribe(
+      users => {
+        users.forEach(user => {
+          let dept = user.department as string
+          if (!this.users[dept]) this.users[dept] = new Array<User>()
+          this.users[dept].push(user)
+        })
+        console.log(this.users)
+      })
+
     if (!this.isFormEnabled)
       this.activitiesFormGroup.disable()
 
@@ -53,14 +70,14 @@ export class ActivitiesComponent implements OnInit {
     var datePickArr = new Array<Partial<BsDatepickerConfig>>(length)
     for (let i = 0; i < length; i++) {
       datePickArr[i] = Object.assign(
-          {},
-          {
-            containerClass: 'theme-default',
-            showWeekNumbers: false,
-            dateInputFormat: 'DD/MM/YYYY',
-            minDate: new Date()
-          })
-      }
+        {},
+        {
+          containerClass: 'theme-default',
+          showWeekNumbers: false,
+          dateInputFormat: 'DD/MM/YYYY',
+          minDate: new Date()
+        })
+    }
     return datePickArr
   }
 
@@ -69,17 +86,19 @@ export class ActivitiesComponent implements OnInit {
       (this.activitiesFormGroup.get('activities') as FormArray)
         .controls
     var activitiesModelArray = this.npi.activities
-
+    console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
     activitiesModelArray.forEach(activity => {
       var activityControl = this.fb.group(
         {
           _id: activity._id,
-          deadline: activity.deadline,
-          startDate: null,
-          endDate: new Date(Date.now() + activity.deadline * 24 * 3600 * 1000),
+          dept: activity.dept,
+          term: activity.term,
+          startDate: this.npi.getCriticalApprovalDate().toLocaleDateString(),
+          endDate: new Date(this.npi.getCriticalApprovalDate() + this.utils.getActivityDeadline(activity.activity) * DAYS),
           activity: activity.activity,
           registry: activity.registry,
-          annex: activity.annex
+          annex: activity.annex,
+          apply: true
           //signature: activity.signature 
         }
       )
@@ -94,39 +113,70 @@ export class ActivitiesComponent implements OnInit {
     });
   }
 
+  validateDateFields(res) {
+    var activitiesFormArray =
+      (this.activitiesFormGroup.get('activities') as FormArray)
+        .controls
+    for (let i = 0; i < activitiesFormArray.length; i++) {
+      let activity = activitiesFormArray[i]
+      //console.log(activity.get("activity").value)
+    }
+  }
+
   updateDateFields(field) {
     var activitiesFormArray =
       (this.activitiesFormGroup.get('activities') as FormArray)
         .controls
-    console.log('updating data')
     for (let i = 0; i < activitiesFormArray.length; i++) {
       if (field._id == activitiesFormArray[i].get('_id').value) {
-        let endDate = activitiesFormArray[i].get('endDate').value
-        let startDate = activitiesFormArray[i].get('startDate').value
+        let activity = activitiesFormArray[i]
+        //console.log(activity)
+        let endDate = new Date(activitiesFormArray[i].get('endDate').value)
+        let startDate = new Date(activitiesFormArray[i].get('startDate').value)
+
+        /*let dependency = this.utils.getDependencyActivity(activity.get('activity').value)
+        if (dependency) {
+          activitiesFormArray.find(act =>
+            act.get('activity').value == dependency.value
+          ).patchValue({
+            endDate: startDate
+          }, { emitEvent: false })
+        }*/
+        //console.log('searching for ', activity.get('activity').value)
+        let dependents = this.utils.getDependentActivities(activity.get('activity').value)
+        if (dependents) {
+          dependents.forEach(dep => {
+            let depControl = activitiesFormArray.find(act =>
+              act.get('activity').value == dep.value
+            )
+            //console.log('updating ' + dep.value + ' with ' + endDate + ' and ' + endDate+depControl.get('term').value)
+            //console.log(endDate)
+            let endDepDate = new Date(endDate.valueOf() + parseInt(depControl.get('term').value) * DAYS)
+            //console.log(endDepDate)
+            depControl.patchValue({
+              startDate: endDate.toLocaleDateString(),
+              endDate: endDepDate
+            })
+          })
+        }
+
+        /*
         this.datePickerConfig[i] = Object.assign(
           this.datePickerConfig[i],
           { minDate: startDate }
         )
         if (i > 0) {
-          activitiesFormArray[i - 1].patchValue({
-            endDate: startDate
-          }, { emitEvent: false })
-
           this.datePickerConfig[i - 1] = Object.assign(
             this.datePickerConfig[i - 1],
             { maxDate: endDate }
           )
         }
         if (i < activitiesFormArray.length - 1) {
-          activitiesFormArray[i + 1].patchValue({
-            startDate: endDate
-          }, { emitEvent: false })
-
           this.datePickerConfig[i + 1] = Object.assign(
             this.datePickerConfig[i + 1],
             { minDate: endDate }
           )
-        }
+        }*/
       }
     }
   }
@@ -136,15 +186,17 @@ export class ActivitiesComponent implements OnInit {
       (this.activitiesFormGroup.get('activities') as FormArray).controls
 
     activitiesFormArray.forEach(analisys => {
-      var activityRow = this.getActivityRow(analisys.get('_id').value)
-      console.log(activityRow.deadline);
+      var activity = this.getActivityRow(analisys.get('_id').value)
+      console.log(activity.term);
       analisys.patchValue(
         {
-          startDate: null,
-          endDate: new Date(Date.now() + activityRow.deadline * 24 * 3600 * 1000),
-          registry: activityRow.registry,
-          annex: activityRow.annex
-          //signature: analisys.signature 
+          //_id: activity._id,
+          term: activity.term,
+          //startDate: null,
+          endDate: new Date(Date.now() + activity.term * DAYS),
+          //activity: activity.activity,
+          registry: activity.registry,
+          annex: activity.annex
         }
       )
     });
@@ -165,6 +217,12 @@ export class ActivitiesComponent implements OnInit {
     let fieldsArr = field.split(".")
     var controls = (this.activitiesFormGroup.get('activities') as FormArray)
     return (controls.get(fieldsArr[0]) as FormGroup).get(fieldsArr[1]).hasError('required')
+  }
+
+  openFileAction(field) {
+    //if (!this.npi[field].annex || !this.npi[field].annex.length)
+      //this.npiComponent.openUploadModal(field)
+      this.npiComponent.openFileManager(field)
   }
 
 }

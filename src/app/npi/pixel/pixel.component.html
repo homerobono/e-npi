@@ -69,10 +69,10 @@
         </textarea>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openFileAction("resources")'
-              [ngClass]='{"text-primary":npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
-              [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
-              <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
-            </button>
+            [ngClass]='{"text-primary":npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
+            [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
+            <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
+          </button>
         </div>
         <div class='invalid-feedback'>
           Defina os recursos necessários
@@ -84,13 +84,13 @@
       <div class="input-group">
         <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
           </textarea>
-          <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openFileAction("norms")'
-              [ngClass]='{"text-primary":npi.norms.annex?.length, "border-danger": fieldHasErrors("norms.annex") && !npi.norms.annex?.length}'
-              [disabled]='!npiComponent.editFlag && !npi.norms.annex?.length'>
-              <i class='fa fa-fw' [ngClass]='npi.norms.annex?.length? "append-icon":"upload-icon"'></i>
-            </button>
-          </div>
+        <div class="input-group-append">
+          <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openFileAction("norms")'
+            [ngClass]='{"text-primary":npi.norms.annex?.length, "border-danger": fieldHasErrors("norms.annex") && !npi.norms.annex?.length}'
+            [disabled]='!npiComponent.editFlag && !npi.norms.annex?.length'>
+            <i class='fa fa-fw' [ngClass]='npi.norms.annex?.length? "append-icon":"upload-icon"'></i>
+          </button>
+        </div>
         <div class='invalid-feedback'>
           Defina as leis e/ou normas aplicáveis
         </div>
@@ -204,10 +204,10 @@
           aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openFileAction("investment")'
-              [ngClass]='{"text-primary":npi.investment.annex?.length, "border-danger": fieldHasErrors("investment.annex") && !npi.investment.annex?.length}'
-              [disabled]='!npiComponent.editFlag && !npi.investment.annex?.length'>
-              <i class='fa fa-fw' [ngClass]='npi.investment.annex?.length? "append-icon":"upload-icon"'></i>
-            </button>
+            [ngClass]='{"text-primary":npi.investment.annex?.length, "border-danger": fieldHasErrors("investment.annex") && !npi.investment.annex?.length}'
+            [disabled]='!npiComponent.editFlag && !npi.investment.annex?.length'>
+            <i class='fa fa-fw' [ngClass]='npi.investment.annex?.length? "append-icon":"upload-icon"'></i>
+          </button>
         </div>
         <div class='invalid-feedback'>
           Defina o investimento
@@ -227,10 +227,10 @@
           aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" id="projectCostAppend" (click)='openFileAction("projectCost")'
-              [ngClass]='{"text-primary":npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost.annex") && !npi.projectCost.annex?.length}'
-              [disabled]='!npiComponent.editFlag && !npi.projectCost.annex?.length'>
-              <i class='fa fa-fw' [ngClass]='npi.projectCost.annex?.length? "append-icon":"upload-icon"'></i>
-            </button>
+            [ngClass]='{"text-primary":npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost.annex") && !npi.projectCost.annex?.length}'
+            [disabled]='!npiComponent.editFlag && !npi.projectCost.annex?.length'>
+            <i class='fa fa-fw' [ngClass]='npi.projectCost.annex?.length? "append-icon":"upload-icon"'></i>
+          </button>
         </div>
         <div class='invalid-feedback'>
           Defina o custo do projeto

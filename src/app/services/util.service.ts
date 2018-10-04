@@ -6,14 +6,45 @@ import { Globals } from '../../../config';
 })
 export class UtilService {
 
-  constructor() {}
+  constructor() { }
 
   getActivities() {
     return Globals.MACRO_STAGES
   }
 
   getActivity(activity) {
-    return Globals.MACRO_STAGES.find(s => s.value == activity)
+    return Globals.MACRO_STAGES.find(a => a.value == activity)
+  }
+
+  getDependentActivities(activity) {
+    let deps = []
+    Globals.MACRO_STAGES.forEach(act => {
+      if (act.dep && act.dep.includes(activity))
+        deps.push(act)
+    })
+    if (deps.length) return deps
+    return null
+  }
+
+  getDependencyActivity(activity) {
+    //console.log(activity)
+    let depValue = this.getActivity(activity).dep
+    if (depValue)
+      return Globals.MACRO_STAGES.find(a => depValue.includes(a.value))
+    return null
+  }
+
+  getActivityDeadline(activityLabel) {
+    let activity = this.getActivity(activityLabel)
+    let previousTerm = 0
+    if (activity) {
+      if (activity.dep)
+        activity.dep.forEach(dep => {
+          previousTerm = Math.max(previousTerm, this.getActivityDeadline(dep))
+        })
+      return previousTerm + activity.term
+    }
+    return 0
   }
 
   getCriticalAnalisys(dept) {
@@ -27,19 +58,19 @@ export class UtilService {
     return depts;
   }
 
-  getCurrencies(){
+  getCurrencies() {
     return Globals.CURRENCIES
   }
-  
-  getCurrency(currency){
+
+  getCurrency(currency) {
     return Globals.CURRENCIES.find(r => r.value == currency)
   }
 
-  getDemandPeriod(demandPeriod){
+  getDemandPeriod(demandPeriod) {
     return Globals.DEMAND_PERIODS.find(r => r.value == demandPeriod)
   }
 
-  getDemandPeriods(){
+  getDemandPeriods() {
     return Globals.DEMAND_PERIODS
   }
 
@@ -67,11 +98,11 @@ export class UtilService {
     return Globals.OEM_ACTIVITIES
   }
 
-  getRegulation(regulation){
+  getRegulation(regulation) {
     return Globals.REGULATIONS.find(r => r.value == regulation)
   }
 
-  getRegulations(){
+  getRegulations() {
     return Globals.REGULATIONS
   }
 
@@ -112,19 +143,19 @@ export class UtilService {
           if (diff > 30) {
             rest = diff % 30
             diff /= 30
-            rest_suffix = diff < 4 && rest > 0.5 ? 
+            rest_suffix = diff < 4 && rest > 0.5 ?
               ' dia' + (rest > 2 ? 's' : '')
               : null
             suffix = ' mes' + (diff > 2 ? 'es' : '') +
-              (rest_suffix ? ' e ': '')
+              (rest_suffix ? ' e ' : '')
             if (diff > 12) {
               rest = diff % 12
               diff /= 12
-              rest_suffix = diff < 4 && rest > 0.5 ? 
-              ' mes' + (rest > 2 ? 'es' : '')
-              : null
+              rest_suffix = diff < 4 && rest > 0.5 ?
+                ' mes' + (rest > 2 ? 'es' : '')
+                : null
               suffix = ' ano' + (diff > 2 ? 's' : '') +
-              (rest_suffix ? ' e ': '')
+                (rest_suffix ? ' e ' : '')
             }
           }
         }

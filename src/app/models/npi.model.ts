@@ -2,6 +2,7 @@ import User from "./user.model";
 import { Globals } from 'config'
 import { UtilService } from "../services/util.service";
 import { FileDescriptor } from "./file-descriptor";
+import { max } from "rxjs/operators";
 
 const utils = new UtilService()
 
@@ -101,7 +102,7 @@ class Npi {
     };
     activities: Array<{
         _id: String,
-        deadline: Number,
+        term: Number,
         dept: String,
         comment: String,
         registry: String,
@@ -215,6 +216,16 @@ class Npi {
                     return true
         }
         return false
+    }
+
+    public getCriticalApprovalDate(): Date {
+        if (this.isCriticallyApproved){
+            var lastAnalysisDate = this.critical[0].signature.date
+            this.critical.forEach(analysis => {
+                lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date: lastAnalysisDate
+            })
+            return lastAnalysisDate
+        }
     }
 }
 

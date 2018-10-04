@@ -47,6 +47,8 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
 import { SendingFormModalComponent } from './npi/sending-form-modal/sending-form-modal.component';
 import { UploaderComponent } from './file-manager/uploader/uploader.component';
 import { UploadService } from './services/upload.service';
+import { BlinkDirective } from './blink.directive';
+import { ActivityRowDirective } from './app-activity-row.directive';
 
 @NgModule({
   declarations: [
@@ -75,7 +77,9 @@ import { UploadService } from './services/upload.service';
     NpiChooserModalComponent,
     ValidateComponent,
     ClientComponent,
-    SendingFormModalComponent
+    SendingFormModalComponent,
+    BlinkDirective,
+    ActivityRowDirective
   ],
   imports: [
     BrowserModule,
@@ -91,7 +95,7 @@ import { UploadService } from './services/upload.service';
     ClickOutsideModule,
     PaginationModule.forRoot(),
     RoutingModule,
-    FileManagerModule,
+    FileManagerModule
   ],
   providers: [
     UsersService,

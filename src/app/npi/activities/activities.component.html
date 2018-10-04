@@ -6,14 +6,17 @@
       </center>
     </label>
     <div class='table-responsive' id='activities' formArrayName='activities'>
-      <table class="table table-sm table-bordered">
+      <table class="table table-sm table-bordered table-hover">
         <thead class='thead-light'>
           <tr>
+            <th scope="col" rowspan=2>#</th>
             <th scope="col" rowspan=2>Atividade</th>
             <th scope="col" rowspan=2>Responsável</th>
             <th scope="col" colspan=2>Prazo</th>
-            <th scope="col" rowspan=2>Documento/Registro</th>
             <th scope="col" rowspan=2>Arquivos</th>
+            <th scope="col" rowspan=2>Registro</th>
+            <th scope="col" rowspan=2>Concluir Atividade</th>
+            <th scope="col" rowspan=2>Incluir?</th>
           </tr>
           <tr>
             <th scope=col>Início</th>
@@ -21,28 +24,46 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i'>
-            <td>
-              {{ utils.getActivity(npi.activities[i].activity).label }}
+          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i' [appActivityRow]='activity.get("dept").value'>
+            <td [appActivityRow]='activity.get("dept").value'>
+              {{ i }}
             </td>
             <td>
+              {{ utils.getActivity(activity.get("activity").value).label }}
+            </td>
+            <td [appActivityRow]='activity.get("dept").value'>
               {{ npi.activities[i].dept }}
-            </td>
-            <td *ngIf='i == 0'>
-            </td>
-            <td *ngIf='i > 0'>
-              <input type='text' class='form-control' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
-                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i-1]' [ngClass]='{"is-invalid": fieldHasErrors(i+".deadline")}'>
+              <select class='custom-select'>
+                <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }} {{ user.lastName }}</option>
+              </select>
             </td>
             <td>
-              <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
-                #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid": fieldHasErrors(i+".deadline")}'>
+              <input type='text' [appBlink]='sdp.value' class='form-control form-control-plaintext' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
+                #sdp [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' disabled readonly>
             </td>
             <td>
-              <textarea class="form-control" rows=1 formControlName='registry' [ngClass]='{"is-invalid": fieldHasErrors(i+".registry")}'></textarea>
+              <input type='text' [appBlink]='edp.value' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
+                #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}'>
             </td>
             <td>
-              {{ npi.activities[i].annex }}
+              <button app-file-button type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
+                [disabled]='!npiComponent.editFlag'>
+                <i class='fa fa-folder fa-fw' [ngClass]='activity.annex?.length? "append-icon":"upload-icon"'></i>
+              </button>
+            </td>
+            <td>
+              {{ signatures[i] }}
+            </td>
+            <td>
+              <button type=button class='btn btn-block btn-light shadow-none m-0' (click)='confirmActivity(activity._id)' [disabled]='!npiComponent.editFlag'>
+                <i class='fa fa-check fa-fw'></i>
+              </button>
+            </td>
+            <td>
+              <div class='custom-control custom-checkbox'>
+                <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
+                <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
+              </div>
             </td>
           </tr>
         </tbody>
