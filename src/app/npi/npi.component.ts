@@ -39,7 +39,7 @@ export class NpiComponent implements OnInit {
 
   resolveSubmission: Observable<any>
 
-  resetFormFlagSubject = new Subject<Boolean>()
+  resetFormFlagSubject = new Subject()
   resetFormFlag = true
 
   newFormVersion = new Subject<Boolean>()
@@ -200,6 +200,7 @@ export class NpiComponent implements OnInit {
               (this.npi.requester.lastName ? ' ' + this.npi.requester.lastName : '')
           }
           console.log(this.npi)
+          //this.resetFormFlagSubject.next()
         }, err => {
           this.location.replaceState(null)
           this.router.navigateByUrl('/error')
@@ -261,6 +262,10 @@ export class NpiComponent implements OnInit {
   promoteNpi(npiForm) {
     this.resolveSubmission = this.npiService.updateAndPromoteNpi(this.npiForm.value)
     this.submitNpi(npiForm)
+  }
+
+  closeActivity(){
+    this.saveNpi(this.npiForm.value)
   }
 
   successResponse(res) {
@@ -368,7 +373,7 @@ export class NpiComponent implements OnInit {
   }
 
   reset() {
-    this.resetFormFlagSubject.next(!this.resetFormFlag)
+    this.resetFormFlagSubject.next()
     this.resetFormFlag = !this.resetFormFlag
   }
 

@@ -16,24 +16,6 @@ export class UtilService {
     return Globals.MACRO_STAGES.find(a => a.value == activity)
   }
 
-  getDependentActivities(activity) {
-    let deps = []
-    Globals.MACRO_STAGES.forEach(act => {
-      if (act.dep && act.dep.includes(activity))
-        deps.push(act)
-    })
-    if (deps.length) return deps
-    return null
-  }
-
-  getDependencyActivity(activity) {
-    //console.log(activity)
-    let depValue = this.getActivity(activity).dep
-    if (depValue)
-      return Globals.MACRO_STAGES.find(a => depValue.includes(a.value))
-    return null
-  }
-
   getCriticalAnalisys(dept) {
     var depts = ['EPROC', 'OPR', 'ADM', 'COM']
     switch (dept) {

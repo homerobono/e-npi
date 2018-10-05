@@ -27,7 +27,7 @@
           </b>
         </div>
         <div class='col-12 description'>{{ user.email }} </div>
-        <div class='col-12 description'>{{ utils.getDepartment(user.department) }} </div>
+        <div class='col-12 description'>{{ utils.getDepartment(user.department)?.label }} </div>
       </div>
     </div>
   </div>

@@ -50,7 +50,7 @@
             <b>Departamento: </b>
           </div>
           <div class='col-xs-5 col-sm-6 float-left' style='margin: 0'>
-            {{ utils.getDepartment(user.department) }}
+            {{ utils.getDepartment(user.department)?.label }}
           </div>
         </div>
         <div class='form-row' style='width: 100%; margin:0'>

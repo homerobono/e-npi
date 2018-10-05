@@ -137,7 +137,7 @@
           </span>
         </div>
         <div class='col text-right'>
-          <small>Última modificação: {{utils.getTimeDifference(null,npi.updated) }}</small>
+          <small>Última modificação: {{utils.getTimeDifference(null, npi.updated) }}</small>
         </div>
       </div>
       <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
@@ -158,9 +158,9 @@
 
         <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'></app-client>
 
-        <app-activities [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isApproved()'></app-activities>
+        <app-activities [npiSetter]='npi' (confirmCloseActivity)='closeActivity()' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3'></app-activities>
 
-        <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isApproved()'></app-validate>
+        <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isComplete()'></app-validate>
 
         <div class="row align-items-center justify-content-between" *ngIf='editFlag'>
           <div class='col-auto text-secondary'>

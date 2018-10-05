@@ -106,8 +106,14 @@ class Npi {
         term: Number,
         dept: String,
         comment: String,
+        annex: [FileDescriptor],
         registry: String,
         apply: Boolean,
+        closed: Boolean,
+        signature: {
+            user: any,
+            date: Date,
+        }
     }>;
     validation: {
         pilot: String,
@@ -216,6 +222,15 @@ class Npi {
                     return (this.clientApproval && this.clientApproval.approval == 'accept')
                 else
                     return true
+        }
+        return false
+    }
+
+    public isComplete(): Boolean {
+        if (this.activities) {
+            return this.activities.every(
+                activity => activity.apply == false || activity.closed == true
+            )
         }
         return false
     }
