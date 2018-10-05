@@ -24,14 +24,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i' [appActivityRow]='activity.get("dept").value'>
-            <td [appActivityRow]='activity.get("dept").value'>
+          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; index as i' [formGroupName]='i' [appActivityRow]='activity.value'>
+            <td>
               {{ i }}
             </td>
             <td>
               {{ utils.getActivity(activity.get("activity").value).label }}
             </td>
-            <td [appActivityRow]='activity.get("dept").value'>
+            <td [appActivityRow]='activity.value'>
               {{ npi.activities[i].dept }}
               <select class='custom-select'>
                 <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }} {{ user.lastName }}</option>
@@ -39,7 +39,7 @@
             </td>
             <td>
               <input type='text' [appBlink]='sdp.value' class='form-control form-control-plaintext' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
-                #sdp [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' disabled readonly>
+                #sdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i>0?i-1:i]' [isDisabled]='isDisabled' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' disabled readonly>
             </td>
             <td>
               <input type='text' [appBlink]='edp.value' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"

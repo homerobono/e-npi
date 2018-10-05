@@ -447,11 +447,8 @@ export class NpiComponent implements OnInit {
   }
 
   loadNpiRef(res) {
-    console.log(res)
-    console.log(typeof res)
     if (res && typeof res == 'number')
       this.npiService.getNpi(res).subscribe(npi => {
-        console.log('loading npiRef');
         this.npiRef = npi[0]
       })
   }

@@ -11,7 +11,7 @@ const depts = Globals.ACTIVITIES_DEPTS
   selector: '[appActivityRow]'
 })
 export class ActivityRowDirective {
-  @Input('appActivityRow') deptRole: string
+  @Input('appActivityRow') activity: any
   @Input() npi: Npi
   constructor(private el: ElementRef, private renderer: Renderer2) { }
 
@@ -28,13 +28,21 @@ export class ActivityRowDirective {
   }
 
   colorizeElement(selector) {
+    let deptRole = this.activity.dept
+    if (!this.activity.apply){
+      this.renderer.setStyle(this.el.nativeElement, 'filter', 'opacity(0.5)')
+      this.renderer.addClass(this.el.nativeElement, 'strike')
+    } else {
+      this.renderer.setStyle(this.el.nativeElement, 'filter', 'opacity(1)')
+      this.renderer.removeClass(this.el.nativeElement, 'strike')
+    }
     for (let i = 0; i < depts.length; i++) {
-      if (this.deptRole == depts[i]) {
+      if (deptRole == depts[i]) {
         //console.log(event)
-        if (this.el.nativeElement.nodeName == 'TR' && selector=='row')
+        if (this.el.nativeElement.nodeName == 'TR' && selector == 'row')
           this.renderer.addClass(this.el.nativeElement, rowClasses[i])
         else
-          if (this.el.nativeElement.nodeName == 'TD' && selector=='cell')
+          if (this.el.nativeElement.nodeName == 'TD' && selector == 'cell')
             this.renderer.addClass(this.el.nativeElement, cellClasses[i])
         break
       }
@@ -42,13 +50,14 @@ export class ActivityRowDirective {
   }
 
   unColorizeElement(selector) {
+    let deptRole = this.activity.dept
     for (let i = 0; i < depts.length; i++) {
-      if (this.deptRole == depts[i]) {
+      if (deptRole == depts[i]) {
         //console.log(event)
-        if (this.el.nativeElement.nodeName == 'TR' && selector=='row')
+        if (this.el.nativeElement.nodeName == 'TR' && selector == 'row')
           this.renderer.removeClass(this.el.nativeElement, rowClasses[i])
         else
-          if (this.el.nativeElement.nodeName == 'TD' && selector=='cell')
+          if (this.el.nativeElement.nodeName == 'TD' && selector == 'cell')
             this.renderer.removeClass(this.el.nativeElement, cellClasses[i])
         break
       }

@@ -102,10 +102,12 @@ class Npi {
     };
     activities: Array<{
         _id: String,
+        activity: String,
         term: Number,
         dept: String,
         comment: String,
         registry: String,
+        apply: Boolean,
     }>;
     validation: {
         pilot: String,
@@ -221,6 +223,7 @@ class Npi {
     public getCriticalApprovalDate(): Date {
         if (this.isCriticallyApproved){
             var lastAnalysisDate = this.critical[0].signature.date
+            if (this.finalApproval && this.finalApproval.status == 'accept') return this.finalApproval.signature.date
             this.critical.forEach(analysis => {
                 lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date: lastAnalysisDate
             })

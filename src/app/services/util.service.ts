@@ -34,19 +34,6 @@ export class UtilService {
     return null
   }
 
-  getActivityDeadline(activityLabel) {
-    let activity = this.getActivity(activityLabel)
-    let previousTerm = 0
-    if (activity) {
-      if (activity.dep)
-        activity.dep.forEach(dep => {
-          previousTerm = Math.max(previousTerm, this.getActivityDeadline(dep))
-        })
-      return previousTerm + activity.term
-    }
-    return 0
-  }
-
   getCriticalAnalisys(dept) {
     var depts = ['EPROC', 'OPR', 'ADM', 'COM']
     switch (dept) {
