@@ -1,77 +1,76 @@
-<div class='container'>
-  <div class='row justify-content-center'>
-    <div class='col body-main'>
-      <div class='sticky-top text-right' style='top:20px; height:0; overflow: visible; z-index: 11'>
-        <div class='btn-group shadow rounded' *ngIf='npi.stage != 5'>
-          <button (click)='refresh()' class='btn btn-light text-primary' data-toggle="tooltip" data-placement="top" title="Atualizar">
-            <i class='fa fa-refresh fa-fw'></i>
-          </button>
-          <button (click)='reset()' class='btn btn-default text-secondary' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag' data-toggle="tooltip"
-            data-placement="top" title="Desfazer alterações">
-            <i class='fa fa-undo fa-fw'></i>
-          </button>
-          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag' data-toggle="tooltip"
-            data-placement="top" title="Cancelar NPI">
-            <i class='fa fa-times fa-fw'></i>
-          </button>
-          <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2 && editFlag' data-toggle="tooltip" data-placement="top"
-            title="Remover NPI">
-            <i class='fa fa-trash fa-fw'></i>
-          </button>
-          <button (click)="toggleEdit()" class='btn btn-info' *ngIf='!editFlag && npi.stage < 5' data-toggle="tooltip" data-placement="top"
-            title="Editar NPI">
-            <i class='fa fa-pencil fa-fw'></i>
-          </button>
-          <button (click)="toggleEdit()" class='btn btn-secondary' *ngIf='editFlag' data-toggle="tooltip" data-placement="top" title="Visualizar NPI">
-            <i class='fa fa-eye fa-fw'></i>
-          </button>
-          <button (click)='submitToAnalisys(npiForm.value)' class='btn btn-warning text-white' *ngIf='editFlag && npi.stage == 1' data-toggle="tooltip"
-            data-placement="top" title="Submeter NPI para Análise Crítica">
-            <i class='fa fa-check-circle-o fa-fw'></i>
-          </button>
-          <button (click)='saveNpi(npiForm.value)' class='btn btn-success' *ngIf='editFlag && npi.stage < 5 && !isFinalApproval()'
-            data-toggle="tooltip" data-placement="top" title="Salvar alterações">
-            <i class='fa fa-save fa-fw'></i>
-          </button>
-          <button (click)='promoteNpi(npiForm.value)' class='btn btn-primary' *ngIf='editFlag && npi.stage < 5 && isFinalApproval()'
-            data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento">
-            <i class='fa fa-check fa-fw'></i>
-          </button>
-          <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='editFlag && npi.stage == 4 && 
-                  (npiForm.get("validation")!=null && npiForm.get("validation").valid)' data-toggle="tooltip" data-placement="top"
-            title="Finalizar NPI">
-            <i class='fa fa-check fa-fw'></i>
-          </button>
-        </div>
-      </div>
-      <div class='btn-group rounded mb-3'>
-        <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top" title="Página inicial de NPI's">
-          <i class='fa fa-chevron-left'></i>
-        </button>
-        <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip" data-placement="top" title="Criar NPI">
-          <i class='fa fa-plus '></i>
-        </button>
-      </div>
-      <div class='row pb-0'>
-        <div class='col'>
-          <div class='row pb-0 align-items-end'>
-            <div class='col-xs col-md mb-0 mr-0 pr-0'>
-              <h3 class='mb-0 d-inline' [ngClass]='{strike: npi.stage == 0}'>
-                NPI #{{ npi.number }} -
-                <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
+<div class='container pt-5'>
+  <div class='sticky-top text-right' style='top:20px; height:0; overflow: visible; z-index: 11'>
+    <div class='btn-group shadow rounded' *ngIf='npi.stage != 5'>
+      <button (click)='refresh()' class='btn btn-light text-primary' data-toggle="tooltip" data-placement="top" title="Atualizar">
+        <i class='fa fa-refresh fa-fw'></i>
+      </button>
+      <button (click)='reset()' class='btn btn-default text-secondary' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag'
+        data-toggle="tooltip" data-placement="top" title="Desfazer alterações">
+        <i class='fa fa-undo fa-fw'></i>
+      </button>
+      <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage >= 2 && npi.stage <= 4 && editFlag'
+        data-toggle="tooltip" data-placement="top" title="Cancelar NPI">
+        <i class='fa fa-times fa-fw'></i>
+      </button>
+      <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2 && editFlag' data-toggle="tooltip"
+        data-placement="top" title="Remover NPI">
+        <i class='fa fa-trash fa-fw'></i>
+      </button>
+      <button (click)="toggleEdit()" class='btn btn-info' *ngIf='!editFlag && npi.stage < 5' data-toggle="tooltip"
+        data-placement="top" title="Editar NPI">
+        <i class='fa fa-pencil fa-fw'></i>
+      </button>
+      <button (click)="toggleEdit()" class='btn btn-secondary' *ngIf='editFlag' data-toggle="tooltip" data-placement="top"
+        title="Visualizar NPI">
+        <i class='fa fa-eye fa-fw'></i>
+      </button>
+      <button (click)='submitToAnalisys(npiForm.value)' class='btn btn-warning text-white' *ngIf='editFlag && npi.stage == 1'
+        data-toggle="tooltip" data-placement="top" title="Submeter NPI para Análise Crítica">
+        <i class='fa fa-check-circle-o fa-fw'></i>
+      </button>
+      <button (click)='saveNpi(npiForm.value)' class='btn btn-success' *ngIf='editFlag && npi.stage < 5 && !isFinalApproval()'
+        data-toggle="tooltip" data-placement="top" title="Salvar alterações">
+        <i class='fa fa-save fa-fw'></i>
+      </button>
+      <button (click)='promoteNpi(npiForm.value)' class='btn btn-primary' *ngIf='editFlag && npi.stage < 5 && isFinalApproval()'
+        data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento">
+        <i class='fa fa-check fa-fw'></i>
+      </button>
+      <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='editFlag && npi.stage == 4 && 
+                  (npiForm.get("validation")!=null && npiForm.get("validation").valid)'
+        data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
+        <i class='fa fa-check fa-fw'></i>
+      </button>
+    </div>
+  </div>
+  <div class='btn-group rounded mb-3'>
+    <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top" title="Página inicial de NPI's">
+      <i class='fa fa-chevron-left'></i>
+    </button>
+    <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip" data-placement="top" title="Criar NPI">
+      <i class='fa fa-plus '></i>
+    </button>
+  </div>
+  <div class='row pb-0'>
+    <div class='col'>
+      <div class='row pb-0 align-items-end'>
+        <div class='col-xs col-md mb-0 mr-0 pr-0'>
+          <h3 class='mb-0 d-inline' [ngClass]='{strike: npi.stage == 0}'>
+            NPI #{{ npi.number }} -
+            <span id='titleLabel' *ngIf='!titleEdit' #name [ngClass]='
                   {"text-primary": titleField != npi.name && 
                     editFlag
                   }'>
-                  {{ this.editFlag ? titleField : npi.name }}
-                  <small class='text-secondary'>{{ npiVersions.length > 1 ? ' (v' + npi.version + ')' : '' }} </small>
-                </span>
-              </h3>
-              <div class="input-group input-group-lg" [ngClass]='{"d-inline-flex" : titleEdit, "d-none": !titleEdit}'>
-                <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)" name='titleInput'
-                  autofocus id='titleInput' [(ngModel)]='titleField'>
-              </div>
-              <div class='d-inline-flex flex-nowrap'>
-                <span class='fa fa-circle mr-1' [ngClass]='{
+              {{ this.editFlag ? titleField : npi.name }}
+              <small class='text-secondary'>{{ npiVersions.length > 1 ? ' (v' + npi.version + ')' : '' }} </small>
+            </span>
+          </h3>
+          <div class="input-group input-group-lg" [ngClass]='{"d-inline-flex" : titleEdit, "d-none": !titleEdit}'>
+            <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)"
+              name='titleInput' autofocus id='titleInput' [(ngModel)]='titleField'>
+          </div>
+          <div class='d-inline-flex flex-nowrap'>
+            <span class='fa fa-circle mr-1' [ngClass]='{
                 "text-danger" : npi.stage == 0,
                 "text-secondary" : npi.stage == 1,
                 "text-warning" : npi.stage == 2,
@@ -79,134 +78,132 @@
                 "text-success" : npi.stage == 4,
                 "text-info" : npi.stage == 5
                 }'></span>
-                <i class='text-secondary'>{{ utils.getStatus(npi.stage) }} </i>
-              </div>
-            </div>
+            <i class='text-secondary'>{{ utils.getStatus(npi.stage) }} </i>
           </div>
-
         </div>
+      </div>
 
-        <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
-          <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm"
-            *ngIf='npi.stage == 5 && !postConclusionEdit'>
-            Alterar Campos...
-          </button>
-          <div class='form-row' *ngIf='postConclusionEdit'>
-            <div class='col-6'>
-              <select class="custom-select" id="motivation" #motivation>
-                <option disabled selected value>Selecione um motivo...</option>
-                <option *ngFor="let mot of motivations" value='{{ mot.value }}'>
-                  {{ mot.label }}
+    </div>
+
+    <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
+      <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm"
+        *ngIf='npi.stage == 5 && !postConclusionEdit'>
+        Alterar Campos...
+      </button>
+      <div class='form-row' *ngIf='postConclusionEdit'>
+        <div class='col-6'>
+          <select class="custom-select" id="motivation" #motivation>
+            <option disabled selected value>Selecione um motivo...</option>
+            <option *ngFor="let mot of motivations" value='{{ mot.value }}'>
+              {{ mot.label }}
+            </option>
+          </select>
+        </div>
+        <div class='col-6' *ngIf='motivation.value!=""'>
+          <div class='form-row'>
+            <div class='input-group'>
+              <select class="custom-select" id="field" #selectedAfectedFields>
+                <option disabled selected value>Selecione o campo afetado...</option>
+                <option *ngFor="let field of afectedFields" value='{{ field }}'>
+                  {{ utils.getActivity(field) }}
                 </option>
               </select>
-            </div>
-            <div class='col-6' *ngIf='motivation.value!=""'>
-              <div class='form-row'>
-                <div class='input-group'>
-                  <select class="custom-select" id="field" #selectedAfectedFields>
-                    <option disabled selected value>Selecione o campo afetado...</option>
-                    <option *ngFor="let field of afectedFields" value='{{ field }}'>
-                      {{ utils.getActivity(field) }}
-                    </option>
-                  </select>
-                  <div class="input-group-append">
-                    <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
-                      [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
-                      <i class='fa fa-chevron-right'></i>
-                    </button>
-                  </div>
-                </div>
+              <div class="input-group-append">
+                <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
+                  [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
+                  <i class='fa fa-chevron-right'></i>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class='row align-items-end'>
-        <small class='col-auto mb-0 mt-0 pr-0'>
-          <a routerLink='/users/{{ authorId }}'>
-            {{ authorName }}</a>, {{ npi.createdString }}
-        </small>
-        <div class='col-auto align-self-center'>
-          <span class='badge mt-1' [ngClass]='{
+    </div>
+  </div>
+  <div class='row align-items-end'>
+    <small class='col-auto mb-0 mt-0 pr-0'>
+      <a routerLink='/users/{{ authorId }}'>
+        {{ authorName }}</a>, {{ npi.createdString }}
+    </small>
+    <div class='col-auto align-self-center'>
+      <span class='badge mt-1' [ngClass]='{
             "badge-success" : npi.entry=="pixel",
             "badge-purple" : npi.entry=="oem",
             "badge-secondary" : npi.entry=="internal",
             "badge-info" : npi.entry=="custom"
             }'>
-            {{ utils.getEntry(npi.entry) }}
-          </span>
-        </div>
-        <div class='col text-right'>
-          <small>Última modificação: {{utils.getTimeDifference(null, npi.updated) }}</small>
-        </div>
-      </div>
-      <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
-        <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
-          <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
-            v{{ npiv.version }}
-          </a>
-        </li>
-      </ul>
-      <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
-        <hr *ngIf='npiVersions.length == 1'>
-        <app-oem [npiSetter]='npi' [npis]='npiVersions' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
-        <app-pixel [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
-        <app-internal [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
-        <app-custom [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
-
-        <app-critical [npiSetter]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
-
-        <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'></app-client>
-
-        <app-activities [npiSetter]='npi' (confirmCloseActivity)='closeActivity()' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3'></app-activities>
-
-        <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isComplete()'></app-validate>
-
-        <div class="row align-items-center justify-content-between" *ngIf='editFlag'>
-          <div class='col-auto text-secondary'>
-            <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top" title="Desfazer alterações"
-              [ngClass]='{"reset-disabled":npi===npiForm.value}'>
-              <i class="fa fa-undo fa-2x"></i>
-            </div>
-          </div>
-        </div>
-        <div class="row align-items-center" *ngIf='editFlag'>
-          <div class='col'>
-            <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='npi.stage >= 2 && npi.stage <= 4'>
-              <span class='fa fa-times-circle'></span>
-              Cancelar NPI
-            </button>
-            <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='npi.stage == 0 || npi.stage == 1'>
-              <span class='fa fa-trash'></span>
-              Remover NPI
-            </button>
-          </div>
-          <div class='col text-center' *ngIf='npi.stage == 1'>
-            <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalisys(npiForm.value)'>
-              <span class='fa fa-check-circle-o fa-fw'></span>
-              Análise Crítica
-            </button>
-          </div>
-          <div class='col text-right'>
-            <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
-              <i class='fa fa-save fa-fw'></i>
-              Salvar
-            </button>
-            <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && isFinalApproval()'>
-              <i class='fa fa-long-arrow-right fa-fw'></i>
-              Avançar para Desenvolvimento
-            </button>
-            <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && newFormVersionFlag'>
-              <i class='fa fa-save fa-fw'></i>
-              Salvar Nova Versão
-            </button>
-            <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 5'>
-              Alterar Campos...
-            </button>
-          </div>
-        </div>
-      </form>
-
+        {{ utils.getEntry(npi.entry) }}
+      </span>
+    </div>
+    <div class='col text-right'>
+      <small>Última modificação: {{utils.getTimeDifference(null, npi.updated) }}</small>
     </div>
   </div>
+  <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
+    <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
+      <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
+        v{{ npiv.version }}
+      </a>
+    </li>
+  </ul>
+  <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
+    <hr *ngIf='npiVersions.length == 1'>
+    <app-oem [npiSetter]='npi' [npis]='npiVersions' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
+    <app-pixel [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
+    <app-internal [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
+    <app-custom [npiSetter]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
+
+    <app-critical [npiSetter]='npi' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
+
+    <app-client [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'></app-client>
+
+    <app-activities [npiSetter]='npi' (confirmCloseActivity)='closeActivity()' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3'></app-activities>
+
+    <app-validate [npi]='npi' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isComplete()'></app-validate>
+
+    <div class="row align-items-center justify-content-between" *ngIf='editFlag'>
+      <div class='col-auto text-secondary'>
+        <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top" title="Desfazer alterações"
+          [ngClass]='{"reset-disabled":npi===npiForm.value}'>
+          <i class="fa fa-undo fa-2x"></i>
+        </div>
+      </div>
+    </div>
+    <div class="row align-items-center" *ngIf='editFlag'>
+      <div class='col'>
+        <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='npi.stage >= 2 && npi.stage <= 4'>
+          <span class='fa fa-times-circle'></span>
+          Cancelar NPI
+        </button>
+        <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
+          *ngIf='npi.stage == 0 || npi.stage == 1'>
+          <span class='fa fa-trash'></span>
+          Remover NPI
+        </button>
+      </div>
+      <div class='col text-center' *ngIf='npi.stage == 1'>
+        <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalisys(npiForm.value)'>
+          <span class='fa fa-check-circle-o fa-fw'></span>
+          Análise Crítica
+        </button>
+      </div>
+      <div class='col text-right'>
+        <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
+          <i class='fa fa-save fa-fw'></i>
+          Salvar
+        </button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && isFinalApproval()'>
+          <i class='fa fa-long-arrow-right fa-fw'></i>
+          Avançar para Desenvolvimento
+        </button>
+        <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && newFormVersionFlag'>
+          <i class='fa fa-save fa-fw'></i>
+          Salvar Nova Versão
+        </button>
+        <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 5'>
+          Alterar Campos...
+        </button>
+      </div>
+    </div>
+  </form>
 </div>

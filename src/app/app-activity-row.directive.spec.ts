@@ -1,4 +1,4 @@
-import { AppActivityRowDirective } from './app-activity-row.directive';
+import { AppActivityRowDirective } from './directives/app-activity-row.directive';
 
 describe('AppActivityRowDirective', () => {
   it('should create an instance', () => {

@@ -1,6 +1,6 @@
 import { Directive, Renderer2, ElementRef, Input, SimpleChanges, HostListener } from '@angular/core';
 import { Globals } from 'config';
-import Npi from './models/npi.model';
+import Npi from '../models/npi.model';
 
 const rowClasses = ['table-primary', 'table-success', 'table-warning', 'table-danger', 'table-info', 'table-secondary']
 const cellClasses = ['text-primary', 'text-success', 'text-warning', 'text-danger', 'text-info', 'text-secondary']

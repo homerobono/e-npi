@@ -67,7 +67,7 @@ export class ActivitiesComponent implements OnInit {
           if (!this.users[dept]) this.users[dept] = new Array<User>()
           this.users[dept].push(user)
         })
-        console.log(this.users)
+        //console.log(this.users)
       })
 
     if (!this.isFormEnabled)
@@ -77,6 +77,9 @@ export class ActivitiesComponent implements OnInit {
       () => this.fillFormData())
 
     this.npiFormOutput.emit(this.activitiesFormGroup)
+
+    //let dateRect = document.getElementById('endDate').getBoundingClientRect()
+    //console.log(dateRect)
   }
 
   initDatePickerConfigArray(length) {
@@ -112,7 +115,7 @@ export class ActivitiesComponent implements OnInit {
           closed: activity.closed
         }
       )
-      activityControl.get('term').valueChanges.subscribe(
+/*      activityControl.get('term').valueChanges.subscribe(
         _ => this.updateOwnDateField(activityControl))
 
       activityControl.get('endDate').valueChanges.subscribe(
@@ -120,7 +123,7 @@ export class ActivitiesComponent implements OnInit {
 
       activityControl.get('apply').valueChanges.subscribe(
         res => this.updateAllDateFields(res, activityControl))
-
+*/
       activityControl.valueChanges.subscribe(
         _ => this.updateParentForm())
 
@@ -225,7 +228,7 @@ export class ActivitiesComponent implements OnInit {
           previousTerm = Math.max(previousTerm, this.getActivityDeadline(activities, dep))
         })
       let activity = activities.find(a => a.activity == activityLabel)
-      let deadline = previousTerm + (activity.apply ? activity.term as number : 0)
+      let deadline = previousTerm + (activity && activity.apply ? activity.term as number : 0)
       //console.log('activity: ' + activityLabel + ' -> ', activity.term, activity.apply, deadline)
       return deadline
     }

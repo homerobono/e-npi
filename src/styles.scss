@@ -13,7 +13,7 @@
   z-index: 200;
 }
 
-body {
+.body-login {
     background: url('./assets/gray_noise.jpg');
     background-attachment: fixed;
     padding-bottom: 60px
@@ -25,20 +25,17 @@ body {
     margin-top: 20px;
     padding : 40px;
     border-radius: 2px;
-    box-shadow: 0px 1px 10px #222;
 }
 .body-home {
     margin-top: 1px;
     padding : 40px;
     background-color : white;
     border-radius : 2px;
-    box-shadow: 0px 1px 10px #222;
 }
 
 .pointer {
     cursor: pointer;
 }
-
 
 .nopadding {
     padding: 0;
@@ -74,7 +71,6 @@ body {
     padding : 40px;
     background-color : white;
     border-radius : 2px;
-    box-shadow: 0px 1px 10px #222;
 }
 
 .invalid-feedback{

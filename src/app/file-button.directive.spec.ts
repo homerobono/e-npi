@@ -1,4 +1,4 @@
-import { FileButtonDirective } from './file-button.directive';
+import { FileButtonDirective } from './directives/file-button.directive';
 
 describe('FileButtonDirective', () => {
   it('should create an instance', () => {
