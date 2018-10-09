@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, AbstractControl } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
@@ -101,36 +101,40 @@ export class ActivitiesComponent implements OnInit {
     var activitiesModelArray = this.npi.activities
     //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
     activitiesModelArray.forEach(activity => {
+      let endDate = new Date(this.npi.getCriticalApprovalDate().valueOf()
+        + this.getActivityDeadline(this.npi.activities, activity.activity) * DAYS)
+      let startDate = new Date(endDate.valueOf() - (activity.term as number) * DAYS)
       var activityControl = this.fb.group(
         {
           _id: activity._id,
           dept: activity.dept,
-          term: activity.term,
-          startDate: new Date(this.npi.getCriticalApprovalDate()),
-          endDate: new Date(this.npi.getCriticalApprovalDate().valueOf() + this.getActivityDeadline(this.npi.activities, activity.activity) * DAYS),
+          term: null,
+          startDate: null,
+          endDate: null,
           activity: activity.activity,
           registry: activity.registry,
           annex: activity.annex,
-          apply: activity.apply,
+          apply: null,
           closed: activity.closed
         }
       )
-/*      activityControl.get('term').valueChanges.subscribe(
-        _ => this.updateOwnDateField(activityControl))
-
+/*
+      activityControl.get('term').valueChanges.subscribe(
+        term => this.updateOwnDateField(term, activityControl))
+/*
       activityControl.get('endDate').valueChanges.subscribe(
-        _ => this.updateTermAndDateFields(activityControl))
-
-      activityControl.get('apply').valueChanges.subscribe(
-        res => this.updateAllDateFields(res, activityControl))
-*/
+        endDate => this.updateTermAndDateFields(endDate, activityControl))
+      /*
+            activityControl.get('apply').valueChanges.subscribe(
+              apply => this.updateAllDateFields(apply, activityControl))
+      */
       activityControl.valueChanges.subscribe(
         _ => this.updateParentForm())
 
       this.activitiesFormArray.controls.push(activityControl)
       //console.log(activityControl.value)
     });
-    this.loadSignatures()
+    this.fillFormData()
   }
 
   validateDateFields(res) {
@@ -141,52 +145,112 @@ export class ActivitiesComponent implements OnInit {
     }
   }
 
-  updateOwnDateField(activityControl) {
-    let startDate = new Date(activityControl.get('startDate').value)
-    let endDate = new Date(activityControl.get('endDate').value)
-    //let term = Math.round((endDate.valueOf() - startDate.valueOf()) / DAYS)
-    let term = activityControl.get('term').value as number
-
-    endDate = new Date(startDate.valueOf() + term * DAYS)
+  updateOwnDateField(term, activityControl) {
+    //console.log(term)
+    let startDate = this.getStartDate(this.npi.activities, activityControl.get("activity").value)
+    let endDate = new Date(startDate.valueOf() + term * DAYS)
+    console.log(startDate)
+    console.log(endDate)
     activityControl.patchValue({
+      startDate: startDate,
       endDate: endDate
     })
   }
 
-  updateAllDateFields(res, activityControl) {
+  getStartDate(activities: Array<any>, activityLabel: String): Date {
+    //console.log(activityLabel)
+    let dependencies = this.getDependencyActivities(activities, activityLabel)
+    let startDate = this.npi.getCriticalApprovalDate()
+    if (dependencies) {
+      dependencies.forEach(depActivity => {
+        let depEndDate = this.getActivityEndDate(activities, depActivity.activity)
+        //console.log(depEndDate)
+        if (depEndDate)
+          startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
+        //else console.log('no endDate for ', depActivity)
+      })
+    }
+    return startDate
+  }
+
+  getActivityEndDate(activities: Array<any>, activityLabel: String): Date {
+    let activityDescriptor = this.utils.getActivity(activityLabel)
+    if (activityDescriptor) {
+      let activity = activities.find(a => a.activity == activityLabel)
+      if (activity && activity.endDate) return new Date(Date.parse(activity.endDate))
+
+      let greatestDate = this.npi.getCriticalApprovalDate()
+      if (activityDescriptor.dep)
+        activityDescriptor.dep.forEach(dep => {
+          let depEndDate = this.getActivityEndDate(activities, dep)
+          let depActivity = activities.find(act => act.activity == dep)
+          //console.log(depActivity)
+          if (depActivity && depActivity.apply)
+          greatestDate = new Date(Math.max(greatestDate.valueOf(), depEndDate.valueOf()))
+        })
+      //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
+      return new Date(greatestDate.valueOf() + activity.term * DAYS)
+    }
+    return null
+  }
+  
+  getActivity(activities, activityLabel) {
+    return activities.find(act => act.activity == activityLabel)
+  }
+
+  getDependencyActivities(activities: Array<any>, activityLabel: String) {
+    console.log(activityLabel)
+    let dependencies = []
+    let dependenciesLabels = this.utils.getActivity(activityLabel).dep
+    if (dependenciesLabels) {
+      dependenciesLabels.forEach(dependencyLabel => {
+        let dependency = activities.find(npiAct => npiAct.activity == dependencyLabel)
+        let dependenciesArr = [dependency]
+        if (dependency && !dependency.apply){
+             dependenciesArr = this.getDependencyActivities(activities, dependencyLabel)
+             //console.log('recursing ', dependencyLabel, dependency)
+        }
+        if (dependenciesArr && dependenciesArr.length){
+          dependencies.concat(dependenciesArr)
+        }
+      })
+      console.log(dependencies)
+      if (dependencies.length) return dependencies
+    }
+    return null
+  }
+
+  updateAllDateFields(apply, activityControl) {
     //console.log('updating dependent controls')
     let endDate = new Date(activityControl.get('endDate').value)
 
-    if (!res)
+    if (!apply)
       endDate = new Date(activityControl.get('startDate').value) //'THE' difference!
 
     let dependents = this.getDependentActivities(activityControl.get('activity').value)
     if (dependents) {
       dependents.forEach(dep => {
-        //this.updateDateFields
-        //console.log(dep)
         let depControl = this.activitiesFormArray.controls.find(act =>
           act.get('activity').value == dep.value
         )
-
-        let endDepDate = new Date(endDate.valueOf() + parseInt(depControl.get('term').value) * DAYS)
-        //console.log(endDepDate)
-        depControl.patchValue({
-          startDate: endDate,
-          endDate: endDepDate
-        })
+        if (depControl) this.updateActivityDates(depControl)
       })
     }
   }
 
-  updateTermAndDateFields(activityControl) {
+  updateTermAndDateFields(endDate, activityControl) {
+    let term = Math.round((Date.parse(endDate) - Date.parse(activityControl.get('startDate').value)) / DAYS)
+    activityControl.patchValue({
+      term: term
+    }, { emitEvent: false })
+
     let dependents = this.getDependentActivities(activityControl.get('activity').value)
     if (dependents) {
       dependents.forEach(dep => {
         let depControl = this.activitiesFormArray.controls.find(act =>
           act.get('activity').value == dep.value
         )
-        if (depControl) this.updateDateFields(depControl)
+        if (depControl) this.updateActivityDates(depControl)
       })
     }
     /*
@@ -197,26 +261,22 @@ export class ActivitiesComponent implements OnInit {
     */
   }
 
-  updateDateFields(actControl) {
-    let dependencies = this.getDependencyActivities(actControl.get("activity").value)
-
-    var term = 0
-    dependencies.forEach(dep => {
-      term = Math.max(term, this.getActivityDeadline(this.activitiesFormArray.value, dep.activity))
+  updateActivityDates(actControl: AbstractControl) {
+    let greatestDate = this.npi.getCriticalApprovalDate()
+    this.utils.getActivity(actControl.get("activity").value).dep.forEach(dep => {
+      //console.log(this.activitiesFormArray.value)
+      greatestDate = new Date(Math.max(greatestDate.valueOf(), this.getActivityEndDate(this.activitiesFormArray.value, dep).valueOf()))
     })
 
-    let startDate = new Date(this.npi.getCriticalApprovalDate().valueOf() + term * DAYS)
+    let startDate = greatestDate
     let endDate = new Date(startDate.valueOf() + parseInt(actControl.get('term').value) * DAYS)
+
+    //    console.log('updating ', actControl.value.activity, ' Start Date to ', startDate)
     //console.log(endDepDate)
     actControl.patchValue({
       startDate: startDate,
       endDate: endDate
     })
-    /*let term = Math.round((endDate.valueOf() - startDate.valueOf()) / DAYS)
-    activityControl.patchValue({
-      term: term
-    }, { emitEvent: false })
-    */
   }
 
   getActivityDeadline(activities, activityLabel) {
@@ -235,22 +295,13 @@ export class ActivitiesComponent implements OnInit {
     return 0
   }
 
-  getDependencyActivities(activity) {
-    //console.log(activity)
-    let dependencies = []
-    this.utils.getActivity(activity).dep.forEach(dependency => {
-      dependencies.push(this.npi.activities.find(npiAct => npiAct.activity == dependency))
-    })
-    return dependencies
-  }
-
-  getDependentActivities(activity) {
+  getDependentActivities(activity): Array<any> {
     let deps = []
     this.utils.getActivities().forEach(act => {
-      let formActivity = (this.activitiesFormGroup.get('activities') as FormArray)
-        .controls.find(a => a.value.activity == act)
       if (act.dep && act.dep.includes(activity)) {
-        if (formActivity && !formActivity.value.apply)
+        let activityForm = (this.activitiesFormGroup.get('activities') as FormArray)
+          .controls.find(a => a.value.activity == act)
+        if (activityForm && !activityForm.get('apply').value)
           deps.push(this.getDependentActivities(act))
         else
           deps.push(act)
@@ -261,19 +312,21 @@ export class ActivitiesComponent implements OnInit {
   }
 
   fillFormData() {
-    console.log('filling form');
-    this.activitiesFormArray.controls.forEach(analisys => {
-      var activity = this.getActivityRow(analisys.get('_id').value)
-      analisys.patchValue(
+    //console.log('filling form');
+    this.activitiesFormArray.controls.forEach(activityControl => {
+      var activity = this.getActivityRow(activityControl.get('_id').value)
+      //console.log (activity)
+      activityControl.patchValue(
         {
           //_id: activity._id,
           term: activity.term,
-          //startDate: null,
-          //endDate: new Date(Date.now() + activity.term * DAYS),
-          //activity: activity.activity,
+          apply: activity.apply,
+          startDate: this.getStartDate(this.npi.activities, activity.activity),
+          endDate: this.getActivityEndDate(this.npi.activities, activity.activity),
+          activity: activity.activity,
           registry: activity.registry,
           annex: activity.annex,
-          //sigature: activity.signature
+          signature: activity.signature
         }
       )
     });
@@ -281,10 +334,7 @@ export class ActivitiesComponent implements OnInit {
   }
 
   getActivityRow(id) {
-    for (let i = 0; i < this.npi.activities.length; i++) {
-      let activity = this.npi.activities[i]
-      if (activity._id == id) return activity
-    }
+    return this.npi.activities.find(act => act._id == id)
   }
 
   updateParentForm() {
