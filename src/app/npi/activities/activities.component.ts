@@ -86,6 +86,9 @@ export class ActivitiesComponent implements OnInit {
 
   subscribeToInputChanges() {
     this.activitiesFormArray.controls.forEach(activityControl => {
+
+      //this.activitiesFormArray.updateValueAndValidity()
+      
       activityControl.get('term').valueChanges.subscribe(
         term => this.updateOwnDateField(term, activityControl))
 
@@ -96,8 +99,6 @@ export class ActivitiesComponent implements OnInit {
               apply => this.updateAllDateFields(apply, activityControl))
       */
     })
-    this.activitiesFormArray.valueChanges.subscribe(
-      _ => this.updateParentForm())
   }
 
   initDatePickerConfigArray(length) {
@@ -136,6 +137,11 @@ export class ActivitiesComponent implements OnInit {
           closed: activity.closed
         }
       )
+
+      activityControl.valueChanges.subscribe(
+        _ => {
+          this.updateParentForm()
+        })
 
       this.activitiesFormArray.controls.push(activityControl)
       //console.log(activityControl.value)
@@ -185,7 +191,7 @@ export class ActivitiesComponent implements OnInit {
   getActivityEndDate(activities: Array<any>, activityLabel: String): Date {
     let activity = activities.find(a => a.activity == activityLabel)
     if (activity) {
-      if (activity && activity.endDate) return new Date(Date.parse(activity.endDate))
+      if (activity.endDate) return new Date(Date.parse(activity.endDate))
       //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
       return new Date(this.getStartDate(activities, activityLabel).valueOf() + activity.term * DAYS)
     }
@@ -243,17 +249,33 @@ export class ActivitiesComponent implements OnInit {
       term: term
     }, { emitEvent: false })
 
-    document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('input'))
-
-    let dependents = this.getDependentActivities(activityControl.get('activity').value)
-    if (dependents) {
-      dependents.forEach(dep => {
-        let depControl = this.activitiesFormArray.controls.find(act =>
-          act.get('activity').value == dep.value
-        )
-        if (depControl) {
-          this.updateActivityDates(depControl)
-        }
+    let dependentsControls = this.getDependentActivitiesControls(activityControl.get('activity').value)
+    if (dependentsControls) {
+      //console.log(activityControl.get('activity').value)
+      //console.log(dependentsControls.map(ac => { return ac.get('activity').value }))
+      let controlsLength = dependentsControls.length
+      let i = 0;
+      while (i < controlsLength) {
+        //console.log(activityControl.get('activity').value, dependentsControls)
+        let depControl = dependentsControls[i]
+        let dependentsOfDependentsControls = this.getDependentActivitiesControls(depControl.get('activity').value)
+        dependentsOfDependentsControls.forEach(dodc => {
+          let indexOfDodc = dependentsControls.indexOf(dodc)
+          if (indexOfDodc > -1) {
+            //console.log('removing repetition of ', dodc.value.activity, ' at ', indexOfDodc)
+            dependentsControls.splice(indexOfDodc, 1)
+            if (indexOfDodc <= i) i--
+          }
+        })
+        //console.log('pushing ', dependentsOfDependentsControls.map(ac => { return ac.get('activity').value }))
+        dependentsControls = dependentsControls.concat(dependentsOfDependentsControls)
+        controlsLength = dependentsControls.length
+        i++
+      }
+      //console.log('dependentsControls:')
+      //console.log(dependentsControls.map(ac => { return ac.get('activity').value }))
+      dependentsControls.forEach(control => {
+        this.updateActivityDates(control)
       })
     }
     /*
@@ -264,24 +286,44 @@ export class ActivitiesComponent implements OnInit {
     */
   }
 
-  updateActivityDates(actControl: AbstractControl) {
+  getDependentActivitiesControls(activity: string): Array<AbstractControl> {
+    let deps = []
+    this.utils.getActivities().forEach(act => {
+      if (act.dep && act.dep.includes(activity)) {
+        let activityControl = this.activitiesFormArray.controls
+          .find(a => a.get('activity').value == act.value)
+        if (activityControl)
+          if (!activityControl.get('apply').value)
+            deps = deps.concat(this.getDependentActivitiesControls(act.value))
+          else
+            deps.push(activityControl)
+      }
+    })
+    return deps
+  }
+
+  updateActivityDates(activityControl: AbstractControl) {
     let greatestDate = this.npi.getCriticalApprovalDate()
-    this.utils.getActivity(actControl.get("activity").value).dep.forEach(dep => {
-      //console.log(this.activitiesFormArray.value)
+    let activity = this.utils.getActivity(activityControl.get("activity").value)
+    activity.dep.forEach(dep => {
       let depEndDate = this.getActivityEndDate(this.activitiesFormArray.value, dep)
-      if (depEndDate)
+      //console.log(depEndDate)
+      if (depEndDate){
         greatestDate = new Date(Math.max(greatestDate.valueOf(), depEndDate.valueOf()))
+      }
     })
 
     let startDate = greatestDate
-    let endDate = new Date(startDate.valueOf() + parseInt(actControl.get('term').value) * DAYS)
+    let endDate = new Date(startDate.valueOf() + parseInt(activityControl.get('term').value) * DAYS)
 
     //    console.log('updating ', actControl.value.activity, ' Start Date to ', startDate)
     //console.log(endDepDate)
-    actControl.patchValue({
+    activityControl.patchValue({
       startDate: startDate,
       endDate: endDate
-    })
+    }, { emitEvent: false })
+
+    document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('input'))
   }
 
   getActivityDeadline(activities, activityLabel) {
@@ -312,8 +354,7 @@ export class ActivitiesComponent implements OnInit {
           deps.push(act)
       }
     })
-    if (deps.length) return deps
-    return null
+    return deps
   }
 
   fillFormData() {
@@ -334,7 +375,7 @@ export class ActivitiesComponent implements OnInit {
           signature: activity.signature
         }
       )
-    });
+    }, { emitEvent: false });
     this.loadSignatures()
   }
 
@@ -343,7 +384,7 @@ export class ActivitiesComponent implements OnInit {
   }
 
   updateParentForm() {
-    console.log('updating parent')
+    //console.log('updating parent')
     this.npiFormOutput.emit(this.activitiesFormGroup)
   }
 
