@@ -1,4 +1,4 @@
-import { BlinkDirective } from './blink.directive';
+import { BlinkDirective } from './directives/blink.directive';
 
 describe('BlinkDirective', () => {
   it('should create an instance', () => {

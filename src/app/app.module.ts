@@ -47,8 +47,9 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
 import { SendingFormModalComponent } from './npi/sending-form-modal/sending-form-modal.component';
 import { UploaderComponent } from './file-manager/uploader/uploader.component';
 import { UploadService } from './services/upload.service';
-import { BlinkDirective } from './blink.directive';
-import { ActivityRowDirective } from './app-activity-row.directive';
+import { BlinkDirective } from './directives/blink.directive';
+import { ActivityRowDirective } from './directives/app-activity-row.directive';
+import { InStockDateDirective } from './directives/in-stock-date.directive';
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { ActivityRowDirective } from './app-activity-row.directive';
     ClientComponent,
     SendingFormModalComponent,
     BlinkDirective,
-    ActivityRowDirective
+    ActivityRowDirective,
+    InStockDateDirective
   ],
   imports: [
     BrowserModule,

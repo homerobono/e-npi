@@ -77,6 +77,9 @@ export class ActivitiesComponent implements OnInit {
       () => this.fillFormData())
 
     this.npiFormOutput.emit(this.activitiesFormGroup)
+
+    //let dateRect = document.getElementById('endDate').getBoundingClientRect()
+    //console.log(dateRect)
   }
 
   initDatePickerConfigArray(length) {
