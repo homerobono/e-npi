@@ -14,15 +14,15 @@
             <th scope="col" rowspan=2>Responsável</th>
             <th scope="col" colspan=3>Prazo</th>
             <th scope="col" rowspan=2>Arquivos</th>
-            <th scope="col" rowspan=2>Status</th>
-            <th scope="col" rowspan=1>Concluir Atividade</th>
+            <th scope="col" rowspan=1>Status</th>
             <th scope="col" rowspan=2>Aplicável</th>
           </tr>
           <tr>
             <th scope=col>Período (dias)</th>
             <th class='date' scope=col>Início</th>
             <th class='date' scope=Fim>Término</th>
-            <th><button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
+            <th>
+              <button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
               <i class='fa fa-check pr-0 mr-0'></i>
               <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
             </button>
@@ -30,21 +30,21 @@
           </tr>
         </thead>
         <tbody #tableBody>
-          <tr *ngFor='let activity of activitiesFormGroup.get("activities").controls; let last = last; index as i' [formGroupName]='i' [appActivityRow]='activity.value' [ngClass]='{"bg-light shadow sticky-bottom":false}'
-          [disabled]='npi.activities[i].closed'>
+          <tr *ngFor='let activity of activitiesFormArray.value; let last = last; index as i;' [formGroupName]='i' [appActivityRow]='activity' [ngClass]='{"bg-light shadow sticky-bottom":false}'
+          [disabled]='activity.closed'>
             <td>
               {{ i }}
             </td>
             <td>
-              {{ utils.getActivity(activity.get("activity").value).label }}
+              {{ utils.getActivity(activity.activity).label }}
             </td>
-            <td [appActivityRow]='activity.value'>
+            <td [appActivityRow]='activity'>
               {{ npi.activities[i].dept }}
               <select class='custom-select'>
                 <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }} {{ user.lastName }}</option>
               </select>
             </td>
-            <td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
+            <td [ngClass]='{"text-danger": activity.term < 0 }'>
               <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0>
             </td>
             <td>
@@ -52,8 +52,9 @@
                 #sdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i>0?i-1:i]' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' readonly>
             </td>
             <td id='endDateCell'>
-              <input type='text' #endDate [appBlink]='endDate.value' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
-                #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid text-danger": fieldHasErrors(i+".term") || activity.value.endDate < activity.value.startDate || (last && activity.value.endDate > npi.inStockDate) }'>
+              <input type='text' class='form-control' #endDate appBlink [activity]='activity' [npi]=npi class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
+                #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid text-danger": fieldHasErrors(i+".term") || activity.endDate < activity.startDate || (last && activity.endDate > npi.inStockDate) }'
+                placement='right' id='{{activity.activity}}_END_DATE'>
             </td>
             <td>
               <button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
@@ -61,21 +62,21 @@
                 <i class='fa fa-folder fa-fw' [ngClass]='activity.annex?.length? "append-icon":"upload-icon"'></i>
               </button>
             </td>
-            <td>
-              <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)' *ngIf='!activity.value.closed && false'
+            <td class=signature>
+              <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)' *ngIf='!activity.closed && false'
               [disabled]='!npiComponent.editFlag'>
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.value.closed && true'>
-                  <i class='fa fa-clock-o fa-fw text-warning'></i>
+              <span *ngIf='!activity.closed && true'>
+                  <i class='fa fa-clock-o fa-lg text-warning'></i>
                 </span>
-              <span *ngIf='activity.value.closed'>
+              <span *ngIf='activity.closed'>
                 <i class='fa fa-check fa-sm text-success'></i>
-                <span class=signature>{{ signatures[i] }}</span>
+                {{ signatures[i] }}
               </span>
             </td>
             <td>
-              <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.get("activity").value).required' >
+              <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.activity).required' >
                 <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
                 <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
               </div>

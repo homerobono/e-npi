@@ -10,8 +10,8 @@ var dateOptions = {
     day: 'numeric',
     month: 'numeric',
     year: '2-digit',
-    hour: '2-digit', 
-    minute:'2-digit'
+    hour: '2-digit',
+    minute: '2-digit'
 }
 
 class Npi {
@@ -139,7 +139,7 @@ class Npi {
             }
             if (npiModel.updated != null) {
                 this.updated = new Date(npiModel.updated)
-                this.updatedString = utils.getTimeDifference(new Date(),this.updated)
+                this.updatedString = utils.getTimeDifference(new Date(), this.updated)
             }
             if (npiModel.npiRef != null) this.npiRef = npiModel.npiRef
             if (npiModel.entry != null) this.entry = npiModel.entry
@@ -178,7 +178,7 @@ class Npi {
             if (npiModel.finalApproval != null) {
                 this.finalApproval = npiModel.finalApproval
                 if (this.finalApproval.signature && this.finalApproval.signature.date)
-                this.finalApproval.signature.date = new Date(this.finalApproval.signature.date);
+                    this.finalApproval.signature.date = new Date(this.finalApproval.signature.date);
             }
             if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
             if (npiModel.activities != null) this.activities = npiModel.activities
@@ -236,14 +236,28 @@ class Npi {
     }
 
     public getCriticalApprovalDate(): Date {
-        if (this.isCriticallyApproved){
+        if (this.isCriticallyApproved) {
             var lastAnalysisDate = this.critical[0].signature.date
             if (this.finalApproval && this.finalApproval.status == 'accept') return this.finalApproval.signature.date
             this.critical.forEach(analysis => {
-                lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date: lastAnalysisDate
+                lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date : lastAnalysisDate
             })
             return lastAnalysisDate
         }
+    }
+
+    public getDependentActivities(activity): Array<any> {
+        let deps = []
+        Globals.MACRO_STAGES.forEach(act => {
+            if (act.dep && act.dep.includes(activity)) {
+                let activityModel = this.activities.find(a => a.activity == act.value)
+                if (activityModel && !activityModel.apply)
+                    deps = deps.concat(this.getDependentActivities(act))
+                else
+                    deps.push(act.value)
+            }
+        })
+        return deps
     }
 }
 

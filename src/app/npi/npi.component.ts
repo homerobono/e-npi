@@ -139,7 +139,8 @@ export class NpiComponent implements OnInit {
         containerClass: 'theme-default',
         showWeekNumbers: false,
         dateInputFormat: 'DD/MM/YYYY',
-        minDate: new Date()
+        minDate: new Date(),
+        //placement: 'right'
       }
     )
   }
