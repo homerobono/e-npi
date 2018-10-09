@@ -49,7 +49,7 @@
             </td>
             <td>
               <input type='text' #startDate [appBlink]='sdp.value' class='form-control form-control-plaintext' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
-                #sdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i>0?i-1:i]' [isDisabled]='isDisabled' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' disabled readonly>
+                #sdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i>0?i-1:i]' [isDisabled]='isDisabled' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' readonly>
             </td>
             <td>
               <input type='text' #endDate [appBlink]='endDate.value' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
