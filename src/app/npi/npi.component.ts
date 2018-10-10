@@ -165,7 +165,7 @@ export class NpiComponent implements OnInit {
     this.editForm.subscribe(
       flag => {
         this.editFlag = flag
-        flag ? this.npiForm.enable() : this.npiForm.disable()
+        flag ? this.npiForm.enable({ emitEvent: false }) : this.npiForm.disable({ emitEvent: false })
       }
     )
 
@@ -265,7 +265,7 @@ export class NpiComponent implements OnInit {
     this.submitNpi(npiForm)
   }
 
-  closeActivity(){
+  closeActivity() {
     this.saveNpi(this.npiForm.value)
   }
 
@@ -424,7 +424,7 @@ export class NpiComponent implements OnInit {
       let activity = activitiesFormArray.controls[i] as FormGroup
       if (activity.get('activity').value == field) {
         console.log('enabling ' + field)
-        activity.enable()
+        activity.enable({ emitEvent: false })
       }
     }
   }

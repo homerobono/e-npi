@@ -87,6 +87,12 @@ export class UtilService {
     return Globals.LABELS[word]
   }
 
+  formatDate(date: Date): String {
+    return ('0' + date.getDate()).slice(-2) + '/'
+         + ('0' + (date.getMonth() + 1)).slice(-2) + '/'
+         + date.getFullYear()
+  }
+
   getTimeDifference(end: Date, start: Date): String {
     if (!end) end = new Date()
     if (!start) start = new Date()

@@ -10,9 +10,12 @@ export class InStockDateDirective {
   constructor(private el: ElementRef, private renderer: Renderer2) { }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes)
-    let left = changes.appInStockDate.currentValue + 5 + 'px'
+    let dateFieldElement = document.getElementById('tableBody').lastElementChild.children[5] as HTMLElement
+    let left = dateFieldElement.offsetLeft + 5 + dateFieldElement.clientWidth + 2 + 'px'
+    let width = dateFieldElement.clientWidth - 9 + 'px'
+
     this.renderer.setStyle(this.el.nativeElement, 'left', left)
+    this.renderer.setStyle(this.el.nativeElement, 'width', width)
     //let dateField = document.getElementsByTagName('input').item(0)
   }
 

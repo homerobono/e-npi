@@ -1,6 +1,7 @@
 import { Directive, Renderer2, ElementRef, Input, SimpleChanges, HostListener } from '@angular/core';
 import { Globals } from 'config';
 import Npi from '../models/npi.model';
+import { AbstractControl } from '@angular/forms';
 
 const rowClasses = ['table-primary', 'table-success', 'table-warning', 'table-danger', 'table-info', 'table-secondary']
 const cellClasses = ['text-primary', 'text-success', 'text-warning', 'text-danger', 'text-info', 'text-secondary']
@@ -11,8 +12,10 @@ const depts = Globals.ACTIVITIES_DEPTS
   selector: '[appActivityRow]'
 })
 export class ActivityRowDirective {
-  @Input('appActivityRow') activity: any
+  
+  @Input('appActivityRow') activity: AbstractControl
   @Input() npi: Npi
+
   constructor(private el: ElementRef, private renderer: Renderer2) { }
 
   @HostListener('mouseenter') onHoverIn() {
@@ -24,18 +27,11 @@ export class ActivityRowDirective {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.colorizeElement('cell')
+    //this.colorizeElement('cell')
   }
 
   colorizeElement(selector) {
-    let deptRole = this.activity.dept
-    if (!this.activity.apply){
-      this.renderer.setStyle(this.el.nativeElement, 'filter', 'opacity(0.5)')
-      this.renderer.addClass(this.el.nativeElement, 'strike')
-    } else {
-      this.renderer.setStyle(this.el.nativeElement, 'filter', 'opacity(1)')
-      this.renderer.removeClass(this.el.nativeElement, 'strike')
-    }
+    let deptRole = this.activity.get('dept').value
     for (let i = 0; i < depts.length; i++) {
       if (deptRole == depts[i]) {
         //console.log(event)
@@ -50,7 +46,7 @@ export class ActivityRowDirective {
   }
 
   unColorizeElement(selector) {
-    let deptRole = this.activity.dept
+    let deptRole = this.activity.get('dept').value
     for (let i = 0; i < depts.length; i++) {
       if (deptRole == depts[i]) {
         //console.log(event)

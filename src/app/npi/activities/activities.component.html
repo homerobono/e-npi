@@ -23,60 +23,63 @@
             <th class='date' scope=Fim>Término</th>
             <th>
               <button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
-              <i class='fa fa-check pr-0 mr-0'></i>
-              <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
-            </button>
-          </th>
+                <i class='fa fa-check pr-0 mr-0'></i>
+                <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
+              </button>
+            </th>
           </tr>
         </thead>
-        <tbody #tableBody>
-          <tr *ngFor='let activity of activitiesFormArray.value; let last = last; index as i;' [formGroupName]='i' [appActivityRow]='activity' [ngClass]='{"bg-light shadow sticky-bottom":false}'
-          [disabled]='activity.closed'>
+        <tbody #tableBody id='tableBody'>
+          <tr *ngFor='let activity of activitiesFormArray.controls; let last = last; index as i;' [formGroupName]='i'
+            [appActivityRow]='activity' [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"' [disabled]='activity.get("closed").value'>
             <td>
               {{ i }}
             </td>
             <td>
-              {{ utils.getActivity(activity.activity).label }}
+              {{ utils.getActivity(activity.get("activity").value).label }}
             </td>
             <td [appActivityRow]='activity'>
               {{ npi.activities[i].dept }}
               <select class='custom-select'>
-                <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }} {{ user.lastName }}</option>
+                <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }}
+                  {{ user.lastName }}</option>
               </select>
             </td>
-            <td [ngClass]='{"text-danger": activity.term < 0 }'>
-              <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0>
+            <td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
+              <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM' appBlink>
             </td>
             <td>
-              <input type='text' #startDate [appBlink]='sdp.value' class='form-control form-control-plaintext' formControlName='startDate' aria-describedby="Data de início para atividade {{ npi.activities[i].activity }}"
-                #sdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i>0?i-1:i]' [ngClass]='{"is-invalid": fieldHasErrors(i+".term")}' readonly>
+              <span id='{{activity.get("activity").value}}_START_DATE' appBlink>
+              {{ this.utils.formatDate(activity.get('startDate').value) }}
+              </span>
             </td>
-            <td id='endDateCell'>
-              <input type='text' class='form-control' #endDate appBlink [activity]='activity' [npi]=npi class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
-                #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' [ngClass]='{"is-invalid text-danger": fieldHasErrors(i+".term") || activity.endDate < activity.startDate || (last && activity.endDate > npi.inStockDate) }'
-                placement='right' id='{{activity.activity}}_END_DATE'>
+            <td>
+              <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}" 
+                [ngClass]='{"is-invalid text-danger": fieldHasErrors(i+".term") || activity.get("endDate").value < activity.get("startDate").value || (last && activity.get("endDate").value > npi.inStockDate) }'
+                #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' placement='right' id='{{activity.get("activity").value}}_END_DATE'
+                appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)' [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td>
               <button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
                 [disabled]='!npiComponent.editFlag'>
-                <i class='fa fa-folder fa-fw' [ngClass]='activity.annex?.length? "append-icon":"upload-icon"'></i>
+                <i class='fa fa-folder fa-fw' [ngClass]='activity.get("annex").value?.length? "append-icon":"upload-icon"'></i>
               </button>
             </td>
             <td class=signature>
-              <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)' *ngIf='!activity.closed && false'
-              [disabled]='!npiComponent.editFlag'>
+              <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
+                *ngIf='!activity.get("closed").value && false' [disabled]='!npiComponent.editFlag'>
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.closed && true'>
-                  <i class='fa fa-clock-o fa-lg text-warning'></i>
-                </span>
-              <span *ngIf='activity.closed'>
+              <span *ngIf='!activity.get("closed").value && true'>
+                <i class='fa fa-clock-o fa-lg text-warning'></i>
+              </span>
+              <span *ngIf='activity.get("closed").value'>
                 <i class='fa fa-check fa-sm text-success'></i>
                 {{ signatures[i] }}
               </span>
             </td>
             <td>
-              <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.activity).required' >
+              <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.get("activity").value).required'>
                 <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
                 <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
               </div>
@@ -85,12 +88,11 @@
         </tbody>
       </table>
     </div>
-    <div class='release-date text-primary' style='text-shadow: 1px 2px 10px #ccc; height: 0'>
-      <div><b>Data de Lançamento</b></div>
-      <hr size='6px' width='{{release.offsetLeft + release.offsetWidth - 4}}px' class='m-0 shadow' style='background-color: blue; color: blue; box-shadow: 0 2px 4px #ccc'>
-      <br>
-      <input type=text class='form-control shadow m-0' #release id='releaseDate' readonly [appInStockDate]='tableBody.lastElementChild.children[5].offsetLeft' style='position:absolute; width: 110px; border-color: blue; top: 24px'
-        value='{{ this.npi.inStockDate.toLocaleDateString("pt-br") }}'>
+    <div class='release-date bg-warning text-primary'>
+      <div class='d-flex mb-0' style='height: 0'><b>Data de Lançamento</b></div>
+      <hr width='{{release.offsetLeft + release.offsetWidth - 4}}px' class='m-0' style='background-color: blue; height:1px; border: 1px; position: absolute; top: 24px'>
+      <input type=text class='form-control shadow m-0' #release id='releaseDate' readonly [appInStockDate]='tableBody.firstElementChild.children[5].offsetLeft'
+        style='position:absolute; border-color: blue; top: -13px' value='{{ this.npi.inStockDate.toLocaleDateString("pt-br") }}'>
     </div>
     <div style='height: 70px'></div>
   </div>
