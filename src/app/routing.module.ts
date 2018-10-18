@@ -3,19 +3,19 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './user/profile/profile.component';
 import { UsersComponent } from './users/users.component';
 import { UserComponent } from './user/user.component';
-import { RegisterComponent } from './register/register.component';
-import { ForgotComponent } from './forgot/forgot.component';
-import { ResetComponent } from './reset/reset.component';
+import { RegisterComponent } from './user/register/register.component';
+import { ForgotComponent } from './user/forgot/forgot.component';
+import { ResetComponent } from './user/reset/reset.component';
 import { ErrorComponent } from './error/error.component';
 import { NpiComponent } from './npi/npi.component';
 import { CreateComponent } from './npi/create/create.component';
 
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
-import { CompleteRegistrationComponent } from './complete-registration/complete-registration.component';
+import { CompleteRegistrationComponent } from './user/complete-registration/complete-registration.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },

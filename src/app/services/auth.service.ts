@@ -37,7 +37,7 @@ export class AuthService {
     console.log('service: trying to login');
     return this.http.post <{message, token}>
       (this.loginUrl, {email: email, password: password})
-      .do( res => { this.setSession(res.token) })
+      .do( res => this.setSession(res.token))
       .shareReplay();
 }
 
@@ -52,7 +52,7 @@ export class AuthService {
 
   logout() {
       localStorage.removeItem("id_token");
-      localStorage.removeItem("first_ame");
+      localStorage.removeItem("first_name");
       localStorage.removeItem("user_level");
       localStorage.removeItem("expires_at");
       this.isLoggedStatus.next(false)
@@ -67,6 +67,10 @@ export class AuthService {
       return !this.isLoggedIn();
   }
 
+  getUser() {
+    return this.jwtHelper.decodeToken(this.getToken()).data
+  }
+  
   getToken() {
     return localStorage.getItem("id_token");
   }    

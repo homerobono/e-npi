@@ -1,13 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-import { UsersService} from '../services/users.service'
-import { ValidatePasswordMatch } from '../validate-password-match'
+import { UsersService} from '../../services/users.service'
+import { ValidatePasswordMatch } from '../../validate-password-match'
 
-import { NavbarComponent } from '../navbar/navbar.component';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { MessageService } from '../services/message.service';
-import User from '../models/user.model';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
+import User from '../../models/user.model';
 
 @Component({
   selector: 'app-complete-registration',

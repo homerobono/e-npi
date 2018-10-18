@@ -105,15 +105,16 @@ class Npi {
         activity: String,
         term: Number,
         dept: String,
+        responsible: any,
         comment: String,
         annex: [FileDescriptor],
         registry: String,
-        apply: Boolean,
         closed: Boolean,
         signature: {
             user: any,
             date: Date,
-        }
+        },
+        apply: Boolean
     }>;
     validation: {
         pilot: String,
@@ -186,11 +187,20 @@ class Npi {
         }
     }
 
-    public isCriticallyAnalised(): Boolean {
+    public isCriticallyTouched(): Boolean {
         if (this.critical) {
             return this.critical.some(
                 (analisys) => analisys.status != null
             )
+        }
+        return false
+    }
+
+    public isCriticallyAnalysed(): Boolean {
+        if (this.critical) {
+            return this.critical.every(
+                analisys => analisys.status != null
+            ) || this.finalApproval.status != null
         }
         return false
     }
@@ -201,6 +211,24 @@ class Npi {
                 (analisys) => analisys.status == 'deny'
             ) && this.critical.every(
                 analisys => analisys.status != null
+            )
+        }
+        return false
+    }
+
+    public hasCriticalApproval(): Boolean {
+        if (this.critical) {
+            return this.critical.some(
+                analisys => analisys.status == 'accept'
+            )
+        }
+        return false
+    }
+
+    public hasCriticalDisapproval(): Boolean {
+        if (this.critical) {
+            return this.critical.some(
+                (analisys) => analisys.status == 'deny'
             )
         }
         return false
@@ -237,8 +265,8 @@ class Npi {
 
     public getCriticalApprovalDate(): Date {
         if (this.isCriticallyApproved) {
-            var lastAnalysisDate = this.critical[0].signature.date
             if (this.finalApproval && this.finalApproval.status == 'accept') return this.finalApproval.signature.date
+            var lastAnalysisDate = this.critical[0].signature.date
             this.critical.forEach(analysis => {
                 lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date : lastAnalysisDate
             })

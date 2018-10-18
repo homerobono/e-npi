@@ -1,0 +1,91 @@
+<div class="container pt-5">
+  <h3>Confirmação de Cadastro</h3>
+  Informe os dados a seguir para confirmar o seu cadastro no sistema:
+  <form [formGroup]='completeForm' (ngSubmit)="registerUser(completeForm.value)" novalidate>
+    <hr>
+    <div class="form-row">
+      <div class="col-md-6 mb-4">
+        <label for="validationCustom01">Nome</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependFirstName">
+              <i class="fa fa-user"></i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="validationCustom01" placeholder="Nome" aria-describedby="inputGroupPrependFirstName"
+            formControlName='firstName' [ngClass]="{'is-invalid': !isFieldValid('firstName')}" autofocus>
+          <div class='invalid-feedback'>
+            Digite um nome
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <label for="validationCustom02">Sobrenome</label>
+        <input type="text" class="form-control" id="validationCustom02" placeholder="Sobrenome" formControlName='lastName'
+          [ngClass]="{'is-invalid': !isFieldValid('lastName')}">
+        <div class='invalid-feedback'>
+          Digite um sobrenome
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-4">
+        <label for="validationCustomEmail">E-Mail</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          <input type="text" class="custom-control-readonly form-control" id="validationCustomEmail" aria-describedby="inputGroupPrepend"
+            formControlName="email" readonly>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <label for="validationCustom03">Telefone</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependPhone">
+              <i class="fa fa-phone"></i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="validationCustom03" placeholder="Telefone" aria-describedby="inputGroupPrepend"
+            formControlName='phone' [ngClass]="{'is-invalid': !isFieldValid('phone')}">
+          <div class='invalid-feedback'>
+            Digite um telefone válido
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="form-row">
+      <div class="col-md-6 mb-4">
+        <label for="newPassword">Senha</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrependNewPassword">
+              <i class="fa fa-key"></i>
+            </span>
+          </div>
+          <input type="password" class="form-control has-error" id="newPassword" placeholder="Senha" aria-describedby="inputGroupPrependPassword"
+            formControlName='newPassword' [ngClass]="{'is-invalid': !isFieldValid('newPassword')}">
+          <div class='invalid-feedback'>
+            Digite uma senha com 4 caracteres ou mais
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <label for="confPassword">Confirmação de Senha</label>
+        <input type="password" class="form-control" id="confPassword" placeholder="Confirmação de senha"
+          formControlName='confPassword' name='confPassword' [ngClass]="{'is-invalid': !isFieldValid('confPassword')}">
+        <div class='invalid-feedback'>
+          Senhas não conferem
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" [disabled]="!completeForm.valid || sendingRegister">
+        Finalizar Cadastro
+      </button>
+    </div>
+  </form>
+</div>

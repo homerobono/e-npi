@@ -80,7 +80,7 @@ export class InternalComponent implements OnInit {
     this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 
-    if (this.npi.isCriticallyAnalised() ||
+    if (this.npi.isCriticallyTouched() ||
       !this.npiComponent.editFlag)
       this.npiForm.disable()
 

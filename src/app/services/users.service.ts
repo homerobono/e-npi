@@ -34,6 +34,7 @@ export class UsersService {
 
   registerPendingUser(user: User): Observable<any> {
     console.log('registering user');
+    console.log(user);
     return this.http.post(this.registerPendingUserUrl, user);
   }
   

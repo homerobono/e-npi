@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, AbstractControl } from '@angular/forms';
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
@@ -17,8 +17,20 @@ export class CriticalComponent implements OnInit {
     this.npi = npi;
     this.fillFormData()
   }
-  @Output() criticalForm = new EventEmitter<FormGroup>()
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.npi.stage == 2 && !this.npi.isCriticallyApproved()) {
+      if (this.npiComponent.user.level > 1) this.criticalFormGroup.enable()
+      this.criticalFormArray.controls.forEach(control => {
+        if (this.amITheAnalysisGestor(control))
+          control.enable()
+      })
+    }
+    else this.criticalFormGroup.disable()
+  }
 
+  @Output() criticalForm = new EventEmitter<FormGroup>()
+  
+  criticalFormArray : FormArray
   criticalFormGroup: FormGroup
   signatures: Array<any>
   finalSignature: String
@@ -30,8 +42,9 @@ export class CriticalComponent implements OnInit {
     private route: ActivatedRoute,
     private npiComponent: NpiComponent
   ) {
+    this.criticalFormArray = fb.array([])
     this.criticalFormGroup = fb.group({
-      'critical': fb.array([]),
+      'critical': this.criticalFormArray,
       'finalApproval': fb.group({
         status: null,
         comment: null
@@ -68,6 +81,26 @@ export class CriticalComponent implements OnInit {
     )
   }
 
+  insertCriticalAnalisys() {
+    var criticalModelArray = this.npi.critical
+
+    criticalModelArray.forEach(analisys => {
+      var criticalControl = this.fb.group(
+        {
+          _id: analisys._id,
+          status: analisys.status,
+          comment: analisys.comment
+        }
+      )
+      criticalControl.valueChanges.subscribe(
+        () => this.updateParentForm())
+
+      this.criticalFormArray.push(criticalControl)
+    });
+
+    this.loadSignatures()
+  }
+
   loadSignatures() {
     for (var i = 0; i < this.npi.critical.length; i++) {
       var row = this.npi.critical[i]
@@ -95,30 +128,10 @@ export class CriticalComponent implements OnInit {
       this.finalSignature = null
   }
 
-  insertCriticalAnalisys() {
-    var criticalFormArray = (this.criticalFormGroup.get('critical') as FormArray).controls
-    var criticalModelArray = this.npi.critical
-
-    criticalModelArray.forEach(analisys => {
-      var criticalControl = this.fb.group(
-        {
-          _id: analisys._id,
-          status: analisys.status,
-          comment: analisys.comment
-        }
-      )
-      criticalControl.valueChanges.subscribe(
-        () => this.updateParentForm())
-
-      criticalFormArray.push(criticalControl)
-    });
-
-    this.loadSignatures()
-  }
 
   fillFormData() {
     var criticalFormArray =
-      (this.criticalFormGroup.get('critical') as FormArray).controls
+      this.criticalFormArray.controls
 
     criticalFormArray.forEach(analisys => {
       var criticalRow = this.getCriticalRow(analisys.get('_id').value)
@@ -135,10 +148,7 @@ export class CriticalComponent implements OnInit {
   }
 
   getCriticalRow(id) {
-    for (let i = 0; i < this.npi.critical.length; i++) {
-      let critical = this.npi.critical[i]
-      if (critical._id == id) return critical
-    }
+    return this.npi.critical.find(critical => critical._id == id)
   }
 
   updateParentForm() {
@@ -148,14 +158,14 @@ export class CriticalComponent implements OnInit {
   toggleStatus(i, event) {
     event.stopPropagation()
     var statusControl =
-      ((this.criticalFormGroup.get('critical') as FormArray)
+      (this.criticalFormArray
         .controls[i] as FormGroup).get('status')
     if (event.target.value == statusControl.value) statusControl.setValue(null)
   }
 
   clearForm() {
     var criticalFormArray =
-      (this.criticalFormGroup.get('critical') as FormArray).controls
+      this.criticalFormArray.controls
 
     criticalFormArray.forEach(analisys => {
       var criticalRow = this.getCriticalRow(analisys.get('_id').value)
@@ -177,6 +187,11 @@ export class CriticalComponent implements OnInit {
       control = control.get(fieldsArr[i])
     }
     return control.hasError('required')
+  }
+
+  amITheAnalysisGestor(analysis: AbstractControl):Boolean {
+    return this.getCriticalRow(analysis.get('_id').value).dept == this.npiComponent.user.department
+      && this.npiComponent.user.level == 1
   }
 
   cancelNpi() {

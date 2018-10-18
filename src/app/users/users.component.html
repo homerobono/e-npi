@@ -1,28 +1,31 @@
-<div class='body-frame col-xs-12 col-sm-10 col-md-9 col-lg-8'>
+<div class='container'>
   <app-nav-buttons></app-nav-buttons>
-  <div class='float-left col-6 nopadding'>
-    <h3>Usuários</h3>
+  <div class='row'>
+    <div class='col-6'>
+      <h3>Usuários</h3>
+    </div>
+    <div class='col-6' *ngIf='userLevel>1'>
+      <button type="submit" class="btn-user btn btn-primary float-right" href="/register" (click)='goToRegister()'
+        *ngIf="userLevel > 0" style='margin:2px;'>
+        <i class='fa fa-user-plus'></i>
+        Cadastrar Usuário
+      </button>
+    </div>
   </div>
-  <div class='float-right col-6' *ngIf='userLevel>1' style='padding:0;'>
-    <button type="submit" class="btn-user btn btn-primary float-right" href="/register" (click)='goToRegister()' *ngIf="userLevel > 0"
-      style='margin:2px;'>
-      Cadastrar Usuário
-    </button>
-  </div>
-  <div class='form-row col-12' style='padding:2px; margin: 0px'>
-    <hr style='text-align: center; width:100%; color: lightgray'>
-  </div>
-  <div class='row p-0 m-0' *ngIf='usersList'>
+  <hr>
+  <div class='row p-3' *ngIf='usersList'>
     <div class='col-xs-12 col-md-6 col-xl-4 p-0' (click)='editProfile(user._id)' *ngFor='let user of usersList'>
       <div class='user-detail' [ngClass]='{"user-pending": user.status!="active"}' *ngIf='user.status!="disabled"'>
         <div class='col-12'>
-          <b> {{ user.status == 'active' ? user.firstName + ' ' + (user.lastName ? user.lastName : '') : user.email }}
+          <b> {{ user.status == 'active' ? user.firstName + ' ' + (user.lastName ? user.lastName : '') : user.email
+            }}
             <span class='label float-right' style='margin-right:0; margin-top: 4px' [ngClass]="{
-                'normal' : user.level == 0,
-                'master' : user.level == 1,
-                'admin' : user.level == 2
+                'basic' : user.level == 0,
+                'manager' : user.level == 1,
+                'master' : user.level == 2,
+                'admin' : user.level == 3
               }">
-              {{ user.level==0?'Normal':user.level==1?'Master':user.level==2?'Administrador':'' }}
+              {{ user.level==0?'Normal':user.level==1?'Gestor':user.level==2?'Master':user.level==3?'Administrador':'' }}
             </span>
           </b>
         </div>

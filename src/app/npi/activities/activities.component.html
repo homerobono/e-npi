@@ -1,11 +1,17 @@
-<div class="form-row" [formGroup]='activitiesFormGroup' *ngIf='npi.stage>2'>
+<div class="form-row" [formGroup]='activitiesFormGroup'>
   <div class='col'>
     <label for='activities' class=col>
       <center>
         <h4>Etapas Macro do Projeto</h4>
       </center>
     </label>
-    <div id='activities' formArrayName='activities'>
+
+    <div *ngIf='npi.stage == 2 && npi.isApproved() && !npiComponent.canChangeActivities' class='text-center'>
+      <i class='small text-secondary'>
+        Aguardando definição das atividades aplicáveis ao projeto pelo MPR (Produto).</i>
+    </div>
+
+    <div id='activities' formArrayName='activities' *ngIf='npi.stage >= 4 || (npi.activities?.length && npiComponent.canChangeActivities)'>
       <table class="table table-sm table-bordered table-hover" #table>
         <thead class='thead-light'>
           <tr>
@@ -13,15 +19,15 @@
             <th scope="col" rowspan=2>Atividade</th>
             <th scope="col" rowspan=2>Responsável</th>
             <th scope="col" colspan=3>Prazo</th>
-            <th scope="col" rowspan=2>Arquivos</th>
-            <th scope="col" rowspan=1>Status</th>
-            <th scope="col" rowspan=2>Aplicável</th>
+            <th scope="col" rowspan=2 *ngIf='npi.stage>=4'>Arquivos</th>
+            <th scope="col" rowspan=1 *ngIf='npi.stage>=4'>Status</th>
+            <th scope="col" rowspan=2 *ngIf='npi.stage==2 && npiComponent.canChangeActivities'>Aplicável</th>
           </tr>
           <tr>
             <th scope=col>Período (dias)</th>
             <th class='date' scope=col>Início</th>
             <th class='date' scope=Fim>Término</th>
-            <th>
+            <th *ngIf='npi.stage>=4'>
               <button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
                 <i class='fa fa-check pr-0 mr-0'></i>
                 <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
@@ -31,7 +37,8 @@
         </thead>
         <tbody #tableBody id='tableBody'>
           <tr *ngFor='let activity of activitiesFormArray.controls; let last = last; index as i;' [formGroupName]='i'
-            [appActivityRow]='activity' [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"' [disabled]='activity.get("closed").value'>
+            [appActivityRow]='activity' [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"'
+            [disabled]='activity.get("closed").value' [style.display]='activity.get("apply").value || npiComponent.editFlag ? "table-row": "none"'>
             <td>
               {{ i }}
             </td>
@@ -40,37 +47,39 @@
             </td>
             <td [appActivityRow]='activity'>
               {{ npi.activities[i].dept }}
-              <select class='custom-select'>
+              <select class='custom-select' formControlName='responsible'>
                 <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }}
                   {{ user.lastName }}</option>
               </select>
             </td>
             <td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
-              <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM' appBlink>
+              <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM'
+                appBlink>
             </td>
             <td>
               <span id='{{activity.get("activity").value}}_START_DATE' appBlink>
-              {{ this.utils.formatDate(activity.get('startDate').value) }}
+                {{ this.utils.formatDate(activity.get('startDate').value) }}
               </span>
             </td>
             <td>
-              <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}" 
+              <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ npi.activities[i].activity }}"
                 [ngClass]='{"is-invalid text-danger": fieldHasErrors(i+".term") || activity.get("endDate").value < activity.get("startDate").value || (last && activity.get("endDate").value > npi.inStockDate) }'
                 #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' placement='right' id='{{activity.get("activity").value}}_END_DATE'
-                appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)' [dependents]='getControlsDependentActivities(activity)'>
+                appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
+                [dependents]='getControlsDependentActivities(activity)'>
             </td>
-            <td>
+            <td *ngIf='npi.stage>=4'>
               <button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
-                [disabled]='!npiComponent.editFlag'>
+                [disabled]='!activity.get("apply").value'>
                 <i class='fa fa-folder fa-fw' [ngClass]='activity.get("annex").value?.length? "append-icon":"upload-icon"'></i>
               </button>
             </td>
-            <td class=signature>
+            <td class=signature *ngIf='npi.stage>=4'>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
-                *ngIf='!activity.get("closed").value && false' [disabled]='!npiComponent.editFlag'>
+                *ngIf='!activity.get("closed").value && canChangeActivity(activity)' [disabled]='!npiComponent.editFlag'>
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.get("closed").value && true'>
+              <span *ngIf='!activity.get("closed").value && !canChangeActivity(activity)'>
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
               </span>
               <span *ngIf='activity.get("closed").value'>
@@ -78,7 +87,7 @@
                 {{ signatures[i] }}
               </span>
             </td>
-            <td>
+            <td *ngIf='npi.stage==2 && npiComponent.canChangeActivities'>
               <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.get("activity").value).required'>
                 <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
                 <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
@@ -88,13 +97,12 @@
         </tbody>
       </table>
     </div>
-    <div class='release-date bg-warning text-primary'>
+    <!--div class='release-date bg-warning text-primary'>
       <div class='d-flex mb-0' style='height: 0'><b>Data de Lançamento</b></div>
-      <hr width='{{release.offsetLeft + release.offsetWidth - 4}}px' class='m-0' style='background-color: blue; height:1px; border: 1px; position: absolute; top: 24px'>
+      <hr width='{{release.offsetLeft + release.offsetWidth - 4}}px' class='m-0' style='background-color: #007bff; height:1px; border: 1px; position: absolute; top: 24px'>
       <input type=text class='form-control shadow m-0' #release id='releaseDate' readonly [appInStockDate]='tableBody.firstElementChild.children[5].offsetLeft'
-        style='position:absolute; border-color: blue; top: -13px' value='{{ this.npi.inStockDate.toLocaleDateString("pt-br") }}'>
+        style='position:absolute; border-color: #007bff; top: -13px' value='{{ this.npi.inStockDate.toLocaleDateString("pt-br") }}'>
     </div>
-    <div style='height: 70px'></div>
+    <div style='height: 70px'></div-->
   </div>
 </div>
-<hr>

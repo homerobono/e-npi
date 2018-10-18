@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MessageService } from '../services/message.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-forgot',

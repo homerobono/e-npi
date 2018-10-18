@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
-import { UsersService} from '../services/users.service'
-import { ValidatePasswordMatch } from '../validate-password-match'
+import { UsersService} from '../../services/users.service'
+import { ValidatePasswordMatch } from '../../validate-password-match'
 
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarComponent } from '../../navbar/navbar.component';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { MessageService } from '../services/message.service';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from '../../services/message.service';
 import { Globals } from 'config';
 
 @Component({

@@ -6,7 +6,7 @@
       </center>
     </label>
     <div class='table-responsive' id='criticalAnalisys' formArrayName='critical'>
-      <table class="table table-bordered">
+      <table class="table table-sm table-bordered">
         <thead class='thead-dark'>
           <tr>
             <th scope="col">Departamento</th>
@@ -18,7 +18,7 @@
         <tbody>
           <tr *ngFor='let analisys of criticalFormGroup.get("critical").controls; index as i' [formGroupName]='i'>
             <td>
-              {{ utils.getDepartment(npi.critical[i].dept).label }}
+              <b>{{ npi.critical[i].dept }}</b> <span style='color: gray; font-size: 10pt'> ({{ utils.getDepartment(npi.critical[i].dept).label }})</span>
             </td>
             <td>
               <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
@@ -68,13 +68,13 @@
   <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
     <div class='row no-gutters'>
       <div class='col-12 col-md-6'>
-        <button class='btn btn-primary btn-block' (click)='finalApprove()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || !comment.value'>
+        <button class='btn btn-primary btn-block' (click)='finalApprove()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2 || !comment.value'>
           <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
           <span> Aprovar</span>
         </button>
       </div>
       <div class='col-12 col-md-6'>
-        <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2'>
+        <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2'>
           <i class='fa fa-trash fa-2x' style='vertical-align: middle;'></i>
           <span> Cancelar NPI</span>
         </button>

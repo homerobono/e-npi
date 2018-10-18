@@ -20,13 +20,12 @@ export class AuthInterceptor implements HttpInterceptor {
         if (idToken) {
             const cloned = req.clone({
                 headers: req.headers.set("Authorization", idToken)
-            }
-            );
+            });
             req = cloned;
         }
 
         return next.handle(req).do(
-            () => { },
+            () => {},
             (err) => {
                 if (err instanceof HttpErrorResponse) {
                     //console.log(err)

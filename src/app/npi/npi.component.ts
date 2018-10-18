@@ -25,6 +25,7 @@ import { FileItem } from 'ng2-file-upload';
 import { UploadService } from '../services/upload.service';
 import { UploaderComponent } from '../file-manager/uploader/uploader.component';
 import { SendingFormModalComponent } from './sending-form-modal/sending-form-modal.component';
+import User from '../models/user.model';
 
 @Component({
   selector: 'app-npi',
@@ -46,15 +47,21 @@ export class NpiComponent implements OnInit {
   newFormVersionFlag: Boolean = false
 
   postConclusionEdit: Boolean = false
-  editForm = new BehaviorSubject<Boolean>(false)
   editFlag: Boolean = false
 
   showNpiToolbar: Boolean = false
 
   response: any
   date: Date
-  npiNumber: Number
+
+  user: User
+  npisList: Npi[]
   npi: Npi
+
+  lastModifiedDifference: String
+  canChangeActivities: Boolean
+
+  npiNumber: Number
   npiVersions: Npi[]
   authorName: String
   authorId: String
@@ -67,8 +74,6 @@ export class NpiComponent implements OnInit {
   editResponse: String
 
   scrollYPosition: Number
-
-  npisList: Npi[]
 
   modalRef: BsModalRef;
   npiRef: Npi
@@ -128,7 +133,7 @@ export class NpiComponent implements OnInit {
     public dialog: MatDialog,
     private uploadService: UploadService
   ) {
-    console.log('constructed again')
+    this.user = authService.getUser()
     this.npi = new Npi(null)
     this.npiVersions = new Array<Npi>()
     this.npiForm = fb.group({})
@@ -159,19 +164,20 @@ export class NpiComponent implements OnInit {
       res => { this.response = res }
     )
     this.localeService.use('pt-br');
+
+    this.canChangeActivities = (typeof this.npi.activities != undefined) &&
+      (this.user.level > 1 || (this.user.level == 1 && this.user.department == "MPR"))
+
     this.route.params.subscribe(
       params => this.getNpi(params.npiNumber)
-    )
-    this.editForm.subscribe(
-      flag => {
-        this.editFlag = flag
-        flag ? this.npiForm.enable({ emitEvent: false }) : this.npiForm.disable({ emitEvent: false })
-      }
     )
 
     this.npiService.npisList.subscribe(
       res => this.npisList = res
     )
+
+    setInterval(() => this.lastModifiedDifference = this.utils.getTimeDifference(null, this.npi.updated),
+      1000)
 
     //setTimeout(() => this.openFileManager('resources'), 400)
 
@@ -200,6 +206,7 @@ export class NpiComponent implements OnInit {
             this.authorName = this.npi.requester.firstName +
               (this.npi.requester.lastName ? ' ' + this.npi.requester.lastName : '')
           }
+          this.lastModifiedDifference = this.utils.getTimeDifference(null, this.npi.updated)
           console.log(this.npi)
           //this.resetFormFlagSubject.next()
         }, err => {
@@ -323,10 +330,7 @@ export class NpiComponent implements OnInit {
   }
 
   toggleEdit() {
-    this.editForm.next(!this.editFlag)
-    if (this.editFlag) {
-      //document.getElementById('npiRef').focus()
-    }
+    this.editFlag = !this.editFlag
   }
 
   toggleTitleEdit(event) {
@@ -460,8 +464,9 @@ export class NpiComponent implements OnInit {
   }
 
   isFinalApproval() {
-    return this.npi.stage == 2
-      && this.npiForm.value.critical.every(analysis => analysis.status == 'accept')
+    if (this.npi.stage == 2 && this.npiForm.getRawValue().critical)
+    return this.npiForm.getRawValue().critical.every(analysis => analysis.status == 'accept')
+    return false
   }
 
   openNpiChooserModal() {
@@ -490,6 +495,13 @@ export class NpiComponent implements OnInit {
       backdrop: 'static',
       keyboard: false
     })
+  }
+
+
+  amITheOwner(): Boolean {
+    if (this.npi.requester && this.user)
+    return this.npi.requester._id == this.user._id
+    return false
   }
 
   ngOnDestroy() {

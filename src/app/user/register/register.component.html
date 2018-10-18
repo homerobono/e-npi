@@ -1,0 +1,120 @@
+<div class="container p-5">
+  <app-nav-buttons></app-nav-buttons>
+  <h3>Cadastrar Usuário</h3>
+  <div class='description'><b>Cadastro inicial:</b> os dados fornecidos nesse formulário serão cadastrados no sistema
+    e um e-mail com um link para completar o cadastro será enviado para o endereço especificado.
+    Só após o usuário finalizar o seu cadastro que este terá acesso ao sistema.
+  </div>
+  <form [formGroup]='registerForm' (ngSubmit)="registerUser(registerForm.value)" novalidate>
+    <hr>
+    <div class="form-row">
+      <div class="col-md-12 mb-4">
+        <label for="validationCustomEmail">E-Mail</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          <input type="text" class="form-control" id="validationCustomEmail" placeholder="E-mail" aria-describedby="inputGroupPrepend"
+            formControlName='email' id='email' [ngClass]="{'is-invalid': !isFieldValid('email')}" autofocus>
+          <div class='invalid-feedback'>
+            Digite um e-mail válido
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-4">
+        <label for="validationCustom04">Departamento</label>
+        <select class="form-control" id="validationCustom04" placeholder="Departamento" formControlName='department'
+          [ngClass]="{'is-invalid': !isFieldValid('department')}">
+          <option *ngFor="let dept of departments" value='{{ dept.value }}'>{{ dept.label }}</option>
+        </select>
+        <div class='invalid-feedback'>
+          Escolha um departamento
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationCustom05">Nível de Permissão</label>
+
+        <div class="form-group">
+          <div class='row'>
+
+            <!-- Básico -->
+            <div class='col-3'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="basic" name="level" value='0' [formControl]="registerForm.controls['level']">
+                <label class="custom-control-label" for="basic">
+                  Básico<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                    Usuário padrão, tem acesso de leitura em todo o sistema e pode criar NPI's. Pode anexar arquivos em
+                    atividades desde que esteja designado a estas.
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Gestor -->
+            <div class='col-3'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" name="level" id='manager' [formControl]="registerForm.controls['level']"
+                  value='1'>
+                <label class="custom-control-label" for="manager">
+                  Gestor<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                    Gestor de um departamento, é responsável por aprovar/reprovar um projeto na análise crítica com
+                    respeito a análise de seu departamento. Designa o responsável por uma atividade da fase de
+                    desenvolvimento, bem como a data de entrega, e pode concluir a atividade e o projeto.
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Master -->
+            <div class='col-3'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" name="level" value='2' id='master' [formControl]="registerForm.controls['level']">
+                <label class="custom-control-label" for="master">
+                  Master<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                    Usuário privilegiado, pode aprovar um projeto na análise crítica independentemente das decisões
+                    dos gestores, pode realizar qualquer atividade da fase de desenvolvimento e concluir o projeto.
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Administrador-->
+            <div class='col-3'>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" class="custom-control-input" id="admin" name="level" value='3' [formControl]="registerForm.controls['level']">
+                <label class="custom-control-label" for="admin">
+                  Administrador<br>
+                  <div class='col-xs-11 radio-level-legend'>
+                    Usuário com nível de permissão máximo, pode editar qualquer campo. Deve ser usado somente para
+                    propósito de manutenção do sistema. Pode criar/editar/excluir usuários.
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class='alert' *ngIf="registerResponse" [ngClass]="{
+      'alert-success' : registerSent,
+      'alert-danger' : !registerSent
+     }">
+      {{ registerResponse }}
+    </div>
+    <div class="row align-items-center justify-content-center">
+      <button type="submit" class="btn btn-success" *ngIf='!sendingRegister' [disabled]="!registerForm.valid || sendingRegister">
+        Cadastrar Usuário
+      </button>
+      <span class='fa fa-circle-o-notch fa-spin fa-2x text-secondary' *ngIf='sendingRegister'></span>
+    </div>
+  </form>
+</div>

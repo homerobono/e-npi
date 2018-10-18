@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { UsersService } from '../services/users.service';
-import { AuthService } from '../services/auth.service';
+import { UsersService } from '../../services/users.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { ValidatePasswordMatch } from '../validate-password-match'
-import User from '../models/user.model';
+import { ValidatePasswordMatch } from '../../validate-password-match'
+import User from '../../models/user.model';
 import { Globals } from 'config';
-import { MessageService } from '../services/message.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-profile',
@@ -134,6 +134,7 @@ export class ProfileComponent implements OnInit {
       return
     }
     this.sendingProfile = true;
+    console.log('updating user')
     this.userService.updateUser(this.user._id, profileForm).
     subscribe(res => {
       console.log(res);

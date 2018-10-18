@@ -22,6 +22,11 @@ export class ActivitiesComponent implements OnInit {
         this.npi = npi;
         this.fillFormData()
     }
+
+    @Input() set toggleEdit(edit: Boolean) {
+        this.toggleFields(edit)
+    }
+
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
     @Output() confirmCloseActivity = new EventEmitter<any>()
 
@@ -126,11 +131,12 @@ export class ActivitiesComponent implements OnInit {
             var activityControl = this.fb.group(
                 {
                     _id: activity._id,
+                    activity: activity.activity,
                     dept: activity.dept,
+                    responsible: activity.responsible,
                     term: null,
                     startDate: null,
                     endDate: null,
-                    activity: activity.activity,
                     registry: activity.registry,
                     annex: activity.annex,
                     apply: null,
@@ -149,17 +155,11 @@ export class ActivitiesComponent implements OnInit {
         this.fillFormData()
     }
 
-    validateDateFields(res) {
-        //console.log('date change ', res)
-        for (let i = 0; i < this.activitiesFormArray.controls.length; i++) {
-            let activity = this.activitiesFormArray.controls[i]
-            //console.log(activity.get("activity").value)
-        }
-    }
+    //===================== Form Controls Methods ================================
 
-    updateOwnDateField(term, activityControl) {
+    updateOwnDateField(term, activityControl: AbstractControl) {
         //console.log(term)
-        let startDate = this.getStartDate(this.npi.activities, activityControl.get("activity").value)
+        let startDate = this.getControlActivityStartDate(activityControl)
         if (startDate) {
             let endDate = new Date(startDate.valueOf() + term * DAYS)
             //console.log(startDate)
@@ -171,110 +171,8 @@ export class ActivitiesComponent implements OnInit {
         }
     }
 
-    getStartDate(activities: Array<any>, activityLabel: String): Date {
-        //console.log(activityLabel)
-        let dependencies = this.getDependencyActivities(activities, activityLabel)
-        let startDate = this.npi.getCriticalApprovalDate()
-
-        if (dependencies) {
-            dependencies.forEach(depActivity => {
-                let depEndDate = this.getActivityEndDate(activities, depActivity.activity)
-                //console.log(depEndDate)
-                if (depEndDate)
-                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-                //else console.log('no endDate for ', depActivity)
-            })
-        }
-        return startDate
-    }
-
-    getActivityEndDate(activities: Array<any>, activityLabel: String): Date {
-        let activity = activities.find(a => a.activity == activityLabel)
-        if (activity) {
-            if (activity.endDate) return new Date(Date.parse(activity.endDate))
-            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
-            return new Date(this.getStartDate(activities, activityLabel).valueOf() + activity.term * DAYS)
-        }
-        return null
-    }
-
-    getControlActivityStartDate(activityControl: AbstractControl): Date {
-        let activityLabel = activityControl.get('activity').value
-        //console.log(activityLabel)
-        let dependenciesControls = this.getControlsDependencyActivities(activityLabel)
-        let startDate = this.npi.getCriticalApprovalDate()
-
-        if (dependenciesControls) {
-            dependenciesControls.forEach(depActivity => {
-                let depEndDate = this.getControlActivityEndDate(depActivity)
-                //console.log(depEndDate)
-                if (depEndDate)
-                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-                //else console.log('no endDate for ', depActivity)
-            })
-        }
-        return startDate
-    }
-
-    getControlsDependencyActivities(activityControl: AbstractControl): Array<AbstractControl> {
-        let activityLabel = activityControl.get('activity').value
-        //console.log(activityLabel)
-        let dependencies = []
-        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
-        if (dependenciesLabels) {
-            dependenciesLabels.forEach(dependencyLabel => {
-                var dependencyControl = this.activitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
-                var dependenciesArr = dependencyControl ? [dependencyControl] : []
-                if (dependencyControl && !dependencyControl.get('apply').value) {
-                    dependenciesArr = this.getControlsDependencyActivities(dependencyControl)
-                    //console.log('recursing ', dependencyLabel, dependency)
-                }
-                if (dependenciesArr && dependenciesArr.length) {
-                    dependencies = dependencies.concat(dependenciesArr)
-                }
-            })
-        }
-        return dependencies
-    }
-
-    getControlActivityEndDate(activityControl: AbstractControl): Date {
-        let activityLabel = activityControl.get('activity').value
-        let activity = this.activitiesFormArray.controls.find(a => a.get('activity').value == activityLabel)
-        if (activity) {
-            if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
-            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
-            return new Date(this.getControlActivityStartDate(activity).valueOf() + activity.get('term').value * DAYS)
-        }
-        return null
-    }
-
-
-    getActivity(activities, activityLabel) {
-        return activities.find(act => act.activity == activityLabel)
-    }
-
-    getDependencyActivities(activities: Array<any>, activityLabel: String) {
-        //console.log(activityLabel)
-        let dependencies = []
-        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
-        if (dependenciesLabels) {
-            dependenciesLabels.forEach(dependencyLabel => {
-                var dependency = activities.find(npiAct => npiAct.activity == dependencyLabel)
-                var dependenciesArr = dependency ? [dependency] : []
-                if (dependency && !dependency.apply) {
-                    dependenciesArr = this.getDependencyActivities(activities, dependencyLabel)
-                    //console.log('recursing ', dependencyLabel, dependency)
-                }
-                if (dependenciesArr && dependenciesArr.length) {
-                    dependencies = dependencies.concat(dependenciesArr)
-                }
-            })
-        }
-        return dependencies
-    }
-
     updateTermField(endDate: Date, activityControl: AbstractControl) {
-        let term = Math.floor(endDate.valueOf()/DAYS) - Math.floor(Date.parse(activityControl.get('startDate').value)/DAYS)
+        let term = Math.floor(endDate.valueOf() / DAYS) - Math.floor(Date.parse(activityControl.get('startDate').value) / DAYS)
         activityControl.patchValue({
             term: term
         }, { emitEvent: false })
@@ -307,23 +205,6 @@ export class ActivitiesComponent implements OnInit {
         }
     }
 
-    getControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
-        let activityLabel = activityControl.get('activity').value
-        let deps = []
-        this.utils.getActivities().forEach(act => {
-            if (act.dep && act.dep.includes(activityLabel)) {
-                let activityControl = this.activitiesFormArray.controls
-                    .find(a => a.get('activity').value == act.value)
-                if (activityControl) {
-                    deps.push(activityControl)
-                    if (!activityControl.get('apply').value)
-                        deps = deps.concat(this.getControlsDependentActivities(activityControl))
-                }
-            }
-        })
-        return deps
-    }
-
     updateActivityDates(activityControl: AbstractControl) {
         let greatestDate = this.npi.getCriticalApprovalDate()
         let dependentActivities = this.getControlsDependencyActivities(activityControl)
@@ -353,53 +234,144 @@ export class ActivitiesComponent implements OnInit {
         document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
     }
 
-    getActivityDeadline(activities, activityLabel) {
-        let activityDescriptor = this.utils.getActivity(activityLabel)
-        let previousTerm = 0
-        if (activityDescriptor) {
-            if (activityDescriptor.dep)
-                activityDescriptor.dep.forEach(dep => {
-                    previousTerm = Math.max(previousTerm, this.getActivityDeadline(activities, dep))
-                })
-            let activity = activities.find(a => a.activity == activityLabel)
-            let deadline = previousTerm + (activity && activity.apply ? activity.term as number : 0)
-            //console.log('activity: ' + activityLabel + ' -> ', activity.term, activity.apply, deadline)
-            return deadline
+    getControlActivityStartDate(activityControl: AbstractControl): Date {
+        let activityLabel = activityControl.get('activity').value
+        //console.log(activityLabel)
+        let dependenciesControls = this.getControlsDependencyActivities(activityControl)
+        let startDate = this.npi.getCriticalApprovalDate()
+
+        if (dependenciesControls) {
+            dependenciesControls.forEach(depActivity => {
+                let depEndDate = this.getControlActivityEndDate(depActivity)
+                //console.log(depEndDate)
+                if (depEndDate)
+                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
+                //else console.log('no endDate for ', depActivity)
+            })
         }
-        return 0
+        return startDate
     }
 
-    getDependentActivities(activity): Array<any> {
+    getControlActivityEndDate(activityControl: AbstractControl): Date {
+        let activityLabel = activityControl.get('activity').value
+        let activity = this.activitiesFormArray.controls.find(a => a.get('activity').value == activityLabel)
+        if (activity) {
+            if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
+            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
+            return new Date(this.getControlActivityStartDate(activity).valueOf() + activity.get('term').value * DAYS)
+        }
+        return null
+    }
+
+    getControlsDependencyActivities(activityControl: AbstractControl): Array<AbstractControl> {
+        let activityLabel = activityControl.get('activity').value
+        //console.log(activityLabel)
+        let dependencies = []
+        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
+        if (dependenciesLabels) {
+            dependenciesLabels.forEach(dependencyLabel => {
+                var dependencyControl = this.activitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
+                var dependenciesArr = dependencyControl ? [dependencyControl] : []
+                if (dependencyControl && !dependencyControl.get('apply').value) {
+                    dependenciesArr = this.getControlsDependencyActivities(dependencyControl)
+                    //console.log('recursing ', dependencyLabel, dependency)
+                }
+                if (dependenciesArr && dependenciesArr.length) {
+                    dependencies = dependencies.concat(dependenciesArr)
+                }
+            })
+        }
+        return dependencies
+    }
+
+    getControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
+        let activityLabel = activityControl.get('activity').value
         let deps = []
         this.utils.getActivities().forEach(act => {
-            if (act.dep && act.dep.includes(activity)) {
-                let activityForm = (this.activitiesFormGroup.get('activities') as FormArray)
-                    .controls.find(a => a.value.activity == act)
-                if (activityForm && !activityForm.get('apply').value)
-                    deps.push(this.getDependentActivities(act))
-                else
-                    deps.push(act)
+            if (act.dep && act.dep.includes(activityLabel)) {
+                let activityControl = this.activitiesFormArray.controls
+                    .find(a => a.get('activity').value == act.value)
+                if (activityControl) {
+                    deps.push(activityControl)
+                    if (!activityControl.get('apply').value)
+                        deps = deps.concat(this.getControlsDependentActivities(activityControl))
+                }
             }
         })
         return deps
     }
+    //========================================================================
+
+    //===================== Model functions ================================
+
+    getModelStartDate(activityLabel: String): Date {
+        //console.log(activityLabel)
+        let activities = this.npi.activities
+        let dependencies = this.getModelDependencyActivities(activityLabel)
+        let startDate = this.npi.getCriticalApprovalDate()
+
+        if (dependencies) {
+            dependencies.forEach(depActivity => {
+                let depEndDate = this.getModelActivityEndDate(depActivity.activity)
+                //console.log(depEndDate)
+                if (depEndDate)
+                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
+                //else console.log('no endDate for ', depActivity)
+            })
+        }
+        return startDate
+    }
+
+    getModelActivityEndDate(activityLabel: String): Date {
+        let activities = this.npi.activities
+        let activity = activities.find(a => a.activity == activityLabel)
+        if (activity) {
+            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
+            return new Date(this.getModelStartDate(activityLabel).valueOf() + (activity.term as number) * DAYS)
+        }
+        return null
+    }
+
+    getModelDependencyActivities(activityLabel: String): Array<any> {
+        let activities = this.npi.activities
+        //console.log(activityLabel)
+        let dependencies = []
+        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
+        if (dependenciesLabels) {
+            dependenciesLabels.forEach(dependencyLabel => {
+                var dependency = activities.find(npiAct => npiAct.activity == dependencyLabel)
+                var dependenciesArr = dependency ? [dependency] : []
+                if (dependency && !dependency.apply) {
+                    dependenciesArr = this.getModelDependencyActivities(dependencyLabel)
+                    //console.log('recursing ', dependencyLabel, dependency)
+                }
+                if (dependenciesArr && dependenciesArr.length) {
+                    dependencies = dependencies.concat(dependenciesArr)
+                }
+            })
+        }
+        return dependencies
+    }
+
+    //========================================================================
 
     fillFormData() {
         console.log('filling form');
         this.activitiesFormArray.controls.forEach(activityControl => {
             var activity = this.getActivityRow(activityControl.get('_id').value)
-            //console.log (activity)
+            // console.log (activity)
             activityControl.patchValue(
                 {
                     //_id: activity._id,
+                    responsible: activity.responsible,
                     term: activity.term,
-                    apply: activity.apply,
-                    startDate: this.getStartDate(this.npi.activities, activity.activity),
-                    endDate: this.getActivityEndDate(this.npi.activities, activity.activity),
+                    startDate: this.getModelStartDate(activity.activity),
+                    endDate: this.getModelActivityEndDate(activity.activity),
                     activity: activity.activity,
                     registry: activity.registry,
                     annex: activity.annex,
-                    signature: activity.signature
+                    signature: activity.signature,
+                    apply: activity.apply
                 }
             )
 
@@ -434,6 +406,28 @@ export class ActivitiesComponent implements OnInit {
         //if (!this.npi[field].annex || !this.npi[field].annex.length)
         //this.npiComponent.openUploadModal(field)
         this.npiComponent.openFileManager(field)
+    }
+
+    toggleFields(edit: Boolean) {
+        this.activitiesFormArray.controls.forEach(control => {
+            if (edit) {
+                if (this.canChangeActivity(control)) control.enable()
+            } else control.disable()
+        })
+    }
+
+    canChangeActivity(activity: AbstractControl): Boolean {
+        let user = this.npiComponent.user
+        return user.level > 1 ||
+            (user.level == 1 && (
+                user.department == activity.get('dept').value ||
+                user.department == 'MPR'
+                )
+            )
+    }
+
+    amIResponsible(activity: AbstractControl): Boolean {
+        return this.npiComponent.user._id == activity.get('responsible').value
     }
 
     closeAllActivities() {

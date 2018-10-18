@@ -18,6 +18,16 @@ export class PixelComponent implements OnInit {
     this.npi = npi;
     this.fillFormData()
   }
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.amITheOwner() &&
+      (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
+        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval() )
+      ))) {
+      this.npiForm.enable()
+      this.npiForm.updateValueAndValidity()
+    }
+    else this.npiForm.disable()
+  }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   npiForm: FormGroup;
@@ -88,13 +98,17 @@ export class PixelComponent implements OnInit {
     this.fillFormData()
     console.log(this.npiForm.value)
 
-    if (this.npi.isCriticallyAnalised() ||
+    if (this.npi.isCriticallyTouched() ||
       !this.npiComponent.editFlag)
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
       () => this.fillFormData()
     )
+  }
+
+  amITheOwner(): Boolean {
+    return this.npi.requester._id == this.npiComponent.user._id
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {

@@ -1,6 +1,6 @@
 <div [formGroup]='npiForm'>
   <div class="form-row">
-    <div class="form-group col-xs-6 col-sm col-md col-lg-auto">
+    <div class="form-group col-xs-12 col-md-4">
       <label for="npiref">NPI Ref.</label>
       <div class="input-group mb-2">
         <div class="input-group-prepend">
@@ -20,24 +20,13 @@
             </small>
           </span>
           <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend" (click)='npiComponent.openNpiChooserModal()'
-            [disabled]='npiComponent.npiForm.disabled'>
+            [disabled]='npiForm.disabled'>
             <span class="fa npi-search-icon fa-sm"></span>
           </button>
         </div>
         <div class='invalid-feedback'>
           Defina a Npi de referência
         </div>
-      </div>
-    </div>
-    <div class="form-group col-sm-4 col-md-3 col-lg-2 mb-4">
-      <label for="complexity">Complexidade</label>
-      <select class="custom-select" id="complexity" placeholder="Complexidade" formControlName='complexity' [ngClass]='{"is-invalid": fieldHasErrors("complexity")}'>
-        <option value=3> Alta </option>
-        <option value=2> Média </option>
-        <option value=1> Baixa </option>
-      </select>
-      <div class='invalid-feedback'>
-        Defina a complexidade do projeto
       </div>
     </div>
 

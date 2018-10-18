@@ -13,6 +13,23 @@
   z-index: 200;
 }
 
+body {
+    background: url('./assets/gray_noise.jpg');
+    background-attachment: fixed;
+    padding-bottom: 60px
+}
+
+app-create .container,
+app-register .container,
+app-npi .container, 
+app-users .container,
+app-user .container,
+app-profile .container,
+app-home .container, {
+    background: white;
+    padding: 40px
+}
+
 .body-login {
     background: url('./assets/gray_noise.jpg');
     background-attachment: fixed;
@@ -43,11 +60,6 @@
 
 .nomargin {
     margin: 0;
-}
-
-.btn {
-    box-shadow: 0 1px 10px #999;
-    padding-bottom: 4px;
 }
 
 .btn-orange {

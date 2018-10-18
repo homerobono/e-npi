@@ -4,9 +4,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { NavbarComponent } from '../navbar/navbar.component';
-import { AuthService } from '../services/auth.service'
-import { ValidatePasswordMatch } from '../validate-password-match'
+import { AuthService } from '../../services/auth.service'
+import { ValidatePasswordMatch } from '../../validate-password-match'
 
 @Component({
   selector: 'app-reset',
