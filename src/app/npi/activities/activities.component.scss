@@ -4,6 +4,19 @@
 }
 
 .release-date {
+    position: fixed;
+    width: 100%;
+    padding: 16px 80px;
+    left: 0;
+    bottom: 0;
+    box-shadow: 0 5px 20px #111;
+    color: white;
+    background: orange;
+    text-align: center;
+    vertical-align: middle
+}
+
+.release-date-bak {
     position: sticky;
     width : auto;
     bottom: 32px;

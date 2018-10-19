@@ -23,7 +23,9 @@ export const slideInOutTopAnimation =
 
 export const slideInOutBottomAnimation =
     trigger('slideInOutBottomAnimation', [
-        transition(':enter', [
+        state('hidden', style({display:'none'})),
+        state('show', style({display:'block'})),
+        transition('hidden => show', [
             style(
                 { transform: 'translateY(200%)' }
             ),
@@ -32,7 +34,7 @@ export const slideInOutBottomAnimation =
                 style({ transform: 'translateY(0%)' })
             )
         ]),
-        transition(':leave', [
+        transition('show => hidden', [
             animate(
                 '200ms ease-in-out',
                 style({ transform: 'translateY(200%)' })

@@ -1,19 +1,13 @@
-<div class="form-row" [formGroup]='activitiesFormGroup'>
+<div class="form-row">
   <div class='col'>
     <label for='activities' class=col>
       <center>
         <h4>Etapas Macro do Projeto</h4>
       </center>
     </label>
-
-    <div *ngIf='npi.stage == 2 && npi.isApproved() && !npiComponent.canChangeActivities' class='text-center'>
-      <i class='small text-secondary'>
-        Aguardando definição das atividades aplicáveis ao projeto pelo MPR (Produto).</i>
-    </div>
-
-    <div id='activities' formArrayName='activities' *ngIf='npi.stage >= 4 || (npi.activities?.length && npiComponent.canChangeActivities)'>
+    <div id='activities' class='table-responsive' [formGroup]='activitiesFormGroup'>
       <table class="table table-sm table-bordered table-hover" #table>
-        <thead class='thead-light'>
+        <thead class='thead-light' id='tableHead'>
           <tr>
             <th scope="col" rowspan=2>#</th>
             <th scope="col" rowspan=2>Atividade</th>
@@ -21,7 +15,7 @@
             <th scope="col" colspan=3>Prazo</th>
             <th scope="col" rowspan=2 *ngIf='npi.stage>=4'>Arquivos</th>
             <th scope="col" rowspan=1 *ngIf='npi.stage>=4'>Status</th>
-            <th scope="col" rowspan=2 *ngIf='npi.stage==2 && npiComponent.canChangeActivities'>Aplicável</th>
+            <th scope="col" rowspan=1 *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>Aplicável</th>
           </tr>
           <tr>
             <th scope=col>Período (dias)</th>
@@ -33,12 +27,19 @@
                 <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
               </button>
             </th>
+            <th *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>
+              <div class='custom-control custom-checkbox'>
+                <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input' id='toggle-apply-all'
+                  style='font-size:30pt' [disabled]='!npiComponent.editFlag' checked=true>
+                <label for='toggle-apply-all' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
+              </div>
+            </th>
           </tr>
         </thead>
-        <tbody #tableBody id='tableBody'>
+        <tbody #tableBody id='tableBody' formArrayName='activities'>
           <tr *ngFor='let activity of activitiesFormArray.controls; let last = last; index as i;' [formGroupName]='i'
             [appActivityRow]='activity' [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"'
-            [disabled]='activity.get("closed").value' [style.display]='activity.get("apply").value || npiComponent.editFlag ? "table-row": "none"'>
+            [disabled]='activity.get("closed").value' [style.display]='displayActivityRow(activity)'>
             <td>
               {{ i }}
             </td>
@@ -87,7 +88,7 @@
                 {{ signatures[i] }}
               </span>
             </td>
-            <td *ngIf='npi.stage==2 && npiComponent.canChangeActivities'>
+            <td *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>
               <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.get("activity").value).required'>
                 <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
                 <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
@@ -105,4 +106,8 @@
     </div>
     <div style='height: 70px'></div-->
   </div>
+</div>
+<div [appInStockDate] class='release-date' #releaseDateDiv [@slideInOutBottomAnimation]='releaseDateDiv.getAttribute("state")'>
+  <div class='d-inline mb-0 mr-5'><b>Data de Lançamento: </b> <span style='font-size: 20px'> {{ releaseDate?.toLocaleDateString("pt-br") }}</span></div>
+  <div class='d-inline mb-0 text-dark'><b>Data em Estoque: </b> <span style='font-size: 20px'> {{ npi.inStockDate?.toLocaleDateString("pt-br") }}</span></div>
 </div>

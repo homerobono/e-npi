@@ -8,16 +8,16 @@
         data-toggle="tooltip" data-placement="top" title="Desfazer alterações">
         <i class='fa fa-undo fa-fw'></i>
       </button>
-      <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='(user.level > 1 || amITheOwner()) && npi.stage == 2'
+      <!--button (click)='cancelNpi()' class='btn btn-danger' *ngIf='(user.level > 1 || amITheOwner()) && npi.stage == 2'
         data-toggle="tooltip" data-placement="top" title="Cancelar NPI">
         <i class='fa fa-times fa-fw'></i>
-      </button>
-      <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage < 2 && editFlag && amITheOwner()' data-toggle="tooltip"
-        data-placement="top" title="Remover NPI">
+      </button-->
+      <button (click)='cancelNpi()' class='btn btn-danger' *ngIf='npi.stage == 1 && editFlag && amITheOwner()'
+        data-toggle="tooltip" data-placement="top" title="Remover NPI">
         <i class='fa fa-trash fa-fw'></i>
       </button>
-      <button (click)="toggleEdit()" class='btn btn-info' *ngIf='!editFlag && npi.stage < 5 && (amITheOwner() || user.level > 0)'
-        data-toggle="tooltip" data-placement="top" title="Editar NPI">
+      <button (click)="toggleEdit()" class='btn btn-info' *ngIf='!editFlag && canIEdit()' data-toggle="tooltip"
+        data-placement="top" title="Editar NPI">
         <i class='fa fa-pencil fa-fw'></i>
       </button>
       <button (click)="toggleEdit()" class='btn btn-secondary' *ngIf='editFlag' data-toggle="tooltip" data-placement="top"
@@ -32,16 +32,15 @@
         data-toggle="tooltip" data-placement="top" title="Salvar alterações">
         <i class='fa fa-save fa-fw'></i>
       </button>
-      <button (click)='promoteNpi(npiForm.value)' class='btn btn-warning text-light'  *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'
+      <button (click)='promoteNpi(npiForm.value)' class='btn btn-warning text-light' *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'
         data-toggle="tooltip" data-placement="top" title="Concluir Análise Crítica">
         <i class='fa fa-check-circle-o fa-fw'></i>
       </button>
-      <button (click)='promoteNpi(npiForm.value)' class='btn btn-primary'  *ngIf='npi.stage == 2 && !newFormVersionFlag && npi.isApproved()'
-        data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento">
-        <i class='fa fa-check fa-fw'></i>
+      <button (click)='promoteNpi(npiForm.value)' class='btn btn-primary' *ngIf='editFlag && npi.stage == 2 && !newFormVersionFlag && npi.isApproved()'
+        data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento" [disabled]='isReleaseEstimateDelayed'>
+        <i class='fa fa-arrow-right fa-fw'></i>
       </button>
-      <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='editFlag && npi.stage == 4 && 
-                  (npiForm.get("validation")!=null && npiForm.get("validation").valid)'
+      <button (click)='finalizeNpi()' class='btn btn-primary text-white' *ngIf='editFlag && npi.stage == 4 && (npiForm.get("validation")!=null && npiForm.get("validation").valid)'
         data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
         <i class='fa fa-check fa-fw'></i>
       </button>
@@ -161,10 +160,16 @@
 
     <app-client [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'></app-client>
 
-    <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeActivity()' (npiFormOutput)='setChild($event)'
-      *ngIf='npi.isApproved()'></app-activities>
+    <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (isReleaseEstimateDelayed)='setReleaseEstimateDalayedStatus($event)'
+      (confirmCloseActivity)='closeActivity()' (npiFormOutput)='setChild($event)' *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && canIChangeActivities))'>
+    </app-activities>
+    <div *ngIf='npi.stage == 2 && npi.isApproved() && !canIChangeActivities' class='text-center'>
+      <h4>Etapas Macro do Projeto</h4>
+      <i class='text-secondary'>
+        Aguardando definição das atividades pelo MPR (Produto).</i>
+    </div>
 
-    <app-validate [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage > 3 && npi.isComplete()'></app-validate>
+    <app-validate [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
 
     <!--div class="row align-items-center justify-content-between" *ngIf='editFlag'>
       <div class='col-auto text-secondary'>
@@ -176,11 +181,11 @@
     </div-->
     <div class="row align-items-center" *ngIf='editFlag'>
       <div class='col'>
-        <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' 
-        *ngIf='(user.level > 1 || amITheOwner()) && npi.stage == 2'>
+        <!--button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' 
+        *ngIf='amITheOwner() && npi.stage == 1'>
           <span class='fa fa-times-circle'></span>
           Cancelar NPI
-        </button>
+        </button-->
         <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
           *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
           <span class='fa fa-trash'></span>
@@ -202,7 +207,8 @@
           <i class='fa fa-check-circle-o fa-fw'></i>
           Concluir Análise Crítica
         </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && npi.isApproved()'>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && npi.isApproved()'
+          [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-arrow-right fa-fw'></i>
           Avançar para Desenvolvimento
         </button>

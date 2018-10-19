@@ -59,7 +59,8 @@ export class NpiComponent implements OnInit {
   npi: Npi
 
   lastModifiedDifference: String
-  canChangeActivities: Boolean
+  canIChangeActivities: Boolean
+  isReleaseEstimateDelayed: Boolean
 
   npiNumber: Number
   npiVersions: Npi[]
@@ -165,7 +166,7 @@ export class NpiComponent implements OnInit {
     )
     this.localeService.use('pt-br');
 
-    this.canChangeActivities = (typeof this.npi.activities != undefined) &&
+    this.canIChangeActivities = (typeof this.npi.activities != undefined) &&
       (this.user.level > 1 || (this.user.level == 1 && this.user.department == "MPR"))
 
     this.route.params.subscribe(
@@ -330,7 +331,8 @@ export class NpiComponent implements OnInit {
   }
 
   toggleEdit() {
-    this.editFlag = !this.editFlag
+    if (this.canIEdit())
+      this.editFlag = !this.editFlag
   }
 
   toggleTitleEdit(event) {
@@ -465,7 +467,7 @@ export class NpiComponent implements OnInit {
 
   isFinalApproval() {
     if (this.npi.stage == 2 && this.npiForm.getRawValue().critical)
-    return this.npiForm.getRawValue().critical.every(analysis => analysis.status == 'accept')
+      return this.npiForm.getRawValue().critical.every(analysis => analysis.status == 'accept')
     return false
   }
 
@@ -497,11 +499,53 @@ export class NpiComponent implements OnInit {
     })
   }
 
+  canIEdit() {
+    return this.npi.stage < 5 && (
+      // Usuário Básico (padrão)
+      (this.user.level == 0 && (
+        (this.amITheOwner() && (this.npi.stage == 1 ||
+          (this.npi.stage == 2 && !this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())) ||
+          (this.npi.stage == 4 && this.npi.isComplete()))
+        ) ||
+        (this.npi.stage == 4 && this.iHavePendingTask())
+      ))
+      || // Usuário Gestor
+      (this.user.level == 1 && (
+        (this.npi.stage == 2 && !this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
+        (this.npi.stage == 3 && this.user.department == "COM" && this.user.level == 1) ||
+        (this.npi.stage == 4 &&
+          (!this.npi.isComplete() && this.iHavePendingTask()) ||
+          (this.npi.isComplete() && (this.user.department == "MEP" || this.amITheOwner()))
+        )
+      ))
+      || // Usuário Master
+      this.user.level == 2
+    )
+  }
+
+  amICriticalAnalyser() {
+    return this.npi.critical.some(
+      analysis => analysis.dept == this.user.department && this.user.level == 1
+    )
+  }
+
+  iHavePendingTask() {
+    this.user.level == 2 || this.npi.activities.some(activity =>
+      !activity.closed && // em aberto
+      (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+        this.user.department == activity.dept && this.user.level >= 1)
+      )
+    )
+  }
 
   amITheOwner(): Boolean {
     if (this.npi.requester && this.user)
-    return this.npi.requester._id == this.user._id
+      return this.npi.requester._id == this.user._id
     return false
+  }
+
+  setReleaseEstimateDalayedStatus(status) {
+    this.isReleaseEstimateDelayed = status
   }
 
   ngOnDestroy() {

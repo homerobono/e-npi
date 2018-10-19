@@ -12,6 +12,17 @@ import { NpiComponent } from '../npi.component';
 export class ValidateComponent implements OnInit {
 
   @Input() npi: Npi
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit) {
+      if (this.npiComponent.amITheOwner()) {
+        this.validateForm.get('validation').get('final').enable()
+      }
+      if (this.npiComponent.user.level > 1) {
+        this.validateForm.get('validation').enable()
+      }
+    }
+  }
+
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   validateForm: FormGroup
@@ -24,10 +35,10 @@ export class ValidateComponent implements OnInit {
     private npiComponent: NpiComponent
   ) {
     this.validateForm = fb.group({
-      'validation': fb.group({
-        'pilot': ['Aprovação Piloto', Validators.required],
-        'product': ['Aprovação Produto', Validators.required],
-        'final': ['Parecer Final', Validators.required],
+      validation: fb.group({
+        pilot: ['Aprovação Piloto', Validators.required],
+        product: ['Aprovação Produto', Validators.required],
+        final: ['Parecer Final', Validators.required],
       })
     })
   }
@@ -69,10 +80,10 @@ export class ValidateComponent implements OnInit {
   fieldHasErrors(field) {
     this.validateForm.updateValueAndValidity()
     return (this.validateForm.get("validation") as FormGroup)
-    .controls[field].hasError('required')
+      .controls[field].hasError('required')
   }
 
-  finalizeNpi(){
+  finalizeNpi() {
     this.npiComponent.finalizeNpi()
   }
 

@@ -8,12 +8,16 @@ import User from '../../models/user.model';
 import { UsersService } from '../../services/users.service';
 import Npi from '../../models/npi.model';
 
+import { slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation } from '../../_animations/slide_in_out.animation'
+
+
 const DAYS = 24 * 3600 * 1000
 
 @Component({
     selector: 'app-activities',
     templateUrl: './activities.component.html',
-    styleUrls: ['./activities.component.scss']
+    styleUrls: ['./activities.component.scss'],
+    animations: [slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation],
 })
 export class ActivitiesComponent implements OnInit {
 
@@ -29,6 +33,7 @@ export class ActivitiesComponent implements OnInit {
 
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
     @Output() confirmCloseActivity = new EventEmitter<any>()
+    @Output() isReleaseEstimateDelayed = new EventEmitter<Boolean>()
 
     activitiesFormGroup: FormGroup
     activitiesFormArray: FormArray
@@ -37,6 +42,7 @@ export class ActivitiesComponent implements OnInit {
     isFormEnabled: Boolean
     datePickerConfig: Array<Partial<BsDatepickerConfig>>;
 
+    releaseDate: Date
     users: any = {}
 
     constructor(
@@ -84,6 +90,7 @@ export class ActivitiesComponent implements OnInit {
         this.subscribeToInputChanges()
 
         this.npiFormOutput.emit(this.activitiesFormGroup)
+        this.updateReleaseDate()
 
         //let dateRect = document.getElementById('endDate').getBoundingClientRect()
         //console.log(this.activitiesFormArray.value)
@@ -106,6 +113,11 @@ export class ActivitiesComponent implements OnInit {
             activityControl.get('apply').valueChanges.subscribe(
                 apply => this.updateDateFields(activityControl))
 
+            if (this.utils.getActivity('RELEASE').dep.includes(activityControl.get('activity').value)) {
+                activityControl.get('endDate').valueChanges.subscribe(
+                    endDate => this.updateReleaseDate()
+                )
+            }
         })
     }
 
@@ -232,6 +244,13 @@ export class ActivitiesComponent implements OnInit {
 
         document.getElementById(activityControl.get('activity').value + "_START_DATE").dispatchEvent(new Event('valueChanges'))
         document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
+
+        //Calculate if release date is dalayed
+        if (this.utils.getActivity('RELEASE').dep.includes(activityControl.get('activity').value)) {
+            //console.log(activityControl.get('activity').value)
+            document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
+            //this.updateDelayedStatus()
+        }
     }
 
     getControlActivityStartDate(activityControl: AbstractControl): Date {
@@ -396,6 +415,25 @@ export class ActivitiesComponent implements OnInit {
         this.npiFormOutput.emit(this.activitiesFormGroup)
     }
 
+    updateReleaseDate() { 
+        let releaseDate = new Date(null)
+        //console.log(releaseDate)
+        let releaseDependents = this.utils.getActivity('RELEASE').dep
+        releaseDependents.forEach(depLabel => {
+            let depControl = this.activitiesFormArray.controls.find(a => a.get('activity').value == depLabel)
+            let depEndDate = new Date(this.getControlActivityStartDate(depControl).valueOf() + (depControl.get('apply').value ? depControl.get('term').value : 0) * DAYS)
+            //            console.log(depLabel, depEndDate, this.npi.inStockDate)
+            releaseDate = new Date(Math.max(releaseDate.valueOf(), depEndDate.valueOf()))
+        })
+        this.releaseDate = releaseDate
+        this.updateDelayedStatus()
+    }
+
+    updateDelayedStatus() {
+        let isDelayed : Boolean = this.releaseDate.valueOf() > this.npi.inStockDate.valueOf()
+        this.isReleaseEstimateDelayed.emit(isDelayed)
+    }
+
     fieldHasErrors(field) {
         let fieldsArr = field.split(".")
         return (this.activitiesFormArray.get(fieldsArr[0]) as FormGroup)
@@ -411,8 +449,20 @@ export class ActivitiesComponent implements OnInit {
     toggleFields(edit: Boolean) {
         this.activitiesFormArray.controls.forEach(control => {
             if (edit) {
-                if (this.canChangeActivity(control)) control.enable()
-            } else control.disable()
+                if (this.canChangeActivity(control)) control.enable({ emitEvent: false })
+            } else control.disable({ emitEvent: false })
+        })
+    }
+
+    toggleApplyAll(event) {
+        //console.log(event.target.checked)
+        let status = event.target.checked
+        this.activitiesFormArray.controls.forEach(control => {
+            let actLabel = control.get('activity').value
+            if (!this.utils.getActivity(actLabel).required)
+                control.patchValue({
+                    apply: status
+                })
         })
     }
 
@@ -422,7 +472,7 @@ export class ActivitiesComponent implements OnInit {
             (user.level == 1 && (
                 user.department == activity.get('dept').value ||
                 user.department == 'MPR'
-                )
+            )
             )
     }
 
@@ -455,6 +505,12 @@ export class ActivitiesComponent implements OnInit {
             closed: true
         })
         this.confirmCloseActivity.emit()
+    }
+
+    displayActivityRow(activity: AbstractControl) {
+        if (activity.get("apply").value || (this.npi.stage == 2 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
+            return "table-row"
+        return "none"
     }
 
     loadSignatures() {

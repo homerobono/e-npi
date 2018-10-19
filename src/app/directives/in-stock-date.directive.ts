@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Renderer2, SimpleChanges, Input } from '@angular/core';
+import { Directive, ElementRef, Renderer2, SimpleChanges, Input, HostListener } from '@angular/core';
 
 @Directive({
   selector: '[appInStockDate]'
@@ -6,17 +6,26 @@ import { Directive, ElementRef, Renderer2, SimpleChanges, Input } from '@angular
 export class InStockDateDirective {
 
   @Input() public appInStockDate
+  public state = 'hidden'
 
-  constructor(private el: ElementRef, private renderer: Renderer2) { }
-
-  ngOnChanges(changes: SimpleChanges) {
-    let dateFieldElement = document.getElementById('tableBody').lastElementChild.children[5] as HTMLElement
-    let left = dateFieldElement.offsetLeft + 5 + dateFieldElement.clientWidth + 2 + 'px'
-    let width = dateFieldElement.clientWidth - 9 + 'px'
-
-    this.renderer.setStyle(this.el.nativeElement, 'left', left)
-    this.renderer.setStyle(this.el.nativeElement, 'width', width)
-    //let dateField = document.getElementsByTagName('input').item(0)
+  @HostListener("window:scroll", [])
+  onWindowScroll() {
+    //console.log((this.appInStockDate as HTMLElement).attributes)
+    let table = document.getElementById('tableHead')
+    let tableY = table.getBoundingClientRect().top - window.innerHeight
+    if (window.pageYOffset < table.getBoundingClientRect().top + 600){
+      //this.renderer.setStyle(this.el.nativeElement, 'display', 'none')
+      this.state = 'hidden';
+      (this.el.nativeElement as HTMLElement).setAttribute('state', 'hidden')
+    }
+    else{
+      //this.renderer.setStyle(this.el.nativeElement, 'display', 'block');
+      this.state = 'show';
+      (this.el.nativeElement as HTMLElement).setAttribute('state', 'show')
+    }
   }
 
+  constructor(private el: ElementRef, private renderer: Renderer2) { 
+    (this.el.nativeElement as HTMLElement).setAttribute('state', 'hidden')
+  }
 }
