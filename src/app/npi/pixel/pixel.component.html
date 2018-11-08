@@ -57,7 +57,7 @@
         <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
         </textarea>
         <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openFileAction("resources")'
+          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="resourcesAppend" (click)='openFileAction("resources")'
             [ngClass]='{"text-primary":npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
@@ -74,7 +74,7 @@
         <textarea class="form-control" rows=3 formControlName='description' id='normsDescription' [ngClass]='{"is-invalid": fieldHasErrors("norms")}'>
           </textarea>
         <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openFileAction("norms")'
+          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="normsAppend" (click)='openFileAction("norms")'
             [ngClass]='{"text-primary":npi.norms.annex?.length, "border-danger": fieldHasErrors("norms.annex") && !npi.norms.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.norms.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.norms.annex?.length? "append-icon":"upload-icon"'></i>
@@ -89,7 +89,7 @@
       <label for="regulations">Homologações/Regulamentações</label>
       <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
         <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard' *ngFor='let reg of objectkeys(npi.regulations.standard)'>
-          <input type="checkbox" class="custom-control-input" id="{{ reg }}" formControlName='{{ reg }}'>
+          <input type="checkbox" class="custom-control-input" style='z-index: 0' id="{{ reg }}" formControlName='{{ reg }}'>
           <label class="custom-control-label" for="{{ reg }}">{{ utils.getRegulation(reg).label }}</label>
         </div>
         <!--div class="custom-control custom-checkbox custom-control-inline">
@@ -192,7 +192,7 @@
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' placeholder='00,00'
           aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openFileAction("investment")'
+          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="investmentAppend" (click)='openFileAction("investment")'
             [ngClass]='{"text-primary":npi.investment.annex?.length, "border-danger": fieldHasErrors("investment.annex") && !npi.investment.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.investment.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.investment.annex?.length? "append-icon":"upload-icon"'></i>
@@ -215,7 +215,7 @@
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value' placeholder='00,00'
           aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" id="projectCostAppend" (click)='openFileAction("projectCost")'
+          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="projectCostAppend" (click)='openFileAction("projectCost")'
             [ngClass]='{"text-primary":npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost.annex") && !npi.projectCost.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.projectCost.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.projectCost.annex?.length? "append-icon":"upload-icon"'></i>

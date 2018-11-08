@@ -48,8 +48,10 @@ import { SendingFormModalComponent } from './npi/sending-form-modal/sending-form
 import { UploaderComponent } from './file-manager/uploader/uploader.component';
 import { UploadService } from './services/upload.service';
 import { BlinkDirective } from './directives/blink.directive';
-import { ActivityRowDirective } from './directives/app-activity-row.directive';
-import { InStockDateDirective } from './directives/in-stock-date.directive';
+import { ActivityRowDirective } from './directives/activity-row.directive';
+import { InStockDateComponent } from './npi/activities/in-stock-date/in-stock-date.component';
+import { ToolbarComponent } from './npi/toolbar/toolbar.component';
+import { ForbiddenComponent } from './user/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +66,7 @@ import { InStockDateDirective } from './directives/in-stock-date.directive';
     HomeComponent,
     ErrorComponent,
     ForgotComponent,
+    ForbiddenComponent,
     UserComponent,
     NavButtonsComponent,
     CreateComponent,
@@ -78,10 +81,11 @@ import { InStockDateDirective } from './directives/in-stock-date.directive';
     NpiChooserModalComponent,
     ValidateComponent,
     ClientComponent,
+    InStockDateComponent,
     SendingFormModalComponent,
+    ToolbarComponent,
     BlinkDirective,
     ActivityRowDirective,
-    InStockDateDirective
   ],
   imports: [
     BrowserModule,

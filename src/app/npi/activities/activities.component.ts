@@ -8,20 +8,17 @@ import User from '../../models/user.model';
 import { UsersService } from '../../services/users.service';
 import Npi from '../../models/npi.model';
 
-import { slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation } from '../../_animations/slide_in_out.animation'
-
-
 const DAYS = 24 * 3600 * 1000
 
 @Component({
     selector: 'app-activities',
     templateUrl: './activities.component.html',
     styleUrls: ['./activities.component.scss'],
-    animations: [slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation],
 })
 export class ActivitiesComponent implements OnInit {
 
     npi: Npi
+    editFlag: Boolean
     @Input() set npiSetter(npi: Npi) {
         this.npi = npi;
         this.fillFormData()
@@ -29,6 +26,8 @@ export class ActivitiesComponent implements OnInit {
 
     @Input() set toggleEdit(edit: Boolean) {
         this.toggleFields(edit)
+        this.isFormEnabled = edit
+        this.editFlag = edit
     }
 
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
@@ -61,7 +60,7 @@ export class ActivitiesComponent implements OnInit {
 
     ngOnInit() {
 
-        this.isFormEnabled =
+        this.editFlag = this.isFormEnabled =
             !this.route.snapshot.data['readOnly'] &&
             this.npi.stage == 3
 
@@ -391,7 +390,7 @@ export class ActivitiesComponent implements OnInit {
                     annex: activity.annex,
                     signature: activity.signature,
                     apply: activity.apply
-                }
+                }, { emitEvent: false }
             )
 
             let indexOfActivity = this.activitiesFormArray.controls.indexOf(activityControl)
@@ -402,7 +401,7 @@ export class ActivitiesComponent implements OnInit {
                         minDate: activityControl.get('startDate').value
                     })
 
-        }, { emitEvent: false });
+        });
         this.loadSignatures()
     }
 
@@ -415,7 +414,7 @@ export class ActivitiesComponent implements OnInit {
         this.npiFormOutput.emit(this.activitiesFormGroup)
     }
 
-    updateReleaseDate() { 
+    updateReleaseDate() {
         let releaseDate = new Date(null)
         //console.log(releaseDate)
         let releaseDependents = this.utils.getActivity('RELEASE').dep
@@ -426,24 +425,18 @@ export class ActivitiesComponent implements OnInit {
             releaseDate = new Date(Math.max(releaseDate.valueOf(), depEndDate.valueOf()))
         })
         this.releaseDate = releaseDate
-        this.updateDelayedStatus()
+        //this.updateDelayedStatus()
     }
 
-    updateDelayedStatus() {
-        let isDelayed : Boolean = this.releaseDate.valueOf() > this.npi.inStockDate.valueOf()
-        this.isReleaseEstimateDelayed.emit(isDelayed)
+    setDelayedStatus(status) {
+        console.log(status)
+        this.isReleaseEstimateDelayed.emit(status)
     }
 
     fieldHasErrors(field) {
         let fieldsArr = field.split(".")
         return (this.activitiesFormArray.get(fieldsArr[0]) as FormGroup)
             .get(fieldsArr[1]).hasError('required')
-    }
-
-    openFileAction(field) {
-        //if (!this.npi[field].annex || !this.npi[field].annex.length)
-        //this.npiComponent.openUploadModal(field)
-        this.npiComponent.openFileManager(field)
     }
 
     toggleFields(edit: Boolean) {
@@ -471,7 +464,7 @@ export class ActivitiesComponent implements OnInit {
         return user.level > 1 ||
             (user.level == 1 && (
                 user.department == activity.get('dept').value ||
-                user.department == 'MPR'
+                (user.department == 'MPR' && this.npi.stage == 2)
             )
             )
     }
@@ -504,7 +497,7 @@ export class ActivitiesComponent implements OnInit {
             endDate: new Date(),
             closed: true
         })
-        this.confirmCloseActivity.emit()
+        this.confirmCloseActivity.emit(activityControl)
     }
 
     displayActivityRow(activity: AbstractControl) {

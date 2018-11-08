@@ -172,17 +172,12 @@ export class PixelComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    let propsArr = field.split(".")
-    let control = this.npiForm.get(propsArr[0])
-    for (let i = 1; i < propsArr.length; i++) {
-      control = control.get(propsArr[i])
-    }
-    return control.hasError('required')
+    return this.npiComponent.invalidFields.find(f => f == field)
   }
 
   openFileAction(field) {
     if (!this.npi[field].annex || !this.npi[field].annex.length)
-      this.npiComponent.openUploadModal(field)
+      this.npiComponent.openFileUploader(field)
     else this.npiComponent.openFileManager(field)
   }
 

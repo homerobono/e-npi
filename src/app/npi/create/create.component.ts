@@ -73,9 +73,9 @@ export class CreateComponent implements OnInit {
         private router: Router,
         private messenger: MessageService,
         private localeService: BsLocaleService,
-        private utils: UtilService,
+        public utils: UtilService,
         private modalService: BsModalService,
-        private uploadService: UploadService
+        public uploadService: UploadService
     ) {
         this.datePickerConfig = Object.assign(
             {},

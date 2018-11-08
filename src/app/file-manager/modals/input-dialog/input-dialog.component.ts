@@ -15,7 +15,7 @@ export class InputDialogComponent implements OnInit {
   element: FileElement
   actionLabel: String
 
-  constructor(private modalRef: BsModalRef) {
+  constructor(public modalRef: BsModalRef) {
     this.onConfirm = new Subject()
     this.actionLabel = 'Digite um nome:'
   }

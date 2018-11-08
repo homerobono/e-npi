@@ -1,8 +1,8 @@
-import { AppActivityRowDirective } from './directives/app-activity-row.directive';
+import { ActivityRowDirective } from './directives/activity-row.directive';
 
-describe('AppActivityRowDirective', () => {
+describe('ActivityRowDirective', () => {
   it('should create an instance', () => {
-    const directive = new AppActivityRowDirective();
+    const directive = new ActivityRowDirective();
     expect(directive).toBeTruthy();
   });
 });

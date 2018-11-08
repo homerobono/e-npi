@@ -18,7 +18,7 @@ export class PreviewComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
     private fileService: FileService,
-    private modalRef: BsModalRef
+    public modalRef: BsModalRef
   ) { }
 
   ngOnInit() {

@@ -58,6 +58,8 @@ export class NpiComponent implements OnInit {
   npisList: Npi[]
   npi: Npi
 
+  invalidFields: Array<any> = []
+
   lastModifiedDifference: String
   canIChangeActivities: Boolean
   isReleaseEstimateDelayed: Boolean
@@ -227,9 +229,16 @@ export class NpiComponent implements OnInit {
     npiForm.entry = this.npi.entry
 
     for (let field in this.uploadService.uploaders) {
-      console.log(this.uploadService.uploaders[field].queue)
-      if (!npiForm[field].annex) npiForm[field].annex = []
-      npiForm[field].annex = npiForm[field].annex.concat(
+      console.log(field, this.uploadService.uploaders[field].queue)
+      let propsArr = field.split(".")
+      let subfield = npiForm[propsArr[0]]
+      console.log(subfield)
+      if (propsArr.length > 1)
+        subfield = subfield.find(act => act.activity == propsArr[1])
+      console.log(subfield)
+      if (!subfield.annex)
+        subfield.annex = []
+      subfield.annex = subfield.annex.concat(
         (this.uploadService.uploaders[field].queue as FileItem[]).map(
           fI => new FileDescriptor(field, fI.file)
         ))
@@ -259,6 +268,7 @@ export class NpiComponent implements OnInit {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
       this.submitNpi(npiForm)
     }
+
   }
 
   submitToAnalisys(npiForm) {
@@ -273,7 +283,9 @@ export class NpiComponent implements OnInit {
     this.submitNpi(npiForm)
   }
 
-  closeActivity() {
+  closeActivity(activityControl) {
+    let form = this.npiForm.value
+    form.activities = [activityControl.value]
     this.saveNpi(this.npiForm.value)
   }
 
@@ -305,6 +317,7 @@ export class NpiComponent implements OnInit {
     if (err.error.message.errors) {
       var errors = err.error.message.errors
       var errorFields = Object.keys(errors)
+      this.invalidFields = errorFields
       var invalidFieldsMessage = 'Corrija o' +
         (errorFields.length == 1 ? ' campo ' : 's campos ')
       try {
@@ -484,7 +497,7 @@ export class NpiComponent implements OnInit {
     })
   }
 
-  openUploadModal(field: String) {
+  openFileUploader(field: String) {
     this.modalRef = this.modalService.show(UploaderComponent, {
       initialState: { field },
       class: 'modal-lg modal-dialog-centered upload-modal'
@@ -511,12 +524,16 @@ export class NpiComponent implements OnInit {
       ))
       || // Usuário Gestor
       (this.user.level == 1 && (
-        (this.npi.stage == 2 && !this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
+        (this.npi.stage == 1 && this.amITheOwner()) ||
+        (this.npi.stage == 2 && (
+          (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) || 
+          (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
+        ) ||
         (this.npi.stage == 3 && this.user.department == "COM" && this.user.level == 1) ||
-        (this.npi.stage == 4 &&
+        (this.npi.stage == 4 && (
           (!this.npi.isComplete() && this.iHavePendingTask()) ||
           (this.npi.isComplete() && (this.user.department == "MEP" || this.amITheOwner()))
-        )
+        ))
       ))
       || // Usuário Master
       this.user.level == 2
@@ -530,7 +547,7 @@ export class NpiComponent implements OnInit {
   }
 
   iHavePendingTask() {
-    this.user.level == 2 || this.npi.activities.some(activity =>
+    return this.user.level == 2 || this.npi.activities.some(activity =>
       !activity.closed && // em aberto
       (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
         this.user.department == activity.dept && this.user.level >= 1)
@@ -544,7 +561,8 @@ export class NpiComponent implements OnInit {
     return false
   }
 
-  setReleaseEstimateDalayedStatus(status) {
+  setReleaseEstimateDelayedStatus(status) {
+    console.log(status)
     this.isReleaseEstimateDelayed = status
   }
 
@@ -553,6 +571,10 @@ export class NpiComponent implements OnInit {
     this.uploadService.cleanUp()
     this.ngUnsubscribe.next()
     this.ngUnsubscribe.complete()
+  }
+
+  canCloseNpi() {
+    return (this.npiForm.get("validation") != null && this.npiForm.get("validation").valid)
   }
 
 }

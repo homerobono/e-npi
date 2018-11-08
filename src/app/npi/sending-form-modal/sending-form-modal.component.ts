@@ -17,7 +17,7 @@ export class SendingFormModalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.uploadService.onCompleteUpload.subscribe( 
+    this.uploadService.onCompleteUploadReplay.subscribe( 
     (res) => {
       if (res){
         this.finished = true

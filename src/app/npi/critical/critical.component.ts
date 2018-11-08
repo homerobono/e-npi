@@ -19,18 +19,23 @@ export class CriticalComponent implements OnInit {
   }
   @Input() set toggleEdit(edit: Boolean) {
     if (edit && this.npi.stage == 2 && !this.npi.isCriticallyApproved()) {
-      if (this.npiComponent.user.level > 1) this.criticalFormGroup.enable()
+      if (this.npiComponent.user.level > 1)
+        this.criticalFormGroup.enable()
       this.criticalFormArray.controls.forEach(control => {
         if (this.amITheAnalysisGestor(control))
           control.enable()
       })
     }
     else this.criticalFormGroup.disable()
+    
+    if (this.npiComponent.user.level == 2 && this.npi.isCriticallyDisapproved() && this.npi.stage == 2 && !this.npi.isApproved())
+      this.criticalFormGroup.get('finalApproval').enable()
+    else this.criticalFormGroup.get('finalApproval').disable()
   }
 
   @Output() criticalForm = new EventEmitter<FormGroup>()
-  
-  criticalFormArray : FormArray
+
+  criticalFormArray: FormArray
   criticalFormGroup: FormGroup
   signatures: Array<any>
   finalSignature: String
@@ -189,7 +194,7 @@ export class CriticalComponent implements OnInit {
     return control.hasError('required')
   }
 
-  amITheAnalysisGestor(analysis: AbstractControl):Boolean {
+  amITheAnalysisGestor(analysis: AbstractControl): Boolean {
     return this.getCriticalRow(analysis.get('_id').value).dept == this.npiComponent.user.department
       && this.npiComponent.user.level == 1
   }

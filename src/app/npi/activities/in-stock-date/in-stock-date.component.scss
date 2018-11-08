@@ -1,0 +1,17 @@
+.release-date {
+    position: fixed;
+    width: 100%;
+    padding: 10px 0;
+    left: 0;
+    bottom: 0;
+    box-shadow: 0 8px 30px #111;
+    color: white;
+    background: black;
+    text-align: center;
+    vertical-align: middle;
+    z-index: 1;
+}
+
+.date {
+    white-space: nowrap;
+}

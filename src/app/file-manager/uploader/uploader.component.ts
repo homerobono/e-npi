@@ -27,8 +27,8 @@ export class UploaderComponent implements OnInit {
 
   constructor(
     private uploadService: UploadService,
-    private modalRef: BsModalRef,
-    private utils: UtilService
+    public modalRef: BsModalRef,
+    public utils: UtilService
   ) { }
 
   ngOnInit() {

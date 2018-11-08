@@ -1,0 +1,17 @@
+<div class='release-date' #releaseDateDiv [@slideInOutBottomAnimation]='state'>
+  <div class='row justify-content-center'>
+    <div class='mb-0 col-auto' [ngClass]='{"text-danger": releaseDate > inStockDate }'>
+      <b>Data de Lançamento: </b>
+      <span style='font-size: 20px'>
+        {{ releaseDate?.toLocaleDateString("pt-br") }}
+      </span>
+      <span class='fa' [ngClass]='releaseDate < inStockDate ? "fa-check text-success":"fa-warning"'></span>
+    </div>
+    <div class='mb-0 text-secondary col-auto'>
+      <b>Data em Estoque: </b>
+      <span style='font-size: 20px'>
+        {{ inStockDate?.toLocaleDateString("pt-br") }}
+      </span>
+    </div>
+  </div>
+</div>

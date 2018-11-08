@@ -70,10 +70,11 @@
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td *ngIf='npi.stage>=4'>
-              <button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
+              <app-file-button [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='editFlag' [canEdit]='canChangeActivity(activity)'></app-file-button>
+              <!--button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
                 [disabled]='!activity.get("apply").value'>
                 <i class='fa fa-folder fa-fw' [ngClass]='activity.get("annex").value?.length? "append-icon":"upload-icon"'></i>
-              </button>
+              </button-->
             </td>
             <td class=signature *ngIf='npi.stage>=4'>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
@@ -107,7 +108,4 @@
     <div style='height: 70px'></div-->
   </div>
 </div>
-<div [appInStockDate] class='release-date' #releaseDateDiv [@slideInOutBottomAnimation]='releaseDateDiv.getAttribute("state")'>
-  <div class='d-inline mb-0 mr-5'><b>Data de Lançamento: </b> <span style='font-size: 20px'> {{ releaseDate?.toLocaleDateString("pt-br") }}</span></div>
-  <div class='d-inline mb-0 text-dark'><b>Data em Estoque: </b> <span style='font-size: 20px'> {{ npi.inStockDate?.toLocaleDateString("pt-br") }}</span></div>
-</div>
+<app-in-stock-date *ngIf='npi.stage==2 && npiComponent.canIChangeActivities' [inStockDate]='npi.inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>

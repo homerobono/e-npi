@@ -19,6 +19,7 @@ import { FileService } from '../services/file.service';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ModalModule } from 'ngx-bootstrap';
 import { PreviewComponent } from './modals/preview/preview.component';
+import { FileButtonComponent } from './file-button/file-button.component';
 //import { RoutingModule } from './routing.module'
 
 @NgModule({
@@ -43,10 +44,12 @@ import { PreviewComponent } from './modals/preview/preview.component';
     FileManagerComponent,
     ExplorerComponent, 
     UploaderComponent, 
-    InputDialogComponent, PreviewComponent
+    FileButtonComponent,
+    InputDialogComponent, PreviewComponent, FileButtonComponent
   ],
   exports: [
-    FileManagerComponent
+    FileManagerComponent,
+    FileButtonComponent
   ],
   entryComponents: [
     ExplorerComponent, 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 import { Globals } from 'config';
-import { Subject, BehaviorSubject, of } from 'rxjs';
+import { Subject, BehaviorSubject, of, Observable } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap';
 import { SendingFormModalComponent } from '../npi/sending-form-modal/sending-form-modal.component';
 import { isNgTemplate } from '@angular/compiler';
@@ -14,7 +14,8 @@ const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
 export class UploadService {
 
   public uploaders: Object = new Object()
-  public onCompleteUpload: Subject<any>
+  public onCompleteUpload: BehaviorSubject<any>
+  public onCompleteUploadReplay: Observable<any>
   public totalSize: number
   public progress: Number = 0
   public isUploading: Boolean = false
@@ -26,7 +27,8 @@ export class UploadService {
 
   constructor() {
     console.log("Constructing uploader Service")
-    this.onCompleteUpload = new Subject<any>()
+    this.onCompleteUpload = new BehaviorSubject<any>(false)
+    this.onCompleteUploadReplay = this.onCompleteUpload.shareReplay()
     this.uploaders = new Object()
   }
 
@@ -47,7 +49,7 @@ export class UploadService {
     let fields = Object.keys(this.uploaders)
 
     if(!fields.length) {
-      this.onCompleteUpload.next()
+      this.onCompleteUpload.next(true)
       return of(['No uploads to make'])
     }
 
@@ -59,8 +61,8 @@ export class UploadService {
       console.log('setting ' + fields[i])
       let previous = fields[i - 1]
       let actual = fields[i]
-      this.uploaders[previous].onCompleteAll = () => {
-        console.log('uploading another one')
+      this.uploaders[previous].onCompleteAll = (res) => {
+        console.log('uploading another one', res)
         setTimeout(() => this.uploaders[actual].uploadAll(), 100)
       }
     }
@@ -95,7 +97,7 @@ export class UploadService {
       if (Object.values(this.uploaders).every((uploader: FileUploader) => !uploader.getNotUploadedItems.length)) {
         console.log("All files uploaded.")
         this.isUploading = false
-        this.onCompleteUpload.next()
+        this.onCompleteUpload.next(true)
         this.cleanUp()
       }
     };

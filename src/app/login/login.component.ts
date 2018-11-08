@@ -21,7 +21,7 @@ export class LoginComponent {
       private fb: FormBuilder,
       private authService: AuthService, 
       private router: Router,
-      private messenger : MessageService
+      public messenger : MessageService
     ) { 
     this.operationResponse = messenger.getAndClear()
     this.messenger.response.subscribe(
