@@ -116,7 +116,10 @@
 
               </textarea>
           <div class="input-group-append">
-            <app-file-button [fieldControl]='createForm.get("resources")' [fieldLabel]='"resources"'></app-file-button>
+            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openUploadModal("resources")'
+              [ngClass]='{"text-primary":uploadService.uploaders["resources"], "border-danger": fieldHasErrors("resources.annex") && !uploadService.uploaders["resources"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
           </div>
           <div class='invalid-feedback'>
             Defina os recursos necessários
@@ -130,7 +133,10 @@
 
             </textarea>
           <div class="input-group-append">
-            <app-file-button [fieldControl]='createForm.get("norms")' [fieldLabel]='"norms"'></app-file-button>
+            <button type=button class="input-group-text btn btn-light shadow-none" id="normsAppend" (click)='openUploadModal("norms")'
+              [ngClass]='{"text-primary":uploadService.uploaders["norms"], "border-danger": fieldHasErrors("norms.annex") && !uploadService.uploaders["norms"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
           </div>
           <div class='invalid-feedback'>
             Defina as leis e/ou normas aplicáveis
@@ -292,8 +298,10 @@
           <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
             aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
           <div class="input-group-append">
-            <app-file-button [fieldControl]='createForm.get("investment")' [fieldLabel]='"investment"'></app-file-button>
-
+            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openUploadModal("investment")'
+              [ngClass]='{"text-primary":uploadService.uploaders["investment"], "border-danger": fieldHasErrors("investment.annex") && !uploadService.uploaders["investment"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
           </div>
           <div class='invalid-feedback'>
             Defina o investimento
@@ -312,7 +320,10 @@
           <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
             aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost.value")}'>
           <div class="input-group-append">
-            <app-file-button [fieldControl]='createForm.get("projectCost")' [fieldLabel]='"projectCost"'></app-file-button>
+            <button type=button class="input-group-text btn btn-light shadow-none is-invalid" id="projectCostAppend"
+              (click)='openUploadModal("projectCost")' [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost.annex") && !uploadService.uploaders["projectCost"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>.value.
           </div>
           <div class='invalid-feedback'>
             Defina o custo do projeto

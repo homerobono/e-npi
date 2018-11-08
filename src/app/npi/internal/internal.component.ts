@@ -38,8 +38,8 @@ export class InternalComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private messenger: MessageService,
-    private utils: UtilService,
-    private npiComponent: NpiComponent
+    public utils: UtilService,
+    public npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
 

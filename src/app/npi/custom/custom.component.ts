@@ -37,8 +37,8 @@ export class CustomComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private utils: UtilService,
-    private npiComponent: NpiComponent
+    public utils: UtilService,
+    public npiComponent: NpiComponent
   ) {
     this.npi = new Npi(null)
 

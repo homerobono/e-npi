@@ -48,7 +48,7 @@ export class ActivitiesComponent implements OnInit {
         private fb: FormBuilder,
         private utils: UtilService,
         private route: ActivatedRoute,
-        private npiComponent: NpiComponent,
+        public npiComponent: NpiComponent,
         private userService: UsersService
     ) {
         this.activitiesFormArray = fb.array([])

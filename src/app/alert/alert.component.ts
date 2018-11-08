@@ -18,7 +18,7 @@ export class AlertComponent implements OnInit {
   route : String
   constructor(
     private messenger : MessageService,
-    private location : Location,
+    public location : Location,
     private router : Router
   ) { }
 

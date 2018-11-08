@@ -1,9 +1,9 @@
-<button *ngIf='fieldControl?.annex && fieldControl?.annex?.length' type='button' class="btn btn-block btn-light shadow-none m-0" 
+<button *ngIf='fieldControl?.get("annex") && fieldControl?.get("annex")?.value.length' type='button' class="btn btn-block btn-light shadow-none m-0" 
 (click)='openFileAction(field)'
   [disabled]='!field?.annex?.length'>
   <i class='fa fa-folder fa-fw'></i>
 </button>
-<button *ngIf='(!field?.annex || field?.annex?.length) && canEdit' type='button' class="btn btn-block btn-light shadow-none m-0"
+<button *ngIf='(!fieldControl?.get("annex") || fieldControl?.get("annex")?.value.length) && canEdit' type='button' class="btn btn-block btn-light shadow-none m-0"
   (click)='openFileAction(field)' [disabled]='!editFlag'>
   <i class='fa fa-upload fa-fw' [ngClass]='{"text-primary" : uploadService.uploaders[field]}'></i>
 </button>

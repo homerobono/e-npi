@@ -131,7 +131,7 @@ export class NpiComponent implements OnInit {
     private messenger: MessageService,
     private localeService: BsLocaleService,
     private location: Location,
-    private utils: UtilService,
+    public utils: UtilService,
     private modalService: BsModalService,
     public dialog: MatDialog,
     private uploadService: UploadService

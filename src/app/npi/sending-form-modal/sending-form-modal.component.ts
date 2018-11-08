@@ -12,7 +12,7 @@ export class SendingFormModalComponent implements OnInit {
   finished = false
 
   constructor(
-    private uploadService: UploadService,
+    public uploadService: UploadService,
     private modalRef: BsModalRef
   ) { }
 

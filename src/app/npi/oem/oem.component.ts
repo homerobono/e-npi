@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
 import { AuthService } from '../../services/auth.service';
@@ -36,12 +36,15 @@ export class OemComponent implements OnInit {
   npiForm: FormGroup;
   npiObservable: Observable<Npi>
 
+  public standardRegulationsArray : any
+  public oemActivitiesControlsArray :  any
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private messenger: MessageService,
-    private utils: UtilService,
-    private npiComponent: NpiComponent
+    public utils: UtilService,
+    public npiComponent: NpiComponent
   ) {
 
     this.npis = new Array<Npi>()
@@ -95,6 +98,11 @@ export class OemComponent implements OnInit {
     console.log(this.npi)
 
     this.insertOemActivities();
+
+
+    this.standardRegulationsArray = (this.npiForm.get('regulations').get('standard') as FormGroup).controls
+    this.oemActivitiesControlsArray = (this.npiForm.get("oemActivities") as FormGroup).controls
+
     this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 

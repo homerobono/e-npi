@@ -10,7 +10,7 @@ import { slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation
   animations: [slideInOutBottomAnimation, slideInOutTopAnimation, scaleUpDownAnimation],
 })
 export class InStockDateComponent {
-  private releaseDate
+  public releaseDate
   @Input() inStockDate: Date
   @Input() set releaseDateSetter(date: Date) {
     this.releaseDate = date
@@ -21,7 +21,7 @@ export class InStockDateComponent {
   @Output() setDelayedStatus = new EventEmitter<Boolean>()
 
   public state = 'hidden'
-
+  
   @HostListener("window:scroll", [])
   onWindowScroll() {
     //console.log((this.appInStockDate as HTMLElement).attributes)

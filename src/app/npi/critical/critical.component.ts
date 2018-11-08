@@ -45,7 +45,7 @@ export class CriticalComponent implements OnInit {
     private fb: FormBuilder,
     private utils: UtilService,
     private route: ActivatedRoute,
-    private npiComponent: NpiComponent
+    public npiComponent: NpiComponent
   ) {
     this.criticalFormArray = fb.array([])
     this.criticalFormGroup = fb.group({

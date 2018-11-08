@@ -36,8 +36,8 @@ export class PixelComponent implements OnInit {
 
   constructor(
     fb: FormBuilder,
-    private npiComponent: NpiComponent,
-    private utils: UtilService
+    public npiComponent: NpiComponent,
+    public utils: UtilService
   ) {
     this.npi = new Npi(null)
 
