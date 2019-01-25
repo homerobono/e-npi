@@ -58,10 +58,11 @@
         </textarea>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="resourcesAppend" (click)='openFileAction("resources")'
-            [ngClass]='{"text-primary":npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
+            [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["resources"] && !npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
           </button>
+          {{npi.investment.annex.length}}
         </div>
         <div class='invalid-feedback'>
           Defina os recursos necessários
@@ -75,7 +76,7 @@
           </textarea>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="normsAppend" (click)='openFileAction("norms")'
-            [ngClass]='{"text-primary":npi.norms.annex?.length, "border-danger": fieldHasErrors("norms.annex") && !npi.norms.annex?.length}'
+            [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["norms"] && !npi.norms.annex?.length, "border-danger": fieldHasErrors("norms.annex") && !npi.norms.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.norms.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.norms.annex?.length? "append-icon":"upload-icon"'></i>
           </button>
@@ -193,7 +194,7 @@
           aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="investmentAppend" (click)='openFileAction("investment")'
-            [ngClass]='{"text-primary":npi.investment.annex?.length, "border-danger": fieldHasErrors("investment.annex") && !npi.investment.annex?.length}'
+            [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["investment"] && !npi.investment.annex?.length, "border-danger": fieldHasErrors("investment.annex") && !npi.investment.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.investment.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.investment.annex?.length? "append-icon":"upload-icon"'></i>
           </button>
