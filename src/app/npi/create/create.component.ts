@@ -159,7 +159,7 @@ export class CreateComponent implements OnInit {
 
     ngOnInit() {
         this.localeService.use('pt-br');
-        setTimeout(() => this.openUploadModal("resources"), 600)
+        //setTimeout(() => this.openUploadModal("resources"), 600)
     }
 
     createNpi(): void {

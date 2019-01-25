@@ -62,7 +62,6 @@
             [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
           </button>
-          {{npi.investment.annex.length}}
         </div>
         <div class='invalid-feedback'>
           Defina os recursos necessários
@@ -217,7 +216,7 @@
           aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
         <div class="input-group-append">
           <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="projectCostAppend" (click)='openFileAction("projectCost")'
-            [ngClass]='{"text-primary":npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost.annex") && !npi.projectCost.annex?.length}'
+            [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["projectCost"] && !npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost.annex") && !npi.projectCost.annex?.length}'
             [disabled]='!npiComponent.editFlag && !npi.projectCost.annex?.length'>
             <i class='fa fa-fw' [ngClass]='npi.projectCost.annex?.length? "append-icon":"upload-icon"'></i>
           </button>

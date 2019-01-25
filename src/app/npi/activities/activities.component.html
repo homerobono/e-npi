@@ -70,7 +70,7 @@
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td *ngIf='npi.stage>=4'>
-              <app-file-button [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='editFlag' [canEdit]='canChangeActivity(activity)'></app-file-button>
+              <app-file-button [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
               <!--button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
                 [disabled]='!activity.get("apply").value'>
                 <i class='fa fa-folder fa-fw' [ngClass]='activity.get("annex").value?.length? "append-icon":"upload-icon"'></i>
@@ -78,10 +78,12 @@
             </td>
             <td class=signature *ngIf='npi.stage>=4'>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
-                *ngIf='!activity.get("closed").value && canChangeActivity(activity)' [disabled]='!npiComponent.editFlag'>
+                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag'
+                data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.get("closed").value && !canChangeActivity(activity)'>
+              <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)'
+              data-toggle="tooltip" data-placement="bottom" title="Aguardando conclusão">
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
               </span>
               <span *ngIf='activity.get("closed").value'>

@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
 
   private ngUnsubscribe = new Subject();
 
+  me : any // user ID
   userLevel: Number = 0
   response = null
   filteredData: Npi[]
@@ -54,6 +55,7 @@ export class HomeComponent implements OnInit {
     private messenger: MessageService,
     private utils: UtilService,
   ) {
+    this.me = authService.getUser()
     this.userLevel = this.authService.getUserLevel();
     this.sortParams =
       [{ field: 'number', order: -1 },
@@ -131,7 +133,7 @@ export class HomeComponent implements OnInit {
       }
     }
     this.filteredData = filteredData
-    //console.log(filteredData)
+    console.log(filteredData)
     //return filteredData
   }
 

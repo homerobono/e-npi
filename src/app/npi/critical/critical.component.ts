@@ -27,7 +27,7 @@ export class CriticalComponent implements OnInit {
       })
     }
     else this.criticalFormGroup.disable()
-    
+
     if (this.npiComponent.user.level == 2 && this.npi.isCriticallyDisapproved() && this.npi.stage == 2 && !this.npi.isApproved())
       this.criticalFormGroup.get('finalApproval').enable()
     else this.criticalFormGroup.get('finalApproval').disable()
@@ -185,18 +185,19 @@ export class CriticalComponent implements OnInit {
     });
   }
 
-  fieldHasErrors(field) {
-    let fieldsArr = field.split(".")
-    let control = this.criticalFormGroup.get(fieldsArr[0])
-    for (let i = 1; i < fieldsArr.length; i++) {
-      control = control.get(fieldsArr[i])
+  fieldHasErrors(fieldIndex) {
+    let controls = this.criticalFormArray.controls.filter(control => control.enabled)
+    let control = controls[fieldIndex]
+    if (control) {
+      control = control.get('comment')
+      return control.hasError('required')
     }
-    return control.hasError('required')
+    else return null
   }
 
   amITheAnalysisGestor(analysis: AbstractControl): Boolean {
     return this.getCriticalRow(analysis.get('_id').value).dept == this.npiComponent.user.department
-      && this.npiComponent.user.level == 1
+      && (this.npiComponent.user.level == 1 || this.npiComponent.user.level == 2)
   }
 
   cancelNpi() {

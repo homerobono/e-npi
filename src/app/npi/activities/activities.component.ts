@@ -469,6 +469,10 @@ export class ActivitiesComponent implements OnInit {
             )
     }
 
+    canCloseActivity(activity: AbstractControl): Boolean {
+        return this.amIResponsible(activity) || this.canChangeActivity(activity)
+    }
+
     amIResponsible(activity: AbstractControl): Boolean {
         return this.npiComponent.user._id == activity.get('responsible').value
     }

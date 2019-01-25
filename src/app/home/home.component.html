@@ -115,7 +115,7 @@
                   {{ npi.number }}
                 </th>
                 <td [ngClass]='{"strike": !npi.stage}'>
-                  {{ npi.name }}
+                  <i class='fa fa-user' *ngIf='npi.requester == me._id'></i> {{ npi.name }}
                 </td>
                 <td>
                   <h5>

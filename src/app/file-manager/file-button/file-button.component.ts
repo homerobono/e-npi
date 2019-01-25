@@ -28,15 +28,18 @@ export class FileButtonComponent implements OnInit {
     public uploadService: UploadService
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log(this.fieldControl.get('annex').value, this.canEdit)
+   }
 
   openFileAction(field) {
+    console.log(field)
     if (field.annex && !field.annex.length && this.npiNumber)
       this.openFileManager(field)
     this.openUploadModal(field)
   }
 
-  openFileManager(field) {
+  openFileManager(field : string) {
     const initialState = {
       npiNumber: this.npiNumber,
       field
@@ -48,15 +51,15 @@ export class FileButtonComponent implements OnInit {
       });
   }
 
-  openUploadModal(field) {
+  openUploadModal(field : string) {
     this.modalRef = this.modalService.show(UploaderComponent, {
       initialState: { field },
       class: 'modal-lg modal-dialog-centered upload-modal'
     });
   }
 
-  get field() {
-    return (this.parent ? `${parent}.` : '') + this.fieldLabel
+  get field() : string{
+    return (this.parent ? `${this.parent}.` : '') + this.fieldLabel
   }
 
 }

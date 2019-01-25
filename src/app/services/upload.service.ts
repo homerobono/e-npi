@@ -110,6 +110,7 @@ export class UploadService {
     }
     Object.assign(this.uploaders, { [subject]: uploader })
     this.updateTotalSize()
+    console.log (subject, this.uploaders)
   }
 
   cleanUp() {
