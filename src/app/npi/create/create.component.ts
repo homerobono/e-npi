@@ -333,6 +333,7 @@ export class CreateComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        this.modalRef.hide()
+        if (this.modalRef)
+            this.modalRef.hide()
     }
 }
