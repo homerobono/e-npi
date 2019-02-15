@@ -4,14 +4,57 @@
   </h4>
   <div class="form-row" formGroupName='validation'>
     <div class='form-group col-6'>
-      <label for='pilot'>Aprovação do Lote Piloto</label>
-      <input type='text' class='form-control' formControlName='pilot' id='pilot' required>
+      <label for='pilot'>Aprovação do Lote Piloto: </label>
+      &nbsp;<b>{{ pilotDate }} </b> <i class='fa fa-check text-success'> </i>
     </div>
+
+
     <div class='form-group col-6'>
       <label for='product'>Resultado da Verificação do Projeto/Produto</label>
+      <div class='row align-items-center mt-3 mb-4'>
+        <div class='col-auto' *ngIf='npi.finalApproval?.status'>
+          <span class='fa fa-check-circle-o fa-2x text-primary' style='vertical-align: middle' *ngIf='npi.finalApproval?.status=="accept"'></span>
+        </div>
+        <div class='col' formGroupName='finalApproval'>
+          <div class='form-group'>
+            <label for='finalComment'>Justificativa</label>
+            <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval.comment")}'>
+            <div class='invalid-feedback'>
+              Descreva o motivo da aprovação
+            </div>
+          </div>
+        </div>
+        <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
+          <div class='row no-gutters'>
+            <div class='col-12 col-md-6'>
+              <button class='btn btn-primary btn-block' (click)='finalApprove()'
+                [disabled]='npi.finalApproval?.status || !npiComponent.editFlag || npi.stage != 2 || npiComponent.user.level < 2 || !comment.value'>
+                <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
+                <span> Aprovar</span>
+                </button>
+            </div>
+            <div class='col-12 col-md-6'>
+              <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' 
+              [disabled]='npi.finalApproval?.status || !npiComponent.editFlag || npi.stage != 2 || npiComponent.user.level < 2'>
+                <i class='fa fa-trash fa-2x' style='vertical-align: middle;'></i>
+                <span> Cancelar NPI</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class='col-12 col-sm text-center final-signature' *ngIf='finalSignature'>
+          <div class='rounded bg-light m-0 p-2'>
+            <i>
+              <b>{{ finalSignature }}</b>
+            </i>
+          </div>
+        </div>
+      </div>
       <input type='text' class='form-control' formControlName='product' id='product' required>
     </div>
   </div>
+
+
   <div class='form-group' formGroupName='validation'>
     <label for='final'>ANÁLISE FINAL</label>
     <textarea class='form-control' id='final' formControlName='final' rows='5' required></textarea>

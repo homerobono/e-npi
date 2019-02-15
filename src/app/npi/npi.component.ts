@@ -268,7 +268,6 @@ export class NpiComponent implements OnInit {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
       this.submitNpi(npiForm)
     }
-
   }
 
   submitToAnalisys(npiForm) {

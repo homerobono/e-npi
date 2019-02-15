@@ -18,20 +18,24 @@
         <tbody>
           <tr *ngFor='let analisys of criticalFormGroup.get("critical").controls; index as i' [formGroupName]='i'>
             <td>
-              <b>{{ npi.critical[i].dept }}</b> <span style='color: gray; font-size: 10pt'> ({{ utils.getDepartment(npi.critical[i].dept).label }})</span>
+              <b>{{ npi.critical[i].dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
+                utils.getDepartment(npi.critical[i].dept).label }})</span>
             </td>
             <td>
-              <i *ngIf='!npi.critical[i].status && !amITheAnalysisGestor(analisys)' style='color: gray; font-size: 10pt'>Em análise</i>
+              <i *ngIf='!npi.critical[i].status && !amITheAnalysisGestor(analisys)' style='color: gray; font-size: 10pt'>Em
+                análise</i>
               <div *ngIf='npi.critical[i].status || amITheAnalysisGestor(analisys)'>
-              <label *ngIf='(npi.critical[i].status && npi.critical[i].status=="accept") || amITheAnalysisGestor(analisys)' class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
-                <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept-{{i}}'>
-                <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
-              </label>
-              <label *ngIf='(npi.critical[i].status && npi.critical[i].status=="deny") || amITheAnalysisGestor(analisys)' class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
-                <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
-                <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
-              </label>
-            </div>
+                <label *ngIf='(npi.critical[i].status && npi.critical[i].status=="accept") || amITheAnalysisGestor(analisys)'
+                  class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept-{{i}}'>
+                  <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
+                </label>
+                <label *ngIf='(npi.critical[i].status && npi.critical[i].status=="deny") || amITheAnalysisGestor(analisys)'
+                  class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                  <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
+                  <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
+                </label>
+              </div>
             </td>
             <td>
               <textarea class="form-control" rows=1 formControlName='comment' [ngClass]='{"is-invalid": fieldHasErrors(i)}'></textarea>
@@ -71,10 +75,11 @@
   <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
     <div class='row no-gutters'>
       <div class='col-12 col-md-6'>
-        <button class='btn btn-primary btn-block' (click)='finalApprove()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2 || !comment.value'>
+        <button class='btn btn-primary btn-block' (click)='finalApprove()'
+          [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2 || !comment.value'>
           <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
           <span> Aprovar</span>
-        </button>
+          </button>
       </div>
       <div class='col-12 col-md-6'>
         <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2'>

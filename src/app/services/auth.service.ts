@@ -42,6 +42,7 @@ export class AuthService {
 }
 
   private setSession( sessionToken ) {
+    console.log(sessionToken)
     const tokenPayload = this.jwtHelper.decodeToken(sessionToken);
     localStorage.setItem('id_token', sessionToken);
     localStorage.setItem('first_name', tokenPayload.data.firstName);

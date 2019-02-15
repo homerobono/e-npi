@@ -22,9 +22,9 @@ export class ValidateComponent implements OnInit {
       }
     }
   }
-
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
+  public pilotDate: string
   validateForm: FormGroup
   deny: FormControl
   isFormEnabled: Boolean
@@ -36,14 +36,17 @@ export class ValidateComponent implements OnInit {
   ) {
     this.validateForm = fb.group({
       validation: fb.group({
-        pilot: ['Aprovação Piloto', Validators.required],
-        product: ['Aprovação Produto', Validators.required],
+        finalApproval: fb.group({
+          status: null,
+          comment: null
+        }),
         final: ['Parecer Final', Validators.required],
       })
     })
   }
 
   ngOnInit() {
+    this.npi.activities.find
     this.isFormEnabled =
       !this.route.snapshot.data['readOnly'] &&
       this.npi.stage == 3 &&
@@ -58,6 +61,9 @@ export class ValidateComponent implements OnInit {
         this.updateParentForm()
       }
     )
+    this.pilotDate =
+      new Date(this.npi.activities.find(a => a.activity == "PILOT").signature.date)
+        .toLocaleDateString('pt-br')
 
     this.fillFormData()
 
@@ -71,14 +77,14 @@ export class ValidateComponent implements OnInit {
   fillFormData() {
     if (this.npi.validation)
       this.validateForm.get("validation").setValue({
-        'pilot': this.npi.validation.pilot ? this.npi.validation.pilot : null,
-        'product': this.npi.validation.product ? this.npi.validation.product : null,
+        'finalApproval': null,//this.npi.validation.product ? this.npi.validation.product : null,
         'final': this.npi.validation.final ? this.npi.validation.final : null,
       })
   }
 
   fieldHasErrors(field) {
     this.validateForm.updateValueAndValidity()
+    console.log(this.validateForm.get("validation") as FormGroup)
     return (this.validateForm.get("validation") as FormGroup)
       .controls[field].hasError('required')
   }

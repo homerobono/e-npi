@@ -46,7 +46,7 @@ export class ActivitiesComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
-        private utils: UtilService,
+        public utils: UtilService,
         private route: ActivatedRoute,
         public npiComponent: NpiComponent,
         private userService: UsersService
@@ -514,12 +514,12 @@ export class ActivitiesComponent implements OnInit {
         for (var i = 0; i < this.npi.activities.length; i++) {
             var row = this.npi.activities[i]
             if (row.signature && row.signature.date && row.signature.user) {
-                var signature = row.signature.user.firstName +
+                var signature = "Concluído por " + row.signature.user.firstName +
                     (row.signature.user.lastName ?
                         ' ' + row.signature.user.lastName :
                         ''
-                    ) + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
-                    ', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
+                    )// + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
+                    //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
                 this.signatures[i] = signature
             }

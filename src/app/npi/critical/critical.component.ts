@@ -110,13 +110,13 @@ export class CriticalComponent implements OnInit {
     for (var i = 0; i < this.npi.critical.length; i++) {
       var row = this.npi.critical[i]
       if (row.signature && row.signature.date && row.signature.user) {
-        var signature = (row.status == 'accept' ? "Aprovado por " : "Reprovado por") + 
-        row.signature.user.firstName +
+        var signature = (row.status == 'accept' ? "Aprovado por " : "Reprovado por ") +
+          row.signature.user.firstName +
           (row.signature.user.lastName ?
             ' ' + row.signature.user.lastName :
             ''
           )// + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
-          //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
+        //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
         this.signatures[i] = signature
       }
@@ -124,12 +124,13 @@ export class CriticalComponent implements OnInit {
     }
     var final = this.npi.finalApproval.signature
     if (final && final.date && final.user)
-      this.finalSignature = final.user.firstName +
+      this.finalSignature = (row.status == 'accept' ? "Aprovado por " : "Reprovado por ") +
+        final.user.firstName +
         (final.user.lastName ?
           ' ' + final.user.lastName :
           ''
-        ) + ', ' + new Date(final.date).toLocaleDateString('pt-br') +
-        ', às ' + new Date(final.date).toLocaleTimeString('pt-br')
+        )// + ', ' + new Date(final.date).toLocaleDateString('pt-br') +
+    //', às ' + new Date(final.date).toLocaleTimeString('pt-br')
     else
       this.finalSignature = null
   }
