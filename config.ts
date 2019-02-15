@@ -119,17 +119,17 @@ export const Globals = Object.freeze({
 		{ value: 'SMT', 		label: 'Programa para Máquina SMT', 				dept: 'MEP', term: 5, dep: ["PROTO_TEST", "GERBER", "BOM_DESC"] },
 		{ value: 'INJECT', 		label: 'Ajuste/Programação Injetora', 				dept: 'MEP', term: 5, dep: ["DEVICE"] },
 		{ value: 'QUALITY', 	label: 'Critérios de Qualidade', 					dept: 'MPR', term: 5, dep: ["ASSEMB_INSTR"], required: true },
-		{ value: 'PILOT', 		label: 'Lote Piloto', 								dept: 'MEP', term: 5, dep: ["INJECT","ASSEMB_INSTR","SMT","TEST_INSTR","QUALITY","TEMPLATE", "TAG_SPEC", "PACKING_SPEC", "MANUAL"], required: true },
-		{ value: 'TEST', 		label: 'Testes de Verificação/Validação', 			dept: 'MPR', term: 5, dep: ["PILOT","PROTO_SW"], required: true },
-		{ value: 'GOLD', 		label: 'Golden Sample', 							dept: 'MPR', term: 5, dep: ["QUALITY", "PILOT"] },
-		{ value: 'PRODUCT_DOC', label: 'Documento de Produto', 						dept: 'MPR', term: 5, dep: ["TEST"], required: true },
+		{ value: 'TEST', 		label: 'Testes de Verificação/Validação', 			dept: 'MPR', term: 5, dep: ["PROTO_SW"], required: true },
+		{ value: 'GOLD', 		label: 'Golden Sample', 							dept: 'MPR', term: 5, dep: ["QUALITY"] },
+//		{ value: 'PRODUCT_DOC', label: 'Documento de Produto', 						dept: 'MPR', term: 5, dep: ["TEST"], required: true },
 		{ value: 'PRODUCT_SW',	label: 'Documento de Software',						dept: 'MPD', term: 5, dep: ["TEST"] },
 		{ value: 'PRODUCT_FW',	label: 'Documento de Firmware', 					dept: 'MPD', term: 5, dep: ["TEST"] },
-		{ value: 'ASSEMB_DOC',	label: 'Documento de Montagem/Teste', 				dept: 'MEP', term: 2, dep: ["PILOT"], required: true },
+		{ value: 'ASSEMB_DOC',	label: 'Documento de Montagem/Teste', 				dept: 'MEP', term: 2, dep: ["TEST"], required: true },
 		{ value: 'PRICE_TABLE',	label: 'Tabela de Preço', 							dept: 'COM', term: 5, dep: ["TEST","BOM_PRICE"], required: true },
 		{ value: 'RELEASE_PLAN',label: 'Plano de Lançamento', 						dept: 'MPR', term: 5, dep: ["PRICE_TABLE"], required: true },
-		{ value: 'PRODUCTION',	label: 'Produção', 									dept: 'OPR', term: 90,dep: ["PILOT", "TEST", "GOLD", "PRODUCT_DOC", "PRODUCT_SW", "PRODUCT_FW", "ASSEMB_DOC"], required: true },
-		{ value: 'RELEASE',		label: 'Lançamento', 								dept: null,  term: 0, dep: ["PRODUCTION", "RELEASE_PLAN", "HOMOLOG"], required: true }
+		{ value: 'PRODUCTION',	label: 'Produção', 									dept: 'OPR', term: 90,dep: ["TEST", "GOLD", "PRODUCT_SW", "PRODUCT_FW", "ASSEMB_DOC"], required: true },
+		{ value: 'PILOT', 		label: 'Lote Piloto', 								dept: 'MEP', term: 5, dep: ["INJECT","ASSEMB_INSTR","SMT","TEST_INSTR","QUALITY","TEMPLATE", "TAG_SPEC", "PACKING_SPEC", "MANUAL", "PRODUCTION", "RELEASE_PLAN"], required: true },
+		{ value: 'RELEASE',		label: 'Lançamento', 								dept: null,  term: 0, dep: ["PILOT", "HOMOLOG"], required: true }
 	],
 
 	REGULATIONS: [

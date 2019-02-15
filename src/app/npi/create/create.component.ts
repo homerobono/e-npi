@@ -95,17 +95,15 @@ export class CreateComponent implements OnInit {
             'entry': 'pixel',
             'npiRef': null,
             'description': 'Requisitos gerais',
-            'norms': fb.group({
-                'description': 'Normas aplicáveis',
-                'annex': null
-            }),
             'resources': fb.group({
                 'description': 'Recursos necessários',
                 'annex': null
             }),
             'regulations': fb.group({
                 'standard': fb.group({}),
-                'additional': null
+                'additional': null,
+                'description': 'Descricao das homologações/regulações aplicáveis',
+                'annex': null
             }),
             'cost': fb.group({
                 'value': '30,00',
@@ -298,6 +296,11 @@ export class CreateComponent implements OnInit {
             control = control.get(propsArr[i])
         }
         return control.hasError('required')
+    }
+
+    isRegulationApplyable(){
+        return Object.keys((this.createForm.get("regulations").get("standard") as FormArray).controls)
+        .some(reg => this.createForm.get("regulations").get("standard").get(reg).value == true)
     }
 
     loadNpiRef(res) {

@@ -36,9 +36,7 @@ class Npi {
     };
     regulations: {
         standard: Object,
-        additional: String
-    };
-    norms: {
+        additional: String,
         description: String,
         annex: [FileDescriptor]
     };
@@ -149,7 +147,6 @@ class Npi {
             if (npiModel.description != null) this.description = npiModel.description
             if (npiModel.resources != null) this.resources = npiModel.resources
             if (npiModel.regulations != null) this.regulations = npiModel.regulations
-            if (npiModel.norms != null) this.norms = npiModel.norms
             if (npiModel.demand != null) this.demand = npiModel.demand
 
             if (npiModel.price != null) this.price = npiModel.price

@@ -50,13 +50,11 @@ export class PixelComponent implements OnInit {
         'description': null,
         'annex': []
       }),
-      'norms': fb.group({
-        'description': null,
-        'annex': []
-      }),
       'regulations': fb.group({
         standard: fb.group({}),
-        additional: null
+        additional: null,
+        'description': null,
+        'annex': []
       }),
       'cost': fb.group({
         value: '30,00',
@@ -175,6 +173,10 @@ export class PixelComponent implements OnInit {
     return this.npiComponent.invalidFields.find(f => f == field)
   }
 
+  isRegulationApplyable(){
+    return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
+    .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
+}
   openFileAction(field) {
     if (!this.npi[field].annex || !this.npi[field].annex.length)
       this.npiComponent.openFileUploader(field)

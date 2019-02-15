@@ -110,12 +110,13 @@ export class CriticalComponent implements OnInit {
     for (var i = 0; i < this.npi.critical.length; i++) {
       var row = this.npi.critical[i]
       if (row.signature && row.signature.date && row.signature.user) {
-        var signature = row.signature.user.firstName +
+        var signature = (row.status == 'accept' ? "Aprovado por " : "Reprovado por") + 
+        row.signature.user.firstName +
           (row.signature.user.lastName ?
             ' ' + row.signature.user.lastName :
             ''
-          ) + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
-          ', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
+          )// + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
+          //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
         this.signatures[i] = signature
       }
