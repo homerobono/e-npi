@@ -28,6 +28,7 @@ export class ValidateComponent implements OnInit {
   validateForm: FormGroup
   deny: FormControl
   isFormEnabled: Boolean
+  finalSignature: String
 
   constructor(
     private fb: FormBuilder,
@@ -84,7 +85,7 @@ export class ValidateComponent implements OnInit {
 
   fieldHasErrors(field) {
     this.validateForm.updateValueAndValidity()
-    console.log(this.validateForm.get("validation") as FormGroup)
+    //console.log(this.validateForm.get("validation") as FormGroup)
     return (this.validateForm.get("validation") as FormGroup)
       .controls[field].hasError('required')
   }
@@ -95,6 +96,30 @@ export class ValidateComponent implements OnInit {
 
   updateParentForm() {
     this.npiFormOutput.emit(this.validateForm)
+  }
+
+  toggleStatus(i, event) {
+    event.stopPropagation()
+    var statusControl = this.validateForm.get("validation").get("finalApproval").get('status')
+    if (event.target.value == statusControl.value) statusControl.setValue(null)
+  }
+
+  loadSignatures() {
+    var final = this.npi.validation.finalApproval.signature
+    if (final && final.date && final.user)
+      this.finalSignature = (this.npi.validation.finalApproval.status == 'accept' ? "Aprovado por " : "Reprovado por ") +
+        final.user.firstName +
+        (final.user.lastName ?
+          ' ' + final.user.lastName :
+          ''
+        )// + ', ' + new Date(final.date).toLocaleDateString('pt-br') +
+    //', às ' + new Date(final.date).toLocaleTimeString('pt-br')
+    else
+      this.finalSignature = null
+  }
+
+  amITheValidator(){
+    return true
   }
 
 }

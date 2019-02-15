@@ -3,42 +3,36 @@
     <b>Validação do Projeto/Produto</b>
   </h4>
   <div class="form-row" formGroupName='validation'>
-    <div class='form-group col-6'>
+    <div class='form-group col-xs-12 col-md-4 col-lg-3'>
       <label for='pilot'>Aprovação do Lote Piloto: </label>
-      &nbsp;<b>{{ pilotDate }} </b> <i class='fa fa-check text-success'> </i>
+      <div><b>{{ pilotDate }} </b> <i class='fa fa-check text-success'> </i></div>
     </div>
 
 
-    <div class='form-group col-6'>
+    <div class='form-group col-xs-12 col-md-8 col-lg-9'>
       <label for='product'>Resultado da Verificação do Projeto/Produto</label>
-      <div class='row align-items-center mt-3 mb-4'>
+       <div class='row align-items-center mt-1 mb-0' formGroupName='finalApproval'>
         <div class='col-auto' *ngIf='npi.finalApproval?.status'>
-          <span class='fa fa-check-circle-o fa-2x text-primary' style='vertical-align: middle' *ngIf='npi.finalApproval?.status=="accept"'></span>
+          <span class='fa fa-2x' style='vertical-align: middle' [ngClass]='npi.validation.finalApproval?.status=="accept" ? "fa-check-circle-o text-primary" : "fa-check-times-o text-danger"'></span>
         </div>
-        <div class='col' formGroupName='finalApproval'>
+        <div *ngIf='npi.validation.finalApproval?.status || amITheValidator()'>
+          <label *ngIf='(npi.validation.finalApproval?.status && npi.validation.finalApproval?.status=="accept") || amITheValidator()'
+            class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+            <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept'>
+            <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
+          </label>
+          <label *ngIf='(npi.validation.finalApproval?.status && npi.validation.finalApproval?.status=="deny") || amITheValidator()'
+            class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+            <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny'>
+            <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
+          </label>
+        </div>
+        <div class='col'>
           <div class='form-group'>
             <label for='finalComment'>Justificativa</label>
-            <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval.comment")}'>
+            <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval")}'>
             <div class='invalid-feedback'>
               Descreva o motivo da aprovação
-            </div>
-          </div>
-        </div>
-        <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
-          <div class='row no-gutters'>
-            <div class='col-12 col-md-6'>
-              <button class='btn btn-primary btn-block' (click)='finalApprove()'
-                [disabled]='npi.finalApproval?.status || !npiComponent.editFlag || npi.stage != 2 || npiComponent.user.level < 2 || !comment.value'>
-                <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
-                <span> Aprovar</span>
-                </button>
-            </div>
-            <div class='col-12 col-md-6'>
-              <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' 
-              [disabled]='npi.finalApproval?.status || !npiComponent.editFlag || npi.stage != 2 || npiComponent.user.level < 2'>
-                <i class='fa fa-trash fa-2x' style='vertical-align: middle;'></i>
-                <span> Cancelar NPI</span>
-              </button>
             </div>
           </div>
         </div>
@@ -50,7 +44,6 @@
           </div>
         </div>
       </div>
-      <input type='text' class='form-control' formControlName='product' id='product' required>
     </div>
   </div>
 

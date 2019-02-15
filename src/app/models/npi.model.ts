@@ -115,8 +115,14 @@ class Npi {
         apply: Boolean
     }>;
     validation: {
-        pilot: String,
-        product: String,
+        finalApproval: {
+            status: String,
+            comment: String,
+            signature: {
+                user: any,
+                date: Date
+            }
+        }
         final: String,
     }
 
