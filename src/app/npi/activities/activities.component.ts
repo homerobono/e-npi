@@ -25,7 +25,8 @@ export class ActivitiesComponent implements OnInit {
     }
 
     @Input() set toggleEdit(edit: Boolean) {
-        this.toggleFields(edit)
+        if (!this.npi.isComplete())
+            this.toggleFields(edit)
         this.isFormEnabled = edit
         this.editFlag = edit
     }
@@ -519,7 +520,7 @@ export class ActivitiesComponent implements OnInit {
                         ' ' + row.signature.user.lastName :
                         ''
                     )// + ', ' + new Date(row.signature.date).toLocaleDateString('pt-br') +
-                    //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
+                //', às ' + new Date(row.signature.date).toLocaleTimeString('pt-br')
 
                 this.signatures[i] = signature
             }

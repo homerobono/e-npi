@@ -145,6 +145,10 @@
           <span class='fa fa-trash'></span>
           Remover NPI
         </button>
+        <button class='btn btn-outline-info w-100' type='button' (click)='toggleNewVersion()' *ngIf='npi.stage >= 4 && !newFormVersionFlag'>
+          <i class='fa fa-edit fa-fw'></i>
+          Alterar Projeto
+        </button>
       </div>
       <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
         <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalisys(npiForm.value)'>

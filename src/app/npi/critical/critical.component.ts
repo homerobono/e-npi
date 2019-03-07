@@ -20,7 +20,7 @@ export class CriticalComponent implements OnInit {
   @Input() set toggleEdit(edit: Boolean) {
     if (edit && this.npi.stage == 2 && !this.npi.isCriticallyApproved()) {
       if (this.npiComponent.user.level > 1)
-        this.criticalFormGroup.enable()
+        this.criticalFormGroup.get("finalApproval").enable()
       this.criticalFormArray.controls.forEach(control => {
         if (this.amITheAnalysisGestor(control))
           control.enable()
@@ -150,6 +150,10 @@ export class CriticalComponent implements OnInit {
         }
       )
     });
+
+    this.criticalFormGroup.get("finalApproval").patchValue({
+      comment: this.npi.finalApproval.comment
+    })
 
     this.loadSignatures()
   }

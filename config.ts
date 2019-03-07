@@ -73,7 +73,8 @@ export const Globals = Object.freeze({
 		finished: 'Concluído',
 		canceled: 'Cancelado',
 		draft: 'Rascunho',
-		finalApproval: 'Aprovação Final'
+		finalApproval: 'Aprovação Final',
+		validation: 'Validação'
 	},
 
 	ENTRIES: {

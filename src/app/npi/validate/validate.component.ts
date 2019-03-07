@@ -91,10 +91,12 @@ export class ValidateComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    this.validateForm.updateValueAndValidity()
-    //console.log(this.validateForm.get("validation") as FormGroup)
-    return (this.validateForm.get("validation") as FormGroup)
-      .controls[field].hasError('required')
+    let propsArr = field.split(".")
+    let control = this.validateForm.get('validation')
+    for (let i = 0; i < propsArr.length; i++) {
+      control = control.get(propsArr[i])
+    }
+    return control.hasError('required')
   }
 
   finalizeNpi() {
@@ -161,7 +163,7 @@ export class ValidateComponent implements OnInit {
   }
 
   amITheValidator() {
-    return true
+    return this.npiComponent.user.level ==1 && this.npiComponent.user.department == "MPR"
   }
 
 }

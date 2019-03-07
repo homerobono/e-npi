@@ -54,15 +54,15 @@
 .radio-container input:disabled ~
 .radio-deny:after {
     cursor: default;
-    background-color: grey;
-    color: #ccc
+    background-color: rgb(190, 190, 190);
+    color: rgb(240, 240, 240)
 }
 
 .radio-container input:disabled ~
 .radio-accept:after {
     cursor: default;
-    background-color: grey;
-    color: #ccc
+    background-color: rgb(189, 189, 189);
+    color: rgb(241, 241, 241)
 }
 
 .radio-container:hover input:disabled ~ 
@@ -90,7 +90,6 @@
 
 .radio-container:hover input:checked:disabled ~ 
 .radio-accept:after {
-    color: rgb(255, 255, 255)
 }
 
 .radio-container input:checked ~
@@ -103,7 +102,6 @@
 
 .radio-container:hover input:checked:disabled ~ 
 .radio-deny:after {
-    color: rgb(255, 255, 255)
 }
 
 .signature {

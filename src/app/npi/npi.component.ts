@@ -134,7 +134,7 @@ export class NpiComponent implements OnInit {
     public utils: UtilService,
     private modalService: BsModalService,
     public dialog: MatDialog,
-    private uploadService: UploadService
+    public uploadService: UploadService
   ) {
     this.user = authService.getUser()
     this.npi = new Npi(null)
@@ -220,7 +220,7 @@ export class NpiComponent implements OnInit {
   }
 
   submitNpi(npiForm): void {
-    this.toggleEdit()
+    //this.toggleEdit()
     this.sendingForm = true
 
     npiForm.name = this.titleField
@@ -291,7 +291,7 @@ export class NpiComponent implements OnInit {
   successResponse(res) {
     console.log(res)
     this.formSent = true;
-
+    this.toggleEdit()
     if (res.update.data.changedFields && Object.keys(res.update.data.changedFields).length > 0)
       this.messenger.set({
         'type': 'success',
@@ -311,7 +311,7 @@ export class NpiComponent implements OnInit {
   }
 
   invalidFieldsError(err) {
-    this.toggleEdit()
+    //this.toggleEdit()
     console.log(err)
     if (err.error.message.errors) {
       var errors = err.error.message.errors
@@ -525,7 +525,7 @@ export class NpiComponent implements OnInit {
       (this.user.level == 1 && (
         (this.npi.stage == 1 && this.amITheOwner()) ||
         (this.npi.stage == 2 && (
-          (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) || 
+          (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
           (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
         ) ||
         (this.npi.stage == 3 && this.user.department == "COM" && this.user.level == 1) ||

@@ -25,7 +25,9 @@ export class FileButtonComponent implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    public uploadService: UploadService
+    public uploadService: UploadService,
+    public npiComponent: NpiComponent,
+    public activitiesComponent: ActivitiesComponent
   ) { }
 
   ngOnInit() {

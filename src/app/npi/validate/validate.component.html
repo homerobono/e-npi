@@ -54,22 +54,16 @@
       </div>
     </div>
   </div>
-  <div class='form-group' formGroupName='validation' *ngIf='npi.validation?.finalApproval?.signature'>
+  <div class='form-group' formGroupName='validation' *ngIf='npi.validation?.finalApproval?.signature?.user && npi.validation?.finalApproval?.signature?.date'>
     <label for='final'>ANÁLISE FINAL</label>
     <textarea class='form-control' id='final' formControlName='final' rows='5' required></textarea>
-    <div class='row' *ngIf='validateForm.valid==true && npiComponent.amITheOwner()'>
+    <div class='row' *ngIf='validateForm.valid && npiComponent.amITheOwner()'>
       <div class='col'>
-        <button type='button' class='w-100 btn btn-primary' (click)='finalizeNpi()'>
+        <button type='button' class='w-100 btn btn-primary mt-2' (click)='finalizeNpi()'>
           <i class='fa fa-check'></i>
           Finalizar NPI
         </button>
       </div>
-    </div>
-    <div>
-      <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='toggleNewVersion()'
-        *ngIf='isFormEnabled && npi.stage == 4'>
-        Alterar Projeto
-      </button>
     </div>
   </div>
   <hr>
