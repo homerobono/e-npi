@@ -29,7 +29,7 @@ export class FileButtonComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.fieldControl.get('annex').value, this.canEdit)
+    //console.log(this.fieldControl.get('annex').value, this.canEdit)
    }
 
   openFileAction(field) {

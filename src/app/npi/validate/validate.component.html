@@ -9,38 +9,30 @@
     </div>
 
 
-    <div class='form-group col-xs-12 col-md-8 col-lg-9'>
-      <label for='product'>Resultado da Verificação do Projeto/Produto</label>
-       <div class='row align-items-center mt-1 mb-0' formGroupName='finalApproval'>
-        <div class='col-auto' *ngIf='npi.finalApproval?.status'>
-          <span class='fa fa-2x' style='vertical-align: middle' [ngClass]='npi.validation.finalApproval?.status=="accept" ? "fa-check-circle-o text-primary" : "fa-check-times-o text-danger"'></span>
-        </div>
-        <div *ngIf='npi.validation.finalApproval?.status || amITheValidator()'>
-          <label *ngIf='(npi.validation.finalApproval?.status && npi.validation.finalApproval?.status=="accept") || amITheValidator()'
-            class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
-            <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept'>
+    <div class='form-group col-xs-12 col-md-8 col-lg-9'
+      *ngIf='!npi.validation?.finalApproval?.signature?.user && amITheValidator()'>
+      <label for='product'><b>Registrar Validação</b></label>
+      <div class='row mt-0 pt-0' formGroupName='finalApproval'>
+        <div class='col-12 mt-0 pt-0'>
+          <label class='radio-container form-check-inline mt-0 pt-0' (click)='toggleStatus(i, $event)'>
+            <input type='radio' #finalApproval class='radio-approval radio-accept' value='true' formControlName='status'
+              id='accept'>
             <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
           </label>
-          <label *ngIf='(npi.validation.finalApproval?.status && npi.validation.finalApproval?.status=="deny") || amITheValidator()'
-            class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
-            <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny'>
+          <label class='radio-container form-check-inline mt-0 pt-0' (click)='toggleStatus(i, $event)'>
+            <input type='radio' #disapproval class='radio-approval radio-deny' value='false' formControlName='status'
+              id='deny'>
             <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
           </label>
         </div>
-        <div class='col'>
+        <div class='col-12' *ngIf='validateForm.get("validation").get("finalApproval").get("status").value == "false"'>
           <div class='form-group'>
             <label for='finalComment'>Justificativa</label>
-            <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval")}'>
+            <input class='form-control' formControlName='comment' id='finalComment' #comment
+              [ngClass]='{"is-invalid": fieldHasErrors("finalApproval")}'>
             <div class='invalid-feedback'>
-              Descreva o motivo da aprovação
+              Descreva o motivo da reprovação
             </div>
-          </div>
-        </div>
-        <div class='col-12 col-sm text-center final-signature' *ngIf='finalSignature'>
-          <div class='rounded bg-light m-0 p-2'>
-            <i>
-              <b>{{ finalSignature }}</b>
-            </i>
           </div>
         </div>
       </div>
@@ -48,22 +40,36 @@
   </div>
 
 
-  <div class='form-group' formGroupName='validation'>
+  <div class='form-group' formGroupName='validation' *ngIf='npi.validation.disapprovals.length || (npi.validation.finalApproval.signature?.user && npi.validation.finalApproval.signature?.date)'>
+    <b>Validações anteriores:</b>
+    <div class='row mb-3'>
+      <div *ngFor='let disapproval of npi.validation.disapprovals; index as i' class='col-12'>
+        <span class='fa fa-fw fa-times text-danger pb-1' style='vertical-align: middle'></span>
+        {{ disapprovalSignatures[i].date }} - <span class=text-danger>Reprovado</span> por
+        <b>{{ disapprovalSignatures[i].user }}</b>: <i>{{ disapproval.comment }}</i>
+      </div>
+      <div class='col-auto' *ngIf='npi.validation?.finalApproval?.signature?.date && npi.validation?.finalApproval?.signature?.user'>
+        <span class='fa fa-fw fa-check text-primary pb-1' style='vertical-align: middle'></span>
+        {{ finalSignature.date }} - <span class=text-primary>Aprovado</span> por <b>{{ finalSignature.user }}</b>.
+      </div>
+    </div>
+  </div>
+  <div class='form-group' formGroupName='validation' *ngIf='npi.validation?.finalApproval?.signature'>
     <label for='final'>ANÁLISE FINAL</label>
     <textarea class='form-control' id='final' formControlName='final' rows='5' required></textarea>
-  </div>
-  <div class='row' *ngIf='validateForm.valid==true'>
-    <div class='col'>
-      <button type='button' class='w-100 btn btn-primary' (click)='finalizeNpi()'>
-        <i class='fa fa-check'></i>
-        Finalizar NPI
+    <div class='row' *ngIf='validateForm.valid==true && npiComponent.amITheOwner()'>
+      <div class='col'>
+        <button type='button' class='w-100 btn btn-primary' (click)='finalizeNpi()'>
+          <i class='fa fa-check'></i>
+          Finalizar NPI
+        </button>
+      </div>
+    </div>
+    <div>
+      <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='toggleNewVersion()'
+        *ngIf='isFormEnabled && npi.stage == 4'>
+        Alterar Projeto
       </button>
     </div>
   </div>
-  <div>
-    <button class='btn btn-outline-info shadow-none ml-auto' type='button' (click)='toggleNewVersion()' *ngIf='isFormEnabled && npi.stage == 4'>
-      Alterar Projeto
-    </button>
-  </div>
-</div>
-<hr>
+  <hr>

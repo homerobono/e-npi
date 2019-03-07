@@ -573,7 +573,7 @@ export class NpiComponent implements OnInit {
   }
 
   canCloseNpi() {
-    return (this.npiForm.get("validation") != null && this.npiForm.get("validation").valid)
+    return (this.npiForm.get("validation") != null && this.npiForm.get("validation").valid && this.amITheOwner())
   }
 
 }

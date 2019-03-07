@@ -1,9 +1,8 @@
 .radio-container {
     display: inline;
     position: relative;
+    top: -10px;
     font-size: 32px;
-    padding: 0;
-    margin: 0;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -24,39 +23,51 @@
 .radio-approval {
     display: inherit;
     position: inherit;
-    color: #bbb;
+    color: rgb(255, 255, 255);
     vertical-align: middle;
 }
 
 .radio-accept:after {
-    content: '\f05d';
-    margin: 4px
+    font-family: "FontAwesome";
+    font-size: 14pt;
+    content: '\f10c \ Aprovar';
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #428bca;
 }
 
 .radio-deny:after {
-    content: "\f05c";
-    margin: 4px
+    font-family: "FontAwesome";
+    font-size: 14pt;
+    content: "\f10c\ Reprovar";
+    padding: 8px;
+    border-radius: 4px;
+    background-color: #d9534f
 }
 
 .radio-container:hover input:enabled ~ 
 .radio-approval:after {
     cursor: pointer;
-    color: #666
+    color: rgb(255, 255, 255)
 }
 
 .radio-container input:disabled ~
 .radio-deny:after {
     cursor: default;
+    background-color: grey;
+    color: #ccc
 }
 
 .radio-container input:disabled ~
 .radio-accept:after {
     cursor: default;
+    background-color: grey;
+    color: #ccc
 }
 
 .radio-container:hover input:disabled ~ 
 .radio-approval:after {
-    color: currentColor
+    color: currentColor;
 }
 
 .radio-container input:enabled ~
@@ -72,23 +83,27 @@
 .radio-container input:checked ~
 .radio-accept:after {
     display: inherit;
-    color: green;
+    color: rgb(255, 255, 255);
+    background-color: #316592;
+    content: '\f05d \ Aprovar';
 }
 
 .radio-container:hover input:checked:disabled ~ 
 .radio-accept:after {
-    color: green
+    color: rgb(255, 255, 255)
 }
 
 .radio-container input:checked ~
 .radio-deny:after {
     display: inherit;
-    color: red;
+    color: rgb(255, 255, 255);
+    background-color: #973b36;
+    content: '\f05c \ Reprovar';
 }
 
 .radio-container:hover input:checked:disabled ~ 
 .radio-deny:after {
-    color: red
+    color: rgb(255, 255, 255)
 }
 
 .signature {

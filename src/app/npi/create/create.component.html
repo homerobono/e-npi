@@ -95,16 +95,26 @@
         </div>
       </div>
     </div>
-
-    <div class="form-group mb-4">
-      <label for='description'>
-        <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
-      </label>
-      <textarea class="form-control" rows=5 formControlName='description' id='description'
-        [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+    <div class="form-row">
+      <div class="form-group col-sm-12 mb-4" formGroupName='description'>
+        <label for='description'>
+          <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
+        </label>
+        <div class="input-group">
+          <textarea class="form-control" rows=5 formControlName='description' id='description'
+            [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
           </textarea>
-      <div class='invalid-feedback'>
-        Forneça os requisitos gerais do projeto
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend"
+              (click)='openUploadModal("description")'
+              [ngClass]='{"text-primary":uploadService.uploaders["description"], "border-danger": fieldHasErrors("description") && !uploadService.uploaders["description"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Forneça os requisitos gerais do projeto
+          </div>
+        </div>
       </div>
     </div>
 
@@ -114,7 +124,6 @@
         <div class="input-group">
           <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription'
             [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
-
               </textarea>
           <div class="input-group-append">
             <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend"

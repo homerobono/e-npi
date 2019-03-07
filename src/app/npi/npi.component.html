@@ -123,7 +123,7 @@
         Aguardando definição das atividades pelo MPR (Produto).</i>
     </div>
 
-    <app-validate [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
+    <app-validate [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
 
     <!--div class="row align-items-center justify-content-between" *ngIf='editFlag'>
       <div class='col-auto text-secondary'>

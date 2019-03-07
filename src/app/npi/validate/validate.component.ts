@@ -11,16 +11,17 @@ import { NpiComponent } from '../npi.component';
 })
 export class ValidateComponent implements OnInit {
 
-  @Input() npi: Npi
+  npi: Npi
+  @Input() set npiSetter(npi: Npi) {
+    this.npi = npi;
+    this.fillFormData()
+    this.loadSignatures()
+  }
+
   @Input() set toggleEdit(edit: Boolean) {
-    if (edit) {
-      if (this.npiComponent.amITheOwner()) {
-        this.validateForm.get('validation').get('final').enable()
-      }
-      if (this.npiComponent.user.level > 1) {
-        this.validateForm.get('validation').enable()
-      }
-    }
+    this.toggleFields(edit)
+    this.isFormEnabled = edit
+    this.editFlag = edit
   }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
@@ -28,7 +29,9 @@ export class ValidateComponent implements OnInit {
   validateForm: FormGroup
   deny: FormControl
   isFormEnabled: Boolean
-  finalSignature: String
+  editFlag: Boolean
+  finalSignature: { 'date', 'user' }
+  disapprovalSignatures: Array<{ 'date', 'user' }>
 
   constructor(
     private fb: FormBuilder,
@@ -67,6 +70,7 @@ export class ValidateComponent implements OnInit {
         .toLocaleDateString('pt-br')
 
     this.fillFormData()
+    this.loadSignatures()
 
     this.npiFormOutput.emit(this.validateForm)
 
@@ -77,8 +81,11 @@ export class ValidateComponent implements OnInit {
 
   fillFormData() {
     if (this.npi.validation)
-      this.validateForm.get("validation").setValue({
-        'finalApproval': null,//this.npi.validation.product ? this.npi.validation.product : null,
+      this.validateForm.get("validation").patchValue({
+        'finalApproval': {
+          status: null,
+          comment: null
+        },
         'final': this.npi.validation.final ? this.npi.validation.final : null,
       })
   }
@@ -105,20 +112,55 @@ export class ValidateComponent implements OnInit {
   }
 
   loadSignatures() {
-    var final = this.npi.validation.finalApproval.signature
-    if (final && final.date && final.user)
-      this.finalSignature = (this.npi.validation.finalApproval.status == 'accept' ? "Aprovado por " : "Reprovado por ") +
-        final.user.firstName +
-        (final.user.lastName ?
-          ' ' + final.user.lastName :
-          ''
-        )// + ', ' + new Date(final.date).toLocaleDateString('pt-br') +
-    //', às ' + new Date(final.date).toLocaleTimeString('pt-br')
+    var disapprovals = this.npi.validation.disapprovals
+    this.disapprovalSignatures = new Array()
+    for (let i = 0; i < disapprovals.length; i++) {
+      if (disapprovals[i].signature.date && disapprovals[i].signature.user)
+        this.disapprovalSignatures.push({
+          date: new Date(disapprovals[i].signature.date).toLocaleDateString('pt-br'),
+          user: disapprovals[i].signature.user.firstName +
+            (disapprovals[i].signature.user.lastName ?
+              ' ' + disapprovals[i].signature.user.lastName :
+              ''
+            )
+        })
+    }
+    var final = this.npi.validation.finalApproval
+    if (final && final.signature && final.signature.date && final.signature.user)
+      this.finalSignature = {
+        date: new Date(final.signature.date).toLocaleDateString('pt-br'),
+        user: final.signature.user.firstName +
+          (final.signature.user.lastName ?
+            ' ' + final.signature.user.lastName :
+            ''
+          )
+      }
     else
       this.finalSignature = null
+    console.log(this.disapprovalSignatures)
   }
 
-  amITheValidator(){
+  toggleFields(edit: Boolean) {
+    if (edit) {
+      if (this.npiComponent.amITheOwner()) {
+        this.validateForm.get('validation').get('final').enable({ emitEvent: false })
+      }
+      if (this.npiComponent.user.level >= 1) {
+        this.validateForm.get('validation').get('finalApproval').enable({ emitEvent: false })
+      }
+    } else {
+      this.validateForm.get('validation').get('final').disable({ emitEvent: false })
+      this.validateForm.get('validation').get('finalApproval').disable({ emitEvent: false })
+    }
+  }
+
+  toggleNewVersion() {
+    this.npiComponent.newFormVersionFlag = !this.npiComponent.newFormVersionFlag
+    this.npiComponent.newFormVersion.next(this.npiComponent.newFormVersionFlag)
+    window.scrollTo({ left: 0, top: 120, behavior: 'smooth' });
+  }
+
+  amITheValidator() {
     return true
   }
 

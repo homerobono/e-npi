@@ -29,7 +29,10 @@ class Npi {
     updated: Date;
     updatedString: String;
     entry: String;
-    description: String;
+    description: {
+        description: String,
+        annex: [FileDescriptor]
+    };
     resources: {
         description: String,
         annex: [FileDescriptor]
@@ -115,9 +118,16 @@ class Npi {
         apply: Boolean
     }>;
     validation: {
-        finalApproval: {
-            status: String,
+        disapprovals: Array<{
             comment: String,
+            signature: {
+                user: any,
+                date: Date
+            }
+        }>,
+        finalApproval: {
+            comment: String,
+            status: Boolean,
             signature: {
                 user: any,
                 date: Date

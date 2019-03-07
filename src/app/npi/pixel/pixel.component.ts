@@ -21,7 +21,7 @@ export class PixelComponent implements OnInit {
   @Input() set toggleEdit(edit: Boolean) {
     if (edit && this.amITheOwner() &&
       (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
-        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval() )
+        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
       ))) {
       this.npiForm.enable()
       this.npiForm.updateValueAndValidity()
@@ -45,7 +45,10 @@ export class PixelComponent implements OnInit {
       'complexity': null,
       'client': null,
       'npiRef': null,
-      'description': null,
+      'description': fb.group({
+        'description': null,
+        'annex': []
+      }),
       'resources': fb.group({
         'description': null,
         'annex': []
@@ -173,10 +176,10 @@ export class PixelComponent implements OnInit {
     return this.npiComponent.invalidFields.find(f => f == field)
   }
 
-  isRegulationApplyable(){
+  isRegulationApplyable() {
     return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
-    .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
-}
+      .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
+  }
   openFileAction(field) {
     if (!this.npi[field].annex || !this.npi[field].annex.length)
       this.npiComponent.openFileUploader(field)

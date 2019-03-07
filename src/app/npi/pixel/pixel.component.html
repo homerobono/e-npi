@@ -42,15 +42,25 @@
     </div>
   </div>
 
-  <div class="form-group mb-4">
-    <label for='description'>
+  <div class="form-group mb-4" formGroupName='description'>
+    <label for='descriptionDescription'>
       <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
     </label>
-    <textarea class="form-control" rows=5 formControlName='description' id='description'
-      [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+    <div class="input-group">
+      <textarea class="form-control" rows=5 formControlName='description' id='descriptionDescription'
+        [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
         </textarea>
-    <div class='invalid-feedback'>
-      Forneça os requisitos gerais do projeto
+        <div class="input-group-append">
+          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="resourcesAppend"
+            (click)='openFileAction("description")'
+            [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["description"] && !npi.description.annex?.length, "border-danger": fieldHasErrors("description.annex") && !npi.description.annex?.length}'
+            [disabled]='!npiComponent.editFlag && !npi.description.annex?.length'>
+            <i class='fa fa-fw' [ngClass]='npi.description.annex?.length? "append-icon":"upload-icon"'></i>
+          </button>
+        </div>
+      <div class='invalid-feedback'>
+        Forneça os requisitos gerais do projeto
+      </div>
     </div>
   </div>
 
