@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
 import { BsDatepickerConfig, BsLocaleService } from 'ngx-bootstrap/datepicker'
@@ -24,8 +24,11 @@ import { FileItem } from 'ng2-file-upload';
 import { FileDescriptor } from '../../models/file-descriptor';
 import { of, Observable } from 'rxjs';
 import { map } from 'rxjs-compat/operator/map';
+import { UsersService } from 'src/app/services/users.service';
+import User from 'src/app/models/user.model';
 
 defineLocale('pt-br', ptBrLocale)
+const DAYS = 24 * 3600 * 1000
 
 @Component({
     selector: 'app-create',
@@ -44,6 +47,9 @@ export class CreateComponent implements OnInit {
     npisList: Npi[]
     modalRef: BsModalRef;
     npiRef: Npi
+
+    oemActivitiesFormArray: FormArray
+    devDate: Date
 
     objectkeys = Object.keys
 
@@ -64,10 +70,14 @@ export class CreateComponent implements OnInit {
     }
 
     datePickerConfig: Partial<BsDatepickerConfig>;
+    oemDatePickerConfig: Array<Partial<BsDatepickerConfig>>;
+    oemActivities: Array<any>
+    users: any = {}
+
     createForm: FormGroup;
 
     constructor(
-        fb: FormBuilder,
+        private fb: FormBuilder,
         private npiService: NpiService,
         private authService: AuthService,
         private router: Router,
@@ -75,7 +85,8 @@ export class CreateComponent implements OnInit {
         private localeService: BsLocaleService,
         public utils: UtilService,
         private modalService: BsModalService,
-        public uploadService: UploadService
+        public uploadService: UploadService,
+        private userService: UsersService
     ) {
         this.datePickerConfig = Object.assign(
             {},
@@ -87,6 +98,7 @@ export class CreateComponent implements OnInit {
             }
         )
         var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * 30)
+        this.oemActivitiesFormArray = fb.array([])
         this.createForm = fb.group({
             'date': new Date().toLocaleDateString('pt-br'),
             'complexity': 2,
@@ -133,19 +145,21 @@ export class CreateComponent implements OnInit {
                 'period': null
             }),
             'fiscals': 'Incentivos fiscais disponíveis',
-            'oemActivities': fb.array([])
+            'oemActivities': this.oemActivitiesFormArray
         })
 
-        var oemActivities = utils.getOemActivities()
-        for (var i = 0; i < oemActivities.length; i++) {
-            (this.createForm.get('oemActivities') as FormArray).
-                push(fb.group({
-                    date: oemDefaultDeadLine,
-                    comment: null,
-                    dept: oemActivities[i].dept,
-                    title: oemActivities[i].title,
-                }))
-        }
+        this.oemActivities = this.utils.getOemActivities()
+        this.insertOemActivities()
+
+        this.userService.getUsers().subscribe(
+            users => {
+                users.forEach(user => {
+                    let dept = user.department as string
+                    if (!this.users[dept]) this.users[dept] = new Array<User>()
+                    this.users[dept].push(user)
+                })
+                //console.log(this.users)
+            })
 
         npiService.npisList.subscribe(res => this.npisList = res)
 
@@ -160,6 +174,8 @@ export class CreateComponent implements OnInit {
 
     ngOnInit() {
         this.localeService.use('pt-br');
+        this.oemDatePickerConfig = this.initDatePickerConfigArray(this.oemActivities.length)
+        this.subscribeToInputChanges()
         //setTimeout(() => this.openUploadModal("resources"), 600)
     }
 
@@ -342,4 +358,308 @@ export class CreateComponent implements OnInit {
         if (this.modalRef)
             this.modalRef.hide()
     }
+    // ==================== OEM related methods ===================
+
+    subscribeToInputChanges() {
+        this.oemActivitiesFormArray.controls.forEach(activityControl => {
+
+            //this.activitiesFormArray.updateValueAndValidity()
+
+            activityControl.get('term').valueChanges.subscribe(
+                term => this.updateOwnDateField(term, activityControl))
+
+            activityControl.get('endDate').valueChanges.subscribe(
+                endDate => {
+                    this.updateTermField(endDate, activityControl)
+                    this.updateDateFields(activityControl)
+                })
+
+            activityControl.get('apply').valueChanges.subscribe(
+                apply => this.updateDateFields(activityControl))
+
+            /*if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
+                activityControl.get('endDate').valueChanges.subscribe(
+                    endDate => this.updateDevDate()
+                )
+            }*/
+        })
+    }
+
+    initDatePickerConfigArray(length) {
+        var datePickArr = new Array<Partial<BsDatepickerConfig>>(length)
+        for (let i = 0; i < length; i++) {
+            datePickArr[i] = Object.assign(
+                {},
+                {
+                    containerClass: 'theme-default',
+                    showWeekNumbers: false,
+                    dateInputFormat: 'DD/MM/YYYY',
+                    minDate: new Date()
+                })
+        }
+        return datePickArr
+    }
+
+    insertOemActivities() {
+        //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
+        this.oemActivities.forEach(activity => {
+            var activityControl = this.fb.group(
+                {
+                    //_id: null,
+                    activity: activity.value,
+                    dept: activity.dept,
+                    responsible: null,
+                    term: activity.term,
+                    startDate: this.getModelStartDate(activity.value),
+                    endDate: this.getModelActivityEndDate(activity.value),
+                    registry: null,
+                    apply: true,
+                }
+            )
+            let indexOfActivity = this.oemActivitiesFormArray.controls.indexOf(activityControl)
+            if (indexOfActivity > -1)
+                this.oemDatePickerConfig[indexOfActivity] = Object.assign(
+                    this.oemDatePickerConfig[indexOfActivity],
+                    {
+                        minDate: activityControl.get('startDate').value
+                    })
+
+            this.oemActivitiesFormArray.controls.push(activityControl)
+            //console.log(activityControl.value)
+        });
+    }
+
+    //===================== Model functions ================================
+
+    getModelStartDate(activityLabel: String): Date {
+        //console.log(activityLabel)
+        let dependencies = this.getModelDependencyActivities(activityLabel)
+        let startDate = new Date()
+
+        if (dependencies) {
+            dependencies.forEach(depActivity => {
+                let depEndDate = this.getModelActivityEndDate(depActivity.activity)
+                //console.log(depEndDate)
+                if (depEndDate)
+                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
+                //else console.log('no endDate for ', depActivity)
+            })
+        }
+        return startDate
+    }
+
+    getModelActivityEndDate(activityLabel: String): Date {
+        let activities = this.oemActivities
+        let activity = activities.find(a => a.activity == activityLabel)
+        if (activity) {
+            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
+            return new Date(this.getModelStartDate(activityLabel).valueOf() + (activity.term as number) * DAYS)
+        }
+        return null
+    }
+
+    getModelDependencyActivities(activityLabel: String): Array<any> {
+        let activities = this.oemActivities
+        //console.log(activityLabel)
+        let dependencies = []
+        let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
+        if (dependenciesLabels) {
+            dependenciesLabels.forEach(dependencyLabel => {
+                var dependency = activities.find(npiAct => npiAct.value == dependencyLabel)
+                var dependenciesArr = dependency ? [dependency] : []
+                if (dependency && !dependency.apply) {
+                    dependenciesArr = this.getModelDependencyActivities(dependencyLabel)
+                    //console.log('recursing ', dependencyLabel, dependency)
+                }
+                if (dependenciesArr && dependenciesArr.length) {
+                    dependencies = dependencies.concat(dependenciesArr)
+                }
+            })
+        }
+        return dependencies
+    }
+
+    //===================== Form Controls Methods ================================
+
+    updateOwnDateField(term, activityControl: AbstractControl) {
+        //console.log(term)
+        let startDate = this.getControlActivityStartDate(activityControl)
+        if (startDate) {
+            let endDate = new Date(startDate.valueOf() + term * DAYS)
+            //console.log(startDate)
+            //console.log(endDate)
+            activityControl.patchValue({
+                startDate: startDate,
+                endDate: endDate
+            })
+        }
+    }
+
+    updateTermField(endDate: Date, activityControl: AbstractControl) {
+        let term = Math.floor(endDate.valueOf() / DAYS) - Math.floor(Date.parse(activityControl.get('startDate').value) / DAYS)
+        activityControl.patchValue({
+            term: term
+        }, { emitEvent: false })
+        //console.log('update ', activityControl.get('activity').value)
+        document.getElementById(activityControl.get('activity').value + "_TERM").dispatchEvent(new Event('valueChanges'))
+    }
+
+    updateDateFields(activityControl: AbstractControl) {
+        let dependentsControls = this.getControlsDependentActivities(activityControl)
+        if (dependentsControls) {
+            let controlsLength = dependentsControls.length
+            let i = 0;
+            while (i < controlsLength) {
+                let depControl = dependentsControls[i]
+                let dependentsOfDependentsControls = this.getControlsDependentActivities(depControl)
+                dependentsOfDependentsControls.forEach(dodc => {
+                    let indexOfDodc = dependentsControls.indexOf(dodc)
+                    if (indexOfDodc > -1) {
+                        dependentsControls.splice(indexOfDodc, 1)
+                        if (indexOfDodc <= i) i--
+                    }
+                })
+                dependentsControls = dependentsControls.concat(dependentsOfDependentsControls)
+                controlsLength = dependentsControls.length
+                i++
+            }
+            dependentsControls.forEach(control => {
+                this.updateActivityDates(control)
+            })
+        }
+    }
+
+    updateActivityDates(activityControl: AbstractControl) {
+        let greatestDate = new Date()
+        let dependentActivities = this.getControlsDependencyActivities(activityControl)
+        dependentActivities.forEach(dep => {
+            let depEndDate = this.getControlActivityEndDate(dep)
+            if (depEndDate) {
+                greatestDate = new Date(Math.max(greatestDate.valueOf(), depEndDate.valueOf()))
+            }
+        })
+
+        let startDate = greatestDate
+        let endDate = new Date(startDate.valueOf() + parseInt(activityControl.get('term').value) * DAYS)
+
+        activityControl.patchValue({
+            startDate: startDate,
+            endDate: endDate
+        }, { emitEvent: false })
+
+        let indexOfActivity = this.oemActivitiesFormArray.controls.indexOf(activityControl)
+        if (indexOfActivity > -1)
+            this.datePickerConfig[indexOfActivity] = Object.assign(
+                this.datePickerConfig[indexOfActivity],
+                { minDate: startDate }
+            )
+
+        document.getElementById(activityControl.get('activity').value + "_START_DATE").dispatchEvent(new Event('valueChanges'))
+        document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
+
+        //Calculate if release date is dalayed
+        //if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
+            //console.log(activityControl.get('activity').value)
+            document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
+            //this.updateDelayedStatus()
+        //}
+    }
+
+    getControlActivityStartDate(activityControl: AbstractControl): Date {
+        let activityLabel = activityControl.get('activity').value
+        //console.log(activityLabel)
+        let dependenciesControls = this.getControlsDependencyActivities(activityControl)
+        let startDate = new Date()
+
+        if (dependenciesControls) {
+            dependenciesControls.forEach(depActivity => {
+                let depEndDate = this.getControlActivityEndDate(depActivity)
+                //console.log(depEndDate)
+                if (depEndDate)
+                    startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
+                //else console.log('no endDate for ', depActivity)
+            })
+        }
+        return startDate
+    }
+
+    getControlActivityEndDate(activityControl: AbstractControl): Date {
+        let activityLabel = activityControl.get('activity').value
+        let activity = this.oemActivitiesFormArray.controls.find(a => a.get('activity').value == activityLabel)
+        if (activity) {
+            if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
+            //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
+            return new Date(this.getControlActivityStartDate(activity).valueOf() + activity.get('term').value * DAYS)
+        }
+        return null
+    }
+
+    getControlsDependencyActivities(activityControl: AbstractControl): Array<AbstractControl> {
+        let activityLabel = activityControl.get('activity').value
+        let dependencies = []
+        let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
+        if (dependenciesLabels) {
+            dependenciesLabels.forEach(dependencyLabel => {
+                var dependencyControl = this.oemActivitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
+                var dependenciesArr = dependencyControl ? [dependencyControl] : []
+                if (dependencyControl && !dependencyControl.get('apply').value) {
+                    dependenciesArr = this.getControlsDependencyActivities(dependencyControl)
+                    //console.log('recursing ', dependencyLabel, dependency)
+                }
+                if (dependenciesArr && dependenciesArr.length) {
+                    dependencies = dependencies.concat(dependenciesArr)
+                }
+            })
+        }
+        return dependencies
+    }
+
+    getControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
+        let activityLabel = activityControl.get('activity').value
+        let deps = []
+        this.utils.getOemActivities().forEach(act => {
+            if (act.dep && act.dep.includes(activityLabel)) {
+                let activityControl = this.oemActivitiesFormArray.controls
+                    .find(a => a.get('activity').value == act.value)
+                if (activityControl) {
+                    deps.push(activityControl)
+                    if (!activityControl.get('apply').value)
+                        deps = deps.concat(this.getControlsDependentActivities(activityControl))
+                }
+            }
+        })
+        return deps
+    }
+    //========================================================================
+
+    //===================== Model functions ================================
+
+    //========================================================================
+
+    toggleApplyAll(event) {
+        //console.log(event.target.checked)
+        let status = event.target.checked
+        this.oemActivitiesFormArray.controls.forEach(control => {
+            let actLabel = control.get('activity').value
+            if (!this.utils.getOemActivity(actLabel).required)
+                control.patchValue({
+                    apply: status
+                })
+        })
+    }
+
+    updateDevDate() {
+        let devDate = new Date(null)
+        //console.log(devDate)
+        let releaseDependents = this.utils.getOemActivity('DEV').dep
+        releaseDependents.forEach(depLabel => {
+            let depControl = this.oemActivitiesFormArray.controls.find(a => a.get('activity').value == depLabel)
+            let depEndDate = new Date(this.getControlActivityStartDate(depControl).valueOf() + (depControl.get('apply').value ? depControl.get('term').value : 0) * DAYS)
+            //            console.log(depLabel, depEndDate, this.npi.inStockDate)
+            devDate = new Date(Math.max(devDate.valueOf(), depEndDate.valueOf()))
+        })
+        this.devDate = devDate
+        //this.updateDelayedStatus()
+    }
+
 }

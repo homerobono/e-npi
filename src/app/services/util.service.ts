@@ -11,9 +11,17 @@ export class UtilService {
   getActivities() {
     return Globals.MACRO_STAGES
   }
-
+  
   getActivity(activity) {
     return Globals.MACRO_STAGES.find(a => a.value == activity)
+  }
+
+  getOemActivities() {
+    return Globals.OEM_ACTIVITIES
+  }
+
+  getOemActivity(activity) {
+    return Globals.OEM_ACTIVITIES.find(a => a.value == activity)
   }
 
   getCriticalAnalisys(dept) {
@@ -63,10 +71,6 @@ export class UtilService {
     return Globals.ENTRIES_ARR
   }
 
-  getOemActivities() {
-    return Globals.OEM_ACTIVITIES
-  }
-
   getRegulation(regulation) {
     return Globals.REGULATIONS.find(r => r.value == regulation)
   }
@@ -88,9 +92,9 @@ export class UtilService {
   }
 
   formatDate(date: Date): String {
-    return ('0' + date.getDate()).slice(-2) + '/'
+    return date ? ('0' + date.getDate()).slice(-2) + '/'
          + ('0' + (date.getMonth() + 1)).slice(-2) + '/'
-         + date.getFullYear()
+         + date.getFullYear() : null
   }
 
   getTimeDifference(end: Date, start: Date): String {

@@ -31,7 +31,6 @@ export class PixelComponent implements OnInit {
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   npiForm: FormGroup;
-
   objectkeys = Object.keys
 
   constructor(
@@ -42,7 +41,6 @@ export class PixelComponent implements OnInit {
     this.npi = new Npi(null)
 
     this.npiForm = fb.group({
-      'complexity': null,
       'client': null,
       'npiRef': null,
       'description': fb.group({
@@ -104,8 +102,7 @@ export class PixelComponent implements OnInit {
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => this.fillFormData()
-    )
+      () => this.fillFormData())
   }
 
   amITheOwner(): Boolean {
@@ -180,6 +177,7 @@ export class PixelComponent implements OnInit {
     return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
       .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
   }
+  
   openFileAction(field) {
     if (!this.npi[field].annex || !this.npi[field].annex.length)
       this.npiComponent.openFileUploader(field)

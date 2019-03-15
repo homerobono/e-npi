@@ -33,14 +33,67 @@ export const Globals = Object.freeze({
 	NPI_OEM_CRITICAL_DEPTS: ['MEP', 'OPR', 'ADM', 'COM'],
 
 	OEM_ACTIVITIES: [
-		{ title: 'Solicitação de Documentos (BOM, Gerbers, etc)', dept: 'COM' },
-		{ title: 'Solicitação do NCM', dept: 'COM' },                                                                 
-		{ title: 'Cotação da BOM', dept: 'MSC' },
-		{ title: 'Estimativa de Capacidade Produtiva', dept: 'OPR' },
-		{ title: 'Definição de RMA/Garantia', dept: 'COM' },
-		{ title: 'Formação de Preço', dept: 'COM' },
-		{ title: 'Avaliação de Capacidade Financeira', dept: 'FIN' },
-		{ title: 'Data da Proposta', dept: 'COM' }
+		{ 
+			value: 'DOCS', 
+			label: 'Solicitação de Documentos (BOM, Gerbers, etc)', 
+			dept: 'COM', 		term: 10, 
+			required: true, annex: true 
+		},
+		{ 
+			value: 'NCM', 
+			label: 'Solicitação do NCM', 
+			dept: 'COM', term: 10, 
+			required: true, annex: true 
+		},                                                                 
+		{ 
+			value: 'BOM', 
+			label: 'Cotação da BOM', 
+			dept: 'OSC', term: 10, 
+			dep: ["NCM", "DOCS"], 
+			required: true, annex: true 
+		},
+		{ 
+			value: 'PROD_EST', 
+			label: 'Estimativa de Capacidade Produtiva', 
+			dept: 'OPR', term: 10, 
+			dep: ["NCM"], 
+			required: true, annex: true 
+		},
+			{ 
+			value: 'RMA', 
+			label: 'Definição de RMA/Garantia', 
+			dept: 'COM', term: 10, 
+			dep: ["BOM", "DOCS","NCM"], 
+			required: true, annex: true 
+		},
+		{ 
+			value: 'PRICE', 
+			label: 'Formação de Preço', 
+			dept: 'COM', term: 10, 
+			dep: ["BOM"], 
+			required: false, annex: true 
+		},
+		{ 
+			value: 'FIN_EST', 
+			label: 'Avaliação de Capacidade Financeira', 
+			dept: 'ADM', term: 10, 
+			dep: ["BOM", "PRICE"], 
+			required: true, annex: true 
+		},
+		{ 
+			value: 'DATE', 
+			label: 'Data da Proposta', 
+			dept: 'COM', term: 10, 
+			dep: ["PROD_EST"], 
+			required: true, annex: true 
+		},
+		/*{ 
+			value: 'DEV', 
+			label: 'Desenvolvimento', 
+			dept: null, term: 0, 
+			dep: ["DATE", "FIN_EST", "RMA"], 
+			required: true, annex: true 
+		}*/
 	],
 
 	LABELS: {

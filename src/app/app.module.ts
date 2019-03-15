@@ -39,6 +39,7 @@ import { PixelComponent } from './npi/pixel/pixel.component';
 import { CriticalComponent } from './npi/critical/critical.component';
 import { ClientComponent } from './npi/oem/client/client.component';
 import { ActivitiesComponent } from './npi/activities/activities.component';
+import { OemActivitiesComponent } from './npi/oem/activities/oem.activities.component';
 import { NpiChooserModalComponent } from './npi/npi-chooser-modal/npi-chooser-modal.component';
 import { ValidateComponent } from './npi/validate/validate.component';
 import { AlertComponent } from './alert/alert.component';
@@ -78,6 +79,7 @@ import { ForbiddenComponent } from './user/forbidden/forbidden.component';
     AlertComponent,
     CriticalComponent,
     ActivitiesComponent,
+    OemActivitiesComponent,
     NpiChooserModalComponent,
     ValidateComponent,
     ClientComponent,
