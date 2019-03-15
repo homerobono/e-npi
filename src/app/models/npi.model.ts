@@ -69,14 +69,22 @@ class Npi {
     };
     inStockDate: any;
     fiscals: String;
-    oemActivities: Array<
-        {
-            _id: String,
-            dept: String,
+    oemActivities: Array<{
+        _id: String,
+        activity: String,
+        term: Number,
+        dept: String,
+        responsible: any,
+        comment: String,
+        annex: [FileDescriptor],
+        registry: String,
+        closed: Boolean,
+        signature: {
+            user: any,
             date: Date,
-            comment: String,
-            annex: String
-        }>;
+        },
+        apply: Boolean
+    }>;
     critical: Array<
         {
             _id: String,
@@ -175,13 +183,7 @@ class Npi {
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
             if (npiModel.fiscals != null) this.fiscals = npiModel.fiscals
-            if (npiModel.oemActivities != null) {
-                this.oemActivities = npiModel.oemActivities
-                this.oemActivities.forEach(activity => {
-                    if (activity.date)
-                        activity.date = new Date(activity.date)
-                });
-            }
+            if (npiModel.oemActivities != null) this.oemActivities = npiModel.oemActivities
             if (npiModel.critical != null) {
                 this.critical = npiModel.critical
                 this.critical.forEach(critical => {

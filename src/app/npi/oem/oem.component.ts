@@ -22,22 +22,31 @@ import { Observable } from 'rxjs';
 })
 
 export class OemComponent implements OnInit {
-  
-  npi : Npi
+
+  npi: Npi
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
     this.fillFormData()
   }
   @Input() npis: Npi[]
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.npiComponent.amITheOwner() &&
+      (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
+        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
+      ))) {
+      this.npiForm.enable()
+      this.npiForm.updateValueAndValidity()
+    }
+    else this.npiForm.disable()
+  }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
-  
-  objectkeys = Object.keys
 
   npiForm: FormGroup;
   npiObservable: Observable<Npi>
+  objectkeys = Object.keys
 
-  public standardRegulationsArray : any
-  public oemActivitiesControlsArray :  any
+  public standardRegulationsArray: any
+  public oemActivitiesControlsArray: any
 
   constructor(
     private fb: FormBuilder,
@@ -50,21 +59,21 @@ export class OemComponent implements OnInit {
     this.npis = new Array<Npi>()
 
     this.npiForm = fb.group({
-      'npiRef': null,
-      'complexity': null,
       'client': null,
-      'description': null,
-      'norms': fb.group({
+      'npiRef': null,
+      'description': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
       }),
       'resources': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
       }),
       'regulations': fb.group({
         standard: fb.group({}),
-        additional: null
+        additional: null,
+        'description': null,
+        'annex': []
       }),
       'inStockDateType': null,
       'inStockDate': fb.group({
@@ -73,19 +82,19 @@ export class OemComponent implements OnInit {
       }),
       'investment': fb.group({
         value: null,
-        currency: null
+        currency: null,
+        annex: []
       }),
       'projectCost': fb.group({
         value: null,
         currency: null,
-        annex: null
+        annex: []
       }),
       'demand': fb.group({
         'amount': null,
         'period': null
       }),
       'fiscals': null,
-      'oemActivities': fb.array([])
     })
     let regulations = utils.getRegulations()
     let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
@@ -95,15 +104,11 @@ export class OemComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.npi)
-
-    this.insertOemActivities();
-
-
     this.standardRegulationsArray = (this.npiForm.get('regulations').get('standard') as FormGroup).controls
-    this.oemActivitiesControlsArray = (this.npiForm.get("oemActivities") as FormGroup).controls
 
-    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
+    this.npiFormOutput.emit(this.npiForm)
+    this.npiForm.get('npiRef').valueChanges.subscribe(
+      res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
 
     if (this.npi.isCriticallyTouched() ||
@@ -111,29 +116,11 @@ export class OemComponent implements OnInit {
       this.npiForm.disable()
 
     this.npiComponent.resetFormFlagSubject.subscribe(
-      () => {
-        this.fillFormData()
-      }
-    )
+      () => this.fillFormData())
 
     this.npiComponent.newFormVersion.subscribe(
-      (flag) => {
-        if (flag) this.editForm()
-        else this.npiForm.disable()
-      }
+      flag => flag ? this.editForm() : this.npiForm.disable()
     )
-
-    this.npiFormOutput.emit(this.npiForm)
-  }
-
-  insertOemActivities() {
-    var oemActivitiesArray = this.npiForm.get('oemActivities') as FormArray
-    var arrLength = this.utils.getOemActivities().length
-    for (var i = 0; i < arrLength; i++) {
-      oemActivitiesArray.push(this.fb.group(
-        this.npi.oemActivities[i]
-      ))
-    }
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
@@ -162,19 +149,21 @@ export class OemComponent implements OnInit {
           value: this.npi.projectCost.value ?
             this.npi.projectCost.value.toFixed(2).toString().replace('.', ',')
             : null,
-          currency: this.npi.projectCost.currency ? 
-            this.npi.projectCost.currency:null,
-          annex: null
+          currency: this.npi.projectCost.currency ?
+            this.npi.projectCost.currency : null,
+          annex: this.npi.projectCost.annex ?
+            this.npi.projectCost.annex : []
         } : null,
       investment: this.npi.investment ?
-      {
-        value: this.npi.investment.value ?
-          this.npi.investment.value.toFixed(2).toString().replace('.', ',')
-          : null,
-        currency: this.npi.investment.currency ? 
-          this.npi.investment.currency:null,
-        annex: null
-      } : null,
+        {
+          value: this.npi.investment.value ?
+            this.npi.investment.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.investment.currency ?
+            this.npi.investment.currency : null,
+          annex: this.npi.investment.annex ?
+            this.npi.investment.annex : []
+        } : null,
       inStockDateType: this.npi.inStockDate ?
         this.npi.inStockDate instanceof (Date || String) ? null :
           this.npi.inStockDate.fixed ? 'fixed' :
@@ -194,12 +183,18 @@ export class OemComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    let fieldsArr = field.split(".")
-    let control = this.npiForm.get(fieldsArr[0])
-    for (let i = 1; i < fieldsArr.length; i++) {
-      control = control.get(fieldsArr[i])
-    }
-    return control.hasError('required')
+    return this.npiComponent.invalidFields.find(f => f == field)
+  }
+
+  isRegulationApplyable() {
+    return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
+      .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
+  }
+
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.npiComponent.openFileUploader(field)
+    else this.npiComponent.openFileManager(field)
   }
 
   updateParentForm() {
@@ -208,6 +203,14 @@ export class OemComponent implements OnInit {
 
   editForm() {
     this.npiForm.enable()
+    this.updateParentForm()
+  }
+
+  setChild(form) {
+    Object.keys(form.controls).forEach((field: string) => {
+      this.npiForm.addControl(field, form.get(field))
+    });
+    this.npiForm.updateValueAndValidity()
     this.updateParentForm()
   }
 

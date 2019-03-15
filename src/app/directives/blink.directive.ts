@@ -7,7 +7,6 @@ import { AbstractControl } from '@angular/forms';
 export class BlinkDirective {
 
   @Input() public activity: any;
-  @Input() public npi: any;
   @Input() public dependencies: Array<AbstractControl>;
   @Input() public dependents: Array<AbstractControl>;
 
