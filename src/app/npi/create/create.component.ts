@@ -401,8 +401,8 @@ export class CreateComponent implements OnInit {
     }
 
     insertOemActivities() {
-        //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
         this.oemActivities.forEach(activity => {
+            console.log(activity.value)
             var activityControl = this.fb.group(
                 {
                     //_id: null,
@@ -432,17 +432,15 @@ export class CreateComponent implements OnInit {
     //===================== Model functions ================================
 
     getModelStartDate(activityLabel: String): Date {
-        //console.log(activityLabel)
         let dependencies = this.getModelDependencyActivities(activityLabel)
         let startDate = new Date()
-
         if (dependencies) {
             dependencies.forEach(depActivity => {
-                let depEndDate = this.getModelActivityEndDate(depActivity.activity)
+                let depEndDate = this.getModelActivityEndDate(depActivity.value)
                 //console.log(depEndDate)
                 if (depEndDate)
                     startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-                //else console.log('no endDate for ', depActivity)
+                else console.log('no endDate for ', depActivity)
             })
         }
         return startDate
@@ -450,7 +448,7 @@ export class CreateComponent implements OnInit {
 
     getModelActivityEndDate(activityLabel: String): Date {
         let activities = this.oemActivities
-        let activity = activities.find(a => a.activity == activityLabel)
+        let activity = activities.find(a => a.value == activityLabel)
         if (activity) {
             //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
             return new Date(this.getModelStartDate(activityLabel).valueOf() + (activity.term as number) * DAYS)
@@ -460,22 +458,10 @@ export class CreateComponent implements OnInit {
 
     getModelDependencyActivities(activityLabel: String): Array<any> {
         let activities = this.oemActivities
-        //console.log(activityLabel)
         let dependencies = []
         let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
-        if (dependenciesLabels) {
-            dependenciesLabels.forEach(dependencyLabel => {
-                var dependency = activities.find(npiAct => npiAct.value == dependencyLabel)
-                var dependenciesArr = dependency ? [dependency] : []
-                if (dependency && !dependency.apply) {
-                    dependenciesArr = this.getModelDependencyActivities(dependencyLabel)
-                    //console.log('recursing ', dependencyLabel, dependency)
-                }
-                if (dependenciesArr && dependenciesArr.length) {
-                    dependencies = dependencies.concat(dependenciesArr)
-                }
-            })
-        }
+        if (dependenciesLabels) 
+            dependencies = activities.filter(act => dependenciesLabels.includes(act.value))
         return dependencies
     }
 
@@ -549,8 +535,8 @@ export class CreateComponent implements OnInit {
 
         let indexOfActivity = this.oemActivitiesFormArray.controls.indexOf(activityControl)
         if (indexOfActivity > -1)
-            this.datePickerConfig[indexOfActivity] = Object.assign(
-                this.datePickerConfig[indexOfActivity],
+            this.oemDatePickerConfig[indexOfActivity] = Object.assign(
+                this.oemDatePickerConfig[indexOfActivity],
                 { minDate: startDate }
             )
 

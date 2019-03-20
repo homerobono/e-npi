@@ -325,7 +325,6 @@ export class OemActivitiesComponent implements OnInit {
 
     getModelStartDate(activityLabel: String): Date {
         console.log(activityLabel)
-        let activities = this.npi.oemActivities
         let dependencies = this.getModelDependencyActivities(activityLabel)
         let startDate = new Date()
 

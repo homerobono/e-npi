@@ -32,7 +32,7 @@
             [appActivityRow]='activity' [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"'
             [disabled]='activity.get("closed").value' [style.display]='displayActivityRow(activity)'>
             <td>
-              {{ i }}
+              {{ i+1 }}
             </td>
             <td>
               {{ utils.getOemActivity(activity.get("activity").value).label }}
