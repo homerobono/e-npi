@@ -219,43 +219,6 @@ export class NpiService {
           }
         }
       }
-      /* else {
-        model.inStockDate = {
-          fixed: null,
-          offset: null
-        }
-      }
-
-      /*
-              model.inStockDate =
-                {
-                  'fixed': npiForm.inStockDateType == 'fixed' ?
-                    npiForm.inStockFixedDate ?
-                      new Date(npiForm.inStockFixedDate) : null : null,
-                  'offset': npiForm.inStockDateType == 'offset' ?
-                    npiForm.inStockOffsetDate : null
-                }
-      
-              if (model.inStockDate.fixed == null && model.inStockDate.offset == null) {
-                console.log('trying todo the right thing')
-                model.inStockDate =
-                  {
-                    'fixed': npiForm.inStockDateType == 'fixed' ?
-                      npiForm.inStockDate instanceof Date ?
-                        npiForm.inStockDate : null : null,
-                    'offset': npiForm.inStockDateType == 'offset' ?
-                      npiForm.inStockDate instanceof Number ||
-                        npiForm.inStockDate instanceof String ||
-                        typeof npiForm.inStockDate == 'string' ||
-                        typeof npiForm.inStockDate == 'number' ?
-                        npiForm.inStockDate as Number : null : null
-                  }
-              }
-      
-              //if (npiForm.inStockDate == null || npiForm.inStockDate == '')
-              //model.inStockDate = null
-              //console.log('date: ')
-     */
     }
 
     console.log(model.inStockDate)

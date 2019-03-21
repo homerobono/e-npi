@@ -262,7 +262,7 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    if (this.npi.stage == 2 && this.isFinalApproval())
+    if (this.npi.stage == 2 && this.isFinalApproval() || this.npi.stage == 3)
       this.promoteNpi(npiForm)
     else {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
@@ -483,6 +483,12 @@ export class NpiComponent implements OnInit {
     return false
   }
 
+  isClientApproval() {
+    if (this.npi.stage == 3 && this.npiForm.getRawValue().clientApproval)
+      return this.npiForm.getRawValue().clientApproval.approval == 'accept'
+    return false
+  }
+
   openNpiChooserModal() {
     const initialState = {
       npisList: this.npisList
@@ -528,7 +534,10 @@ export class NpiComponent implements OnInit {
           (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
           (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
         ) ||
-        (this.npi.stage == 3 && this.user.department == "COM" && this.user.level == 1) ||
+        (this.npi.stage == 3 && (
+          (this.user.department == "COM" && this.user.level == 1 && !this.npi.activities) ||
+          (this.user.department == "MPR" && this.npi.activities)
+        )) ||
         (this.npi.stage == 4 && (
           (!this.npi.isComplete() && this.iHavePendingTask()) ||
           (this.npi.isComplete() && (this.user.department == "MEP" || this.amITheOwner()))

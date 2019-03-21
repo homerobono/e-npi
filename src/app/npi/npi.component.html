@@ -117,7 +117,8 @@
     <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
       (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)' *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && canIChangeActivities))'>
     </app-activities>
-    <div *ngIf='npi.stage == 2 && npi.isApproved() && !canIChangeActivities' class='text-center'>
+    
+    <div *ngIf='(npi.stage == 2 || npi.stage == 3) && npi.isApproved() && !canIChangeActivities' class='text-center'>
       <h4>Etapas Macro do Projeto</h4>
       <i class='text-secondary'>
         Aguardando definição das atividades pelo MPR (Produto).</i>
@@ -165,7 +166,12 @@
           <i class='fa fa-check-circle-o fa-fw'></i>
           Concluir Análise Crítica
         </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && npi.isApproved()'
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && !npi.activities' 
+          [disabled]='isReleaseEstimateDelayed'>
+          <i class='fa fa-th-list fa-fw'></i>
+          Concluir e Definir Atividades
+        </button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && npi.activities' 
           [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-arrow-right fa-fw'></i>
           Avançar para Desenvolvimento

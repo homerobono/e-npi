@@ -49,7 +49,7 @@
             <td [appActivityRow]='activity'>
               {{ npi.activities[i].dept }}
               <select class='custom-select' formControlName='responsible'>
-                <option *ngFor='let user of users[npi.activities[i].dept]' value='{{ user._id }}'>{{ user.firstName }}
+                <option *ngFor='let user of users[npi.activities[i].dept]; let first=first' [selected]='first' value='{{ user._id }}'>{{ user.firstName }}
                   {{ user.lastName }}</option>
               </select>
             </td>
@@ -110,4 +110,4 @@
     <div style='height: 70px'></div-->
   </div>
 </div>
-<app-in-stock-date *ngIf='npi.stage==2 && npiComponent.canIChangeActivities' [inStockDate]='npi.inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>
+<app-in-stock-date *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities' [inStockDate]='npi.inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>

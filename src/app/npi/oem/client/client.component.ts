@@ -14,31 +14,39 @@ export class ClientComponent implements OnInit {
 
   @Input() npi: Npi
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
-  
-  npiForm : FormGroup
-  deny : FormControl
+
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.npi.stage == 3 && this.npi.isCriticallyApproved() && !this.npi.activities) {
+      this.npiForm.enable()
+      this.npiForm.updateValueAndValidity()
+    }
+    else this.npiForm.disable()
+  }
+
+  npiForm: FormGroup
+  deny: FormControl
   isFormEnabled: Boolean = true
 
   constructor(
-    private fb : FormBuilder,
-    private route : ActivatedRoute,
-    private npiComponent : NpiComponent
-  ) { 
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private npiComponent: NpiComponent
+  ) {
     this.npiForm = fb.group({
-      'clientApproval' : fb.group({
-        'approval' : null,
-        'comment' : null
+      'clientApproval': fb.group({
+        'approval': null,
+        'comment': null
       })
     })
   }
 
   ngOnInit() {
-    this.isFormEnabled = 
-      this.npiComponent.editFlag && 
+    this.isFormEnabled =
+      this.npiComponent.editFlag &&
       this.npi.stage == 3 &&
       this.npi.isCriticallyApproved()
-      
-    if (!this.isFormEnabled) 
+
+    if (!this.isFormEnabled)
       this.npiForm.disable()
 
     this.npiFormOutput.emit(this.npiForm)
@@ -50,16 +58,22 @@ export class ClientComponent implements OnInit {
       () => { this.fillFormData() }
     )
 
+    this.npiForm.get('clientApproval').valueChanges.subscribe(
+      () => {
+        this.npiForm.updateValueAndValidity()
+        this.npiFormOutput.emit(this.npiForm)
+      }
+    )
   }
 
-  fillFormData(){
+  fillFormData() {
     this.npiForm.get("clientApproval").setValue({
-      'approval' : this.npi.clientApproval.approval,
-      'comment' : this.npi.clientApproval.comment
+      'approval': this.npi.clientApproval.approval,
+      'comment': this.npi.clientApproval.comment
     })
   }
 
-  toggleNewVersion(){
+  toggleNewVersion() {
     this.npiComponent.newFormVersionFlag = !this.npiComponent.newFormVersionFlag
     this.npiComponent.newFormVersion.next(this.npiComponent.newFormVersionFlag)
     window.scrollTo({ left: 0, top: 120, behavior: 'smooth' });
