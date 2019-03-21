@@ -113,7 +113,7 @@ export class ActivitiesComponent implements OnInit {
             activityControl.get('apply').valueChanges.subscribe(
                 apply => this.updateDateFields(activityControl))
 
-            if (this.utils.getActivity('RELEASE').dep.includes(activityControl.get('activity').value)) {
+            if (this.utils.getActivity('RELEASE', this.npi.entry).dep.includes(activityControl.get('activity').value)) {
                 activityControl.get('endDate').valueChanges.subscribe(
                     endDate => this.updateReleaseDate()
                 )
@@ -246,7 +246,7 @@ export class ActivitiesComponent implements OnInit {
         document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
 
         //Calculate if release date is dalayed
-        if (this.utils.getActivity('RELEASE').dep.includes(activityControl.get('activity').value)) {
+        if (this.utils.getActivity('RELEASE', this.npi.entry).dep.includes(activityControl.get('activity').value)) {
             //console.log(activityControl.get('activity').value)
             document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
             //this.updateDelayedStatus()
@@ -286,7 +286,7 @@ export class ActivitiesComponent implements OnInit {
         let activityLabel = activityControl.get('activity').value
         //console.log(activityLabel)
         let dependencies = []
-        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
+        let dependenciesLabels = this.utils.getActivity(activityLabel, this.npi.entry).dep
         if (dependenciesLabels) {
             dependenciesLabels.forEach(dependencyLabel => {
                 var dependencyControl = this.activitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
@@ -306,7 +306,7 @@ export class ActivitiesComponent implements OnInit {
     getControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
         let activityLabel = activityControl.get('activity').value
         let deps = []
-        this.utils.getActivities().forEach(act => {
+        this.utils.getActivities(this.npi.entry).forEach(act => {
             if (act.dep && act.dep.includes(activityLabel)) {
                 let activityControl = this.activitiesFormArray.controls
                     .find(a => a.get('activity').value == act.value)
@@ -355,7 +355,7 @@ export class ActivitiesComponent implements OnInit {
         let activities = this.npi.activities
         //console.log(activityLabel)
         let dependencies = []
-        let dependenciesLabels = this.utils.getActivity(activityLabel).dep
+        let dependenciesLabels = this.utils.getActivity(activityLabel, this.npi.entry).dep
         if (dependenciesLabels) {
             dependenciesLabels.forEach(dependencyLabel => {
                 var dependency = activities.find(npiAct => npiAct.activity == dependencyLabel)
@@ -418,7 +418,7 @@ export class ActivitiesComponent implements OnInit {
     updateReleaseDate() {
         let releaseDate = new Date(null)
         //console.log(releaseDate)
-        let releaseDependents = this.utils.getActivity('RELEASE').dep
+        let releaseDependents = this.utils.getActivity('RELEASE', this.npi.entry).dep
         releaseDependents.forEach(depLabel => {
             let depControl = this.activitiesFormArray.controls.find(a => a.get('activity').value == depLabel)
             let depEndDate = new Date(this.getControlActivityStartDate(depControl).valueOf() + (depControl.get('apply').value ? depControl.get('term').value : 0) * DAYS)
@@ -453,7 +453,7 @@ export class ActivitiesComponent implements OnInit {
         let status = event.target.checked
         this.activitiesFormArray.controls.forEach(control => {
             let actLabel = control.get('activity').value
-            if (!this.utils.getActivity(actLabel).required)
+            if (!this.utils.getActivity(actLabel, this.npi.entry).required)
                 control.patchValue({
                     apply: status
                 })

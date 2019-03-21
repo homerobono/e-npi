@@ -8,12 +8,13 @@ export class UtilService {
 
   constructor() { }
 
-  getActivities() {
-    return Globals.MACRO_STAGES
+  getActivities(kind?: String) {
+    return kind && kind == "oem" ? Globals.OEM_STAGES : Globals.MACRO_STAGES
   }
-  
-  getActivity(activity) {
-    return Globals.MACRO_STAGES.find(a => a.value == activity)
+
+  getActivity(activity, kind?: String) {
+    return (kind && kind == "oem" ? Globals.OEM_STAGES : Globals.MACRO_STAGES)
+      .find(a => a.value == activity)
   }
 
   getOemActivities() {
@@ -93,8 +94,8 @@ export class UtilService {
 
   formatDate(date: Date): String {
     return date ? ('0' + date.getDate()).slice(-2) + '/'
-         + ('0' + (date.getMonth() + 1)).slice(-2) + '/'
-         + date.getFullYear() : null
+      + ('0' + (date.getMonth() + 1)).slice(-2) + '/'
+      + date.getFullYear() : null
   }
 
   getTimeDifference(end: Date, start: Date): String {

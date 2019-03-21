@@ -335,8 +335,8 @@
     <!-- ATIVIDADES OEM -->
     <div class="form-row" *ngIf='oem.checked'>
       <div class='col'>
-        <label for='oemActivities' class=col>
-          <h4>Etapas O&M</h4>
+        <label for='oemActivities' class=text-center>
+          <h5><b>Etapas O&M</b></h5>
         </label>
         <div id='oemActivities' class='table-responsive'>
           <table class="table table-sm table-bordered table-hover" #table>
@@ -346,24 +346,16 @@
                 <th scope="col" rowspan=2>Atividade</th>
                 <th scope="col" rowspan=2>Responsável</th>
                 <th scope="col" colspan=3>Prazo</th>
-                <th scope="col" rowspan=1>Aplicável</th>
               </tr>
               <tr>
                 <th scope=col>Período (dias)</th>
                 <th class='date' scope=col>Início</th>
                 <th class='date' scope=Fim>Término</th>
-                <th>
-                  <div class='custom-control custom-checkbox'>
-                    <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input' id='toggle-apply-all'
-                      style='font-size:30pt' checked=true>
-                    <label for='toggle-apply-all' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
-                  </div>
-                </th>
               </tr>
             </thead>
             <tbody #tableBody id='tableBody' formArrayName='oemActivities'>
-              <tr *ngFor='let oemActivity of oemActivitiesFormArray.controls; let last = last; index as i;' [formGroupName]='i'
-                [appActivityRow]='oemActivity' [ngClass]='oemActivity.get("apply").value ? "applyable" : "not-applyable"'>
+              <tr *ngFor='let oemActivity of oemActivitiesFormArray.controls; let last = last; index as i;'
+                [formGroupName]='i' [appActivityRow]='oemActivity' [ngClass]='oemActivity.get("apply").value ? "applyable" : "not-applyable"'>
                 <td>
                   {{ i+1 }}
                 </td>
@@ -373,9 +365,9 @@
                 <td [appActivityRow]='oemActivity'>
                   {{ oemActivities[i].dept }}
                   <select class='custom-select' formControlName='responsible'>
-                    <option *ngFor='let user of users[oemActivities[i].dept]' value='{{ user._id }}'>{{ user.firstName
-                      }}
-                      {{ user.lastName }}</option>
+                    <option *ngFor='let user of users[oemActivities[i].dept]; let first = first' value='{{ user._id }}' [selected]='first'>
+                      {{ user.firstName }} {{ user.lastName }}
+                    </option>
                   </select>
                 </td>
                 <td [ngClass]='{"text-danger": oemActivity.get("term").value < 0 }'>
@@ -392,12 +384,6 @@
                     #edp="bsDatepicker" bsDatepicker [bsConfig]='oemDatePickerConfig[i]' placement='right' id='{{oemActivity.get("activity").value}}_END_DATE'
                     appBlink [oemActivity]='oemActivity' [dependencies]='getControlsDependencyActivities(oemActivity)'
                     [dependents]='getControlsDependentActivities(oemActivity)'>
-                </td>
-                <td>
-                  <div class='custom-control custom-checkbox' *ngIf='!utils.getOemActivity(oemActivity.get("activity").value).required'>
-                    <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
-                    <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
-                  </div>
                 </td>
               </tr>
             </tbody>
