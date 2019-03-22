@@ -97,7 +97,7 @@ export class CreateComponent implements OnInit {
                 minDate: new Date()
             }
         )
-        var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * 30)
+        var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * (167 + 30))
         this.oemActivitiesFormArray = fb.array([])
         this.createForm = fb.group({
             'date': new Date().toLocaleDateString('pt-br'),
@@ -460,7 +460,7 @@ export class CreateComponent implements OnInit {
         let activities = this.oemActivities
         let dependencies = []
         let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
-        if (dependenciesLabels) 
+        if (dependenciesLabels)
             dependencies = activities.filter(act => dependenciesLabels.includes(act.value))
         return dependencies
     }
@@ -545,9 +545,9 @@ export class CreateComponent implements OnInit {
 
         //Calculate if release date is dalayed
         //if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
-            //console.log(activityControl.get('activity').value)
-            document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
-            //this.updateDelayedStatus()
+        //console.log(activityControl.get('activity').value)
+        document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
+        //this.updateDelayedStatus()
         //}
     }
 

@@ -3,7 +3,7 @@
   [disabled]='!fieldControl?.get("annex")?.value.length'>
   <i class='fa fa-folder fa-fw'></i>
 </button>
-<button *ngIf='activitiesComponent.canChangeActivity(fieldControl) && !fieldControl?.get("annex")?.value?.length' type='button' class="btn btn-block btn-light shadow-none m-0"
+<button *ngIf='canEdit && !fieldControl?.get("annex")?.value?.length' type='button' class="btn btn-block btn-light shadow-none m-0"
   (click)='openUploadModal(field)' [disabled]='!editFlag'>
   <i class='fa fa-upload fa-fw' [ngClass]='{"text-primary" : uploadService.uploaders[field]}'></i>
 </button>

@@ -1,10 +1,12 @@
 <div class='container pt-5'>
   <app-toolbar [npi]='npi'></app-toolbar>
   <div class='btn-group rounded mb-3'>
-    <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top" title="Página inicial de NPI's">
+    <button routerLink='/home' class='btn btn-light' data-toggle="tooltip" data-placement="top"
+      title="Página inicial de NPI's">
       <i class='fa fa-chevron-left'></i>
     </button>
-    <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip" data-placement="top" title="Criar NPI">
+    <button routerLink='/npi/create' class='btn btn-outline-orange' data-toggle="tooltip" data-placement="top"
+      title="Criar NPI">
       <i class='fa fa-plus '></i>
     </button>
   </div>
@@ -43,8 +45,8 @@
     </div>
 
     <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
-      <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none" [disabled]="sendingForm"
-        *ngIf='npi.stage == 5 && !postConclusionEdit'>
+      <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none"
+        [disabled]="sendingForm" *ngIf='npi.stage == 5 && !postConclusionEdit'>
         Alterar Campos...
       </button>
       <div class='form-row' *ngIf='postConclusionEdit'>
@@ -66,8 +68,8 @@
                 </option>
               </select>
               <div class="input-group-append">
-                <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
-                  [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
+                <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)'
+                  class="btn btn-info shadow-none" [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
                   <i class='fa fa-chevron-right'></i>
                 </button>
               </div>
@@ -98,33 +100,47 @@
   </div>
   <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
     <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
-      <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
+      <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./'
+        [ngClass]='{"active": npi.version == npiv.version}'>
         v{{ npiv.version }}
       </a>
     </li>
   </ul>
   <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
     <hr *ngIf='npiVersions.length == 1'>
-    <app-oem [npiSetter]='npi' [npis]='npiVersions' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
-    <app-pixel [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'></app-pixel>
-    <app-internal [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
-    <app-custom [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
+    <app-oem [npiSetter]='npi' [npis]='npiVersions' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'
+      *ngIf='npi.entry=="oem"'></app-oem>
+    <app-pixel [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'>
+    </app-pixel>
+    <app-internal [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'
+      *ngIf='npi.entry=="internal"'></app-internal>
+    <app-custom [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'
+      *ngIf='npi.entry=="custom"'></app-custom>
 
-    <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'></app-critical>
+    <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'>
+    </app-critical>
 
-    <app-client [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'></app-client>
+    <div *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'>
+      <app-oem-activities [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeOemActivity($event)'
+        (npiFormOutput)='setChild($event)'>
+      </app-oem-activities>
+      <app-client *ngIf='npi.isOemComplete()' [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'></app-client>
+    </div>
 
-    <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
-      (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)' *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && canIChangeActivities))'>
+    <app-activities [npiSetter]='npi' [toggleEdit]='editFlag'
+      (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
+      (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)'
+      *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && canIChangeActivities))'>
     </app-activities>
-    
+
     <div *ngIf='(npi.stage == 2 || npi.stage == 3) && npi.isApproved() && !canIChangeActivities' class='text-center'>
       <h4>Etapas Macro do Projeto</h4>
       <i class='text-secondary'>
         Aguardando definição das atividades pelo MPR (Produto).</i>
     </div>
 
-    <app-validate [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
+    <app-validate [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'
+      *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
 
     <!--div class="row align-items-center justify-content-between" *ngIf='editFlag'>
       <div class='col-auto text-secondary'>
@@ -141,46 +157,54 @@
           <span class='fa fa-times-circle'></span>
           Cancelar NPI
         </button-->
-        <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
-          *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
+        <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm"
+          (click)='cancelNpi()' *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
           <span class='fa fa-trash'></span>
           Remover NPI
         </button>
-        <button class='btn btn-outline-info w-100' type='button' (click)='toggleNewVersion()' *ngIf='npi.stage >= 4 && !newFormVersionFlag'>
+        <button class='btn btn-outline-info w-100' type='button' (click)='toggleNewVersion()'
+          *ngIf='npi.stage >= 4 && !newFormVersionFlag'>
           <i class='fa fa-edit fa-fw'></i>
           Alterar Projeto
         </button>
       </div>
       <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
-        <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalisys(npiForm.value)'>
+        <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm"
+          (click)='submitToAnalisys(npiForm.value)'>
           <span class='fa fa-check-circle-o fa-fw'></span>
           Análise Crítica
         </button>
       </div>
       <div class='col text-right'>
-        <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
+        <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm"
+          *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
           <i class='fa fa-save fa-fw'></i>
           Salvar
         </button>
-        <button type="submit" class="btn btn-warning w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'>
+        <button type="submit" class="btn btn-warning w-100" [disabled]="sendingForm"
+          *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'>
           <i class='fa fa-check-circle-o fa-fw'></i>
           Concluir Análise Crítica
         </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && !npi.activities' 
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm"
+          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && !npi.activities'
           [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-th-list fa-fw'></i>
           Concluir e Definir Atividades
         </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && npi.activities' 
+        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm"
+          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && npi.activities'
           [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-arrow-right fa-fw'></i>
           Avançar para Desenvolvimento
         </button>
-        <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='npi.stage < 5 && newFormVersionFlag'>
+        <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm"
+          *ngIf='npi.stage < 5 && newFormVersionFlag'>
           <i class='fa fa-save fa-fw'></i>
           Salvar Nova Versão
         </button>
-        <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 5'>
+        <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm"
+          *ngIf='npi.stage == 5'>
           Alterar Campos...
         </button>
       </div>

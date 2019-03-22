@@ -38,7 +38,7 @@ export class InStockDateComponent {
   updateDelayedStatus() {
     let isDelayed : Boolean = this.releaseDate.valueOf() > this.inStockDate.valueOf()
     this.setDelayedStatus.emit(isDelayed)
-}
+ }
 
 
 }

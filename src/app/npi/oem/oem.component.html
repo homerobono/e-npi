@@ -138,7 +138,7 @@
       </div>
       <div class="form-row" *ngIf='fixed.checked'>
         <div class="input-group col" formGroupName='inStockDate'>
-          <input type='text' class='form-control' formControlName='offset' name='offset' aria-describedby="Data em Estoque"
+          <input type='text' class='form-control' formControlName='fixed' name='fixed' aria-describedby="Data em Estoque"
             #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
           <div class="input-group-append">
             <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
@@ -154,7 +154,7 @@
               +
             </span>
           </div>
-          <input type='number' class='form-control' formControlName='fixed' name='fixed' aria-describedby="Data em Estoque"
+          <input type='number' class='form-control' formControlName='offset' name='offset' aria-describedby="Data em Estoque"
             [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
           <div class="input-group-append">
             <span class="input-group-text" id="inStockDateAppend">
@@ -243,7 +243,5 @@
     </div>
   </div>
   <hr>
-  <app-oem-activities [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)'>
-  </app-oem-activities>
 </div>
 <hr>

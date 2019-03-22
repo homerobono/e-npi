@@ -107,7 +107,11 @@ class Npi {
     };
     clientApproval: {
         approval: String,
-        comment: String
+        comment: String,
+        signature: {
+            user: any,
+            date: Date
+        }
     };
     activities: Array<{
         _id: String,
@@ -269,6 +273,13 @@ class Npi {
         return false
     }
 
+    public isOemComplete(): Boolean {
+        if (this.entry != 'oem') return false
+        return this.oemActivities.every(
+            activity => activity.closed == true
+        )
+    }
+
     public isComplete(): Boolean {
         if (this.activities) {
             return this.activities.every(
@@ -286,7 +297,13 @@ class Npi {
                 lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date : lastAnalysisDate
             })
             return lastAnalysisDate
-        }
+        } return null
+    }
+
+    public getApprovalDate(): Date {
+        if (this.entry == 'oem')
+            return this.clientApproval.signature.date
+        else return this.getCriticalApprovalDate()
     }
 
     public getDependentActivities(activity): Array<any> {
@@ -301,6 +318,20 @@ class Npi {
             }
         })
         return deps
+    }
+
+    getInStockDate(): Date {
+        if (this.entry == 'oem') {
+            if (this.inStockDate.fixed)
+                return new Date(this.inStockDate.fixed)
+            else if (this.inStockDate.offset) {
+                return new Date(
+                    new Date(this.getApprovalDate()).valueOf() + this.inStockDate.offset * 24 * 3600 * 1000
+                )
+            }
+        }
+        else
+            return new Date(this.inStockDate)
     }
 }
 

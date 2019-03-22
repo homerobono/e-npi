@@ -33,7 +33,6 @@ export class OemActivitiesComponent implements OnInit {
 
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
     @Output() confirmCloseActivity = new EventEmitter<any>()
-    @Output() isReleaseEstimateDelayed = new EventEmitter<Boolean>()
 
     activitiesFormGroup: FormGroup
     activitiesFormArray: FormArray
@@ -42,7 +41,6 @@ export class OemActivitiesComponent implements OnInit {
     isFormEnabled: Boolean
     datePickerConfig: Array<Partial<BsDatepickerConfig>>;
 
-    releaseDate: Date
     users: any = {}
 
     constructor(
@@ -90,7 +88,6 @@ export class OemActivitiesComponent implements OnInit {
         this.subscribeToInputChanges()
 
         this.npiFormOutput.emit(this.activitiesFormGroup)
-        //this.updateReleaseDate()
 
         //let dateRect = document.getElementById('endDate').getBoundingClientRect()
         //console.log(this.activitiesFormArray.value)
@@ -113,11 +110,6 @@ export class OemActivitiesComponent implements OnInit {
             activityControl.get('apply').valueChanges.subscribe(
                 apply => this.updateDateFields(activityControl))
 
-            /*if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
-                activityControl.get('endDate').valueChanges.subscribe(
-                    endDate => this.updateReleaseDate()
-                )
-            }*/
         })
     }
 
@@ -245,12 +237,8 @@ export class OemActivitiesComponent implements OnInit {
         document.getElementById(activityControl.get('activity').value + "_START_DATE").dispatchEvent(new Event('valueChanges'))
         document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
 
-        //Calculate if release date is dalayed
-        //if (this.utils.getOemActivity('RELEASE').dep.includes(activityControl.get('activity').value)) {
-            //console.log(activityControl.get('activity').value)
-            document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
-            //this.updateDelayedStatus()
-       // }
+        document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
+
     }
 
     getControlActivityStartDate(activityControl: AbstractControl): Date {
@@ -324,7 +312,6 @@ export class OemActivitiesComponent implements OnInit {
     //===================== Model functions ================================
 
     getModelStartDate(activityLabel: String): Date {
-        console.log(activityLabel)
         let dependencies = this.getModelDependencyActivities(activityLabel)
         let startDate = new Date()
 
@@ -344,7 +331,6 @@ export class OemActivitiesComponent implements OnInit {
         let activities = this.npi.oemActivities
         let activity = activities.find(a => a.activity == activityLabel)
         if (activity) {
-            console.log('activity: ' + activityLabel)
             return new Date(this.getModelStartDate(activityLabel).valueOf() + (activity.term as number) * DAYS)
         }
         return null
@@ -352,7 +338,6 @@ export class OemActivitiesComponent implements OnInit {
 
     getModelDependencyActivities(activityLabel: String): Array<any> {
         let activities = this.npi.oemActivities
-        console.log(activityLabel)
         let dependencies = []
         let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
         if (dependenciesLabels) {
@@ -361,7 +346,7 @@ export class OemActivitiesComponent implements OnInit {
                 var dependenciesArr = dependency ? [dependency] : []
                 if (dependency && !dependency.apply) {
                     dependenciesArr = this.getModelDependencyActivities(dependencyLabel)
-                    console.log('recursing ', dependencyLabel, dependency)
+                    //console.log('recursing ', dependencyLabel, dependency)
                 }
                 if (dependenciesArr && dependenciesArr.length) {
                     dependencies = dependencies.concat(dependenciesArr)
@@ -412,25 +397,6 @@ export class OemActivitiesComponent implements OnInit {
     updateParentForm() {
         //console.log('updating parent')
         this.npiFormOutput.emit(this.activitiesFormGroup)
-    }
-
-    updateReleaseDate() {
-        let releaseDate = new Date(null)
-        //console.log(releaseDate)
-        let releaseDependents = this.utils.getOemActivity('DEV').dep
-        releaseDependents.forEach(depLabel => {
-            let depControl = this.activitiesFormArray.controls.find(a => a.get('activity').value == depLabel)
-            let depEndDate = new Date(this.getControlActivityStartDate(depControl).valueOf() + (depControl.get('apply').value ? depControl.get('term').value : 0) * DAYS)
-            //            console.log(depLabel, depEndDate, this.npi.inStockDate)
-            releaseDate = new Date(Math.max(releaseDate.valueOf(), depEndDate.valueOf()))
-        })
-        this.releaseDate = releaseDate
-        //this.updateDelayedStatus()
-    }
-
-    setDelayedStatus(status) {
-        console.log(status)
-        this.isReleaseEstimateDelayed.emit(status)
     }
 
     fieldHasErrors(field) {

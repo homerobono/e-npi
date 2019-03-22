@@ -282,6 +282,12 @@ export class NpiComponent implements OnInit {
     this.submitNpi(npiForm)
   }
 
+  closeOemActivity(activityControl) {
+    let form = this.npiForm.value
+    form.oemActivities = [activityControl.value]
+    this.saveNpi(this.npiForm.value)
+  }
+
   closeActivity(activityControl) {
     let form = this.npiForm.value
     form.activities = [activityControl.value]
@@ -535,8 +541,9 @@ export class NpiComponent implements OnInit {
           (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
         ) ||
         (this.npi.stage == 3 && (
-          (this.user.department == "COM" && this.user.level == 1 && !this.npi.activities) ||
-          (this.user.department == "MPR" && this.npi.activities)
+          (this.user.department == "COM" && this.user.level == 1 && !(this.npi.activities && this.npi.activities.length)) ||
+          (this.user.department == "MPR" && this.npi.activities && this.npi.activities.length) ||
+          (!this.npi.isOemComplete() && this.iHavePendingTask())
         )) ||
         (this.npi.stage == 4 && (
           (!this.npi.isComplete() && this.iHavePendingTask()) ||
@@ -559,8 +566,12 @@ export class NpiComponent implements OnInit {
       !activity.closed && // em aberto
       (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
         this.user.department == activity.dept && this.user.level >= 1)
-      )
-    )
+      )) ||
+      this.npi.oemActivities.some(activity =>
+        !activity.closed && // em aberto
+        (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+          this.user.department == activity.dept && this.user.level >= 1)
+        ))
   }
 
   amITheOwner(): Boolean {

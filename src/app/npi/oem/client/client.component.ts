@@ -16,7 +16,7 @@ export class ClientComponent implements OnInit {
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   @Input() set toggleEdit(edit: Boolean) {
-    if (edit && this.npi.stage == 3 && this.npi.isCriticallyApproved() && !this.npi.activities) {
+    if (edit && this.npi.stage == 3 && this.npi.isCriticallyApproved()  && !(this.npi.activities && this.npi.activities.length)) {
       this.npiForm.enable()
       this.npiForm.updateValueAndValidity()
     }

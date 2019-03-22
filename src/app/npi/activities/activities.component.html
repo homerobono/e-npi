@@ -15,7 +15,7 @@
             <th scope="col" colspan=3>Prazo</th>
             <th scope="col" rowspan=2 *ngIf='npi.stage>=4'>Arquivos</th>
             <th scope="col" rowspan=1 *ngIf='npi.stage>=4'>Status</th>
-            <th scope="col" rowspan=1 *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>Aplicável</th>
+            <th scope="col" rowspan=1 *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities'>Aplicável</th>
           </tr>
           <tr>
             <th scope=col>Período (dias)</th>
@@ -27,7 +27,7 @@
                 <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
               </button>
             </th>
-            <th *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>
+            <th *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities'>
               <div class='custom-control custom-checkbox'>
                 <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input' id='toggle-apply-all'
                   style='font-size:30pt' [disabled]='!npiComponent.editFlag' checked=true>
@@ -91,7 +91,7 @@
                 {{ signatures[i] }}
               </span>
             </td>
-            <td *ngIf='npi.stage==2 && npiComponent.canIChangeActivities'>
+            <td *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities'>
               <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.get("activity").value).required'>
                 <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
                 <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
@@ -101,13 +101,7 @@
         </tbody>
       </table>
     </div>
-    <!--div class='release-date bg-warning text-primary'>
-      <div class='d-flex mb-0' style='height: 0'><b>Data de Lançamento</b></div>
-      <hr width='{{release.offsetLeft + release.offsetWidth - 4}}px' class='m-0' style='background-color: #007bff; height:1px; border: 1px; position: absolute; top: 24px'>
-      <input type=text class='form-control shadow m-0' #release id='releaseDate' readonly [appInStockDate]='tableBody.firstElementChild.children[5].offsetLeft'
-        style='position:absolute; border-color: #007bff; top: -13px' value='{{ this.npi.inStockDate.toLocaleDateString("pt-br") }}'>
-    </div>
-    <div style='height: 70px'></div-->
+    <app-request></app-request>
   </div>
 </div>
-<app-in-stock-date *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities' [inStockDate]='npi.inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>
+<app-in-stock-date *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities' [inStockDate]='inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>
