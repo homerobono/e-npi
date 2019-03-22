@@ -273,9 +273,16 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    if (this.npi.stage == 2 && this.isFinalApproval() || this.npi.stage == 3)
+    if (this.npi.stage == 2 && this.isFinalApproval() || this.npi.stage == 3) {
+      if (this.npi.activities.length)
+        if (!this.isReleaseEstimateDelayed)
+          this.promoteNpi(npiForm)
+        else
+          if (!confirm(
+            "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, MEP, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
+          ) return;
       this.promoteNpi(npiForm)
-    else {
+    } else {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
       this.submitNpi(npiForm)
     }
@@ -611,9 +618,11 @@ export class NpiComponent implements OnInit {
     if (where == 'top')
       window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
     else if (where == 'bottom')
-      window.scrollTo({ left: 0, 
+      window.scrollTo({
+        left: 0,
         top: document.body.offsetHeight - outerHeight,
-        behavior: 'smooth' });
+        behavior: 'smooth'
+      });
   }
 
 }

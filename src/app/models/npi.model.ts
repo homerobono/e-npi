@@ -228,6 +228,7 @@ class Npi {
             }
             if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
             if (npiModel.activities != null) this.activities = npiModel.activities
+            if (npiModel.requests != null) this.requests = npiModel.requests
             if (npiModel.validation != null) this.validation = npiModel.validation
         }
     }

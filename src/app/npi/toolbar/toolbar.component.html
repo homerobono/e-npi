@@ -24,7 +24,7 @@
         <i class='fa fa-eye fa-fw'></i>
       </button>
       <button (click)='npiComponent.submitToAnalysis(npiComponent.npiForm.value)' class='btn btn-warning text-white' *ngIf='npiComponent.editFlag && npi.stage == 1'
-        data-toggle="tooltip" data-placement="top" title="Submeter NPI para Análise Crítica">
+        data-toggle="tooltip" data-placement="top" title="Submeter NPI para análise crítica">
         <i class='fa fa-check-circle-o fa-fw'></i>
       </button>
       <button (click)='npiComponent.saveNpi(npiComponent.npiForm.value)' class='btn btn-success' *ngIf='npiComponent.editFlag && npi.stage < 5 && !npiComponent.isFinalApproval()'
@@ -32,12 +32,16 @@
         <i class='fa fa-save fa-fw'></i>
       </button>
       <button (click)='npiComponent.promoteNpi(npiComponent.npiForm.value)' class='btn btn-warning text-light' *ngIf='npi.stage == 2 && !newFormVersionFlag && npiComponent.isFinalApproval() && !npi.isApproved()'
-        data-toggle="tooltip" data-placement="top" title="Concluir Análise Crítica">
+        data-toggle="tooltip" data-placement="top" title="Concluir análise crítica">
         <i class='fa fa-check-circle-o fa-fw'></i>
       </button>
-      <button (click)='npiComponent.promoteNpi(npiComponent.npiForm.value)' class='btn btn-primary' *ngIf='npiComponent.editFlag && npi.stage == 2 && !npiComponent.newFormVersionFlag && npi.isApproved()'
-        data-toggle="tooltip" data-placement="top" title="Avançar para Desenvolvimento" [disabled]='npiComponent.isReleaseEstimateDelayed'>
+      <button (click)='npiComponent.saveNpi(npiComponent.npiForm.value)' class='btn btn-primary' *ngIf='npiComponent.editFlag && (npi.stage == 2 || npi.stage == 3) && !npiComponent.newFormVersionFlag && npi.isApproved() && !npiComponent.isReleaseEstimateDelayed'
+        data-toggle="tooltip" data-placement="top" title="Avançar para desenvolvimento">
         <i class='fa fa-arrow-right fa-fw'></i>
+      </button>
+      <button (click)='npiComponent.saveNpi(npiComponent.npiForm.value)' class='btn btn-primary' *ngIf='npiComponent.editFlag && (npi.stage == 2 || npi.stage == 3) && !npiComponent.newFormVersionFlag && npi.isApproved() && npiComponent.isReleaseEstimateDelayed'
+        data-toggle="tooltip" data-placement="top" title="Avançar para desenvolvimento com data de lançamento em atraso">
+        <i class='fa fa-warning fa-fw'></i>
       </button>
       <button (click)='npiComponent.finalizeNpi()' class='btn btn-primary text-white' *ngIf='npiComponent.editFlag && npi.stage == 4 && npiComponent.canCloseNpi()'
         data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
