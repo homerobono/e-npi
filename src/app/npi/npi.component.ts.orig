@@ -257,7 +257,7 @@ export class NpiComponent implements OnInit {
     this.npiForm.setErrors(null)
   }
 
-  submitToAnalisys(npiForm) {
+  submitToAnalysis(npiForm) {
     npiForm.stage = 2
     this.submitNpi(npiForm)
   }

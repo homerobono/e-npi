@@ -25,13 +25,14 @@ import { FileItem } from 'ng2-file-upload';
 import { UploadService } from '../services/upload.service';
 import { UploaderComponent } from '../file-manager/uploader/uploader.component';
 import { SendingFormModalComponent } from './sending-form-modal/sending-form-modal.component';
+import { fadeAnimation } from '../_animations/fade_in_out.animation';
 import User from '../models/user.model';
 
 @Component({
   selector: 'app-npi',
   templateUrl: './npi.component.html',
   styleUrls: ['./npi.component.scss'],
-  animations: [slideInOutBottomAnimation],
+  animations: [slideInOutBottomAnimation, fadeAnimation],
 })
 
 export class NpiComponent implements OnInit {
@@ -98,7 +99,6 @@ export class NpiComponent implements OnInit {
     'STATIONERY'
   ]
 
-
   currency = createNumberMask({
     prefix: '',
     includeThousandsSeparator: true,
@@ -121,6 +121,10 @@ export class NpiComponent implements OnInit {
   npiForm: FormGroup;
 
   bsModalRef: BsModalRef
+
+
+  showGoToBottomButton: Boolean = true
+  showGoToTopButton: Boolean
 
   constructor(
     private fb: FormBuilder,
@@ -158,8 +162,15 @@ export class NpiComponent implements OnInit {
     this.scrollYPosition = pageYOffset
     if (pageYOffset > 240) {
       this.showNpiToolbar = true
-    } else
+      this.showGoToTopButton = true
+    } else {
       this.showNpiToolbar = false
+      this.showGoToTopButton = false
+    }
+    if (pageYOffset < document.body.offsetHeight - outerHeight - 120) {
+      this.showGoToBottomButton = true
+    } else
+      this.showGoToBottomButton = false
   }
 
   ngOnInit() {
@@ -270,7 +281,7 @@ export class NpiComponent implements OnInit {
     }
   }
 
-  submitToAnalisys(npiForm) {
+  submitToAnalysis(npiForm) {
     if (!confirm(
       "Tem certeza que deseja enviar para Análise Crítica? Todos os funcionários envolvidos serão notificados da submissão.")
     ) return;
@@ -547,7 +558,7 @@ export class NpiComponent implements OnInit {
         )) ||
         (this.npi.stage == 4 && (
           (!this.npi.isComplete() && this.iHavePendingTask()) ||
-          (this.npi.isComplete() && (this.user.department == "MEP" || this.amITheOwner()))
+          (this.npi.isComplete() && (this.user.department == "MPR" || this.amITheOwner()))
         ))
       ))
       || // Usuário Master
@@ -594,6 +605,15 @@ export class NpiComponent implements OnInit {
 
   canCloseNpi() {
     return (this.npiForm.get("validation") != null && this.npiForm.get("validation").valid && this.amITheOwner())
+  }
+
+  scrollTo(where) {
+    if (where == 'top')
+      window.scrollTo({ left: 0, top: 0, behavior: 'smooth' });
+    else if (where == 'bottom')
+      window.scrollTo({ left: 0, 
+        top: document.body.offsetHeight - outerHeight,
+        behavior: 'smooth' });
   }
 
 }

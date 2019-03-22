@@ -170,7 +170,7 @@
       </div>
       <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
         <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm"
-          (click)='submitToAnalisys(npiForm.value)'>
+          (click)='submitToAnalysis(npiForm.value)'>
           <span class='fa fa-check-circle-o fa-fw'></span>
           Análise Crítica
         </button>
@@ -210,4 +210,17 @@
       </div>
     </div>
   </form>
+</div>
+
+<div class='fixed-top text-right mt-5 mr-3 bg-danger' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("top")'
+    [@fadeAnimation]>
+    <i class='fa fa-chevron-up m-auto p-auto' style='overflow: visible'></i>
+  </button>
+</div>
+<div class='fixed-bottom text-right mb-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToBottomButton'>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("bottom")'
+    [@fadeAnimation]>
+    <i class='fa fa-chevron-down m-auto p-auto' style='overflow: visible'></i>
+  </button>
 </div>

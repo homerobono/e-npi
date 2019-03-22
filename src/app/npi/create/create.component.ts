@@ -106,6 +106,10 @@ export class CreateComponent implements OnInit {
             'name': 'Versões',
             'entry': 'pixel',
             'npiRef': null,
+            'designThinking': fb.group({
+              'apply': null,
+              'annex': []
+            }),
             'description': fb.group({
                 'description': 'Requisitos gerais',
                 'annex': null
@@ -263,7 +267,7 @@ export class CreateComponent implements OnInit {
         this.createNpi()
     }
 
-    submitToAnalisys() {
+    submitToAnalysis() {
         this.createForm.value.stage = 2
         this.resolveSubmission = this.npiService.createNpi(this.createForm.value)
             .switchMap(create => {
@@ -402,7 +406,6 @@ export class CreateComponent implements OnInit {
 
     insertOemActivities() {
         this.oemActivities.forEach(activity => {
-            console.log(activity.value)
             var activityControl = this.fb.group(
                 {
                     //_id: null,

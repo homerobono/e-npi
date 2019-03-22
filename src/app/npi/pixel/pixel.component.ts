@@ -43,6 +43,10 @@ export class PixelComponent implements OnInit {
     this.npiForm = fb.group({
       'client': null,
       'npiRef': null,
+      'designThinking': fb.group({
+        'apply': null,
+        'annex': []
+      }),
       'description': fb.group({
         'description': null,
         'annex': []

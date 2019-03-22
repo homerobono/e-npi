@@ -25,7 +25,7 @@ export class UtilService {
     return Globals.OEM_ACTIVITIES.find(a => a.value == activity)
   }
 
-  getCriticalAnalisys(dept) {
+  getCriticalAnalysis(dept) {
     var depts = ['EPROC', 'OPR', 'ADM', 'COM']
     switch (dept) {
       case 'oem':

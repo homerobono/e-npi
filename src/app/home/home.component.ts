@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   filterForm: FormGroup
 
   scrollYPosition: Number
-  showGoToBottomButton: Boolean
+  showGoToBottomButton: Boolean = true
   showGoToTopButton: Boolean
 
   stageOrder = [2, 3, 4, 5, 0, 1]

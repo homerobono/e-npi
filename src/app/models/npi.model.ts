@@ -29,6 +29,10 @@ class Npi {
     updated: Date;
     updatedString: String;
     entry: String;
+    designThinking: {
+        apply: Boolean,
+        annex: [FileDescriptor]
+    };
     description: {
         description: String,
         annex: [FileDescriptor]
@@ -129,6 +133,27 @@ class Npi {
         },
         apply: Boolean
     }>;
+    requests: Array<{
+        _id: String,
+        class: String,
+        responsible: any,
+        comment: String,
+        closed: Boolean,
+        signature: {
+            user: any,
+            date: Date,
+        },
+        analysis: Array<{
+            _id: String,
+            status: String,
+            dept: String,
+            comment: String,
+            signature: {
+                user: any,
+                date: Date
+            }
+        }>;
+    }>;
     validation: {
         disapprovals: Array<{
             comment: String,
@@ -172,6 +197,7 @@ class Npi {
             if (npiModel.entry != null) this.entry = npiModel.entry
             if (npiModel.__t != null) this.entry = npiModel.__t
 
+            if (npiModel.designThinking != null) this.designThinking = npiModel.designThinking
             if (npiModel.description != null) this.description = npiModel.description
             if (npiModel.resources != null) this.resources = npiModel.resources
             if (npiModel.regulations != null) this.regulations = npiModel.regulations
@@ -209,7 +235,7 @@ class Npi {
     public isCriticallyTouched(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analisys) => analisys.status != null
+                (analysis) => analysis.status != null
             )
         }
         return false
@@ -218,7 +244,7 @@ class Npi {
     public isCriticallyAnalysed(): Boolean {
         if (this.critical) {
             return this.critical.every(
-                analisys => analisys.status != null
+                analysis => analysis.status != null
             ) || this.finalApproval.status != null
         }
         return false
@@ -227,9 +253,9 @@ class Npi {
     public isCriticallyDisapproved(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analisys) => analisys.status == 'deny'
+                (analysis) => analysis.status == 'deny'
             ) && this.critical.every(
-                analisys => analisys.status != null
+                analysis => analysis.status != null
             )
         }
         return false
@@ -238,7 +264,7 @@ class Npi {
     public hasCriticalApproval(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                analisys => analisys.status == 'accept'
+                analysis => analysis.status == 'accept'
             )
         }
         return false
@@ -247,7 +273,7 @@ class Npi {
     public hasCriticalDisapproval(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analisys) => analisys.status == 'deny'
+                (analysis) => analysis.status == 'deny'
             )
         }
         return false
@@ -256,7 +282,7 @@ class Npi {
     public isCriticallyApproved(): Boolean {
         if (this.critical) {
             return this.critical.every(
-                analisys => analisys.status == 'accept'
+                analysis => analysis.status == 'accept'
             ) || this.finalApproval.status == 'accept'
         }
         return false

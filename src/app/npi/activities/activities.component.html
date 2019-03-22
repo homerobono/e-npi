@@ -101,7 +101,7 @@
         </tbody>
       </table>
     </div>
-    <app-request></app-request>
+    <app-request [npiSetter]='npi' [requestClass]='DELAYED_RELEASED' (npiFormOutput)='setChild($event)'></app-request>
   </div>
 </div>
 <app-in-stock-date *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities' [inStockDate]='inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>

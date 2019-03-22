@@ -60,7 +60,7 @@ export class CriticalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.insertCriticalAnalisys()
+    this.insertCriticalAnalysis()
 
     this.isFormEnabled =
       this.npiComponent.editFlag &&
@@ -86,15 +86,15 @@ export class CriticalComponent implements OnInit {
     )
   }
 
-  insertCriticalAnalisys() {
+  insertCriticalAnalysis() {
     var criticalModelArray = this.npi.critical
 
-    criticalModelArray.forEach(analisys => {
+    criticalModelArray.forEach(analysis => {
       var criticalControl = this.fb.group(
         {
-          _id: analisys._id,
-          status: analisys.status,
-          comment: analisys.comment
+          _id: analysis._id,
+          status: analysis.status,
+          comment: analysis.comment
         }
       )
       criticalControl.valueChanges.subscribe(
@@ -140,10 +140,10 @@ export class CriticalComponent implements OnInit {
     var criticalFormArray =
       this.criticalFormArray.controls
 
-    criticalFormArray.forEach(analisys => {
-      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
+    criticalFormArray.forEach(analysis => {
+      var criticalRow = this.getCriticalRow(analysis.get('_id').value)
       //console.log(criticalRow)
-      analisys.patchValue(
+      analysis.patchValue(
         {
           status: criticalRow.status,
           comment: criticalRow.comment
@@ -178,10 +178,10 @@ export class CriticalComponent implements OnInit {
     var criticalFormArray =
       this.criticalFormArray.controls
 
-    criticalFormArray.forEach(analisys => {
-      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
+    criticalFormArray.forEach(analysis => {
+      var criticalRow = this.getCriticalRow(analysis.get('_id').value)
       console.log(criticalRow)
-      analisys.patchValue(
+      analysis.patchValue(
         {
           status: null,
           comment: null,
