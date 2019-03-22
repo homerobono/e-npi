@@ -187,13 +187,13 @@
           Concluir Análise Crítica
         </button>
         <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm"
-          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && !npi.activities'
+          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && !npi.activities.length'
           [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-th-list fa-fw'></i>
           Concluir e Definir Atividades
         </button>
         <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm"
-          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && npi.activities'
+          *ngIf='(npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval()) && npi.activities.length'
           [disabled]='isReleaseEstimateDelayed'>
           <i class='fa fa-arrow-right fa-fw'></i>
           Avançar para Desenvolvimento
