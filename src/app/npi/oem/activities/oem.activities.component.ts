@@ -11,13 +11,13 @@ import Npi from '../../../models/npi.model';
 const DAYS = 24 * 3600 * 1000
 
 @Component({
-  selector: 'app-oem-activities',
-  templateUrl: './oem.activities.component.html',
-  styleUrls: ['./oem.activities.component.scss']
+    selector: 'app-oem-activities',
+    templateUrl: './oem.activities.component.html',
+    styleUrls: ['./oem.activities.component.scss']
 })
 export class OemActivitiesComponent implements OnInit {
 
-  npi: Npi
+    npi: Npi
     editFlag: Boolean
     @Input() set npiSetter(npi: Npi) {
         this.npi = npi;
@@ -25,10 +25,14 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     @Input() set toggleEdit(edit: Boolean) {
-        if (!this.npi.isComplete())
-            this.toggleFields(edit)
-        this.isFormEnabled = edit
-        this.editFlag = edit
+        if (edit && this.npi.amITheOwner(this.npiComponent.user._id) &&
+            (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
+                && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
+            ))) {
+            this.activitiesFormGroup.enable()
+            this.activitiesFormGroup.updateValueAndValidity()
+        }
+        else this.activitiesFormGroup.disable()
     }
 
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
@@ -362,7 +366,7 @@ export class OemActivitiesComponent implements OnInit {
         console.log('filling form');
         this.activitiesFormArray.controls.forEach(activityControl => {
             var activity = this.getOemActivityRow(activityControl.get('_id').value)
-            console.log (activity, activityControl.get('_id').value)
+            console.log(activity, activityControl.get('_id').value)
             activityControl.patchValue(
                 {
                     //_id: activity._id,
@@ -471,7 +475,7 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     displayActivityRow(activity: AbstractControl) {
-        if (activity.get("apply").value || (this.npi.stage ==  1 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
+        if (activity.get("apply").value || (this.npi.stage == 1 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
             return "table-row"
         return "none"
     }
