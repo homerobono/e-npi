@@ -273,14 +273,14 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    if (this.npi.stage == 2 && this.isFinalApproval() || this.npi.stage == 3) {
-      if (this.npi.activities.length)
-        if (!this.isReleaseEstimateDelayed)
-          this.promoteNpi(npiForm)
-        else
+    if ((this.npi.stage == 2 || this.npi.stage == 3) && this.isFinalApproval()) {
+      if (this.npi.activities.length && this.isReleaseEstimateDelayed)
+        if (!this.npi.isRequestOpen('DELAYED_RELEASE')){
           if (!confirm(
             "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, MEP, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
+        } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
+          this.submitNpi(npiForm)
       this.promoteNpi(npiForm)
     } else {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
@@ -504,6 +504,22 @@ export class NpiComponent implements OnInit {
   isFinalApproval() {
     if (this.npi.stage == 2 && this.npiForm.getRawValue().critical)
       return this.npiForm.getRawValue().critical.every(analysis => analysis.status == 'accept')
+    return false
+  }
+
+  isRequestFinalApproval(requestClass) {
+    console.log(this.npiForm.getRawValue())
+    let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
+    if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
+      return request.analysis(analysis => analysis.status == 'accept')
+    return false
+  }
+
+  isAnyRequestFinalApproval() {
+    this.npiForm.getRawValue().requests.some(request => {
+      if ((this.npi.stage == 2 || this.npi.stage == 3) && !request.closed)
+        return request.analysis.every(analysis => analysis.status == 'accept')
+    })
     return false
   }
 

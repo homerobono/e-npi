@@ -7,9 +7,10 @@
       <label for='pilot'>Aprovação do Lote Piloto: </label>
       <div><b>{{ pilotDate }} </b> <i class='fa fa-check text-success'> </i></div>
     </div>
+  </div>
 
 
-    <div class='form-group col-xs-12 col-md-8 col-lg-9'
+  <!-->div class='form-group col-xs-12 col-md-8 col-lg-9'
       *ngIf='!npi.validation?.finalApproval?.signature?.user && amITheValidator()'>
       <label for='product'><b>Registrar Validação</b></label>
       <div class='row mt-0 pt-0' formGroupName='finalApproval'>
@@ -37,10 +38,10 @@
         </div>
       </div>
     </div>
-  </div>
+  </div-->
 
 
-  <div class='form-group' formGroupName='validation' *ngIf='npi.validation.disapprovals.length || (npi.validation.finalApproval.signature?.user && npi.validation.finalApproval.signature?.date)'>
+  <!-->div class='form-group' formGroupName='validation' *ngIf='npi.validation.disapprovals.length || (npi.validation.finalApproval.signature?.user && npi.validation.finalApproval.signature?.date)'>
     <b>Validações anteriores:</b>
     <div class='row mb-3'>
       <div *ngFor='let disapproval of npi.validation.disapprovals; index as i' class='col-12'>
@@ -53,11 +54,17 @@
         {{ finalSignature.date }} - <span class=text-primary>Aprovado</span> por <b>{{ finalSignature.user }}</b>.
       </div>
     </div>
-  </div>
-  <div class='form-group' formGroupName='validation' *ngIf='npi.validation?.finalApproval?.signature?.user && npi.validation?.finalApproval?.signature?.date'>
-    <label for='final'>ANÁLISE FINAL</label>
+  </div-->
+  <div class='form-group' formGroupName='validation'>
+    <label for='final'>Análise Final</label>
     <textarea class='form-control' id='final' formControlName='final' rows='5' required></textarea>
-    <div class='row' *ngIf='validateForm.valid && npiComponent.amITheOwner()'>
+    <div class='row' *ngIf='validateForm.valid && amITheValidator()'>
+      <div class='col'>
+        <button type='button' class='w-100 btn btn-outline-info mt-2' (click)='npiComponent.toggleEdit()'>
+          <i class='fa fa-edit'></i>
+          Alterar NPI
+        </button>
+      </div>
       <div class='col'>
         <button type='button' class='w-100 btn btn-primary mt-2' (click)='finalizeNpi()'>
           <i class='fa fa-check'></i>
@@ -66,4 +73,5 @@
       </div>
     </div>
   </div>
-  <hr>
+</div>
+<hr>

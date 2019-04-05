@@ -35,7 +35,8 @@ export class ClientComponent implements OnInit {
     this.npiForm = fb.group({
       'clientApproval': fb.group({
         'approval': null,
-        'comment': null
+        'comment': null,
+        'annex': []
       })
     })
   }

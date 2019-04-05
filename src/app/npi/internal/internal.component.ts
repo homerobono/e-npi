@@ -30,6 +30,16 @@ export class InternalComponent implements OnInit {
     this.npi = npi;
     this.fillFormData()
   }
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.npi.amITheOwner(this.npiComponent.user._id) &&
+      (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
+        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
+      ))) {
+      this.npiForm.enable()
+      this.npiForm.updateValueAndValidity()
+    }
+    else this.npiForm.disable()
+  }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   npiForm: FormGroup;
@@ -44,40 +54,40 @@ export class InternalComponent implements OnInit {
     this.npi = new Npi(null)
 
     this.npiForm = fb.group({
-      'npiRef': null,
-      'complexity': null,
       'client': null,
-      'description': null,
-      'norms': fb.group({
+      'npiRef': null,
+      'designThinking': fb.group({
+        'apply': null,
+        'annex': []
+      }),
+      'description': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
       }),
       'resources': fb.group({
         'description': null,
-        'annex': null
-      }),
-      'regulations': fb.group({
-        standard: fb.group({}),
-        additional: null
+        'annex': []
       }),
       'fiscals': null,
       'investment': fb.group({
         value: null,
-        currency: null
+        currency: null,
+        annex: []
       }),
       'projectCost': fb.group({
         value: null,
         currency: null,
-        annex: null
-      }),
-      
+        annex: []
+      })
     })
   }
 
   ngOnInit() {
 
     this.npiFormOutput.emit(this.npiForm)
-    this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
+    this.npiForm.get('npiRef').valueChanges.subscribe(
+      res => { this.npiComponent.loadNpiRef(res) }
+    )
     this.fillFormData()
 
     if (this.npi.isCriticallyTouched() ||
@@ -132,11 +142,16 @@ export class InternalComponent implements OnInit {
     })
   }
   fieldHasErrors(field) {
-    return this.npiForm.controls[field].hasError('required')
+    return this.npiComponent.invalidFields.find(f => f == field)
   }
 
   updateParentForm() {
     this.npiFormOutput.emit(this.npiForm)
   }
 
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.npiComponent.openFileUploader(field)
+    else this.npiComponent.openFileManager(field)
+  }
 }

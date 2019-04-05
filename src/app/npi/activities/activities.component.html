@@ -101,7 +101,8 @@
         </tbody>
       </table>
     </div>
-    <app-request [npiSetter]='npi' [requestClass]='DELAYED_RELEASED' (npiFormOutput)='setChild($event)'></app-request>
   </div>
 </div>
+<app-request *ngIf='npi.requests?.length' [toggleEdit]='editFlag' [npiSetter]='npi' [requestClassSetter]='"DELAYED_RELEASE"' (requestForm)='setRequestChild($event, "DELAYED_RELEASE")'></app-request>
+
 <app-in-stock-date *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities' [inStockDate]='inStockDate' [releaseDateSetter]='releaseDate' (setDelayedStatus)='isReleaseEstimateDelayed.emit($event)'></app-in-stock-date>

@@ -117,15 +117,15 @@
     <app-custom [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'
       *ngIf='npi.entry=="custom"'></app-custom>
 
+    <app-oem-activities *ngIf='npi.entry=="oem"' [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeOemActivity($event)'
+      (npiFormOutput)='setChild($event)'>
+    </app-oem-activities>
+
     <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'>
     </app-critical>
 
-    <div *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'>
-      <app-oem-activities [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeOemActivity($event)'
-        (npiFormOutput)='setChild($event)'>
-      </app-oem-activities>
-      <app-client *ngIf='npi.isOemComplete()' [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'></app-client>
-    </div>
+    <app-client *ngIf='npi.entry=="oem" && npi.isOemComplete() && npi.stage > 2 && npi.isCriticallyApproved()'
+      [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'></app-client>
 
     <app-activities [npiSetter]='npi' [toggleEdit]='editFlag'
       (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
@@ -177,7 +177,7 @@
       </div>
       <div class='col text-right'>
         <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm"
-          *ngIf='npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()'>
+          *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && npi.isRequestOpen("DELAYED_RELEASE") )'>
           <i class='fa fa-save fa-fw'></i>
           Salvar
         </button>
@@ -197,12 +197,12 @@
           Avançar para Desenvolvimento
         </button>
         <button type="submit" class="btn btn-outline-primary w-100" [disabled]="sendingForm"
-          *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && isReleaseEstimateDelayed'>
+          *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && isReleaseEstimateDelayed && !npi.isRequestRegistered("DELAYED_RELEASE")'>
           <i class='fa fa-warning fa-fw'></i>
           Avançar para Desenvolvimento com Data de Lançamento em Atraso
         </button>
         <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm"
-          *ngIf='npi.stage < 5 && newFormVersionFlag'>
+          *ngIf='(npi.stage < 5 && newFormVersionFlag)'>
           <i class='fa fa-save fa-fw'></i>
           Salvar Nova Versão
         </button>
@@ -216,14 +216,14 @@
 </div>
 
 <div class='fixed-top text-right mt-5 mr-3 bg-danger' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
-  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("top")'
-    [@fadeAnimation]>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto'
+    (click)='scrollTo("top")' [@fadeAnimation]>
     <i class='fa fa-chevron-up m-auto p-auto' style='overflow: visible'></i>
   </button>
 </div>
 <div class='fixed-bottom text-right mb-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToBottomButton'>
-  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("bottom")'
-    [@fadeAnimation]>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto'
+    (click)='scrollTo("bottom")' [@fadeAnimation]>
     <i class='fa fa-chevron-down m-auto p-auto' style='overflow: visible'></i>
   </button>
 </div>

@@ -99,7 +99,7 @@ export class PixelComponent implements OnInit {
       res => this.npiComponent.loadNpiRef(res)
     )
     this.fillFormData()
-    console.log(this.npiForm.value)
+    //console.log(this.npiForm.value)
 
     if (this.npi.isCriticallyTouched() ||
       !this.npiComponent.editFlag)

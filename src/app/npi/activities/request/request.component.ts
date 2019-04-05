@@ -14,25 +14,34 @@ export class RequestComponent implements OnInit {
 
   npi: Npi
   request: any
+  requestClass: String
+
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
-    this.fillFormData()
   }
-  @Input() requestClass : String
+
+  @Input() set requestClassSetter(requestClass: String) {
+    this.requestClass = requestClass
+    console.log(this.requestClass)
+    this.request = this.npiComponent.npi.requests.find(r => r.class == this.requestClass)
+    if (this.request) {
+      console.log(this.request.analysis)
+      this.signatures = new Array<String>(this.request.analysis.length)
+      this.fillFormData()
+      if (!this.analysisFormArray.length)
+        this.insertRequestAnalysis()
+    }
+  }
+
   @Input() set toggleEdit(edit: Boolean) {
-    if (edit && this.npi.stage == 2 && !this.npi.isCriticallyApproved()) {
-      if (this.npiComponent.user.level > 1)
-        this.requestFormGroup.get("finalApproval").enable()
-      this.analysisFormArray.controls.forEach(control => {
-        if (this.amITheAnalysisGestor(control))
-          control.enable()
-      })
+    if (edit) {
+      if (this.npiComponent.user.level >= 1)
+        this.analysisFormArray.controls.forEach(control => {
+          if (this.amITheAnalysisGestor(control))
+            control.enable()
+        })
     }
     else this.requestFormGroup.disable()
-
-    if (this.npiComponent.user.level == 2 && this.npi.isCriticallyDisapproved() && this.npi.stage == 2 && !this.npi.isApproved())
-      this.requestFormGroup.get('finalApproval').enable()
-    else this.requestFormGroup.get('finalApproval').disable()
   }
 
   @Output() requestForm = new EventEmitter<FormGroup>()
@@ -51,15 +60,13 @@ export class RequestComponent implements OnInit {
   ) {
     this.analysisFormArray = fb.array([])
     this.requestFormGroup = fb.group({
+      'class': '',
       'analysis': this.analysisFormArray,
     })
-    //this.npi = npiComponent.npi
-    this.request = this.request.analysis.find(request => request.class == this.requestClass )
-    this.signatures = new Array<String>(this.request.analysis.length)
+    //this.npi = npiComponent.npis
   }
 
   ngOnInit() {
-    this.insertRequestAnalysis()
 
     this.isFormEnabled =
       this.npiComponent.editFlag &&
@@ -86,6 +93,10 @@ export class RequestComponent implements OnInit {
   }
 
   insertRequestAnalysis() {
+    this.requestFormGroup.patchValue(
+      { class: this.requestClass }
+    )
+
     var analysisModelArray = this.request.analysis
 
     analysisModelArray.forEach(analysis => {
@@ -102,7 +113,7 @@ export class RequestComponent implements OnInit {
       this.analysisFormArray.push(analysisControl)
     });
 
-    this.loadSignatures()
+    //this.loadSignatures()
   }
 
   loadSignatures() {
@@ -150,11 +161,7 @@ export class RequestComponent implements OnInit {
       )
     });
 
-    this.requestFormGroup.get("finalApproval").patchValue({
-      comment: this.npi.finalApproval.comment
-    })
-
-    this.loadSignatures()
+    //this.loadSignatures()
   }
 
   getRequestRow(id) {
@@ -162,6 +169,7 @@ export class RequestComponent implements OnInit {
   }
 
   updateParentForm() {
+    console.log('updating')
     this.requestForm.emit(this.requestFormGroup)
   }
 
@@ -201,8 +209,8 @@ export class RequestComponent implements OnInit {
   }
 
   amITheAnalysisGestor(analysis: AbstractControl): Boolean {
-    return this.getRequestRow(analysis.get('_id').value).dept == this.npiComponent.user.department
-      && (this.npiComponent.user.level == 1 || this.npiComponent.user.level == 2)
+    return (this.getRequestRow(analysis.get('_id').value).dept == this.npiComponent.user.department
+      && (this.npiComponent.user.level == 1 || this.npiComponent.user.level == 2))
   }
 
   cancelNpi() {

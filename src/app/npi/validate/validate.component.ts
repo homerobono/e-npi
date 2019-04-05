@@ -15,7 +15,6 @@ export class ValidateComponent implements OnInit {
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
     this.fillFormData()
-    this.loadSignatures()
   }
 
   @Input() set toggleEdit(edit: Boolean) {
@@ -40,10 +39,6 @@ export class ValidateComponent implements OnInit {
   ) {
     this.validateForm = fb.group({
       validation: fb.group({
-        finalApproval: fb.group({
-          status: null,
-          comment: null
-        }),
         final: ['Parecer Final', Validators.required],
       })
     })
@@ -70,7 +65,6 @@ export class ValidateComponent implements OnInit {
         .toLocaleDateString('pt-br')
 
     this.fillFormData()
-    this.loadSignatures()
 
     this.npiFormOutput.emit(this.validateForm)
 
@@ -82,10 +76,6 @@ export class ValidateComponent implements OnInit {
   fillFormData() {
     if (this.npi.validation)
       this.validateForm.get("validation").patchValue({
-        'finalApproval': {
-          status: null,
-          comment: null
-        },
         'final': this.npi.validation.final ? this.npi.validation.final : null,
       })
   }
@@ -107,52 +97,13 @@ export class ValidateComponent implements OnInit {
     this.npiFormOutput.emit(this.validateForm)
   }
 
-  toggleStatus(i, event) {
-    event.stopPropagation()
-    var statusControl = this.validateForm.get("validation").get("finalApproval").get('status')
-    if (event.target.value == statusControl.value) statusControl.setValue(null)
-  }
-
-  loadSignatures() {
-    var disapprovals = this.npi.validation.disapprovals
-    this.disapprovalSignatures = new Array()
-    for (let i = 0; i < disapprovals.length; i++) {
-      if (disapprovals[i].signature.date && disapprovals[i].signature.user)
-        this.disapprovalSignatures.push({
-          date: new Date(disapprovals[i].signature.date).toLocaleDateString('pt-br'),
-          user: disapprovals[i].signature.user.firstName +
-            (disapprovals[i].signature.user.lastName ?
-              ' ' + disapprovals[i].signature.user.lastName :
-              ''
-            )
-        })
-    }
-    var final = this.npi.validation.finalApproval
-    if (final && final.signature && final.signature.date && final.signature.user)
-      this.finalSignature = {
-        date: new Date(final.signature.date).toLocaleDateString('pt-br'),
-        user: final.signature.user.firstName +
-          (final.signature.user.lastName ?
-            ' ' + final.signature.user.lastName :
-            ''
-          )
-      }
-    else
-      this.finalSignature = null
-    console.log(this.disapprovalSignatures)
-  }
-
   toggleFields(edit: Boolean) {
     if (edit) {
-      if (this.npiComponent.amITheOwner()) {
+      if (this.amITheValidator()) {
         this.validateForm.get('validation').get('final').enable({ emitEvent: false })
-      }
-      if (this.npiComponent.user.level >= 1) {
-        this.validateForm.get('validation').get('finalApproval').enable({ emitEvent: false })
       }
     } else {
       this.validateForm.get('validation').get('final').disable({ emitEvent: false })
-      this.validateForm.get('validation').get('finalApproval').disable({ emitEvent: false })
     }
   }
 
@@ -163,7 +114,12 @@ export class ValidateComponent implements OnInit {
   }
 
   amITheValidator() {
-    return this.npiComponent.user.level ==1 && this.npiComponent.user.department == "MPR"
+    return this.npiComponent.user.level == 2 || (
+      this.npiComponent.user.level == 1 && (
+        (this.npi.entry != 'oem' && this.npiComponent.user.department == "MPR") ||
+        (this.npi.entry == 'oem' && this.npiComponent.user.department == "COM")
+      )
+    )
   }
 
 }

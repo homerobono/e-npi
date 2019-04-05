@@ -13,14 +13,14 @@
             <th scope="col" rowspan=2>Atividade</th>
             <th scope="col" rowspan=2>Responsável</th>
             <th scope="col" colspan=3>Prazo</th>
-            <th scope="col" rowspan=2 *ngIf='npi.stage>=1 && npi.isCriticallyApproved()'>Arquivos</th>
-            <th scope="col" rowspan=1 *ngIf='npi.stage>=1 && npi.isCriticallyApproved()'>Status</th>
+            <th scope="col" rowspan=2>Arquivos</th>
+            <th scope="col" rowspan=1>Status</th>
           </tr>
           <tr>
             <th scope=col>Período (dias)</th>
             <th class='date' scope=col>Início</th>
             <th class='date' scope=Fim>Término</th>
-            <th *ngIf='npi.stage>=1 && npi.isCriticallyApproved()'>
+            <th *ngIf='npi.stage>=1 && !npi.isCriticallyApproved()'>
               <button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
                 <i class='fa fa-check pr-0 mr-0'></i>
                 <i class='fa fa-check m-0 p-0' style='position: relative; left:-9px'></i>
@@ -61,12 +61,12 @@
                 appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
-            <td *ngIf='npi.stage>=1 && npi.isCriticallyApproved()'>
+            <td>
               <app-file-button *ngIf='utils.getOemActivity(activity.get("activity").value).annex' [fieldControl]='activity'
                 [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiNumber]='npi.number'
                 [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
             </td>
-            <td class=signature *ngIf='npi.stage>=1 && npi.isCriticallyApproved()'>
+            <td class=signature>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
                 *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag'
                 data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">

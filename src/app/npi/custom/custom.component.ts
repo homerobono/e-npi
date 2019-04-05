@@ -30,6 +30,16 @@ export class CustomComponent implements OnInit {
     this.npi = npi;
     this.fillFormData()
   }
+  @Input() set toggleEdit(edit: Boolean) {
+    if (edit && this.npi.amITheOwner(this.npiComponent.user._id) &&
+      (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
+        && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
+      ))) {
+      this.npiForm.enable()
+      this.npiForm.updateValueAndValidity()
+    }
+    else this.npiForm.disable()
+  }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
   npiForm: FormGroup;
@@ -43,21 +53,25 @@ export class CustomComponent implements OnInit {
     this.npi = new Npi(null)
 
     this.npiForm = fb.group({
-      'complexity': null,
       'client': null,
       'npiRef': null,
-      'description': null,
-      'norms': fb.group({
+      'designThinking': fb.group({
+        'apply': null,
+        'annex': []
+      }),
+      'description': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
       }),
       'resources': fb.group({
         'description': null,
-        'annex': null
+        'annex': []
       }),
       'regulations': fb.group({
         standard: fb.group({}),
-        additional: null
+        additional: null,
+        'description': null,
+        'annex': []
       }),
       'cost': fb.group({
         value: '30,00',
@@ -70,12 +84,13 @@ export class CustomComponent implements OnInit {
       'inStockDate': null,
       'investment': fb.group({
         value: null,
-        currency: null
+        currency: null,
+        annex: []
       }),
       'projectCost': fb.group({
         value: null,
         currency: null,
-        annex: null
+        annex: []
       }),
       'demand': fb.group({
         'amount': null,
@@ -164,9 +179,20 @@ export class CustomComponent implements OnInit {
   }
 
   fieldHasErrors(field) {
-    return this.npiForm.get(field).hasError('required')
+    return this.npiComponent.invalidFields.find(f => f == field)
   }
 
+  isRegulationApplyable() {
+    return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
+      .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
+  }
+  
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.npiComponent.openFileUploader(field)
+    else this.npiComponent.openFileManager(field)
+  }
+  
   updateParentForm() {
     this.npiFormOutput.emit(this.npiForm)
   }

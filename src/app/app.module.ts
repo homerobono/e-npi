@@ -53,6 +53,7 @@ import { ActivityRowDirective } from './directives/activity-row.directive';
 import { InStockDateComponent } from './npi/activities/in-stock-date/in-stock-date.component';
 import { ToolbarComponent } from './npi/toolbar/toolbar.component';
 import { ForbiddenComponent } from './user/forbidden/forbidden.component';
+import { RequestComponent } from './npi/activities/request/request.component';
 
 @NgModule({
   declarations: [
@@ -79,6 +80,7 @@ import { ForbiddenComponent } from './user/forbidden/forbidden.component';
     AlertComponent,
     CriticalComponent,
     ActivitiesComponent,
+    RequestComponent,
     OemActivitiesComponent,
     NpiChooserModalComponent,
     ValidateComponent,

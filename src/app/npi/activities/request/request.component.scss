@@ -75,9 +75,15 @@
     color: green;
 }
 
+.radio-container:hover input:checked ~
+.radio-accept:after {
+    display: inherit;
+    color: darkgreen;
+}
+
 .radio-container:hover input:checked:disabled ~ 
 .radio-accept:after {
-    color: green
+    color: green !important
 }
 
 .radio-container input:checked ~
@@ -86,9 +92,15 @@
     color: red;
 }
 
+.radio-container:hover input:checked ~
+.radio-deny:after {
+    display: inherit;
+    color: darkred ;
+}
+
 .radio-container:hover input:checked:disabled ~ 
 .radio-deny:after {
-    color: red
+    color: red !important
 }
 
 .signature {

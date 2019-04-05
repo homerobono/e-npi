@@ -112,6 +112,7 @@ class Npi {
     clientApproval: {
         approval: String,
         comment: String,
+        annex: [FileDescriptor],
         signature: {
             user: any,
             date: Date
@@ -232,6 +233,9 @@ class Npi {
             if (npiModel.validation != null) this.validation = npiModel.validation
         }
     }
+    public amITheOwner(userId): Boolean {
+        return this.requester._id == userId
+      }
 
     public isCriticallyTouched(): Boolean {
         if (this.critical) {
@@ -313,6 +317,17 @@ class Npi {
                 activity => activity.apply == false || activity.closed == true
             )
         }
+        return false
+    }
+
+    public isRequestRegistered(className: String) : Boolean {
+    return this.requests.find(request => request.class == className) != null
+    }
+
+    public isRequestOpen(className: String) : Boolean {
+        let request = this.requests.find(request => request.class == className)
+        if(request)
+            return !Boolean(request.closed)
         return false
     }
 

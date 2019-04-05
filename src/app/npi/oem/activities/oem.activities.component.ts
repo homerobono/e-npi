@@ -61,7 +61,7 @@ export class OemActivitiesComponent implements OnInit {
 
         this.editFlag = this.isFormEnabled =
             !this.route.snapshot.data['readOnly'] &&
-            this.npi.stage == 3
+            this.npi.stage == 1
 
         this.datePickerConfig = this.initDatePickerConfigArray(this.npi.oemActivities.length)
 
@@ -430,7 +430,7 @@ export class OemActivitiesComponent implements OnInit {
         return user.level > 1 ||
             (user.level == 1 && (
                 user.department == activity.get('dept').value ||
-                (user.department == 'MPR' && this.npi.stage == 2)
+                (user.department == 'MPR' && this.npi.stage == 1)
             )
             )
     }
@@ -471,7 +471,7 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     displayActivityRow(activity: AbstractControl) {
-        if (activity.get("apply").value || (this.npi.stage == 2 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
+        if (activity.get("apply").value || (this.npi.stage ==  1 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
             return "table-row"
         return "none"
     }

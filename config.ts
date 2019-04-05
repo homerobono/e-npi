@@ -34,11 +34,11 @@ export const Globals = Object.freeze({
 
 	OEM_ACTIVITIES: [
 		{ value: 'DOCS', label: 'Solicitação de Documentos (BOM, Gerbers, etx)', dep: [], dept: 'COM', term: 4, annex: true, required: true },
-		{ value: 'NCM',  label: 'Solicitação do NCM',                            dep: [], dept: 'COM', term: 4,  annex: false, required: true },
-		{ value: 'BOM',  label: 'Cotação da BOM',                                dep: [], dept: 'OSC', term: 6,  annex: true, required: true },
-		{ value: 'PROP', label: 'Proposta',                                      dep: [], dept: 'COM', term: 8, annex: true, required: true }
+		{ value: 'PROP',  label: 'Proposta de Desenvolvimento',                   dep: ['DOCS'], dept: 'COM', term: 1,  annex: true, required: false },
+		{ value: 'BOM',  label: 'Cotação da BOM',                                dep: ['PROP'], dept: 'OSC', term: 6,  annex: true, required: true },
+		{ value: 'PRICE', label: 'Formação de preço',                                      dep: ['BOM'], dept: 'COM', term: 8, annex: true, required: true }
 	],
-
+	
 	LABELS: {
 		number: 'Número',
 		created: 'Data de Criação',
