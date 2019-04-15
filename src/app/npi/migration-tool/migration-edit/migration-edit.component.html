@@ -1,0 +1,733 @@
+<div class='container'>
+  <app-nav-buttons></app-nav-buttons>
+  <h3>Migrar NPI</h3>
+  <form [formGroup]='migrateForm' (ngSubmit)="saveNpi(migrateForm.value)">
+    <hr>
+    <div class="form-row">
+      <div class="form-group col-sm-2 col-md-2 col-xl-1">
+        <label for="number">Número</label>
+        <input type="text" class="form-control" id="number" placeholder="(auto)" formControlName='number'>
+      </div>
+      <div class="form-group col-sm-4 col-md-4 col-lg-3 col-xl-2">
+        <label for="date">Data de Criação</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="datePrepend">
+              <i class='fa fa-calendar fa-fw'></i>
+            </span>
+          </div>
+          <input type='text' class='form-control' formControlName='date' name='date' id="date"
+            aria-describedby="Data e criação" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+        </div>
+      </div>
+      <div class="form-group col-xs-6 col-sm col-md col-lg-auto">
+        <label for="npiref">NPI Ref.</label>
+        <div class="input-group mb-2">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="npiRefPrepend">
+              #
+            </span>
+          </div>
+          <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef'
+            [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
+          <div class="input-group-append">
+            <span class='input-group-text'>
+              <small *ngIf='npiRefField.value!=""'>
+                <a routerLink='/npi/{{ npiRef.number }}'
+                  style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'
+                  *ngIf='npiRef'>{{ npiRef.name }}
+                  <i>({{ utils.getEntry(npiRef.entry) }})</i>
+                </a>
+                <span class='text-danger' *ngIf='npiRefField.value!="" && !npiRef'>NPI inválida</span>
+              </small>
+            </span>
+            <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend"
+              (click)='openNpiChooserModal()'>
+              <span class="fa npi-search-icon fa-sm"></span>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Defina a Npi de referência
+          </div>
+        </div>
+      </div>
+      <div class='w-100 d-lg-none'></div>
+      <div class="form-group col-sm-12 col-md mb-3">
+        <label for="client">Cliente</label>
+        <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client'
+          [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
+        <div class='invalid-feedback'>
+          Defina o cliente
+        </div>
+      </div>
+      <div class='w-100'></div>
+      <div class="form-group col-sm-4 mb-4">
+        <label for="requester">Autor</label>
+        <select class='custom-select' id=requester formControlName='requester'
+          [ngClass]='{"is-invalid": fieldHasErrors("requester")}'>
+          <option *ngFor='let user of allUsers' value='{{ user._id }}'>{{ user.firstName }}
+            {{ user.lastName }}</option>
+        </select>
+        <div class='invalid-feedback'>
+          Defina o autor da NPI
+        </div>
+      </div>
+      <div class="form-group col-sm-8 mb-4">
+        <label for="name">Nome do Projeto</label>
+        <input type="text" class="form-control" id="name" placeholder="Nome" formControlName='name'
+          [ngClass]='{"is-invalid": fieldHasErrors("name")}'>
+        <div class='invalid-feedback'>
+          Defina o nome do projeto
+        </div>
+      </div>
+    </div>
+
+    <label for='entry-group'>Entrada</label>
+    <div class="form-row">
+      <div class="form-group col" id='entry-group'>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="pixel-npi" value='pixel' name='entry' #pixel
+            [formControl]="migrateForm.controls['entry']">
+          <label for="pixel-npi" class='custom-control-label'>Pixel</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem' #oem
+            [formControl]="migrateForm.controls['entry']">
+          <label for="oem-npi" class='custom-control-label'>O&M</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="internal-npi" name='entry' value='internal' #internal
+            [formControl]="migrateForm.controls['entry']">
+          <label for="internal-npi" class='custom-control-label'>Interno</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="custom-npi" name='entry' value='custom' #custom
+            [formControl]="migrateForm.controls['entry']">
+          <label for="custom-npi" class='custom-control-label'>Customização</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="col-sm-12">
+        <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='designThinking'>
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="designThinking" formControlName='apply'
+              #designThinkingApply>
+            <label class="custom-control-label" for="designThinking">Design Thinking</label>
+          </div>
+          <button type=button class="input-group-text btn btn-light shadow-none" id="designThinkingAppend"
+            (click)='openUploadModal("designThinking")' [disabled]='!designThinkingApply.checked'
+            [ngClass]='{"text-primary":uploadService.uploaders["designThinking"], "border-danger": fieldHasErrors("designThinking") && !uploadService.uploaders["designThinking"]}'>
+            <i class='fa fa-fw append-icon'></i>
+          </button>
+          <div class='invalid-feedback'>
+            Forneça os requisitos gerais do projeto
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-row">
+      <div class="form-group col-sm-12 mb-4" formGroupName='description'>
+        <label for='description'>
+          <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
+        </label>
+        <div class="input-group">
+          <textarea class="form-control" rows=5 formControlName='description' id='description'
+            [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+          </textarea>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend"
+              (click)='openUploadModal("description")'
+              [ngClass]='{"text-primary":uploadService.uploaders["description"], "border-danger": fieldHasErrors("description") && !uploadService.uploaders["description"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Forneça os requisitos gerais do projeto
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-sm-12 mb-4" formGroupName='resources'>
+        <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
+        <div class="input-group">
+          <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription'
+            [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
+              </textarea>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend"
+              (click)='openUploadModal("resources")'
+              [ngClass]='{"text-primary":uploadService.uploaders["resources"], "border-danger": fieldHasErrors("resources") && !uploadService.uploaders["resources"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Defina os recursos necessários
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12" *ngIf='!internal.checked'>
+        <label for="regulations">Homologações/Regulamentações</label>
+        <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
+          <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard'
+            *ngFor='let reg of objectkeys(migrateForm.get("regulations").get("standard").controls)'>
+            <input type="checkbox" class="custom-control-input" id="{{ reg }}" formControlName='{{ reg }}'>
+            <label class="custom-control-label" for="{{ reg }}">{{ utils.getRegulation(reg).label }}</label>
+          </div>
+          <!--div class="custom-control custom-checkbox custom-control-inline">
+                <input type="checkbox" class="custom-control-input" checked id='other' (change)="true" #other>
+                <label class="custom-control-label" for="other">Outro(s)</label>
+              </div-->
+          <input class='form-control' type='text' formControlName='additional' name='additional'
+            aria-describedby="Homologações/Regulamentações"
+            [ngClass]='{"is-invalid": fieldHasErrors("regulations.additional")}'
+            *ngIf='migrateForm.get("regulations").get("standard").get("other").value'>
+          <div class='invalid-feedback'>
+            Defina as homologações/regulações aplicáveis
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-sm-12 mb-4" formGroupName='regulations' *ngIf='isRegulationApplyable()'>
+        <div class="input-group">
+          <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription'
+            [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
+            </textarea>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend"
+              (click)='openUploadModal("regulations")'
+              [ngClass]='{"text-primary":uploadService.uploaders["regulations.description"], "border-danger": fieldHasErrors("regulations.description") && !uploadService.uploaders["regulations"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Descreva as homologações/regulações aplicáveis ou anexe algum arquivo
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row align-items-end">
+      <!-- Cost -->
+      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked'
+        formGroupName='cost'>
+        <label for="cost">Custo do Produto</label>
+        <div class="input-group" id='cost'>
+          <div class="input-group-prepend">
+            <select value='R$' class='input-group-text' formControlName='currency'>
+              <option *ngFor='let cur of utils.getCurrencies()' value='{{ cur.value }}'>{{ cur.label }}</option>
+            </select>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
+            aria-describedby="Custo" [ngClass]='{"is-invalid": fieldHasErrors("cost")}'>
+          <div class='invalid-feedback'>
+            Defina o custo do produto
+          </div>
+        </div>
+      </div>
+      <!-- Price -->
+      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked'
+        formGroupName='price'>
+        <label for="price">Preço de Venda</label>
+        <div class="input-group" id='price'>
+          <div class="input-group-prepend">
+            <select value='R$' class='input-group-text' formControlName='currency'>
+              <option *ngFor='let cur of utils.getCurrencies()' value='{{ cur.value }}'>{{ cur.label }}</option>
+            </select>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
+            aria-describedby="Preço" [ngClass]='{"is-invalid": fieldHasErrors("price")}'>
+          <div class='invalid-feedback'>
+            Defina o preço do produto
+          </div>
+        </div>
+      </div>
+      <!-- In Stock Date -->
+      <div class='col-sm-5 col-md-4 col-lg-4 form-group mb-4' [ngClass]='{"col-md-6": oem.checked || internal.checked}'
+        *ngIf='!internal.checked'>
+        <label for="inStockDate">Data em Estoque</label>
+        <div class="input-group" *ngIf='!oem.checked'>
+          <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate'
+            aria-describedby="Data em Estoque" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockDate")}'>
+          <div class="input-group-append">
+            <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+              <i class='fa fa-calendar fa-fw'></i>
+            </li>
+          </div>
+        </div>
+        <div class="form-row" *ngIf='oem.checked'>
+          <div class="form-group col" id='inStockDate-group'>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" class="custom-control-input" id="fixed-date" value='fixed' name='inStockDateType'
+                formControlName="inStockDateType" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+              <label for="fixed-date" class='custom-control-label'>
+                Data fixa
+              </label>
+            </div>
+            <div class="custom-control custom-radio custom-control-inline">
+              <input type="radio" class="custom-control-input" id="offset-date" value='offset' name='inStockDateType'
+                formControlName="inStockDateType" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+              <label for="offset-date" class='custom-control-label'>
+                Prazo após aprovação
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" *ngIf='oem.checked && migrateForm.controls["inStockDateType"].value=="fixed"'>
+          <div class="input-group col">
+            <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate'
+              aria-describedby="Data em Estoque" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <div class="input-group-append">
+              <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
+                <i class='fa fa-calendar fa-fw'></i>
+              </li>
+            </div>
+          </div>
+        </div>
+        <div class="form-row" *ngIf='oem.checked && migrateForm.controls["inStockDateType"].value=="offset"'>
+          <div class="input-group col">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inStockDatePrepend">
+                +
+              </span>
+            </div>
+            <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate'
+              aria-describedby="Data em Estoque" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <div class="input-group-append">
+              <span class="input-group-text" id="inStockDateAppend">
+                dias
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Demand -->
+      <div class='col-sm-7 col-md-5 col-lg-4 order-md-6 order-lg-12 form-group mb-4'
+        [ngClass]='{"order-md-6": pixel.checked || custom.checked, "col-md-6 order-md-2": oem.checked || internal.checked}'
+        formGroupName='demand' *ngIf='!internal.checked'>
+        <label for="projectCost">Demanda</label>
+        <div class="input-group">
+          <input class='form-control' type='number' formControlName='amount' name='demand' aria-describedby="Demanda"
+            [ngClass]='{"is-invalid": fieldHasErrors("demand.amount")}'>
+          <div class="input-group-append">
+            <span class="input-group-text" id="projectCostAppend">
+              peças
+            </span>
+          </div>
+          <div class="input-group-append">
+            <select formControlName='period' class='custom-select' id="period" placeholder="Período"
+              [ngClass]='{"is-invalid": fieldHasErrors("demand.period")}'>
+              <option *ngFor='let period of utils.getDemandPeriods()' value='{{ period.value }}'>{{ period.label }}
+              </option>
+            </select>
+          </div>
+          <div class='invalid-feedback'>
+            Defina a demanda do produto
+          </div>
+        </div>
+      </div>
+      <!-- Fiscals -->
+      <div class='col-sm-12 order-md-4 form-group mb-4'
+        [ngClass]='{"col-md-7": pixel.checked || custom.checked, "col-lg-12": !oem.checked, "col-md-12 col-lg-8": oem.checked, "col-md-12": internal.checked}'>
+        <label for="fiscals">Incentivos Fiscais</label>
+        <input type='text' class='form-control' formControlName='fiscals' name='fiscals'
+          aria-describedby="Incentivos Fiscais" placeholder='Incentivos Fiscais'
+          [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
+        <div class='invalid-feedback'>
+          Defina os incentivos fiscais
+        </div>
+      </div>
+      <!-- Investment -->
+      <div class='col-sm-6 col-md-6 col-lg order-md-8 form-group mb-4' formGroupName='investment'>
+        <label for="investment">Investimento</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <select value='R$' class='input-group-text' formControlName='currency'>
+              <option *ngFor='let cur of utils.getCurrencies()' value='{{ cur.value }}'>{{ cur.label }}</option>
+            </select>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
+            aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend"
+              (click)='openUploadModal("investment")'
+              [ngClass]='{"text-primary":uploadService.uploaders["investment"], "border-danger": fieldHasErrors("investment") && !uploadService.uploaders["investment"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Defina o investimento
+          </div>
+        </div>
+      </div>
+      <!-- Project Cost -->
+      <div class='col-sm-6 col-md-6 col-lg order-md-10 form-group mb-4' formGroupName='projectCost'>
+        <label for="projectCost">Custo do Projeto</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <select value='R$' class='input-group-text' formControlName='currency'>
+              <option *ngFor='let cur of utils.getCurrencies()' value='{{ cur.value }}'>{{ cur.label }}</option>
+            </select>
+          </div>
+          <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
+            aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none is-invalid" id="projectCostAppend"
+              (click)='openUploadModal("projectCost")'
+              [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost") && !uploadService.uploaders["projectCost"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Defina o custo do projeto
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATIVIDADES OEM -->
+    <div class="form-row" *ngIf='oem.checked'>
+      <div class='col'>
+        <label for='oemActivities' class=text-center>
+          <h5><b>Etapas O&M</b></h5>
+        </label>
+        <div id='oemActivities' class='table-responsive'>
+          <table class="table table-sm table-bordered table-hover" #table>
+            <thead class='thead-light' id='tableHead'>
+              <tr>
+                <th scope="col" rowspan=1>#</th>
+                <th scope="col" rowspan=1>Atividade</th>
+                <th scope="col" rowspan=1>Responsável</th>
+                <th scope="col" rowspan=1>Anexos</th>
+                <th scope="col" colspan=1>Data de Conclusão</th>
+              </tr>
+            </thead>
+            <tbody #tableBody id='tableBody' formArrayName='oemActivities'>
+              <tr *ngFor='let oemActivity of oemActivitiesFormArray.controls; let last = last; index as i;'
+                [formGroupName]='i' [appActivityRow]='oemActivity'
+                [ngClass]='oemActivity.get("apply").value ? "applyable" : "not-applyable"'>
+                <td>
+                  {{ i+1 }}
+                </td>
+                <td>
+                  {{ utils.getOemActivity(oemActivity.get("activity").value).label }}
+                </td>
+                <td [appActivityRow]='oemActivity'>
+                  {{ oemActivities[i].dept }}
+                  <select class='custom-select' formControlName='responsible'>
+                    <option *ngFor='let user of deptUsers[oemActivities[i].dept]; let first = first'
+                      value='{{ user._id }}'>
+                      {{ user.firstName }} {{ user.lastName }}
+                    </option>
+                  </select>
+                </td>
+                <td>
+                  <button type=button class="btn btn-block btn-light shadow-none m-0"
+                    (click)='openUploadModal("oemActivities."+oemActivity.get("activity").value)'
+                    [ngClass]='{"text-primary": uploadService.uploaders["oemActivities."+oemActivity.get("activity").value], 
+                    "border-danger": fieldHasErrors("oemActivities."+i+".annex") && !uploadService.uploaders["oemActivities."+oemActivity.get("activity").value]}'>
+                    <i class='fa fa-fw append-icon'></i>
+                  </button>
+                </td>
+                <td>
+                  <input type='text' class='form-control' formControlName='endDate'
+                    aria-describedby="Data final para atividade {{ oemActivities[i].label }}" #edp="bsDatepicker"
+                    bsDatepicker [bsConfig]='DatePickerConfig' placement='right'
+                    id='{{oemActivity.get("activity").value}}_END_DATE'>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+
+
+
+    <div class="form-row">
+      <div class='col'>
+        <label for='criticalAnalysis' class=col>
+          <center>
+            <h4>Análise Crítica</h4>
+          </center>
+        </label>
+        <div class='table-responsive' id='criticalAnalysis' formArrayName='critical'>
+          <table class="table table-sm table-bordered">
+            <thead class='thead-dark'>
+              <tr>
+                <th scope="col" rowspan=2>Departamento</th>
+                <th scope="col" rowspan=2>Status</th>
+                <th scope="col" rowspan=2>Observações</th>
+                <th scope="col" rowspan=1, colspan=2>Assinatura</th>
+              </tr>
+              <tr>
+                <th scope="col" rowspan=1>Responsável</th>
+                <th scope="col" rowspan=1>Data</th>
+              </tr>
+            </thead>
+            <tbody *ngIf='pixel.checked'>
+              <tr *ngFor='let dept of pixelCriticalDepts; index as i' [formGroupName]='i'>
+                <td>
+                  <b>{{ dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
+                            utils.getDepartment(dept).label }})</span>
+                </td>
+                <td>
+                  <div>
+                    <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                      <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status'
+                        id='accept-{{i}}'>
+                      <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
+                    </label>
+                    <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
+                      <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status'
+                        id='deny-{{i}}'>
+                      <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <textarea class="form-control" rows=1 formControlName='comment'></textarea>
+                </td>
+                <td formGroupName="signature">
+                  <select class='custom-select' formControlName='user'>
+                    <option *ngFor='let user of deptUsers[dept]; let first=first'
+                      value='{{ user._id }}'>
+                      {{ user.firstName }}
+                      {{ user.lastName }}</option>
+                  </select>
+                </td>
+                <td formGroupName="signature">
+                  <div class='form-group'>
+                    <input type='text' class='form-control' formControlName='date' name='date'
+                      aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker
+                      [bsConfig]='datePickerConfig'>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf='!pixel.checked'>
+              <tr *ngFor='let dept of nonPixelCriticalDepts; index as i' [formGroupName]='i+1'>
+                <td>
+                  <b>{{ dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
+                              utils.getDepartment(dept).label }})</span>
+                </td>
+                <td>
+                  <div>
+                    <label class='radio-container form-check-inline' (click)='toggleStatus(i+1, $event)'>
+                      <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status'
+                        id='accept-{{i+1}}'>
+                      <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
+                    </label>
+                    <label class='radio-container form-check-inline' (click)='toggleStatus(i+1, $event)'>
+                      <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status'
+                        id='deny-{{i+1}}'>
+                      <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
+                    </label>
+                  </div>
+                </td>
+                <td>
+                  <textarea class="form-control" rows=1 formControlName='comment'></textarea>
+                </td>
+                <td formGroupName="signature">
+                  <select class='custom-select' formControlName='user'>
+                    <option *ngFor='let user of deptUsers[dept]; let first=first'
+                      value='{{ user._id }}'>
+                      {{ user.firstName }}
+                      {{ user.lastName }}</option>
+                  </select>
+                </td>
+                <td formGroupName="signature">
+                  <div class='form-group'>
+                    <input type='text' class='form-control' formControlName='date' name='date'
+                      aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker
+                      [bsConfig]='datePickerConfig'>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-row" formGroupName='clientApproval' *ngIf='oem.checked'>
+      <h4>
+        <b>Aprovação do Cliente</b>
+      </h4>
+      <div class='form-group col-auto'>
+        <label for='approval'>Aprovado?</label>
+        <div class='form-group' id='approval'>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="accept" class="custom-control-input" formControlName='approval' value='accept'>
+            <label class="custom-control-label" for="accept">Sim</label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="deny" class="custom-control-input" formControlName='approval' value='deny' #deny>
+            <label class="custom-control-label" for="deny">Não</label>
+          </div>
+        </div>
+      </div>
+      <div class='form-group col'>
+        <label for='comment'>Justificativa/Comentário </label>
+        <div class='input-group'>
+          <textarea class='form-control' id='comment' formControlName='comment' rows='1'
+            [ngClass]='{"is-invalid": fieldHasErrors("clientApproval")}'></textarea>
+          <div class="input-group-append">
+            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend"
+              (click)='openUploadModal("clientApproval")'
+              [ngClass]='{"text-primary":uploadService.uploaders["clientApproval"], "border-danger": fieldHasErrors("clientApproval") && !uploadService.uploaders["clientApproval"]}'>
+              <i class='fa fa-fw append-icon'></i>
+            </button>
+          </div>
+          <div class='invalid-feedback'>
+            Descreva os termos da aprovação do cliente e/ou inclua um anexo
+          </div>
+        </div>
+      </div>
+      <hr>
+    </div>
+
+
+    <div class="form-row">
+      <div class='col'>
+        <label for='activities' class=col>
+          <center>
+            <h4>Etapas Macro do Projeto</h4>
+          </center>
+        </label>
+        <div id='activities' class='table-responsive'>
+          <table class="table table-sm table-bordered table-hover" #table>
+            <thead class='thead-light' id='tableHead'>
+              <tr>
+                <th scope="col" rowspan=2>#</th>
+                <th scope="col" rowspan=2>Atividade</th>
+                <th scope="col" rowspan=2>Responsável</th>
+                <th scope="col" rowspan=2>Concluído em</th>
+                <th scope="col" rowspan=2>Arquivos</th>
+                <th scope="col" rowspan=1>Aplicável</th>
+              </tr>
+              <tr>
+                <th>
+                  <div class='custom-control custom-checkbox'>
+                    <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input'
+                      id='toggle-apply-all' style='font-size:30pt' checked=true>
+                    <label for='toggle-apply-all' class='custom-control-label pointer'
+                      style='position: relative; left:4px'></label>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody #tableBody id='tableBody' formArrayName='activities'>
+              <tr *ngFor='let activity of migrateForm.get("activities").controls; let last = last; index as i;'
+                [formGroupName]='i' [appActivityRow]='activity'
+                [ngClass]='activity.get("apply").value ? "applyable" : "not-applyable"'
+                [disabled]='activity.get("closed").value'>
+                <td>
+                  {{ i+1 }}
+                </td>
+                <td>
+                  {{ utils.getActivity(activity.get("activity").value, entry).label }}
+                </td>
+                <td [appActivityRow]='activity'>
+                  {{ migrateForm.get("activities").value[i].dept }}
+                  <select class='custom-select' formControlName='responsible'>
+                    <option *ngFor='let user of deptUsers[migrateForm.get("activities").value[i].dept]; let first=first'
+                      value='{{ user._id }}'>{{ user.firstName }}
+                      {{ user.lastName }}</option>
+                  </select>
+                </td>
+                <td>
+                  <input type='text' class='form-control' formControlName='endDate'
+                    [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
+                    #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right'
+                    id='{{activity.get("activity").value}}_END_DATE' appBlink [activity]='activity' [npi]=npi
+                    [dependencies]='getControlsDependencyActivities(activity)'
+                    [dependents]='getControlsDependentActivities(activity)'>
+                </td>
+                <td>
+                  <button type=button class="btn btn-block btn-light shadow-none m-0"
+                    *ngIf='utils.getActivity(activity.get("activity").value, entry).annex'
+                    (click)='openUploadModal("activities."+activity.get("activity").value)'
+                    [ngClass]='{"text-primary": uploadService.uploaders["activities."+activity.get("activity").value], 
+                    "border-danger": fieldHasErrors("activities."+i+".annex") && !uploadService.uploaders["activities."+activity.get("activity").value]}'>
+                    <i class='fa fa-fw append-icon'></i>
+                  </button>
+                </td>
+                <td>
+                  <div class='custom-control custom-checkbox'
+                    *ngIf='!utils.getActivity(activity.get("activity").value, entry).required'>
+                    <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}'
+                      style='font-size:30pt'>
+                    <label for='apply-{{i}}' class='custom-control-label pointer'
+                      style='position: relative; left:4px'></label>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf='migrateForm.get("clientApproval").get("approval").value=="accept"'>
+      <h4>
+        <b>Validação do Projeto/Produto</b>
+      </h4>
+      <div class="form-row">
+        <div class='form-group col-xs-12 col-md-4 col-lg-3'>
+          <label for='pilot'>Aprovação do Lote Piloto: </label>
+          <span *ngIf='pilotDate'><b>{{ pilotDate }} </b> <i class='fa fa-check text-success'> </i></span>
+          <span *ngIf='!pilotDate'> -</span>
+        </div>
+      </div>
+
+      <div class="form-row" formGroupName='validation'>
+        <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
+          <label for='validationUser'>Responsável pela finalização: </label>
+          <select class='custom-select' id=validationUser formControlName='user'
+            [ngClass]='{"is-invalid": fieldHasErrors("validation.signature.user")}'>
+            <option *ngFor='let user of allUsers' value='{{ user._id }}'>{{ user.firstName }}
+              {{ user.lastName }}</option>
+          </select>
+        </div>
+        <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
+          <label for='date'>Data de finalização: </label>
+          <input type='text' class='form-control' formControlName='date' name='date'
+            aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+        </div>
+      </div>
+
+      <div class='form-group' formGroupName='validation'>
+        <label for='final'>Análise Final</label>
+        <textarea class='form-control' id='final' formControlName='final' rows='5' required></textarea>
+      </div>
+    </div>
+    <hr>
+
+    <div class="row align-items-center">
+      <div class='col'>
+        <button type="button" class="btn btn-secondary w-100" [disabled]="sendingForm || migrateForm.pristine"
+          (click)='migrateForm.reset()'>
+          <span class='fa fa-undo'></span>
+          Limpar Campos
+        </button>
+      </div>
+      <div class='col text-right'>
+        <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm">
+          <i class='fa fa-save fa-fw'></i>
+          Salvar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

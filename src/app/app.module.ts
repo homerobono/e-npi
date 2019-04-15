@@ -55,6 +55,7 @@ import { ToolbarComponent } from './npi/toolbar/toolbar.component';
 import { ForbiddenComponent } from './user/forbidden/forbidden.component';
 import { RequestComponent } from './npi/activities/request/request.component';
 import { MigrationToolComponent } from './npi/migration-tool/migration-tool.component';
+import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migration-edit.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { MigrationToolComponent } from './npi/migration-tool/migration-tool.comp
     ValidateComponent,
     ClientComponent,
     MigrationToolComponent,
+    MigrationEditComponent,
     InStockDateComponent,
     SendingFormModalComponent,
     ToolbarComponent,
