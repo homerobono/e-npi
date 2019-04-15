@@ -49,8 +49,10 @@ export class MigrationToolComponent implements OnInit {
 
   oemActivitiesFormArray: FormArray
   criticalFormArray: FormArray
-  activitiesFormArray: FormArray
+  oemMacroActivitiesFormArray: FormArray
+  nonOemMacroActivitiesFormArray: FormArray
   devDate: Date
+  entry: String = 'oem'
 
   objectkeys = Object.keys
 
@@ -104,7 +106,8 @@ export class MigrationToolComponent implements OnInit {
     )
     var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * (167 + 30))
     this.oemActivitiesFormArray = fb.array([])
-    this.activitiesFormArray = fb.array([])
+    this.oemMacroActivitiesFormArray = fb.array([])
+    this.nonOemMacroActivitiesFormArray = fb.array([])
     this.criticalFormArray = fb.array([])
 
     this.migrateForm = fb.group({
@@ -165,7 +168,7 @@ export class MigrationToolComponent implements OnInit {
         'comment': null,
         'annex': []
       }),
-      'activities': this.activitiesFormArray,
+      'activities': null,
       'validation': fb.group({
         'final': ['Parecer Final', Validators.required],
         'signature': fb.group({
@@ -237,7 +240,13 @@ export class MigrationToolComponent implements OnInit {
               }
             })
         })
-        this.activitiesFormArray.controls.forEach(control => {
+        this.oemMacroActivitiesFormArray.controls.forEach(control => {
+          if (this.deptUsers[control.get("dept").value])
+            control.patchValue({
+              'responsible': this.deptUsers[control.get("dept").value][0]._id
+            })
+        })
+        this.nonOemMacroActivitiesFormArray.controls.forEach(control => {
           if (this.deptUsers[control.get("dept").value])
             control.patchValue({
               'responsible': this.deptUsers[control.get("dept").value][0]._id
@@ -252,7 +261,7 @@ export class MigrationToolComponent implements OnInit {
     let npiForm = migrateForm
     console.log(npiForm, this.uploadService.uploaders)
 
-    for (let field in this.uploadService.uploaders) {        
+    for (let field in this.uploadService.uploaders) {
       let subfields = field.split(".")
       if (subfields[0] == 'activities' || field == 'oemActivities') {
         let index = npiForm[subfields[0]].findIndex(act => act.activity == subfields[1])
@@ -647,7 +656,14 @@ export class MigrationToolComponent implements OnInit {
   toggleApplyAll(event) {
     //console.log(event.target.checked)
     let status = event.target.checked
-    this.activitiesFormArray.controls.forEach(control => {
+    this.oemMacroActivitiesFormArray.controls.forEach(control => {
+      let actLabel = control.get('activity').value
+      if (!this.utils.getActivity(actLabel, 'oem').required)
+        control.patchValue({
+          apply: status
+        })
+    })
+    this.nonOemMacroActivitiesFormArray.controls.forEach(control => {
       let actLabel = control.get('activity').value
       if (!this.utils.getActivity(actLabel).required)
         control.patchValue({
@@ -711,23 +727,51 @@ export class MigrationToolComponent implements OnInit {
           closed: true
         }
       )
-
-      this.activitiesFormArray.controls.push(activityControl)
-
+      this.oemMacroActivitiesFormArray.controls.push(activityControl)
       activityControl.valueChanges.subscribe(value => {
-        this.migrateForm.addControl('activities', this.activitiesFormArray)
+        if (this.migrateForm.get("entry").value == 'oem')
+          this.migrateForm.addControl('activities', this.oemMacroActivitiesFormArray)
+      });
+    });
+
+    activitiesModelArray = this.utils.getActivities('oem')
+    //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
+    activitiesModelArray.forEach(activity => {
+      var activityControl = this.fb.group(
+        {
+          activity: activity.value,
+          dept: activity.dept,
+          responsible: null,
+          term: null,
+          startDate: null,
+          endDate: new Date(),
+          registry: null,
+          annex: null,
+          apply: true,
+          closed: true
+        }
+      )
+      this.nonOemMacroActivitiesFormArray.controls.push(activityControl)
+      activityControl.valueChanges.subscribe(value => {
+        if (this.migrateForm.get("entry").value != 'oem')
+          this.migrateForm.addControl('activities', this.nonOemMacroActivitiesFormArray)
       });
       //console.log(activityControl.value)
     });
-    //this.fillActivitiesFormData()
+
+    this.migrateForm.setControl("activities", this.oemMacroActivitiesFormArray);
   }
 
   subscribeToInputChanges() {
-    this.activitiesFormArray.controls.forEach(activityControl => {
-
-      //this.activitiesFormArray.updateValueAndValidity()
-
-
+    this.migrateForm.get("entry").valueChanges.subscribe(entry => {
+      console.log(entry)
+      this.entry = entry
+      if (entry == 'oem')
+        this.migrateForm.addControl("activities", this.oemMacroActivitiesFormArray)
+      else
+        this.migrateForm.addControl("activities", this.nonOemMacroActivitiesFormArray)
+    })
+    this.oemMacroActivitiesFormArray.controls.forEach(activityControl => {
       activityControl.get('endDate').valueChanges.subscribe(
         endDate => {
           if (activityControl.get('activity').value == "PILOT")
@@ -735,10 +779,15 @@ export class MigrationToolComponent implements OnInit {
               new Date(endDate)
                 .toLocaleDateString('pt-br')
         })
-
-      //activityControl.get('apply').valueChanges.subscribe(
-      //  apply => this.updateDateFields(activityControl))
-
+    })
+    this.nonOemMacroActivitiesFormArray.controls.forEach(activityControl => {
+      activityControl.get('endDate').valueChanges.subscribe(
+        endDate => {
+          if (activityControl.get('activity').value == "PILOT")
+            this.pilotDate =
+              new Date(endDate)
+                .toLocaleDateString('pt-br')
+        })
     })
   }
 
@@ -810,7 +859,7 @@ export class MigrationToolComponent implements OnInit {
       endDate: endDate
     }, { emitEvent: false })
 
-    let indexOfActivity = this.activitiesFormArray.controls.indexOf(activityControl)
+    //let indexOfActivity = this.activitiesFormArray.controls.indexOf(activityControl)
 
     document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
   }
@@ -835,7 +884,8 @@ export class MigrationToolComponent implements OnInit {
 
   getControlActivityEndDate(activityControl: AbstractControl): Date {
     let activityLabel = activityControl.get('activity').value
-    let activity = this.activitiesFormArray.controls.find(a => a.get('activity').value == activityLabel)
+    let activity = (this.migrateForm.get("activities") as FormArray)
+      .controls.find(a => a.get('activity').value == activityLabel)
     if (activity) {
       if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
       //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
@@ -851,7 +901,7 @@ export class MigrationToolComponent implements OnInit {
     let dependenciesLabels = this.utils.getActivity(activityLabel, this.migrateForm.get('entry').value).dep
     if (dependenciesLabels) {
       dependenciesLabels.forEach(dependencyLabel => {
-        var dependencyControl = this.activitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
+        var dependencyControl = (this.migrateForm.get("activities") as FormArray).controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
         var dependenciesArr = dependencyControl ? [dependencyControl] : []
         if (dependencyControl && !dependencyControl.get('apply').value) {
           dependenciesArr = this.getControlsDependencyActivities(dependencyControl)
@@ -870,7 +920,7 @@ export class MigrationToolComponent implements OnInit {
     let deps = []
     this.utils.getActivities(this.migrateForm.get('entry').value).forEach(act => {
       if (act.dep && act.dep.includes(activityLabel)) {
-        let activityControl = this.activitiesFormArray.controls
+        let activityControl = (this.migrateForm.get("activities") as FormArray).controls
           .find(a => a.get('activity').value == act.value)
         if (activityControl) {
           deps.push(activityControl)
