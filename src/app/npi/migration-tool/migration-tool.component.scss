@@ -1,0 +1,159 @@
+.fa-file-upload {
+    color: white;
+    width: 16px;
+    margin: 0;
+    fill: blue
+}
+
+.upload-button{
+    text-shadow: 0 1px 10px #ddd;
+    color: slateblue;
+}
+
+.fa-upload {
+    font-size: 14pt
+}
+
+.upload-button:hover{
+    cursor: pointer;
+    text-shadow: 0 1px 12px lighten($color: slateblue, $amount: 25)
+}
+
+.upload-button:active{
+    color: blue
+}
+
+.npi-search-icon:before {
+    content: "\f002";
+}
+
+button:hover .npi-search-icon:before {
+    color: blue
+}
+
+.append-icon:after {
+    content: "\f07b";
+}
+
+button:hover .append-icon:after {
+    content: "\f07c";
+    color: blue
+}
+
+
+.radio-container {
+    display: inline;
+    position: relative;
+    font-size: 32px;
+    padding: 0;
+    margin: 0;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.radio-container input{
+    opacity: 0;
+    display: none;
+}
+
+.radio-container input:disabled{
+    opacity: 0;
+    cursor: default;
+    display: none;
+}
+
+.radio-approval {
+    display: inherit;
+    position: inherit;
+    color: #bbb;
+    vertical-align: middle;
+}
+
+.radio-accept:after {
+    content: '\f05d';
+    margin: 4px
+}
+
+.radio-deny:after {
+    content: "\f05c";
+    margin: 4px
+}
+
+.radio-container:hover input:enabled ~ 
+.radio-approval:after {
+    cursor: pointer;
+    color: #666
+}
+
+.radio-container input:disabled ~
+.radio-deny:after {
+    cursor: default;
+}
+
+.radio-container input:disabled ~
+.radio-accept:after {
+    cursor: default;
+}
+
+.radio-container:hover input:disabled ~ 
+.radio-approval:after {
+    color: currentColor
+}
+
+.radio-container input:enabled ~
+.radio-deny:after {
+    display: inherit;
+}
+
+.radio-container input:enabled ~
+.radio-accept:after {
+    display: inherit;
+}
+
+.radio-container input:checked ~
+.radio-accept:after {
+    display: inherit;
+    color: green;
+}
+
+.radio-container:hover input:checked ~
+.radio-accept:after {
+    display: inherit;
+    color: darkgreen;
+}
+
+.radio-container:hover input:checked:disabled ~ 
+.radio-accept:after {
+    color: green !important
+}
+
+.radio-container input:checked ~
+.radio-deny:after {
+    display: inherit;
+    color: red;
+}
+
+.radio-container:hover input:checked ~
+.radio-deny:after {
+    display: inherit;
+    color: darkred ;
+}
+
+.radio-container:hover input:checked:disabled ~ 
+.radio-deny:after {
+    color: red !important
+}
+
+.signature {
+    font-size: 12px; 
+    line-height: 14px;
+    color: gray;
+}
+
+.final-signature {
+    font-size: 14px; 
+    line-height: 20px !important;
+    color: gray;
+}

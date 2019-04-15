@@ -156,22 +156,12 @@ class Npi {
         }>;
     }>;
     validation: {
-        disapprovals: Array<{
-            comment: String,
-            signature: {
-                user: any,
-                date: Date
-            }
-        }>,
-        finalApproval: {
-            comment: String,
-            status: Boolean,
-            signature: {
-                user: any,
-                date: Date
-            }
+        final: String
+        signature: {
+            user: any,
+            date: Date
         }
-        final: String,
+        status: Boolean
     }
 
     constructor(npiModel: any | null) {

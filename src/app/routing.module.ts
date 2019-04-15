@@ -16,6 +16,7 @@ import { CreateComponent } from './npi/create/create.component';
 import { AuthGuardService as AuthGuard } from './services/auth.guard.service'
 import { AccessGuardService as AccessGuard } from './services/access.guard.service'
 import { CompleteRegistrationComponent } from './user/complete-registration/complete-registration.component';
+import { MigrationToolComponent } from './npi/migration-tool/migration-tool.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -81,8 +82,14 @@ const appRoutes: Routes = [
     component: CreateComponent
   },
   {
-    path: 'npi/:npiNumber',
+    path: 'npi/migrate',
     canActivate: [AuthGuard],
+    data: { allowedToMigrate: true },
+    component: MigrationToolComponent
+  },
+  {
+    path: 'npi/:npiNumber',
+    canActivate: [AuthGuard], 
     component: NpiComponent
   },
   { path: 'error', component: ErrorComponent },

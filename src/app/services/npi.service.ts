@@ -18,6 +18,7 @@ export class NpiService {
   api_url = Globals.ENPI_SERVER_URL
   npisUrl = `${this.api_url}/npis`;
   npiUrl = `${this.api_url}/npi/`;
+  npiMigrateUrl = `${this.api_url}/npis/migrate`;
 
   npisList: BehaviorSubject<Npi[]>
   manualRefresh: BehaviorSubject<Boolean>
@@ -75,6 +76,14 @@ export class NpiService {
     var npi = this.formToModel(npiForm)
     console.log(npi);
     return this.http.post(this.npisUrl, npi)
+  }
+
+  migrateNpi(npiForm): Observable<any> {
+    console.log('migrating npi');
+    console.log(npiForm);
+    var npi = this.formToModel(npiForm)
+    console.log(npi);
+    return this.http.post(this.npiMigrateUrl, npi)
   }
 
   newNpiVersion(npiForm): Observable<any> {

@@ -54,6 +54,7 @@ import { InStockDateComponent } from './npi/activities/in-stock-date/in-stock-da
 import { ToolbarComponent } from './npi/toolbar/toolbar.component';
 import { ForbiddenComponent } from './user/forbidden/forbidden.component';
 import { RequestComponent } from './npi/activities/request/request.component';
+import { MigrationToolComponent } from './npi/migration-tool/migration-tool.component';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { RequestComponent } from './npi/activities/request/request.component';
     NpiChooserModalComponent,
     ValidateComponent,
     ClientComponent,
+    MigrationToolComponent,
     InStockDateComponent,
     SendingFormModalComponent,
     ToolbarComponent,

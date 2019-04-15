@@ -20,12 +20,13 @@ body {
 }
 
 app-create .container,
+app-migration-tool .container,
 app-register .container,
 app-npi .container, 
 app-users .container,
 app-user .container,
 app-profile .container,
-app-home .container, {
+app-home .container {
     background: white;
     padding: 40px
 }

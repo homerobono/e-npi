@@ -60,6 +60,14 @@ export class UtilService {
     return Globals.DEPARTMENTS
   }
 
+  getPixelCriticalDepartments() {
+    return Globals.NPI_PIXEL_CRITICAL_DEPTS
+  }
+
+  getCriticalDepartments() {
+    return Globals.NPI_PIXEL_CRITICAL_DEPTS
+  }
+
   getEntry(entry) {
     return Globals.ENTRIES[entry]
   }

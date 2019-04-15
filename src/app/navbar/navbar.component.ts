@@ -12,7 +12,8 @@ export class NavbarComponent implements OnInit {
   nameOfUser: String;
   userIsLogged: Boolean = false;
   userLevel: Number;
-  path: String
+  path: String;
+  user
 
   constructor(
     private authService: AuthService, 
@@ -27,6 +28,8 @@ export class NavbarComponent implements OnInit {
           //this.userIsLogged = true;
           this.nameOfUser = authService.getFirstName();
           this.userLevel = authService.getUserLevel();
+          this.user = authService.getUser()
+          console.log(this.user)
         } else 
           console.log('logged out')
       },

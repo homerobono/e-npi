@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs/Rx';
+import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -22,14 +22,14 @@ export class AuthService {
     verifyResetTokenUrl = `${this.api_url}/reset/`;
     verifySessionTokenUrl = `${this.api_url}/`;
 
-    isLoggedStatus: Subject<Boolean>
+    isLoggedStatus: BehaviorSubject<Boolean>
 
     jwtHelper = new JwtHelperService()
  
   constructor(
     private http: HttpClient,
   ){ 
-    this.isLoggedStatus = new Subject()
+    this.isLoggedStatus = new BehaviorSubject(false)
     this.isLoggedStatus.next(this.isLoggedIn())
   }
     

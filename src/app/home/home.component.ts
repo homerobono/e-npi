@@ -133,7 +133,7 @@ export class HomeComponent implements OnInit {
       }
     }
     this.filteredData = filteredData
-    console.log(filteredData)
+    //console.log(filteredData)
     //return filteredData
   }
 

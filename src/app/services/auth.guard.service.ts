@@ -19,6 +19,8 @@ export class AuthGuardService implements CanActivate{
   canActivate(route: ActivatedRouteSnapshot): boolean {
     var notLogged : Boolean = this.auth.isLoggedOut();
     var mustNot : Boolean = route.data.mustNotBeLogged;
+    var canMigrate : Boolean = route.data.allowedToMigrate;
+
     if ( (notLogged && mustNot) || !(notLogged || mustNot) ){
       //console.log('auth allowed')
       return true;

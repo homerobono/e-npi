@@ -1,19 +1,20 @@
 <div class='container pt-5'>
   <div class='row justify-content-between align-items-end'>
     <div class='col align-items-center'>
-      <img routerLink='/npi/create' class='btn btn-default btn-create p-0 m-0' data-toggle="tooltip" data-placement="top"
-        title="Criar nova NPI" src='/assets/add-button.svg'>
+      <img routerLink='/npi/create' class='btn btn-default btn-create p-0 m-0' data-toggle="tooltip"
+        data-placement="top" title="Criar nova NPI" src='/assets/add-button.svg'>
     </div>
     <div class='col-auto text-danger' (click)='refresh()'>
       <a routerLink=# (click)='removeAll()' class='pl-0 pt-2 pb-2 text-danger'>
-        <i class='fa fa-trash-o fa-2x text-shadow' data-toggle="tooltip" data-placement="top" title="Remover todas NPI's"></i>
+        <i class='fa fa-trash-o fa-2x text-shadow' data-toggle="tooltip" data-placement="top"
+          title="Remover todas NPI's"></i>
       </a>
     </div>
   </div>
   <div class='row align-items-end'>
     <div class='col-auto ml-auto' (click)='refresh()'>
-      <i class='fa fa-refresh refresh' [ngClass]='{"fa-spin" : manualRefresh}' data-toggle="tooltip" data-placement="top"
-        title="Atualizar lista de NPI's"></i>
+      <i class='fa fa-refresh refresh' [ngClass]='{"fa-spin" : manualRefresh}' data-toggle="tooltip"
+        data-placement="top" title="Atualizar lista de NPI's"></i>
     </div>
   </div>
   <div *ngIf='!data.length && !gettingNpis' class='text-center'>
@@ -37,18 +38,22 @@
                 <th scope="col">
                   <div class='sort-header' (click)='toggleSortBy("number")'>
                     <b>#</b>
-                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada"
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por entrada"
                       *ngIf='sortParams[0].field=="number" && sortParams[0].order==1'></span>
-                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada"
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente entrada"
                       *ngIf='sortParams[0].field=="number" && sortParams[0].order==-1'></span>
                   </div>
                 </th>
                 <th scope="col">
                   <div class='sort-header' (click)='toggleSortBy("name")'>
                     <b>Nome</b>
-                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome"
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por nome"
                       *ngIf='sortParams[0].field=="name" && sortParams[0].order==1'></span>
-                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome"
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente nome"
                       *ngIf='sortParams[0].field=="name" && sortParams[0].order==-1'></span>
                   </div>
                   <input type=text class='form-control' formControlName='name'>
@@ -56,9 +61,11 @@
                 <th scope="col">
                   <div class='sort-header' (click)='toggleSortBy("entry")'>
                     <b>Entrada</b>
-                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por entrada"
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por entrada"
                       *ngIf='sortParams[0].field=="entry" && sortParams[0].order==1'></span>
-                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente entrada"
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente entrada"
                       *ngIf='sortParams[0].field=="entry" && sortParams[0].order==-1'></span>
                   </div>
                   <select type=text class='form-control' formControlName='entry'>
@@ -70,14 +77,17 @@
                 <th scope="col">
                   <div class='sort-header' (click)='toggleSortBy("stage")' style='display: inline;'>
                     <b>Status</b>
-                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por nome"
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por nome"
                       *ngIf='sortParams[0].field=="stage" && sortParams[0].order==1'></span>
-                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente nome"
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente nome"
                       *ngIf='sortParams[0].field=="stage" && sortParams[0].order==-1'></span>
                   </div>
                   <div class='status-order' [ngClass]='{"active-filter":sortParams[0].field=="stage"}'>
-                    <span class='fa fa-circle fa-xs' data-toggle="tooltip" data-placement="top" title="{{ utils.getStatus(stat) }} no topo"
-                      *ngFor='let stat of stageOrder; index as i' (click)='toggleStage(i)' [ngClass]='{
+                    <span class='fa fa-circle fa-xs' data-toggle="tooltip" data-placement="top"
+                      title="{{ utils.getStatus(stat) }} no topo" *ngFor='let stat of stageOrder; index as i'
+                      (click)='toggleStage(i)' [ngClass]='{
                             "text-danger" : stat == 0,
                             "text-secondary" : stat == 1,
                             "text-orange" : stat == 2,
@@ -95,16 +105,19 @@
                 <th scope="col">
                   <div (click)='toggleSortBy("updated")' class='sort-header'>
                     <b>Última Modificação</b>
-                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top" title="Ordem ascendente por data de criação"
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por data de criação"
                       *ngIf='sortParams[0].field== "updated" && sortParams[0].order==1'></span>
-                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top" title="Ordem descendente por data de criação"
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente por data de criação"
                       *ngIf='sortParams[0].field== "updated" && sortParams[0].order==-1'></span>
                   </div>
                   <input type=text class='form-control' formControlName='updated'>
                 </th>
                 <th scope='col'>
                   <i class='fa fa-undo fa-2x text-secondary' (click)='filterForm.reset()' *ngIf='filterForm.dirty'
-                    data-toggle="tooltip" data-placement="top" title="Limpar filtros" style='cursor: pointer; vertical-align: middle'></i>
+                    data-toggle="tooltip" data-placement="top" title="Limpar filtros"
+                    style='cursor: pointer; vertical-align: middle'></i>
                 </th>
               </tr>
             </thead>
@@ -149,8 +162,8 @@
                         "fa-times-circle text-danger": crit.status == "deny",
                         "fa-circle text-gray": !crit.status
                       }'></i>
-                    <i style="vertical-align: middle" class='fa fa-2x fa-fw' *ngIf='npi.entry == "oem"' data-toggle="tooltip"
-                      data-placement="top" title="Aprovação do cliente" [ngClass]='{
+                    <i style="vertical-align: middle" class='fa fa-2x fa-fw' *ngIf='npi.entry == "oem"'
+                      data-toggle="tooltip" data-placement="top" title="Aprovação do cliente" [ngClass]='{
                         "fa-check-circle text-purple": npi.clientApproval.approval == "accept",
                         "fa-times-circle text-purple": npi.clientApproval.approval == "deny",
                         "fa-circle text-light-purple ": !npi.clientApproval.approval
@@ -180,14 +193,14 @@
 </div>
 
 <div class='fixed-top text-right mt-5 mr-3 bg-danger' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
-  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("top")'
-    [@fadeAnimation]>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto'
+    (click)='scrollTo("top")' [@fadeAnimation]>
     <i class='fa fa-chevron-up m-auto p-auto' style='overflow: visible'></i>
   </button>
 </div>
 <div class='fixed-bottom text-right mb-5 mr-3' style='height:0; overflow: visible' *ngIf='showGoToBottomButton'>
-  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto' (click)='scrollTo("bottom")'
-    [@fadeAnimation]>
+  <button style='border-radius: 30px; height: 40px; width: 40px' class='btn btn-light shadow m-auto p-auto'
+    (click)='scrollTo("bottom")' [@fadeAnimation]>
     <i class='fa fa-chevron-down m-auto p-auto' style='overflow: visible'></i>
   </button>
 </div>

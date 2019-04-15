@@ -45,10 +45,6 @@
     </div>
 
     <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
-      <button type="button" (click)='togglePostConclusionEdit()' class="btn btn-outline-info shadow-none"
-        [disabled]="sendingForm" *ngIf='npi.stage == 5 && !postConclusionEdit'>
-        Alterar Campos...
-      </button>
       <div class='form-row' *ngIf='postConclusionEdit'>
         <div class='col-6'>
           <select class="custom-select" id="motivation" #motivation>
