@@ -26,7 +26,6 @@ import { of, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs-compat/operator/map';
 import { UsersService } from 'src/app/services/users.service';
 import User from 'src/app/models/user.model';
-import { isNumber } from 'ngx-bootstrap/chronos/utils/type-checks';
 
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
@@ -105,7 +104,7 @@ export class MigrationEditComponent implements OnInit {
       {
         containerClass: 'theme-default',
         showWeekNumbers: false,
-        dateInputFormat: 'DD/MM/YYYY'
+        //dateInputFormat: 'DD/MM/YYYY'
       }
     )
     var oemDefaultDeadLine = new Date(Date.now() + 3600000 * 24 * (167 + 30))
@@ -115,11 +114,11 @@ export class MigrationEditComponent implements OnInit {
 
     this.migrateForm = fb.group({
       'number': null,
-      'date': null,
+      'created': null,
       'client': null,
       'requester': null,
       'name': null,
-      'entry': null,
+      'entry': new FormControl({ value: null, disabled: true }),
       'npiRef': null,
       'designThinking': fb.group({
         'apply': null,
@@ -274,6 +273,39 @@ export class MigrationEditComponent implements OnInit {
             this.npi.cost.currency : null,
         } : null,
       });
+
+    this.npi.critical.forEach(analisys => {
+      let control = (this.migrateForm.get("critical") as FormArray).controls
+        .find(actControl => actControl.get("dept").value == analisys.dept)
+      control.patchValue({
+        signature: {
+          user: analisys.signature.user._id,
+          date: analisys.signature.date
+        }
+      })
+    });
+
+    this.npi.oemActivities.forEach(activity => {
+      let control = (this.migrateForm.get("oemActivities") as FormArray).controls
+        .find(actControl => actControl.get("activity").value == activity.activity)
+      control.patchValue({
+        signature: {
+          user: activity.responsible._id,
+          date: activity.signature.date
+        }
+      })
+    });
+
+    this.npi.activities.forEach(activity => {
+      let control = (this.migrateForm.get("activities") as FormArray).controls
+        .find(actControl => actControl.get("activity").value == activity.activity)
+      control.patchValue({
+        signature: {
+          user: activity.signature.user._id,
+          date: activity.signature.date
+        }
+      })
+    });
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
@@ -426,8 +458,10 @@ export class MigrationEditComponent implements OnInit {
   }
 
   loadNpiRef(res) {
-    if (!isNaN(res))
+    if (!isNaN(res) && res != null) {
+      console.log(res)
       this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
+    }
   }
 
   openNpiChooserModal() {
@@ -459,46 +493,21 @@ export class MigrationEditComponent implements OnInit {
   }
   // ==================== OEM related methods ===================
 
-  subscribeToOemInputChanges() {
-    this.oemActivitiesFormArray.controls.forEach(activityControl => {
-
-      //this.activitiesFormArray.updateValueAndValidity()
-
-      activityControl.get('term').valueChanges.subscribe(
-        term => this.updateOemOwnDateField(term, activityControl))
-
-      activityControl.get('endDate').valueChanges.subscribe(
-        endDate => {
-          this.updateOemDateFields(activityControl)
-        })
-
-      activityControl.get('apply').valueChanges.subscribe(
-        apply => this.updateOemDateFields(activityControl))
-
-      /*if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
-          activityControl.get('endDate').valueChanges.subscribe(
-              endDate => this.updateDevDate()
-          )
-      }*/
-    })
-  }
-
   insertOemActivities() {
     if (this.npi.oemActivities)
       this.npi.oemActivities.forEach(activity => {
-        console.log(activity.dept)
         var oemActivityControl = this.fb.group(
           {
             //_id: null,
             activity: activity.activity,
             dept: activity.dept,
-            responsible: activity.responsible,
+            responsible: activity.responsible._id,
             endDate: activity.signature.date,
             annex: activity.annex,
             registry: activity.registry,
             apply: activity.apply,
             signature: this.fb.group({
-              user: activity.signature.user,
+              user: null,
               date: activity.signature.date
             })
           }
@@ -511,178 +520,6 @@ export class MigrationEditComponent implements OnInit {
       });
   }
 
-  //===================== Model functions ================================
-
-  getOemModelStartDate(activityLabel: String): Date {
-    let dependencies = this.getOemModelDependencyActivities(activityLabel)
-    let startDate = new Date()
-    if (dependencies) {
-      dependencies.forEach(depActivity => {
-        let depEndDate = this.getOemModelActivityEndDate(depActivity.value)
-        //console.log(depEndDate)
-        if (depEndDate)
-          startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-        else console.log('no endDate for ', depActivity)
-      })
-    }
-    return startDate
-  }
-
-  getOemModelActivityEndDate(activityLabel: String): Date {
-    let activities = this.oemActivities
-    let activity = activities.find(a => a.value == activityLabel)
-    if (activity) {
-      //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
-      return new Date(this.getOemModelStartDate(activityLabel).valueOf() + (activity.term as number) * DAYS)
-    }
-    return null
-  }
-
-  getOemModelDependencyActivities(activityLabel: String): Array<any> {
-    let activities = this.oemActivities
-    let dependencies = []
-    let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
-    if (dependenciesLabels)
-      dependencies = activities.filter(act => dependenciesLabels.includes(act.value))
-    return dependencies
-  }
-
-  //===================== Form Controls Methods ================================
-
-  updateOemOwnDateField(term, activityControl: AbstractControl) {
-    //console.log(term)
-    let startDate = this.getOemControlActivityStartDate(activityControl)
-    if (startDate) {
-      let endDate = new Date(startDate.valueOf() + term * DAYS)
-      //console.log(startDate)
-      //console.log(endDate)
-      activityControl.patchValue({
-        startDate: startDate,
-        endDate: endDate
-      })
-    }
-  }
-
-  updateOemDateFields(activityControl: AbstractControl) {
-    let dependentsControls = this.getOemControlsDependentActivities(activityControl)
-    if (dependentsControls) {
-      let controlsLength = dependentsControls.length
-      let i = 0;
-      while (i < controlsLength) {
-        let depControl = dependentsControls[i]
-        let dependentsOfDependentsControls = this.getOemControlsDependentActivities(depControl)
-        dependentsOfDependentsControls.forEach(dodc => {
-          let indexOfDodc = dependentsControls.indexOf(dodc)
-          if (indexOfDodc > -1) {
-            dependentsControls.splice(indexOfDodc, 1)
-            if (indexOfDodc <= i) i--
-          }
-        })
-        dependentsControls = dependentsControls.concat(dependentsOfDependentsControls)
-        controlsLength = dependentsControls.length
-        i++
-      }
-      dependentsControls.forEach(control => {
-        this.updateOemActivityDates(control)
-      })
-    }
-  }
-
-  updateOemActivityDates(activityControl: AbstractControl) {
-    let greatestDate = new Date()
-    let dependentActivities = this.getOemControlsDependencyActivities(activityControl)
-    dependentActivities.forEach(dep => {
-      let depEndDate = this.getOemControlActivityEndDate(dep)
-      if (depEndDate) {
-        greatestDate = new Date(Math.max(greatestDate.valueOf(), depEndDate.valueOf()))
-      }
-    })
-
-    let startDate = greatestDate
-    let endDate = new Date(startDate.valueOf() + parseInt(activityControl.get('term').value) * DAYS)
-
-    activityControl.patchValue({
-      startDate: startDate,
-      endDate: endDate
-    }, { emitEvent: false })
-
-    let indexOfActivity = this.oemActivitiesFormArray.controls.indexOf(activityControl)
-
-    document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
-
-    //Calculate if release date is dalayed
-    //if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
-    //console.log(activityControl.get('activity').value)
-    document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('change'))
-    //this.updateDelayedStatus()
-    //}
-  }
-
-  getOemControlActivityStartDate(activityControl: AbstractControl): Date {
-    let activityLabel = activityControl.get('activity').value
-    //console.log(activityLabel)
-    let dependenciesControls = this.getOemControlsDependencyActivities(activityControl)
-    let startDate = new Date()
-
-    if (dependenciesControls) {
-      dependenciesControls.forEach(depActivity => {
-        let depEndDate = this.getOemControlActivityEndDate(depActivity)
-        //console.log(depEndDate)
-        if (depEndDate)
-          startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-        //else console.log('no endDate for ', depActivity)
-      })
-    }
-    return startDate
-  }
-
-  getOemControlActivityEndDate(activityControl: AbstractControl): Date {
-    let activityLabel = activityControl.get('activity').value
-    let activity = this.oemActivitiesFormArray.controls.find(a => a.get('activity').value == activityLabel)
-    if (activity) {
-      if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
-      //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
-      return new Date(this.getOemControlActivityStartDate(activity).valueOf() + activity.get('term').value * DAYS)
-    }
-    return null
-  }
-
-  getOemControlsDependencyActivities(activityControl: AbstractControl): Array<AbstractControl> {
-    let activityLabel = activityControl.get('activity').value
-    let dependencies = []
-    let dependenciesLabels = this.utils.getOemActivity(activityLabel).dep
-    if (dependenciesLabels) {
-      dependenciesLabels.forEach(dependencyLabel => {
-        var dependencyControl = this.oemActivitiesFormArray.controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
-        var dependenciesArr = dependencyControl ? [dependencyControl] : []
-        if (dependencyControl && !dependencyControl.get('apply').value) {
-          dependenciesArr = this.getOemControlsDependencyActivities(dependencyControl)
-          //console.log('recursing ', dependencyLabel, dependency)
-        }
-        if (dependenciesArr && dependenciesArr.length) {
-          dependencies = dependencies.concat(dependenciesArr)
-        }
-      })
-    }
-    return dependencies
-  }
-
-  getOemControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
-    let activityLabel = activityControl.get('activity').value
-    let deps = []
-    this.utils.getOemActivities().forEach(act => {
-      if (act.dep && act.dep.includes(activityLabel)) {
-        let activityControl = this.oemActivitiesFormArray.controls
-          .find(a => a.get('activity').value == act.value)
-        if (activityControl) {
-          deps.push(activityControl)
-          if (!activityControl.get('apply').value)
-            deps = deps.concat(this.getOemControlsDependentActivities(activityControl))
-        }
-      }
-    })
-    return deps
-  }
   //========================================================================
   //===================== Model functions ================================
   //========================================================================
@@ -719,7 +556,7 @@ export class MigrationEditComponent implements OnInit {
         comment: analisys.comment,
         signature: this.fb.group({
           user: analisys.signature.user._id,
-          date: analisys.signature.date
+          date: null
         })
       })
       this.criticalFormArray.controls.push(control)
@@ -747,8 +584,8 @@ export class MigrationEditComponent implements OnInit {
           apply: activity.apply,
           closed: activity.closed,
           signature: this.fb.group({
-            user: activity.signature.user,
-            date: activity.signature.date
+            user: null,
+            date: null
           })
         }
       )
@@ -773,110 +610,8 @@ export class MigrationEditComponent implements OnInit {
 
   //===================== Form Controls Methods ================================
 
-  updateOwnDateField(term, activityControl: AbstractControl) {
-    //console.log(term)
-    let startDate = this.getControlActivityStartDate(activityControl)
-    if (startDate) {
-      let endDate = new Date(startDate.valueOf() + term * DAYS)
-      //console.log(startDate)
-      //console.log(endDate)
-      activityControl.patchValue({
-        startDate: startDate,
-        endDate: endDate
-      })
-    }
-  }
-
-  updateTermField(endDate: Date, activityControl: AbstractControl) {
-    let term = Math.floor(endDate.valueOf() / DAYS) - Math.floor(Date.parse(activityControl.get('startDate').value) / DAYS)
-    activityControl.patchValue({
-      term: term
-    }, { emitEvent: false })
-    //console.log('update ', activityControl.get('activity').value)
-    document.getElementById(activityControl.get('activity').value + "_TERM").dispatchEvent(new Event('valueChanges'))
-  }
-
-  updateDateFields(activityControl: AbstractControl) {
-    let dependentsControls = this.getControlsDependentActivities(activityControl)
-    if (dependentsControls) {
-      let controlsLength = dependentsControls.length
-      let i = 0;
-      while (i < controlsLength) {
-        let depControl = dependentsControls[i]
-        let dependentsOfDependentsControls = this.getControlsDependentActivities(depControl)
-        dependentsOfDependentsControls.forEach(dodc => {
-          let indexOfDodc = dependentsControls.indexOf(dodc)
-          if (indexOfDodc > -1) {
-            dependentsControls.splice(indexOfDodc, 1)
-            if (indexOfDodc <= i) i--
-          }
-        })
-        dependentsControls = dependentsControls.concat(dependentsOfDependentsControls)
-        controlsLength = dependentsControls.length
-        i++
-      }
-      dependentsControls.forEach(control => {
-        this.updateActivityDates(control)
-      })
-    }
-  }
-
-  updateActivityDates(activityControl: AbstractControl) {
-    let greatestDate = this.migrateForm.get('critical').value[4].signature
-    let dependentActivities = this.getControlsDependencyActivities(activityControl)
-    dependentActivities.forEach(dep => {
-      let depEndDate = this.getControlActivityEndDate(dep)
-      if (depEndDate) {
-        greatestDate = new Date(Math.max(greatestDate.valueOf(), depEndDate.valueOf()))
-      }
-    })
-
-    let startDate = greatestDate
-    let endDate = new Date(startDate.valueOf() + parseInt(activityControl.get('term').value) * DAYS)
-
-    activityControl.patchValue({
-      startDate: startDate,
-      endDate: endDate
-    }, { emitEvent: false })
-
-    //let indexOfActivity = this.activitiesFormArray.controls.indexOf(activityControl)
-
-    document.getElementById(activityControl.get('activity').value + "_END_DATE").dispatchEvent(new Event('valueChanges'))
-  }
-
-  getControlActivityStartDate(activityControl: AbstractControl): Date {
-    let activityLabel = activityControl.get('activity').value
-    //console.log(activityLabel)
-    let dependenciesControls = this.getControlsDependencyActivities(activityControl)
-    let startDate = this.migrateForm.get('critical').value[4].signature
-
-    if (dependenciesControls) {
-      dependenciesControls.forEach(depActivity => {
-        let depEndDate = this.getControlActivityEndDate(depActivity)
-        //console.log(depEndDate)
-        if (depEndDate)
-          startDate = new Date(Math.max(startDate.valueOf(), depEndDate.valueOf()))
-        //else console.log('no endDate for ', depActivity)
-      })
-    }
-    return startDate
-  }
-
-  getControlActivityEndDate(activityControl: AbstractControl): Date {
-    let activityLabel = activityControl.get('activity').value
-    let activity = (this.migrateForm.get("activities") as FormArray)
-      .controls.find(a => a.get('activity').value == activityLabel)
-    if (activity) {
-      if (activity.get('endDate').value) return new Date(Date.parse(activity.get('endDate').value))
-      //console.log('activity: ' + activityLabel + ' -> ', greatestDate)
-      return new Date(this.getControlActivityStartDate(activity).valueOf() + activity.get('term').value * DAYS)
-    }
-    return null
-  }
-
-  getControlsDependencyActivities(activityControl: AbstractControl): Array<AbstractControl> {
-    let activityLabel = activityControl.get('activity').value
-    //console.log(activityLabel)
+  getControlsDependencyActivities(activity: any): Array<AbstractControl> {
+    let activityLabel = activity['activity']
     let dependencies = []
     let dependenciesLabels = this.utils.getActivity(activityLabel, this.migrateForm.get('entry').value).dep
     if (dependenciesLabels) {
@@ -884,7 +619,7 @@ export class MigrationEditComponent implements OnInit {
         var dependencyControl = (this.migrateForm.get("activities") as FormArray).controls.find(npiAct => npiAct.get('activity').value == dependencyLabel)
         var dependenciesArr = dependencyControl ? [dependencyControl] : []
         if (dependencyControl && !dependencyControl.get('apply').value) {
-          dependenciesArr = this.getControlsDependencyActivities(dependencyControl)
+          dependenciesArr = this.getControlsDependencyActivities(dependencyControl.value)
           //console.log('recursing ', dependencyLabel, dependency)
         }
         if (dependenciesArr && dependenciesArr.length) {
@@ -895,8 +630,8 @@ export class MigrationEditComponent implements OnInit {
     return dependencies
   }
 
-  getControlsDependentActivities(activityControl: AbstractControl): Array<AbstractControl> {
-    let activityLabel = activityControl.get('activity').value
+  getControlsDependentActivities(activity: any): Array<AbstractControl> {
+    let activityLabel = activity['activity']
     let deps = []
     this.utils.getActivities(this.migrateForm.get('entry').value).forEach(act => {
       if (act.dep && act.dep.includes(activityLabel)) {
@@ -905,7 +640,7 @@ export class MigrationEditComponent implements OnInit {
         if (activityControl) {
           deps.push(activityControl)
           if (!activityControl.get('apply').value)
-            deps = deps.concat(this.getControlsDependentActivities(activityControl))
+            deps = deps.concat(this.getControlsDependentActivities(activityControl.value))
         }
       }
     })

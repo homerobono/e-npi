@@ -4,9 +4,9 @@ export const Globals = Object.freeze({
 	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
 	//ENPI_SERVER_URL: 'http://10.0.0.175:1110/e-npi/v2',
-	ENPI_SERVER_URL: 'http://191.252.113.160:3002/e-npi/v1',
+	ENPI_SERVER_URL: 'http://191.252.113.160:3001/e-npi/v1',
 	//ENPI_SERVER_URL : 'http://191.252.113.160:1110/e-npi/v2',
-	LOCAL_ENPI_URL: 'http://191.252.113.160:3002/e-npi/v1',
+	LOCAL_ENPI_URL: 'http://191.252.113.160:3001/e-npi/v1',
 
 	STATUS: [
 		'Cancelado',

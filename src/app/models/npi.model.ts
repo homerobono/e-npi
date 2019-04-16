@@ -204,7 +204,13 @@ class Npi {
                     new Date(npiModel.inStockDate) :
                     this.inStockDate = npiModel.inStockDate
             if (npiModel.fiscals != null) this.fiscals = npiModel.fiscals
-            if (npiModel.oemActivities != null) this.oemActivities = npiModel.oemActivities
+            if (npiModel.oemActivities != null) {
+                this.oemActivities = npiModel.oemActivities
+                this.oemActivities.forEach(activity => {
+                    if (activity.signature && activity.signature.date)
+                        activity.signature.date = new Date(activity.signature.date);
+                });
+            }
             if (npiModel.critical != null) {
                 this.critical = npiModel.critical
                 this.critical.forEach(critical => {
@@ -218,7 +224,13 @@ class Npi {
                     this.finalApproval.signature.date = new Date(this.finalApproval.signature.date);
             }
             if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
-            if (npiModel.activities != null) this.activities = npiModel.activities
+            if (npiModel.activities != null) {
+                this.activities = npiModel.activities
+                this.activities.forEach(activity => {
+                    if (activity.signature && activity.signature.date)
+                        activity.signature.date = new Date(activity.signature.date);
+                });
+            }
             if (npiModel.requests != null) this.requests = npiModel.requests
             if (npiModel.validation != null) this.validation = npiModel.validation
         }

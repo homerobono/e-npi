@@ -16,7 +16,7 @@
               <i class='fa fa-calendar fa-fw'></i>
             </span>
           </div>
-          <input type='text' class='form-control' formControlName='date' name='date' id="date" aria-describedby="Data e criação"
+          <input type='text' class='form-control' formControlName='created' name='created' id="date" aria-describedby="Data e criação"
             #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
         </div>
       </div>
@@ -390,9 +390,9 @@
                 <td>
                   {{ utils.getOemActivity(oemActivity.get("activity").value).label }}
                 </td>
-                <td [appActivityRow]='oemActivity'>
+                <td [appActivityRow]='oemActivity' formGroupName='signature'>
                   {{ oemActivities[i].dept }}
-                  <select class='custom-select' formControlName='responsible'>
+                  <select class='custom-select' formControlName='user'>
                     <option *ngFor='let user of deptUsers[oemActivities[i].dept]; let first = first' value='{{ user._id }}'
                       [selected]='first'>
                       {{ user.firstName }} {{ user.lastName }}
@@ -406,8 +406,8 @@
                     <i class='fa fa-fw append-icon'></i>
                   </button>
                 </td>
-                <td>
-                  <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ oemActivities[i].label }}"
+                <td formGroupName='signature'>
+                  <input type='text' class='form-control' formControlName='date' aria-describedby="Data final para atividade {{ oemActivities[i].label }}"
                     #edp="bsDatepicker" bsDatepicker [bsConfig]='DatePickerConfig' placement='right' id='{{oemActivity.get("activity").value}}_END_DATE'>
                 </td>
               </tr>
@@ -605,8 +605,8 @@
                       {{ user.lastName }}</option>
                   </select>
                 </td>
-                <td>
-                  <input type='text' class='form-control' formControlName='endDate' [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
+                <td formGroupName='signature'> 
+                  <input type='text' class='form-control' formControlName='date' [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
                     #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right' id='{{activity.get("activity").value}}_END_DATE'
                     appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
                     [dependents]='getControlsDependentActivities(activity)'>

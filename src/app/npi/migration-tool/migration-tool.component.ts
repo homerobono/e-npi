@@ -112,7 +112,7 @@ export class MigrationToolComponent implements OnInit {
 
     this.migrateForm = fb.group({
       'number': null,
-      'date': null,
+      'created': null,
       'client': 'Pixel',
       'requester': null,
       'name': 'Versões',
@@ -459,14 +459,18 @@ export class MigrationToolComponent implements OnInit {
         {
           //_id: null,
           activity: activity.value,
-          dept: activity.dept,
           responsible: null,
+          dept: activity.dept,
           term: activity.term,
           startDate: this.getOemModelStartDate(activity.value),
           endDate: this.getOemModelActivityEndDate(activity.value),
           annex: null,
           registry: null,
           apply: true,
+          signature: this.fb.group({
+            user: null,
+            date: new Date()
+          })
         }
       )
       oemActivityControl.valueChanges.subscribe(value => {
@@ -725,7 +729,11 @@ export class MigrationToolComponent implements OnInit {
             registry: null,
             annex: null,
             apply: true,
-            closed: true
+            closed: true,
+            signature: this.fb.group({
+              user: null,
+              date: new Date()
+            })
           }
         )
         this.oemMacroActivitiesFormArray.controls.push(activityControl)
