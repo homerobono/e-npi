@@ -164,7 +164,7 @@ class Npi {
         status: Boolean
     }
 
-    constructor(npiModel: any | null) {
+    constructor(npiModel?: any | null) {
 
         if (npiModel) {
             if (npiModel._id) this.id = npiModel._id

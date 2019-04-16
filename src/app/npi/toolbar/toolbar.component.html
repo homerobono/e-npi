@@ -1,5 +1,5 @@
 <div class='sticky-top text-right' style='top:20px; height:0; overflow: visible; z-index: 1'>
-    <div class='btn-group shadow rounded' *ngIf='npi.stage != 5'>
+    <div class='btn-group shadow rounded'>
       <button (click)='npiComponent.refresh()' class='btn btn-light text-primary' data-toggle="tooltip" data-placement="top" title="Atualizar">
         <i class='fa fa-refresh fa-fw'></i>
       </button>
@@ -46,6 +46,10 @@
       <button (click)='npiComponent.finalizeNpi()' class='btn btn-primary text-white' *ngIf='npiComponent.editFlag && npi.stage == 4 && npiComponent.canCloseNpi()'
         data-toggle="tooltip" data-placement="top" title="Finalizar NPI">
         <i class='fa fa-check fa-fw'></i>
+      </button>
+      <button [routerLink]='["migrate"]' class='btn btn-info' *ngIf='npiComponent.user.level==3' data-toggle="tooltip"
+        data-placement="top" title="Editar na Ferramanta de Migração">
+        <i class='fa fa-exchange fa-fw'></i>
       </button>
     </div>
   </div>

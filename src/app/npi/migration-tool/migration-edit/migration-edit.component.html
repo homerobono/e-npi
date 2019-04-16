@@ -1,12 +1,12 @@
 <div class='container'>
   <app-nav-buttons></app-nav-buttons>
-  <h3>Migrar NPI</h3>
+  <h3>Ferramenta de Migração: Editar NPI</h3>
   <form [formGroup]='migrateForm' (ngSubmit)="saveNpi(migrateForm.value)">
     <hr>
     <div class="form-row">
       <div class="form-group col-sm-2 col-md-2 col-xl-1">
         <label for="number">Número</label>
-        <input type="text" class="form-control" id="number" placeholder="(auto)" formControlName='number'>
+        <input type="text" class="form-control" id="number" placeholder="(auto)" formControlName='number' readonly>
       </div>
       <div class="form-group col-sm-4 col-md-4 col-lg-3 col-xl-2">
         <label for="date">Data de Criação</label>
@@ -391,6 +391,7 @@
       </div>
     </div>
 
+
     <!-- ATIVIDADES OEM -->
     <div class="form-row" *ngIf='oem.checked'>
       <div class='col'>
@@ -409,19 +410,18 @@
               </tr>
             </thead>
             <tbody #tableBody id='tableBody' formArrayName='oemActivities'>
-              <tr *ngFor='let oemActivity of oemActivitiesFormArray.controls; let last = last; index as i;'
-                [formGroupName]='i' [appActivityRow]='oemActivity'
-                [ngClass]='oemActivity.get("apply").value ? "applyable" : "not-applyable"'>
+              <tr *ngFor='let oemActivity of npi.oemActivities; let last = last; index as i;'
+                [formGroupName]='i' [ngClass]='oemActivity.apply ? "applyable" : "not-applyable"'>
                 <td>
                   {{ i+1 }}
                 </td>
                 <td>
-                  {{ utils.getOemActivity(oemActivity.get("activity").value).label }}
+                  {{ utils.getOemActivity(oemActivity.activity).label }}
                 </td>
-                <td [appActivityRow]='oemActivity'>
-                  {{ oemActivities[i].dept }}
+                <td>
+                  {{ oemActivity.dept }}
                   <select class='custom-select' formControlName='responsible'>
-                    <option *ngFor='let user of deptUsers[oemActivities[i].dept]; let first = first'
+                    <option *ngFor='let user of deptUsers[oemActivity.dept]; let first = first'
                       value='{{ user._id }}'>
                       {{ user.firstName }} {{ user.lastName }}
                     </option>
@@ -429,17 +429,17 @@
                 </td>
                 <td>
                   <button type=button class="btn btn-block btn-light shadow-none m-0"
-                    (click)='openUploadModal("oemActivities."+oemActivity.get("activity").value)'
-                    [ngClass]='{"text-primary": uploadService.uploaders["oemActivities."+oemActivity.get("activity").value], 
-                    "border-danger": fieldHasErrors("oemActivities."+i+".annex") && !uploadService.uploaders["oemActivities."+oemActivity.get("activity").value]}'>
+                    (click)='openUploadModal("oemActivities."+oemActivity.activity)'
+                    [ngClass]='{"text-primary": uploadService.uploaders["oemActivities."+oemActivity.activity], 
+                    "border-danger": fieldHasErrors("oemActivities."+i+".annex") && !uploadService.uploaders["oemActivities."+oemActivity.activity.value]}'>
                     <i class='fa fa-fw append-icon'></i>
                   </button>
                 </td>
                 <td>
                   <input type='text' class='form-control' formControlName='endDate'
-                    aria-describedby="Data final para atividade {{ oemActivities[i].label }}" #edp="bsDatepicker"
+                    aria-describedby="Data final para atividade {{ utils.getOemActivity(oemActivity.activity).label }}" #edp="bsDatepicker"
                     bsDatepicker [bsConfig]='DatePickerConfig' placement='right'
-                    id='{{oemActivity.get("activity").value}}_END_DATE'>
+                    id='{{oemActivity.activity}}_END_DATE'>
                 </td>
               </tr>
             </tbody>
@@ -448,8 +448,6 @@
       </div>
     </div>
     <hr>
-
-
 
 
     <div class="form-row">
@@ -473,62 +471,22 @@
                 <th scope="col" rowspan=1>Data</th>
               </tr>
             </thead>
-            <tbody *ngIf='pixel.checked'>
-              <tr *ngFor='let dept of pixelCriticalDepts; index as i' [formGroupName]='i'>
+            <tbody>
+              <tr *ngFor='let analisys of npi.critical; index as i' [formGroupName]='i'>
                 <td>
-                  <b>{{ dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
-                            utils.getDepartment(dept).label }})</span>
+                  <b>{{ analisys.dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
+                              utils.getDepartment(analisys.dept).label }})</span>
                 </td>
                 <td>
                   <div>
                     <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                       <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status'
-                        id='accept-{{i}}'>
+                        id='accept-{{i+1}}'>
                       <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
                     </label>
                     <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                       <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status'
                         id='deny-{{i}}'>
-                      <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
-                    </label>
-                  </div>
-                </td>
-                <td>
-                  <textarea class="form-control" rows=1 formControlName='comment'></textarea>
-                </td>
-                <td formGroupName="signature">
-                  <select class='custom-select' formControlName='user'>
-                    <option *ngFor='let user of deptUsers[dept]; let first=first'
-                      value='{{ user._id }}'>
-                      {{ user.firstName }}
-                      {{ user.lastName }}</option>
-                  </select>
-                </td>
-                <td formGroupName="signature">
-                  <div class='form-group'>
-                    <input type='text' class='form-control' formControlName='date' name='date'
-                      aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker
-                      [bsConfig]='datePickerConfig'>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-            <tbody *ngIf='!pixel.checked'>
-              <tr *ngFor='let dept of nonPixelCriticalDepts; index as i' [formGroupName]='i+1'>
-                <td>
-                  <b>{{ dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
-                              utils.getDepartment(dept).label }})</span>
-                </td>
-                <td>
-                  <div>
-                    <label class='radio-container form-check-inline' (click)='toggleStatus(i+1, $event)'>
-                      <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status'
-                        id='accept-{{i+1}}'>
-                      <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
-                    </label>
-                    <label class='radio-container form-check-inline' (click)='toggleStatus(i+1, $event)'>
-                      <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status'
-                        id='deny-{{i+1}}'>
                       <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
                     </label>
                   </div>
@@ -645,9 +603,8 @@
                       {{ user.lastName }}</option>
                   </select>
                 </td>
-                <td>
-                  <input type='text' class='form-control' formControlName='endDate'
-                    [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
+                <td formGroupName='signature'>
+                  <input type='text' class='form-control' formControlName='date'
                     #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right'
                     id='{{activity.get("activity").value}}_END_DATE' appBlink [activity]='activity' [npi]=npi
                     [dependencies]='getControlsDependencyActivities(activity)'

@@ -36,6 +36,7 @@ export class NpiService {
   }
 
   getNpi(npiNumber: Number): Observable<Npi[]> {
+    console.log(npiNumber)
     return this.http.get(this.npiUrl + npiNumber)
       .map(res => {
         console.log(res)

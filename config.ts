@@ -136,7 +136,7 @@ export const Globals = Object.freeze({
 		{ value: 'BOM_DESC', 	label: 'BOM com P/N, Descrição', 					dept: 'MEP', term: 5,  required: true, annex: true },
 		{ value: 'GERBER', 		label: 'Arquivo Gerber e Centroide', 				dept: 'MEP', term: 5,  annex: true },
 		{ value: 'MECH_LAYOUT', label: 'Desenho de Partes Mecânicas', 				dept: 'MEP', term: 60, annex: true },
-		{ value: 'FIRMWARE', 	label: 'Firmware', 									dept: 'MEP', term: 10, annex: true },
+		{ value: 'FIRMWARE', 	label: 'Firmware', 									dept: 'OPR', term: 10, annex: true },
 		{ value: 'BOM_PRICE', 	label: 'Cotação/Compra da BOM de Protótipo', 		dept: 'OSC', term: 20,dep: ["ELETRIC_LAYOUT", "BOM_DESC"], annex: true },
 		{ value: 'PROTO_ASSEMB',label: 'Montagem de Protótipo', 					dept: 'MPD', term: 10,dep: ["FIRMWARE","BOM_PRICE"], annex: false },
 		{ value: 'PROTO_SW', 	label: 'Protótipo de Software', 					dept: 'MPD', term:100,dep: ["SPECS_SW"], annex: true },

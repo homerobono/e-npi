@@ -26,6 +26,7 @@ import { of, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs-compat/operator/map';
 import { UsersService } from 'src/app/services/users.service';
 import User from 'src/app/models/user.model';
+import { isNumber } from 'ngx-bootstrap/chronos/utils/type-checks';
 
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
@@ -44,7 +45,7 @@ export class MigrationEditComponent implements OnInit {
   formSent: Boolean = false;
   migrateResponse: String;
 
-  npi: Npi
+  npi: Npi = new Npi()
   npiVersions: Npi[]
   npisList: Npi[]
   modalRef: BsModalRef;
@@ -179,11 +180,6 @@ export class MigrationEditComponent implements OnInit {
         })
       })
     })
-
-    this.pixelCriticalDepts = this.utils.getPixelCriticalDepartments()
-    this.nonPixelCriticalDepts = this.pixelCriticalDepts.slice(1)
-    this.oemActivities = this.utils.getOemActivities()
-
   }
 
   ngOnInit() {
@@ -191,9 +187,22 @@ export class MigrationEditComponent implements OnInit {
 
     this.npiService.npisList.subscribe(res => this.npisList = res)
 
-    this.insertOemActivities()
-    this.insertCriticalAnalisys()
-    this.insertActivities()
+    this.route.params.concatMap(
+      params => 
+        this.npiService.getNpi(params.npiNumber)
+    ).subscribe(
+      npis => {
+        this.npi = npis[0]
+        this.npiVersions = npis
+        this.insertOemActivities()
+        this.insertCriticalAnalisys()
+        this.insertActivities()
+        this.fillFormData()
+      }, err => {
+        //this.location.replaceState(null)
+        this.router.navigateByUrl('/error')
+      }
+    )
 
     let regulations = this.utils.getRegulations()
     let additionalArray = this.migrateForm.get('regulations').get('standard') as FormGroup
@@ -201,7 +210,7 @@ export class MigrationEditComponent implements OnInit {
       additionalArray.addControl(reg.value, this.fb.control(null))
     })
 
-    this.migrateForm.get('npiRef').valueChanges.subscribe(res => { this.loadNpiRef(res) })
+    this.migrateForm.get('npiRef').valueChanges.subscribe(res => this.loadNpiRef(res))
 
     this.userService.getUsers().subscribe(
       users => {
@@ -214,51 +223,16 @@ export class MigrationEditComponent implements OnInit {
             this.deptUsers[dept] = new Array<User>()
           this.deptUsers[dept].push(user)
         })
-
-        this.migrateForm.patchValue({
-          'requester': this.allUsers[0]._id
-        })
-        this.migrateForm.patchValue({
-          'validation': {
-            'signature': {
-              'user': this.allUsers[0]._id,
-              'date': new Date()
-            }
-          }
-        })
       });
     
-      this.route.params.subscribe(
-        params => {
-          console.log(params.npiNumber)
-          this.getNpi(params.npiNumber)
-        }
-      )
     this.subscribeToInputChanges()
-  }
-
-  getNpi(npiNumber) {
-    console.log('getting npi ' + npiNumber)
-    this.npiService.getNpi(npiNumber).takeUntil(this.ngUnsubscribe)
-      .subscribe(
-        npis => {
-          this.npi = npis[0]
-          this.npiVersions = npis
-          this.fillFormData()
-          console.log(this.npi)
-          //this.resetFormFlagSubject.next()
-        }, err => {
-          //this.location.replaceState(null)
-          this.router.navigateByUrl('/error')
-        }
-      )
   }
 
   fillFormData() {
 
     this.fillNestedFormData(this.migrateForm, this.npi)
 
-    this.migrateForm.patchValue({
+    /*this.migrateForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
       price: this.npi.price ? {
         value: this.npi.price.value ?
@@ -295,7 +269,7 @@ export class MigrationEditComponent implements OnInit {
             this.npi.investment.annex : []
         } : null,
         requester : this.npi.requester._id
-    })
+    })*/
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
@@ -309,7 +283,7 @@ export class MigrationEditComponent implements OnInit {
           try {
             control.setValue(model[field])
           }
-          catch { }
+          catch(err) {  console.log(err) }
         }
     })
   }
@@ -448,7 +422,8 @@ export class MigrationEditComponent implements OnInit {
   }
 
   loadNpiRef(res) {
-    this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
+    if(!isNaN(res))
+      this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
   }
 
   openNpiChooserModal() {
@@ -505,20 +480,22 @@ export class MigrationEditComponent implements OnInit {
   }
 
   insertOemActivities() {
-    this.oemActivities.forEach(activity => {
+    this.npi.oemActivities.forEach(activity => {
       console.log(activity.dept)
       var oemActivityControl = this.fb.group(
         {
           //_id: null,
-          activity: null,
-          dept: null,
-          responsible: null,
-          term: activity.term,
-          startDate: null,
-          endDate: null,
-          annex: null,
-          registry: null,
-          apply: null,
+          activity: activity.activity,
+          dept: activity.dept,
+          responsible: activity.responsible,
+          endDate: activity.signature.date,
+          annex: activity.annex,
+          registry: activity.registry,
+          apply: activity.apply,
+          signature: this.fb.group({
+            user: activity.signature.user,
+            date: activity.signature.date
+          })
         }
       )
       oemActivityControl.valueChanges.subscribe(value => {
@@ -730,24 +707,22 @@ export class MigrationEditComponent implements OnInit {
   //========================================================================
 
   insertCriticalAnalisys() {
-    console.log(this.pixelCriticalDepts)
-    for (let i = 0; i < this.pixelCriticalDepts.length; i++) {
+    this.npi.critical.forEach(analisys => {
       let control = this.fb.group({
-        dept: this.pixelCriticalDepts[i],
-        status: "accept",
-        comment: null,
+        dept: analisys.dept,
+        status: analisys.status,
+        comment: analisys.comment,
         signature: this.fb.group({
-          user: null,
-          date: new Date()
+          user: analisys.signature.user._id,
+          date: analisys.signature.date
         })
       })
       this.criticalFormArray.controls.push(control)
       control.valueChanges.subscribe(value => {
-        //console.log('updating critical array')
         this.migrateForm.addControl('critical', this.criticalFormArray)
-        this.migrateForm.updateValueAndValidity()
+        //this.migrateForm.updateValueAndValidity()
       });
-    }
+    });
   }
 
   //========================================================================
@@ -755,21 +730,21 @@ export class MigrationEditComponent implements OnInit {
   //========================================================================
 
   insertActivities() {
-    var activitiesModelArray = this.utils.getActivities()
     //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
-    activitiesModelArray.forEach(activity => {
+    this.npi.activities.forEach(activity => {
       var activityControl = this.fb.group(
         {
-          activity: activity.value,
+          activity: activity.activity,
           dept: activity.dept,
-          responsible: null,
-          term: null,
-          startDate: null,
-          endDate: new Date(),
-          registry: null,
-          annex: null,
-          apply: true,
-          closed: true
+          responsible: activity.responsible._id,
+          registry: activity.registry,
+          annex: activity.annex,
+          apply: activity.apply,
+          closed: activity.closed,
+          signature: this.fb.group({
+            user: activity.signature.user,
+            date: activity.signature.date
+          })
         }
       )
       this.activitiesFormArray.controls.push(activityControl)
