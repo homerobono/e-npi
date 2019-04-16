@@ -188,7 +188,7 @@ export class MigrationEditComponent implements OnInit {
     this.npiService.npisList.subscribe(res => this.npisList = res)
 
     this.route.params.concatMap(
-      params => 
+      params =>
         this.npiService.getNpi(params.npiNumber)
     ).subscribe(
       npis => {
@@ -224,7 +224,7 @@ export class MigrationEditComponent implements OnInit {
           this.deptUsers[dept].push(user)
         })
       });
-    
+
     this.subscribeToInputChanges()
   }
 
@@ -232,22 +232,9 @@ export class MigrationEditComponent implements OnInit {
 
     this.fillNestedFormData(this.migrateForm, this.npi)
 
-    /*this.migrateForm.patchValue({
+    this.migrateForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
-      price: this.npi.price ? {
-        value: this.npi.price.value ?
-          this.npi.price.value.toFixed(2).toString().replace('.', ',')
-          : null,
-        currency: this.npi.price.currency ?
-          this.npi.price.currency : null,
-      } : null,
-      cost: this.npi.cost ? {
-        value: this.npi.cost.value ?
-          this.npi.cost.value.toFixed(2).toString().replace('.', ',')
-          : null,
-        currency: this.npi.cost.currency ?
-          this.npi.cost.currency : null,
-      } : null,
+
       projectCost: this.npi.projectCost ?
         {
           value: this.npi.projectCost.value ?
@@ -268,8 +255,25 @@ export class MigrationEditComponent implements OnInit {
           annex: this.npi.investment.annex ?
             this.npi.investment.annex : []
         } : null,
-        requester : this.npi.requester._id
-    })*/
+      requester: this.npi.requester._id
+    })
+    if (this.npi.entry == 'pixel' || this.npi.entry == 'custom')
+      this.migrateForm.patchValue({
+        price: this.npi.price ? {
+          value: this.npi.price.value ?
+            this.npi.price.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.price.currency ?
+            this.npi.price.currency : null,
+        } : null,
+        cost: this.npi.cost ? {
+          value: this.npi.cost.value ?
+            this.npi.cost.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.cost.currency ?
+            this.npi.cost.currency : null,
+        } : null,
+      });
   }
 
   fillNestedFormData(form: FormGroup | FormArray, model) {
@@ -283,7 +287,7 @@ export class MigrationEditComponent implements OnInit {
           try {
             control.setValue(model[field])
           }
-          catch(err) {  console.log(err) }
+          catch (err) { console.log(err) }
         }
     })
   }
@@ -422,7 +426,7 @@ export class MigrationEditComponent implements OnInit {
   }
 
   loadNpiRef(res) {
-    if(!isNaN(res))
+    if (!isNaN(res))
       this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
   }
 
@@ -480,30 +484,31 @@ export class MigrationEditComponent implements OnInit {
   }
 
   insertOemActivities() {
-    this.npi.oemActivities.forEach(activity => {
-      console.log(activity.dept)
-      var oemActivityControl = this.fb.group(
-        {
-          //_id: null,
-          activity: activity.activity,
-          dept: activity.dept,
-          responsible: activity.responsible,
-          endDate: activity.signature.date,
-          annex: activity.annex,
-          registry: activity.registry,
-          apply: activity.apply,
-          signature: this.fb.group({
-            user: activity.signature.user,
-            date: activity.signature.date
-          })
-        }
-      )
-      oemActivityControl.valueChanges.subscribe(value => {
-        this.migrateForm.addControl('oemActivities', this.oemActivitiesFormArray)
+    if (this.npi.oemActivities)
+      this.npi.oemActivities.forEach(activity => {
+        console.log(activity.dept)
+        var oemActivityControl = this.fb.group(
+          {
+            //_id: null,
+            activity: activity.activity,
+            dept: activity.dept,
+            responsible: activity.responsible,
+            endDate: activity.signature.date,
+            annex: activity.annex,
+            registry: activity.registry,
+            apply: activity.apply,
+            signature: this.fb.group({
+              user: activity.signature.user,
+              date: activity.signature.date
+            })
+          }
+        )
+        oemActivityControl.valueChanges.subscribe(value => {
+          this.migrateForm.addControl('oemActivities', this.oemActivitiesFormArray)
+        });
+        this.oemActivitiesFormArray.controls.push(oemActivityControl)
+        //console.log(activityControl.value)
       });
-      this.oemActivitiesFormArray.controls.push(oemActivityControl)
-      //console.log(activityControl.value)
-    });
   }
 
   //===================== Model functions ================================
@@ -749,7 +754,7 @@ export class MigrationEditComponent implements OnInit {
       )
       this.activitiesFormArray.controls.push(activityControl)
       activityControl.valueChanges.subscribe(value => {
-          this.migrateForm.addControl('activities', this.activitiesFormArray)
+        this.migrateForm.addControl('activities', this.activitiesFormArray)
       });
     });
   }
