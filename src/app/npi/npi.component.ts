@@ -277,7 +277,7 @@ export class NpiComponent implements OnInit {
       if (this.npi.activities.length && this.isReleaseEstimateDelayed)
         if (!this.npi.isRequestOpen('DELAYED_RELEASE')){
           if (!confirm(
-            "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, MEP, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
+            "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
           this.submitNpi(npiForm)
