@@ -551,7 +551,7 @@
               </tr>
             </thead>
             <tbody #tableBody id='tableBody' formArrayName='activities'>
-              <tr *ngFor='let activity of npi.activities; let last = last; index as i;' [formGroupName]='i' [ngClass]='activity.apply ? "applyable" : "not-applyable"'
+              <tr *ngFor='let activity of npi.activities; let last = last; index as i;' [formGroupName]='i' [ngClass]='activitiesFormArray.controls[i].get("apply").value ? "applyable" : "not-applyable"'
                 [disabled]='activity.closed'>
                 <td>
                   {{ i+1 }}
@@ -574,11 +574,9 @@
                     [dependents]='getControlsDependentActivities(activity)'>
                 </td>
                 <td>
-                  <button type=button class="btn btn-block btn-light shadow-none m-0" *ngIf='utils.getActivity(activity.activity, entry).annex'
-                    (click)='openUploadModal("activities."+activity.activity)' [ngClass]='{"text-primary": uploadService.uploaders["activities."+activity.activity], 
-                    "border-danger": fieldHasErrors("activities."+i+".annex") && !uploadService.uploaders["activities."+activity.activity]}'>
-                    <i class='fa fa-fw append-icon'></i>
-                  </button>
+                  <app-file-button *ngIf='utils.getActivity(activity.activity).annex' [fieldControl]='activitiesFormArray.controls[i]' 
+                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='true' 
+                  [canEdit]='true'></app-file-button>
                 </td>
                 <td>
                   <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.activity, entry).required'>

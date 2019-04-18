@@ -329,6 +329,9 @@ export class MigrationEditComponent implements OnInit {
     let npiForm = migrateForm
     console.log(npiForm, this.uploadService.uploaders)
 
+    npiForm.number = this.npi.number
+    npiForm.id = this.npi.id
+
     for (let field in this.uploadService.uploaders) {
       console.log(field, this.uploadService.uploaders[field].queue)
       let propsArr = field.split(".")
@@ -361,7 +364,7 @@ export class MigrationEditComponent implements OnInit {
           'message': 'NPI editada com sucesso'
         });
         this.formSent = true;
-        this.router.navigateByUrl('/npi/' + res.migrate.data.number)
+        this.router.navigateByUrl('/npi/' + res.update.data.npi.number)
       }, err => {
         this.invalidFieldsError(err)
         this.formSent = false;

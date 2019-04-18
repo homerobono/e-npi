@@ -39,7 +39,7 @@ export class UsersComponent implements OnInit {
     this.usersService.getUsers()
       .subscribe(users => { 
         console.log(users)
-        this.usersList = users;
+        this.usersList = users.filter(user => user.status != 'disabled');
         this.formatDate();
       })
   }
