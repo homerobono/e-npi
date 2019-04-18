@@ -14,7 +14,7 @@
     font-size: 14pt
 }
 
-.upload-button:hover{
+.upload-button:enabled:hover{
     cursor: pointer;
     text-shadow: 0 1px 12px lighten($color: slateblue, $amount: 25)
 }
@@ -35,7 +35,7 @@ button:hover .npi-search-icon:before {
     content: "\f07b";
 }
 
-button:hover .append-icon:after {
+button:enabled:hover .append-icon:after {
     content: "\f07c";
     color: blue
 }

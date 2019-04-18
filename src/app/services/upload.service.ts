@@ -27,8 +27,8 @@ export class UploadService {
 
   constructor() {
     console.log("Constructing uploader Service")
-    this.onCompleteUpload = new BehaviorSubject<any>(false)
-    this.onCompleteUploadReplay = this.onCompleteUpload.shareReplay()
+    this.onCompleteUpload = new BehaviorSubject<Boolean>(false)
+    this.onCompleteUploadReplay = this.onCompleteUpload.asObservable()
     this.uploaders = new Object()
   }
 
@@ -50,6 +50,7 @@ export class UploadService {
 
     if(!fields.length) {
       this.onCompleteUpload.next(true)
+      this.onCompleteUpload.next(false)
       return of(['No uploads to make'])
     }
 
@@ -98,6 +99,7 @@ export class UploadService {
         console.log("All files uploaded.")
         this.isUploading = false
         this.onCompleteUpload.next(true)
+        this.onCompleteUpload.next(false)
         this.cleanUp()
       }
     };
@@ -122,25 +124,19 @@ export class UploadService {
     }
     this.progress = 0
     this.totalSize = 0
-    delete this.speed
+    this.speed = 0
     delete this.uploadingFileItem
     delete this.npiNumber
   }
 
-  updateSpeed(progress1, progress2) {
-    let speed = 0
-    let actTime = Date.now()
-    let timeDiff = (actTime - this.prevTime) / 1000
-    if (timeDiff > 1) {
-      this.prevTime = actTime
-      speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
-      speed = (this.speed+speed)/2
+  updateSpeed(progress1, progress2, timeDiff) {
+      let speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
+      console.log(progress2, progress1, this.totalSize/1024)
+      this.speed = Math.round(this.speed == 0 ? speed : (this.speed+speed)/2)
       //this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
-    }
   }
 
   updateProgress() {
-    //console.log('updating')
     let progress = 0
     Object.values(this.uploaders).forEach(uploader => {
       try {
@@ -148,7 +144,12 @@ export class UploadService {
       } catch (e) { console.error(e) }
     })
     progress = Math.round(progress / this.totalSize)
-    this.updateSpeed(this.progress, progress)
+    let actTime = Date.now()
+    let timeDiff = (actTime - this.prevTime) / 1000
+    //if (timeDiff > 1) {
+      this.prevTime = actTime
+      this.updateSpeed(this.progress, progress, timeDiff)
+    //}
     this.progress = progress
     //console.log(progress)
 //    console.log(this.uploadingFileItem)
@@ -169,7 +170,7 @@ export class UploadService {
     for (let i = 0; i < uploadersArr.length; i++) {
       totalSize += this.totalUploaderSize(uploadersArr[i])
     }
-    //console.log('totalSize: '+ totalSize)
+    console.log('totalSize: '+ totalSize)
     this.totalSize = totalSize
   }
 

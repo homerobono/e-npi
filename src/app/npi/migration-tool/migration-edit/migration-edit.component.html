@@ -110,6 +110,9 @@
               #designThinkingApply>
             <label class="custom-control-label" for="designThinking">Design Thinking</label>
           </div>
+          <app-file-button *ngIf='utils.getActivity(activity.activity).annex' [fieldControl]='activitiesFormArray.controls[i]' 
+                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='true' 
+                  [canEdit]='true'></app-file-button>
           <button type=button class="input-group-text btn btn-light shadow-none" id="designThinkingAppend" (click)='openUploadModal("designThinking")'
             [disabled]='!designThinkingApply.checked' [ngClass]='{"text-primary":uploadService.uploaders["designThinking"], "border-danger": fieldHasErrors("designThinking") && !uploadService.uploaders["designThinking"]}'>
             <i class='fa fa-fw append-icon'></i>

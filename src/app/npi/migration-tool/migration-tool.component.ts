@@ -263,7 +263,7 @@ export class MigrationToolComponent implements OnInit {
 
     for (let field in this.uploadService.uploaders) {
       let subfields = field.split(".")
-      if (subfields[0] == 'activities' || field == 'oemActivities') {
+      if (subfields[0] == 'activities' || subfields[0] == 'oemActivities') {
         let index = npiForm[subfields[0]].findIndex(act => act.activity == subfields[1])
         npiForm[subfields[0]][index].annex =
           (this.uploadService.uploaders[field].queue as FileItem[]).map(
@@ -285,15 +285,18 @@ export class MigrationToolComponent implements OnInit {
         //setTimeout(()=> this.modalRef.hide(), 500)
       })
       .subscribe(res => {
-        console.log('All complete');
         console.log(res);
-        this.messenger.set({
-          'type': 'success',
-          'message': 'NPI migrada com sucesso'
-        });
-        this.formSent = true;
-        this.clearFields();
-        this.router.navigateByUrl('/npi/' + res.migrate.data.number)
+        if (res.done) {
+          console.log('All complete');
+          console.log(res);
+          this.messenger.set({
+            'type': 'success',
+            'message': 'NPI migrada com sucesso'
+          });
+          this.formSent = true;
+          this.clearFields();
+          this.router.navigateByUrl('/npi/' + res.migrate.data.number)
+        }
       }, err => {
         this.invalidFieldsError(err)
         this.formSent = false;
@@ -352,11 +355,14 @@ export class MigrationToolComponent implements OnInit {
         console.log('NPI migrated');
         console.log(migrate.data);
         if (this.uploadService.totalSize) this.openSendingFormModal()
-        return this.uploadService.upload(migrate.data.number).map(
+        return this.uploadService.upload(migrate.data.number).concatMap(
           upload => {
             var res = { migrate, upload }
-            console.log(res)
-            return res
+            ///console.log(res)
+            return this.uploadService.onCompleteUploadReplay.map(res => {
+              console.log(res, { migrate, upload })
+              return { migrate, upload, done: res }
+            })
           }
         )
       })
@@ -570,9 +576,9 @@ export class MigrationToolComponent implements OnInit {
 
   displayActivityRow(activity: AbstractControl) {
     if (activity.get("apply").value)
-        return "table-row"
+      return "table-row"
     return "none"
-}
+  }
   getOemModelStartDate(activityLabel: String): Date {
     let dependencies = this.getOemModelDependencyActivities(activityLabel)
     let startDate = new Date()
