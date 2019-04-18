@@ -325,25 +325,26 @@ export class MigrationEditComponent implements OnInit {
     })
   }
 
-  migrateNpi(migrateForm): void {
+  migrateUpdateNpi(migrateForm): void {
     let npiForm = migrateForm
     console.log(npiForm, this.uploadService.uploaders)
 
     for (let field in this.uploadService.uploaders) {
-      let subfields = field.split(".")
-      if (subfields[0] == 'activities' || field == 'oemActivities') {
-        let index = npiForm[subfields[0]].findIndex(act => act.activity == subfields[1])
-        npiForm[subfields[0]][index].annex =
-          (this.uploadService.uploaders[field].queue as FileItem[]).map(
-            fI => new FileDescriptor(field, fI.file)
-          )
-      } else {
-        npiForm[field].annex =
-          (this.uploadService.uploaders[field].queue as FileItem[]).map(
-            fI => new FileDescriptor(field, fI.file)
-          )
-      }
+      console.log(field, this.uploadService.uploaders[field].queue)
+      let propsArr = field.split(".")
+      let subfield = npiForm[propsArr[0]]
+      console.log(subfield)
+      if (propsArr.length > 1)
+        subfield = subfield.find(act => act.activity == propsArr[1])
+      console.log(subfield)
+      if (!subfield.annex)
+        subfield.annex = []
+      subfield.annex = subfield.annex.concat(
+        (this.uploadService.uploaders[field].queue as FileItem[]).map(
+          fI => new FileDescriptor(field, fI.file)
+        ))
     }
+
     console.log(npiForm)
     this.sendingForm = true
 
@@ -357,10 +358,9 @@ export class MigrationEditComponent implements OnInit {
         console.log(res);
         this.messenger.set({
           'type': 'success',
-          'message': 'NPI migrada com sucesso'
+          'message': 'NPI editada com sucesso'
         });
         this.formSent = true;
-        this.clearFields();
         this.router.navigateByUrl('/npi/' + res.migrate.data.number)
       }, err => {
         this.invalidFieldsError(err)
@@ -399,10 +399,7 @@ export class MigrationEditComponent implements OnInit {
     this.sendingForm = false;
   }
 
-  saveNpi(migrateForm) {
-    migrateForm.stage = 5
-    migrateForm.validation.status = true
-
+  updateNpi(migrateForm) {
     if (migrateForm.clientApproval.approval == "deny") {
       delete migrateForm.activities
       delete migrateForm.validation
@@ -410,26 +407,9 @@ export class MigrationEditComponent implements OnInit {
     }
     console.log(migrateForm)
 
-    if (migrateForm.entry != 'pixel') {
-      migrateForm.critical.splice(0, 1)
-    }
-
-
     this.resolveSubmission = this.npiService.migrateUpdateNpi(migrateForm)
-      .concatMap(migrate => {
-        console.log('migrated NPI edited');
-        console.log(migrate.data);
-        if (this.uploadService.totalSize) this.openSendingFormModal()
-        return this.uploadService.upload(migrate.data.number).map(
-          upload => {
-            var res = { migrate, upload }
-            console.log(res)
-            return res
-          }
-        )
-      })
 
-    this.migrateNpi(migrateForm)
+    this.migrateUpdateNpi(migrateForm)
   }
 
 
