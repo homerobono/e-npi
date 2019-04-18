@@ -481,8 +481,98 @@ export class MigrationToolComponent implements OnInit {
     });
   }
 
+  insertCriticalAnalisys() {
+    console.log(this.pixelCriticalDepts)
+    for (let i = 0; i < this.pixelCriticalDepts.length; i++) {
+      let control = this.fb.group({
+        dept: this.pixelCriticalDepts[i],
+        status: "accept",
+        comment: null,
+        signature: this.fb.group({
+          user: null,
+          date: new Date()
+        })
+      })
+      this.criticalFormArray.controls.push(control)
+      control.valueChanges.subscribe(value => {
+        //console.log('updating critical array')
+        this.migrateForm.addControl('critical', this.criticalFormArray)
+        this.migrateForm.updateValueAndValidity()
+      });
+    }
+  }
+
+  insertActivities() {
+    var activitiesModelArray = this.utils.getActivities()
+    //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
+    activitiesModelArray.forEach(activity => {
+      if (activity.value != "RELEASE") {
+        var activityControl = this.fb.group(
+          {
+            activity: activity.value,
+            dept: activity.dept,
+            responsible: null,
+            term: null,
+            startDate: null,
+            endDate: new Date(),
+            registry: null,
+            annex: null,
+            apply: true,
+            closed: true,
+            signature: this.fb.group({
+              user: null,
+              date: new Date()
+            })
+          }
+        )
+        this.oemMacroActivitiesFormArray.controls.push(activityControl)
+        activityControl.valueChanges.subscribe(value => {
+          if (this.migrateForm.get("entry").value == 'oem')
+            this.migrateForm.addControl('activities', this.oemMacroActivitiesFormArray)
+        });
+      }
+    });
+
+    activitiesModelArray = this.utils.getActivities('oem')
+    //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
+    activitiesModelArray.forEach(activity => {
+      if (activity.value != "RELEASE") {
+        var activityControl = this.fb.group(
+          {
+            activity: activity.value,
+            dept: activity.dept,
+            responsible: null,
+            term: null,
+            startDate: null,
+            endDate: new Date(),
+            registry: null,
+            annex: null,
+            apply: true,
+            closed: true,
+            signature: this.fb.group({
+              user: null,
+              date: new Date()
+            })
+          }
+        )
+        this.nonOemMacroActivitiesFormArray.controls.push(activityControl)
+        activityControl.valueChanges.subscribe(value => {
+          if (this.migrateForm.get("entry").value != 'oem')
+            this.migrateForm.addControl('activities', this.nonOemMacroActivitiesFormArray)
+        });
+      }
+      //console.log(activityControl.value)
+    });
+
+    this.migrateForm.setControl("activities", this.oemMacroActivitiesFormArray);
+  }
   //===================== Model functions ================================
 
+  displayActivityRow(activity: AbstractControl) {
+    if (activity.get("apply").value)
+        return "table-row"
+    return "none"
+}
   getOemModelStartDate(activityLabel: String): Date {
     let dependencies = this.getOemModelDependencyActivities(activityLabel)
     let startDate = new Date()
@@ -685,94 +775,10 @@ export class MigrationToolComponent implements OnInit {
   }
 
   //========================================================================
-  //===================== Critical Analisys ================================
-  //========================================================================
-
-  insertCriticalAnalisys() {
-    console.log(this.pixelCriticalDepts)
-    for (let i = 0; i < this.pixelCriticalDepts.length; i++) {
-      let control = this.fb.group({
-        dept: this.pixelCriticalDepts[i],
-        status: "accept",
-        comment: null,
-        signature: this.fb.group({
-          user: null,
-          date: new Date()
-        })
-      })
-      this.criticalFormArray.controls.push(control)
-      control.valueChanges.subscribe(value => {
-        //console.log('updating critical array')
-        this.migrateForm.addControl('critical', this.criticalFormArray)
-        this.migrateForm.updateValueAndValidity()
-      });
-    }
-  }
-
-  //========================================================================
   //===================== Activities functions ================================
   //========================================================================
 
-  insertActivities() {
-    var activitiesModelArray = this.utils.getActivities()
-    //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
-    activitiesModelArray.forEach(activity => {
-      if (activity.value != "RELEASE") {
-        var activityControl = this.fb.group(
-          {
-            activity: activity.value,
-            dept: activity.dept,
-            responsible: null,
-            term: null,
-            startDate: null,
-            endDate: new Date(),
-            registry: null,
-            annex: null,
-            apply: true,
-            closed: true,
-            signature: this.fb.group({
-              user: null,
-              date: new Date()
-            })
-          }
-        )
-        this.oemMacroActivitiesFormArray.controls.push(activityControl)
-        activityControl.valueChanges.subscribe(value => {
-          if (this.migrateForm.get("entry").value == 'oem')
-            this.migrateForm.addControl('activities', this.oemMacroActivitiesFormArray)
-        });
-      }
-    });
 
-    activitiesModelArray = this.utils.getActivities('oem')
-    //console.log(this.npi.getCriticalApprovalDate().toLocaleDateString())
-    activitiesModelArray.forEach(activity => {
-      if (activity.value != "RELEASE") {
-        var activityControl = this.fb.group(
-          {
-            activity: activity.value,
-            dept: activity.dept,
-            responsible: null,
-            term: null,
-            startDate: null,
-            endDate: new Date(),
-            registry: null,
-            annex: null,
-            apply: true,
-            closed: true
-          }
-        )
-        this.nonOemMacroActivitiesFormArray.controls.push(activityControl)
-        activityControl.valueChanges.subscribe(value => {
-          if (this.migrateForm.get("entry").value != 'oem')
-            this.migrateForm.addControl('activities', this.nonOemMacroActivitiesFormArray)
-        });
-      }
-      //console.log(activityControl.value)
-    });
-
-    this.migrateForm.setControl("activities", this.oemMacroActivitiesFormArray);
-  }
 
   subscribeToInputChanges() {
     this.migrateForm.get("entry").valueChanges.subscribe(entry => {

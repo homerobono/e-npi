@@ -285,16 +285,17 @@ export class MigrationEditComponent implements OnInit {
       })
     });
 
-    this.npi.oemActivities.forEach(activity => {
-      let control = (this.migrateForm.get("oemActivities") as FormArray).controls
-        .find(actControl => actControl.get("activity").value == activity.activity)
-      control.patchValue({
-        signature: {
-          user: activity.responsible._id,
-          date: activity.signature.date
-        }
-      })
-    });
+    if (this.npi.oemActivities)
+      this.npi.oemActivities.forEach(activity => {
+        let control = (this.migrateForm.get("oemActivities") as FormArray).controls
+          .find(actControl => actControl.get("activity").value == activity.activity)
+        control.patchValue({
+          signature: {
+            user: activity.signature.user._id,
+            date: activity.signature.date
+          }
+        })
+      });
 
     this.npi.activities.forEach(activity => {
       let control = (this.migrateForm.get("activities") as FormArray).controls
@@ -414,9 +415,9 @@ export class MigrationEditComponent implements OnInit {
     }
 
 
-    this.resolveSubmission = this.npiService.migrateNpi(migrateForm)
+    this.resolveSubmission = this.npiService.migrateUpdateNpi(migrateForm)
       .concatMap(migrate => {
-        console.log('NPI migrated');
+        console.log('migrated NPI edited');
         console.log(migrate.data);
         if (this.uploadService.totalSize) this.openSendingFormModal()
         return this.uploadService.upload(migrate.data.number).map(
