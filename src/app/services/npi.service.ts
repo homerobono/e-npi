@@ -87,6 +87,23 @@ export class NpiService {
     return this.http.post(this.npiMigrateUrl, npi)
   }
 
+  migrateUpdateNpi(npiForm): Observable<any> {
+    console.log('updating migrated npi');
+    var npi = this.formToModel(npiForm)
+    console.log(npi);
+    return this.http.put(this.npiMigrateUrl, npi)
+      .concatMap(update => {
+        console.log('NPI updated');
+        return this.uploadService.upload(npiForm.number).map(
+          upload => {
+            var res = { update, upload }
+            console.log(res)
+            return res
+          }
+        )
+      })
+  }
+
   newNpiVersion(npiForm): Observable<any> {
     console.log('creating new npi version from ' + npiForm.id);
     console.log(npiForm);

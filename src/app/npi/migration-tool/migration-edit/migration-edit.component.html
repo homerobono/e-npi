@@ -1,7 +1,7 @@
 <div class='container'>
   <app-nav-buttons></app-nav-buttons>
   <h3>Ferramenta de Migração: Editar NPI</h3>
-  <form [formGroup]='migrateForm' (ngSubmit)="saveNpi(migrateForm.value)">
+  <form [formGroup]='migrateForm' (ngSubmit)="updateNpi(migrateForm.value)">
     <hr>
     <div class="form-row">
       <div class="form-group col-sm-2 col-md-2 col-xl-1">
@@ -419,7 +419,7 @@
     </div>
     <hr>
 
-
+    <!-- ANÁLISE CRÍTICA -->
     <div class="form-row">
       <div class='col'>
         <label for='criticalAnalysis' class=col>
@@ -483,6 +483,7 @@
       </div>
     </div>
 
+    <!-- ATIVIDADES O&M -->
     <div *ngIf='npi.entry=="oem"'>
       <h4>
         <b>Aprovação do Cliente</b>
@@ -520,6 +521,7 @@
       </div>
     </div>
 
+    <!-- ATIVIDADES MACRO -->
     <div class="form-row">
       <div class='col'>
         <label for='activities' class=col>

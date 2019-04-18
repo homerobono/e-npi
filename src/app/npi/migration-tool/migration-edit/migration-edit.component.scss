@@ -157,3 +157,12 @@ button:hover .append-icon:after {
     line-height: 20px !important;
     color: gray;
 }
+
+.applyable{
+    filter: opacity(1)
+}
+
+.not-applyable{
+    filter: opacity(0.5);
+    text-decoration: line-through
+}
