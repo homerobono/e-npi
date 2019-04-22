@@ -19,7 +19,7 @@ export class FileButtonComponent implements OnInit {
   @Input() parent: String = ''
   @Input() editFlag: Boolean = true
   @Input() canEdit: Boolean = true
-  @Input() npiNumber: Number
+  @Input() npiId: String
 
   private modalRef: BsModalRef
 
@@ -33,14 +33,14 @@ export class FileButtonComponent implements OnInit {
 
   openFileAction(field) {
     console.log(field)
-    if (field.annex && !field.annex.length && this.npiNumber)
+    if (field.annex && !field.annex.length && this.npiId)
       this.openFileManager(field)
     this.openUploadModal(field)
   }
 
   openFileManager(field : string) {
     const initialState = {
-      npiNumber: this.npiNumber,
+      npiId: this.npiId,
       field,
       editFlag: this.editFlag
     }

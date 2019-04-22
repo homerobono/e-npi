@@ -20,7 +20,7 @@ export class UploadService {
   public progress: Number = 0
   public isUploading: Boolean = false
   public uploadingFileItem: FileItem
-  public npiNumber: Number
+  public _id: Number
   public evolve = false
   public speed: number = 0
   private prevTime: number = Date.now()
@@ -44,8 +44,8 @@ export class UploadService {
     }
   }
 
-  upload(npiNumber) {
-    this.npiNumber = npiNumber
+  upload(id) {
+    this._id = id
     let fields = Object.keys(this.uploaders)
 
     if(!fields.length) {
@@ -106,8 +106,8 @@ export class UploadService {
 
     uploader.onErrorItem = (file, res) => { console.log(res) }
     uploader.onBuildItemForm = (_, form) => {
-      form.append('destination', this.npiNumber + '/' + subject)
-      form.append('npiNumber', this.npiNumber)
+      form.append('destination', this._id + '/' + subject)
+      form.append('_id', this._id)
       form.append('evolve', this.evolve)
     }
     Object.assign(this.uploaders, { [subject]: uploader })
@@ -126,7 +126,7 @@ export class UploadService {
     this.totalSize = 0
     this.speed = 0
     delete this.uploadingFileItem
-    delete this.npiNumber
+    delete this._id
   }
 
   updateSpeed(progress1, progress2, timeDiff) {

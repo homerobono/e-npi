@@ -255,7 +255,7 @@ export class CreateComponent implements OnInit {
                 console.log('NPI created');
                 console.log(create.data);
                 if (this.uploadService.totalSize) this.openSendingFormModal()
-                return this.uploadService.upload(create.data.number).map(
+                return this.uploadService.upload(create.data._id).map(
                     upload => {
                         var res = { create, upload }
                         console.log(res)
@@ -274,7 +274,7 @@ export class CreateComponent implements OnInit {
                 console.log('NPI created');
                 console.log(create.data);
                 if (this.uploadService.totalSize) this.openSendingFormModal()
-                return this.uploadService.upload(create.data.number).map(
+                return this.uploadService.upload(create.data._id).map(
                     upload => {
                         var res = { create, upload }
                         console.log(res)

@@ -21,7 +21,7 @@ export class FileManagerComponent implements OnInit {
   files: Observable<FileElement[]>;
   folders: Observable<FileElement[]>;
   rootPath: String;
-  npiNumber: String;
+  npiId: String;
   field: String;
   relativePath: String;
   currentPath: String;
@@ -36,7 +36,7 @@ export class FileManagerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rootPath = this.npiNumber + '/' + this.field + '/'
+    this.rootPath = this.npiId + '/' + this.field + '/'
     this.currentPath = this.rootPath
     this.relativePath = '/'
     this.updateFileQuery();

@@ -355,7 +355,7 @@ export class MigrationToolComponent implements OnInit {
         console.log('NPI migrated');
         console.log(migrate.data);
         if (this.uploadService.totalSize) this.openSendingFormModal()
-        return this.uploadService.upload(migrate.data.number).concatMap(
+        return this.uploadService.upload(migrate.data._id).concatMap(
           upload => {
             var res = { migrate, upload }
             ///console.log(res)
