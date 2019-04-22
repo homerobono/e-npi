@@ -16,7 +16,7 @@
 
 .upload-button:enabled:hover{
     cursor: pointer;
-    text-shadow: 0 1px 12px lighten($color: slateblue, $amount: 25)
+    text-shadow: 0 1px 12px lighten($color: rgb(24, 155, 231), $amount: 25)
 }
 
 .upload-button:active{

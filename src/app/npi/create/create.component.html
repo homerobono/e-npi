@@ -393,6 +393,7 @@
                 <th scope="col" rowspan=2>Atividade</th>
                 <th scope="col" rowspan=2>Responsável</th>
                 <th scope="col" colspan=3>Prazo</th>
+                <th scope="col" rowspan=2>Aplicável</th>
               </tr>
               <tr>
                 <th scope=col>Período (dias)</th>
@@ -435,6 +436,12 @@
                     id='{{oemActivity.get("activity").value}}_END_DATE' appBlink [oemActivity]='oemActivity'
                     [dependencies]='getControlsDependencyActivities(oemActivity)'
                     [dependents]='getControlsDependentActivities(oemActivity)'>
+                </td>
+                <td>
+                  <div class='custom-control custom-checkbox' *ngIf='!utils.getOemActivity(oemActivity.get("activity").value, entry).required'>
+                    <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
+                    <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
+                  </div>
                 </td>
               </tr>
             </tbody>

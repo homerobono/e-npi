@@ -20,7 +20,7 @@
             <button type='button' class='btn btn-light shadow-none text-primary' (click)='updateFileQuery()'>
               <span class='pointer fa fa-refresh'></span>
             </button>
-            <button type='button' class='btn btn-light shadow-none pr-2' (click)="openNewFolderDialog()">
+            <button type='button' class='btn btn-light shadow-none pr-2' (click)="openNewFolderDialog()" [disabled]='!editFlag's>
               <span class="fa fa-folder text-primary">
               </span>
               <span style="position:relative; left:-10px; top: -2px; font-size: 8px" class='fa fa-plus text-light'></span>
@@ -31,7 +31,7 @@
           <button type='button' class='btn btn-primary' (click)='downloadAll()'>
             <span class='fa fa-download fa-fw'></span>
           </button>
-          <button type='button' class="btn btn-success" (click)='openUploadModal()'>
+          <button type='button' class="btn btn-success" (click)='openUploadModal()' [disabled]='!editFlag'>
             <span class='fa fa-upload fa-fw'></span>
           </button>
         </div>
@@ -40,6 +40,7 @@
   </div>
   <div class="modal-body pt-0 mt-0 body">
     <app-explorer 
+      [editFlag]='editFlag'
       [files]="files | async" 
       [folders]="folders | async"
       [path]="relativePath" 

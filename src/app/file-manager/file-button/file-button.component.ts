@@ -41,7 +41,8 @@ export class FileButtonComponent implements OnInit {
   openFileManager(field : string) {
     const initialState = {
       npiNumber: this.npiNumber,
-      field
+      field,
+      editFlag: this.editFlag
     }
     this.modalRef = this.modalService.show( FileManagerComponent,
       {

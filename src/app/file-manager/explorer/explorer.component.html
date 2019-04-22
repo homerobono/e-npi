@@ -14,7 +14,7 @@
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
     <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}"
-    [disabled]='!canNavigateUp && !availableFolders(element)'>
+    [disabled]='!((canNavigateUp || availableFolders(element)) && editFlag)'>
       <mat-icon>open_with</mat-icon>
       <span>Mover Para...</span>
     </button>
@@ -22,7 +22,7 @@
       <mat-icon>remove_red_eye</mat-icon>
       <span>Preview</span>
     </button>
-    <button mat-menu-item (click)="openRenameDialog(element)">
+    <button mat-menu-item (click)="openRenameDialog(element)" [disabled]='!editFlag'>
       <mat-icon>edit</mat-icon>
       <span>Renomear</span>
     </button>
@@ -30,7 +30,7 @@
       <mat-icon>cloud_download</mat-icon>
       <span>Download</span>
     </button>
-    <button mat-menu-item (click)="deleteElement(element)">
+    <button mat-menu-item (click)="deleteElement(element)" [disabled]='!editFlag'>
       <mat-icon>delete</mat-icon>
       <span>Remover</span>
     </button>

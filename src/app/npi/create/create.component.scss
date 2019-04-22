@@ -2,21 +2,21 @@
     color: white;
     width: 16px;
     margin: 0;
-    fill: blue
+    fill: rgb(30, 139, 228)
 }
 
 .upload-button{
     text-shadow: 0 1px 10px #ddd;
-    color: slateblue;
+    color:  rgb(30, 139, 228)
 }
 
 .fa-upload {
     font-size: 14pt
 }
 
-.upload-button:hover{
+.upload-button:enabled:hover{
     cursor: pointer;
-    text-shadow: 0 1px 12px lighten($color: slateblue, $amount: 25)
+    text-shadow: 0 1px 12px lighten($color: rgb(30, 139, 228), $amount: 25)
 }
 
 .upload-button:active{
@@ -35,7 +35,16 @@ button:hover .npi-search-icon:before {
     content: "\f07b";
 }
 
-button:hover .append-icon:after {
+button:enable:hover .append-icon:after {
     content: "\f07c";
-    color: blue
+    color: rgb(30, 139, 228)
+}
+
+.applyable{
+    filter: opacity(1)
+}
+
+.not-applyable{
+    filter: opacity(0.5);
+    text-decoration: line-through
 }

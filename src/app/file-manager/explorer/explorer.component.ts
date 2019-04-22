@@ -26,6 +26,7 @@ export class ExplorerComponent {
   @Input() folders: FileElement[];
   @Input() canNavigateUp: string;
   @Input() path: string;
+  @Input() editFlag: Boolean;
 
   @Output() elementDownload = new EventEmitter<FileElement>();
   @Output() preview = new EventEmitter<FileElement>();

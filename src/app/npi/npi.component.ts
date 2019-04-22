@@ -480,7 +480,8 @@ export class NpiComponent implements OnInit {
   openFileManager(field) {
     const initialState = {
       npiNumber: this.npi.number,
-      field
+      field,
+      editFlag: this.editFlag
     }
     this.modalRef = this.modalService.show(
       FileManagerComponent,
