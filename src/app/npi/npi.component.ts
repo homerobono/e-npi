@@ -479,7 +479,7 @@ export class NpiComponent implements OnInit {
 
   openFileManager(field) {
     const initialState = {
-      npiNumber: this.npi.number,
+      npiId: this.npi.id,
       field,
       editFlag: this.editFlag
     }

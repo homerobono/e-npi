@@ -232,7 +232,12 @@ class Npi {
                 });
             }
             if (npiModel.requests != null) this.requests = npiModel.requests
-            if (npiModel.validation != null) this.validation = npiModel.validation
+            if (npiModel.validation != null) {
+                this.validation = npiModel.validation
+                if (npiModel.validation && npiModel.validation.signature && npiModel.validation.signature.date)
+                    this.validation.signature.date = new Date(npiModel.validation.signature.date)
+
+            }
         }
     }
     public amITheOwner(userId): Boolean {

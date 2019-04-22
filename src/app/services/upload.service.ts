@@ -94,12 +94,13 @@ export class UploadService {
       this.isUploading = true
       this.uploadingFileItem = fileItem
     }
+
     uploader.onCompleteAll = () => {
       if (Object.values(this.uploaders).every((uploader: FileUploader) => !uploader.getNotUploadedItems.length)) {
         console.log("All files uploaded.")
         this.isUploading = false
         this.onCompleteUpload.next(true)
-        this.onCompleteUpload.next(false)
+        //this.onCompleteUpload.next(false)
         this.cleanUp()
       }
     };

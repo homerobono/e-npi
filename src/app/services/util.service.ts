@@ -96,8 +96,13 @@ export class UtilService {
     return Globals.STATUS[stage as number]
   }
 
-  getLabel(word) {
-    return Globals.LABELS[word]
+  getLabel(word: String) {
+    let subwords = word.split('.')
+    let label = Globals.LABELS[subwords[0]]
+    for (let i=1; i<subwords.length; i++){
+      label = label[subwords[i]]
+    }
+    return label
   }
 
   formatDate(date: Date): String {

@@ -110,13 +110,9 @@
               #designThinkingApply>
             <label class="custom-control-label" for="designThinking">Design Thinking</label>
           </div>
-          <app-file-button *ngIf='utils.getActivity(activity.activity).annex' [fieldControl]='activitiesFormArray.controls[i]' 
-                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='true' 
-                  [canEdit]='true'></app-file-button>
-          <button type=button class="input-group-text btn btn-light shadow-none" id="designThinkingAppend" (click)='openUploadModal("designThinking")'
-            [disabled]='!designThinkingApply.checked' [ngClass]='{"text-primary":uploadService.uploaders["designThinking"], "border-danger": fieldHasErrors("designThinking") && !uploadService.uploaders["designThinking"]}'>
-            <i class='fa fa-fw append-icon'></i>
-          </button>
+          <app-file-button [fieldControl]='migrateForm.get("designThinking")' 
+            [fieldLabel]='"designThinking"' [npiId]='npi.id' [editFlag]='designThinkingApply.checked' 
+            [canEdit]='true'></app-file-button>
           <div class='invalid-feedback'>
             Forneça os requisitos gerais do projeto
           </div>
@@ -134,9 +130,9 @@
           <textarea class="form-control" rows=5 formControlName='description' id='description' [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
           </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend" (click)='openUploadModal("description")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend" (click)='openFileAction("description")'
               [ngClass]='{"text-primary":uploadService.uploaders["description"], "border-danger": fieldHasErrors("description") && !uploadService.uploaders["description"]}'>
-              <i class='fa fa-fw append-icon'></i>
+              <i class='fa fa-fw' [ngClass]='npi.description?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
           <div class='invalid-feedback'>
@@ -153,9 +149,9 @@
           <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
               </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openUploadModal("resources")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openFileAction("resources")'
               [ngClass]='{"text-primary":uploadService.uploaders["resources"], "border-danger": fieldHasErrors("resources") && !uploadService.uploaders["resources"]}'>
-              <i class='fa fa-fw append-icon'></i>
+              <i class='fa fa-fw' [ngClass]='npi.resources?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
           <div class='invalid-feedback'>
@@ -186,9 +182,9 @@
           <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription' [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
             </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openUploadModal("regulations")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openFileAction("regulations")'
               [ngClass]='{"text-primary":uploadService.uploaders["regulations.description"], "border-danger": fieldHasErrors("regulations.description") && !uploadService.uploaders["regulations"]}'>
-              <i class='fa fa-fw append-icon'></i>
+              <i class='fa fa-fw' [ngClass]='npi.regulations?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
           <div class='invalid-feedback'>
@@ -334,9 +330,9 @@
           <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
             aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openUploadModal("investment")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openFileAction("investment")'
               [ngClass]='{"text-primary":uploadService.uploaders["investment"], "border-danger": fieldHasErrors("investment") && !uploadService.uploaders["investment"]}'>
-              <i class='fa fa-fw append-icon'></i>
+              <i class='fa fa-fw' [ngClass]='npi.investment?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
           <div class='invalid-feedback'>
@@ -357,8 +353,8 @@
             aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
           <div class="input-group-append">
             <button type=button class="input-group-text btn btn-light shadow-none is-invalid" id="projectCostAppend"
-              (click)='openUploadModal("projectCost")' [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost") && !uploadService.uploaders["projectCost"]}'>
-              <i class='fa fa-fw append-icon'></i>
+              (click)='openFileAction("projectCost")' [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost") && !uploadService.uploaders["projectCost"]}'>
+              <i class='fa fa-fw' [ngClass]='npi.projectCost?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
           <div class='invalid-feedback'>
@@ -404,11 +400,9 @@
                   </select>
                 </td>
                 <td>
-                  <button type=button class="btn btn-block btn-light shadow-none m-0" (click)='openUploadModal("oemActivities."+oemActivity.activity)'
-                    [ngClass]='{"text-primary": uploadService.uploaders["oemActivities."+oemActivity.activity], 
-                    "border-danger": fieldHasErrors("oemActivities."+i+".annex") && !uploadService.uploaders["oemActivities."+oemActivity.activity.value]}'>
-                    <i class='fa fa-fw append-icon'></i>
-                  </button>
+                    <app-file-button *ngIf='utils.getOemActivity(oemActivity.activity).annex' [fieldControl]='oemActivitiesFormArray.controls[i]' 
+                    [fieldLabel]='oemActivity.activity' [parent]='"oemActivities"' [npiId]='npi.id' [editFlag]='oemActivity.apply' 
+                    [canEdit]='true'></app-file-button>
                 </td>
                 <td>
                   <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ utils.getOemActivity(oemActivity.activity).label }}"
@@ -486,7 +480,6 @@
       </div>
     </div>
 
-    <!-- ATIVIDADES O&M -->
     <div *ngIf='npi.entry=="oem"'>
       <h4>
         <b>Aprovação do Cliente</b>
@@ -510,9 +503,9 @@
           <div class='input-group'>
             <textarea class='form-control' id='comment' formControlName='comment' rows='1' [ngClass]='{"is-invalid": fieldHasErrors("clientApproval")}'></textarea>
             <div class="input-group-append">
-              <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openUploadModal("clientApproval")'
+              <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openFileAction("clientApproval")'
                 [ngClass]='{"text-primary":uploadService.uploaders["clientApproval"], "border-danger": fieldHasErrors("clientApproval") && !uploadService.uploaders["clientApproval"]}'>
-                <i class='fa fa-fw append-icon'></i>
+                <i class='fa fa-fw' [ngClass]='npi.clientApproval?.annex ? "append-icon" : "fa-upload"'></i>
               </button>
             </div>
             <div class='invalid-feedback'>
@@ -578,7 +571,7 @@
                 </td>
                 <td>
                   <app-file-button *ngIf='utils.getActivity(activity.activity).annex' [fieldControl]='activitiesFormArray.controls[i]' 
-                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiId]='npi.id' [editFlag]='true' 
+                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiId]='npi.id' [editFlag]='activitiesFormArray.controls[i].get("apply").value' 
                   [canEdit]='true'></app-file-button>
                 </td>
                 <td>

@@ -94,7 +94,7 @@ export class NpiService {
     return this.http.put(this.npiMigrateUrl, npi)
       .concatMap(update => {
         console.log('NPI updated');
-        return this.uploadService.upload(npiForm.number).map(
+        return this.uploadService.upload(npiForm.id).map(
           upload => {
             var res = { update, upload }
             console.log(res)
@@ -112,7 +112,7 @@ export class NpiService {
     return this.http.post(this.npiUrl, npi)
       .concatMap(update => {
         console.log('new NPI version created');
-        return this.uploadService.upload(npiForm._id).map(
+        return this.uploadService.upload(npiForm.id).map(
           upload => {
             var res = { update, upload }
             console.log(res)
@@ -129,7 +129,7 @@ export class NpiService {
     return this.http.put(this.npiUrl, npi)
       .concatMap(update => {
         console.log('NPI updated');
-        return this.uploadService.upload(npiForm._id).map(
+        return this.uploadService.upload(npiForm.id).map(
           upload => {
             var res = { update, upload }
             console.log(res)

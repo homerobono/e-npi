@@ -26,6 +26,7 @@ import { of, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs-compat/operator/map';
 import { UsersService } from 'src/app/services/users.service';
 import User from 'src/app/models/user.model';
+import { FileManagerComponent } from 'src/app/file-manager/file-manager.component';
 
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
@@ -326,6 +327,9 @@ export class MigrationEditComponent implements OnInit {
   }
 
   migrateUpdateNpi(migrateForm): void {
+    
+    this.openSendingFormModal()
+
     let npiForm = migrateForm
     console.log(npiForm, this.uploadService.uploaders)
 
@@ -354,17 +358,19 @@ export class MigrationEditComponent implements OnInit {
     this.resolveSubmission
       .finally(() => {
         this.sendingForm = false;
-        //setTimeout(()=> this.modalRef.hide(), 500)
+        setTimeout(()=> this.modalRef.hide(), 500)
       })
       .subscribe(res => {
-        console.log('All complete');
-        console.log(res);
-        this.messenger.set({
-          'type': 'success',
-          'message': 'NPI editada com sucesso'
-        });
-        this.formSent = true;
-        this.router.navigateByUrl('/npi/' + res.update.data.npi.number)
+        if (res.upload){
+          console.log('All complete');
+          console.log(res);
+          this.messenger.set({
+            'type': 'success',
+            'message': 'NPI editada com sucesso'
+          });
+          this.formSent = true;
+          this.router.navigateByUrl('/npi/' + res.update.data.npi.number)
+        }
       }, err => {
         this.invalidFieldsError(err)
         this.formSent = false;
@@ -461,6 +467,12 @@ export class MigrationEditComponent implements OnInit {
     })
   }
 
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.openUploadModal(field)
+    else this.openFileManager(field)
+  }
+
   openUploadModal(field: String) {
     this.modalRef = this.modalService.show(UploaderComponent, {
       initialState: { field },
@@ -468,6 +480,20 @@ export class MigrationEditComponent implements OnInit {
     });
   }
 
+  openFileManager(field) {
+    const initialState = {
+      npiId: this.npi.id,
+      field,
+      editFlag: true
+    }
+    this.modalRef = this.modalService.show(
+      FileManagerComponent,
+      {
+        initialState,
+        class: "modal-lg"
+      });
+  }
+  
   openSendingFormModal() {
     this.modalRef = this.modalService.show(SendingFormModalComponent, {
       class: 'modal-md modal-dialog-centered',

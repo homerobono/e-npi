@@ -29,6 +29,7 @@ export class FileManagerComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
+    public subModalRef: BsModalRef,
     private modalService: BsModalService,
     private fileService: FileService,
     private uploader: UploadService
@@ -45,14 +46,14 @@ export class FileManagerComponent implements OnInit {
   }
 
   openNewFolderDialog() {
-    this.modalRef = this.modalService.show(InputDialogComponent, {
+    this.subModalRef = this.modalService.show(InputDialogComponent, {
       initialState: {
         actionLabel: 'Digite o nome da pasta:'
       },
       class: "modal-sm shadow-lg vertically-centered"
     }
     );
-    this.modalRef.content.onConfirm.subscribe(name => {
+    this.subModalRef.content.onConfirm.subscribe(name => {
       if (name != "") {
         this.addFolder({ name });
       }
@@ -61,7 +62,7 @@ export class FileManagerComponent implements OnInit {
 
   openPreview(element: FileElement) {
     console.log(element)
-    this.modalRef = this.modalService.show(PreviewComponent, {
+    this.subModalRef = this.modalService.show(PreviewComponent, {
       initialState: {
         currentPath: this.currentPath,
         element,
@@ -171,7 +172,7 @@ export class FileManagerComponent implements OnInit {
   }
 
   openUploadModal() {
-    this.modalRef = this.modalService.show(UploaderComponent, {
+    this.subModalRef = this.modalService.show(UploaderComponent, {
       initialState: { field: this.field },
       class: 'modal-lg modal-dialog-centered upload-modal'
     });

@@ -1,6 +1,6 @@
 <button *ngIf='fieldControl?.get("annex")?.value?.length' type='button' class="btn btn-block btn-light shadow-none m-0" 
-(click)='openFileManager(field)'
-  [disabled]='!fieldControl?.get("annex")?.value.length'>
+(click)='openFileManager(field)' [ngClass]='{"text-primary" : uploadService.uploaders[field]}'
+  [disabled]='!canEdit'>
   <i class='fa fa-folder fa-fw'></i>
 </button>
 <button *ngIf='canEdit && !fieldControl?.get("annex")?.value?.length' type='button' class="btn btn-block btn-light shadow-none m-0"

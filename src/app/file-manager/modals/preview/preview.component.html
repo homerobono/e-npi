@@ -5,4 +5,4 @@
 </div>
 <img [src]='dataUrl' style='max-width:100%' *ngIf='dataUrl && getFileType()=="image"'>
 <embed [src]="dataUrl" class='embeded-file text-center' *ngIf='dataUrl && getFileType()=="pdf"'>
-<i class='fa fa-circle-o-notch fa-spin fa-4x' *ngIf='!dataUrl'></i>
+<div class='circle-loader' style='margin: 10px' *ngIf='!dataUrl'></div>

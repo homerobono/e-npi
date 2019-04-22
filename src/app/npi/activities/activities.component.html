@@ -70,7 +70,8 @@
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td *ngIf='npi.stage>=4'>
-              <app-file-button *ngIf='utils.getActivity(activity.get("activity").value).annex' [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"activities"' [npiNumber]='npi.number' [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
+              <app-file-button *ngIf='utils.getActivity(activity.get("activity").value).annex' [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"activities"' 
+              [npiId]='npi.id' [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
               <!--button appFileButton type='button' class="btn btn-block btn-light shadow-none m-0" (click)='openFileAction(npi.activities[i].dept)'
                 [disabled]='!activity.get("apply").value'>
                 <i class='fa fa-folder fa-fw' [ngClass]='activity.get("annex").value?.length? "append-icon":"upload-icon"'></i>
