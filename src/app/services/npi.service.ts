@@ -45,6 +45,7 @@ export class NpiService {
           console.log('converting npis')
           try {
             var transNpi = new Npi(npi)
+            console.log(transNpi)
             Npis.push(transNpi)
           } catch (e) {
             console.log(e)

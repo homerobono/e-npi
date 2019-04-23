@@ -30,6 +30,43 @@ import User from 'src/app/models/user.model';
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
 
+const oemMigrationApplyDefault = {
+  SPECS_HW: false,
+  SPECS_SW: false,
+  MECH_SPEC: false,
+  ELETRIC_LAYOUT: true,
+  BOM_DESC: true,
+  GERBER: true,
+  MECH_LAYOUT: false,
+  FIRMWARE: true,
+  BOM_PRICE: false,
+  PROTO_ASSEMB: false,
+  PROTO_SW: false,
+  PROTO_VERIF: false,
+  PROTO_VALID: false,
+  BOM_SUBMIT: true,
+  CHECKLIST: true,
+  DEVICE: false,
+  TEMPLATE: true,
+  DATASHEET: false,
+  SPEC_TAG: true,
+  SPEC_PACKING: true,
+  MANUAL: false,
+  HOMOLOG: false,
+  EQUIPMENT: false,
+  JIG: true,
+  SMT: true,
+  TRYOUT: false,
+  GOLDEN: false,
+  DOCUMENT_SW: false,
+  DOCUMENT_FW: false,
+  PRICE_TABLE: false,
+  RELEASE_PLAN: false,
+  PRODUCTION: true,
+  ASSEMBLY: true,
+  PILOT: true,
+}
+
 @Component({
   selector: 'app-migration-tool',
   templateUrl: './migration-tool.component.html',
@@ -205,12 +242,16 @@ export class MigrationToolComponent implements OnInit {
       users => {
         this.allUsers = users.filter(user =>
           user.status == 'active' && user.department && user.level < 3
-        );
+        ).sort((a, b) => (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName, "pt-BR"));
+        let usersByDept = {}
         this.allUsers.forEach(user => {
           let dept = user.department as string
-          if (!this.deptUsers[dept])
-            this.deptUsers[dept] = new Array<User>()
-          this.deptUsers[dept].push(user)
+          if (!usersByDept[dept])
+            usersByDept[dept] = new Array<User>()
+          usersByDept[dept].push(user)
+        })
+        Object.keys(usersByDept).forEach(dept => {
+          this.deptUsers[dept] = usersByDept[dept].sort((a, b) => (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName, "pt-BR"))
         })
 
         this.migrateForm.patchValue({
@@ -346,7 +387,9 @@ export class MigrationToolComponent implements OnInit {
     console.log(migrateForm)
 
     if (migrateForm.entry != 'pixel') {
-      migrateForm.critical.splice(0, 1)
+      let unwantedIndex = migrateForm.critical.findIndex(analisys => analisys.dept == 'MPR')
+      if (unwantedIndex != -1)
+        migrateForm.critical.splice(unwantedIndex, 1)
     }
 
 
@@ -523,7 +566,7 @@ export class MigrationToolComponent implements OnInit {
             endDate: new Date(),
             registry: null,
             annex: null,
-            apply: true,
+            apply: oemMigrationApplyDefault[activity.value],
             closed: true,
             signature: this.fb.group({
               user: null,

@@ -165,7 +165,6 @@ class Npi {
     }
 
     constructor(npiModel?: any | null) {
-
         if (npiModel) {
             if (npiModel._id) this.id = npiModel._id
             if (npiModel.id) this.id = npiModel.id
@@ -198,10 +197,14 @@ class Npi {
             if (npiModel.cost != null) this.cost = npiModel.cost
             if (npiModel.investment != null) this.investment = npiModel.investment
             if (npiModel.projectCost != null) this.projectCost = npiModel.projectCost
-            if (npiModel.inStockDate != null) this.inStockDate =
-                (typeof npiModel.inStockDate === 'string' ||
-                    npiModel.inStockDate instanceof String) ?
-                    new Date(npiModel.inStockDate) :
+            if (npiModel.inStockDate != null)
+                if (typeof npiModel.inStockDate === 'string' ||
+                    npiModel.inStockDate instanceof String)
+                    this.inStockDate = new Date(npiModel.inStockDate)
+                else if (npiModel.inStockDate.fixed) {
+                    this.inStockDate = npiModel.inStockDate
+                    this.inStockDate.fixed = new Date(npiModel.inStockDate.fixed)
+                } else
                     this.inStockDate = npiModel.inStockDate
             if (npiModel.fiscals != null) this.fiscals = npiModel.fiscals
             if (npiModel.oemActivities != null) {
@@ -242,7 +245,7 @@ class Npi {
     }
     public amITheOwner(userId): Boolean {
         return this.requester._id == userId
-      }
+    }
 
     public isCriticallyTouched(): Boolean {
         if (this.critical) {
@@ -327,13 +330,13 @@ class Npi {
         return false
     }
 
-    public isRequestRegistered(className: String) : Boolean {
-    return this.requests.find(request => request.class == className) != null
+    public isRequestRegistered(className: String): Boolean {
+        return this.requests.find(request => request.class == className) != null
     }
 
-    public isRequestOpen(className: String) : Boolean {
+    public isRequestOpen(className: String): Boolean {
         let request = this.requests.find(request => request.class == className)
-        if(request)
+        if (request)
             return !Boolean(request.closed)
         return false
     }

@@ -216,12 +216,16 @@ export class MigrationEditComponent implements OnInit {
       users => {
         this.allUsers = users.filter(user =>
           user.status == 'active' && user.department && user.level < 3
-        );
+        ).sort((a, b) => (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName, "pt-BR"));
+        let usersByDept = {}
         this.allUsers.forEach(user => {
           let dept = user.department as string
-          if (!this.deptUsers[dept])
-            this.deptUsers[dept] = new Array<User>()
-          this.deptUsers[dept].push(user)
+          if (!usersByDept[dept])
+            usersByDept[dept] = new Array<User>()
+          usersByDept[dept].push(user)
+        })
+        Object.keys(usersByDept).forEach(dept => {
+          this.deptUsers[dept] = usersByDept[dept].sort((a, b) => (a.firstName + ' ' + a.lastName).localeCompare(b.firstName + ' ' + b.lastName, "pt-BR"))
         })
       });
 
@@ -234,7 +238,7 @@ export class MigrationEditComponent implements OnInit {
 
     this.migrateForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
-
+      inStockDate: this.npi.inStockDate.fixed ? this.npi.inStockDate.fixed : this.npi.inStockDate.offset,
       projectCost: this.npi.projectCost ?
         {
           value: this.npi.projectCost.value ?

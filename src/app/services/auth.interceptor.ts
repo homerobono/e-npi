@@ -38,7 +38,7 @@ export class AuthInterceptor implements HttpInterceptor {
                                 message: 'Não foi possível estabelecer comunicação com o servidor',
                                 log: err.message
                             })
-                        this.router.navigate(['/error'])
+                        //this.router.navigate(['/error'])
                     } else if (err.status === 401) {
                         console.log('UNAUTHORIZED')
                         let expires = new Date(localStorage.getItem("expires_at"))
