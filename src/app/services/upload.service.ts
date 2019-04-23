@@ -24,6 +24,7 @@ export class UploadService {
   public evolve = false
   public speed: number = 0
   private prevTime: number = Date.now()
+  private uploadQueue: Array<NodeJS.Timer> = []
 
   constructor() {
     console.log("Constructing uploader Service")
@@ -48,9 +49,9 @@ export class UploadService {
     this._id = id
     let fields = Object.keys(this.uploaders)
 
-    if(!fields.length) {
+    if (!fields.length) {
       this.onCompleteUpload.next(true)
-      this.onCompleteUpload.next(false)
+      //this.onCompleteUpload.next(false)
       return of(['No uploads to make'])
     }
 
@@ -64,7 +65,7 @@ export class UploadService {
       let actual = fields[i]
       this.uploaders[previous].onCompleteAll = (res) => {
         console.log('uploading another one', res)
-        setTimeout(() => this.uploaders[actual].uploadAll(), 100)
+        this.uploadQueue.push(setTimeout(() => this.uploaders[actual].uploadAll(), 100))
       }
     }
     this.prevTime = Date.now()
@@ -113,7 +114,7 @@ export class UploadService {
     }
     Object.assign(this.uploaders, { [subject]: uploader })
     this.updateTotalSize()
-    console.log (subject, this.uploaders)
+    console.log(subject, this.uploaders)
   }
 
   cleanUp() {
@@ -128,16 +129,20 @@ export class UploadService {
     this.speed = 0
     delete this.uploadingFileItem
     delete this._id
+    this.uploadQueue.forEach(timer => { try { timer.unref() } catch (e) { console.log(e) } })
+    this.uploadQueue = []
+    console.log("Cleaned all up")
   }
 
   updateSpeed(progress1, progress2, timeDiff) {
-      let speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
-      console.log(progress2, progress1, this.totalSize/1024)
-      this.speed = Math.round(this.speed == 0 ? speed : (this.speed+speed)/2)
-      //this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
+    let speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
+    console.log(progress2, progress1, this.totalSize / 1024)
+    this.speed = Math.round(this.speed == 0 ? speed : (this.speed + speed) / 2)
+    //this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
   }
 
   updateProgress() {
+    console.log(this.totalSize)
     let progress = 0
     Object.values(this.uploaders).forEach(uploader => {
       try {
@@ -148,12 +153,12 @@ export class UploadService {
     let actTime = Date.now()
     let timeDiff = (actTime - this.prevTime) / 1000
     //if (timeDiff > 1) {
-      this.prevTime = actTime
-      this.updateSpeed(this.progress, progress, timeDiff)
+    this.prevTime = actTime
+    this.updateSpeed(this.progress, progress, timeDiff)
     //}
     this.progress = progress
     //console.log(progress)
-//    console.log(this.uploadingFileItem)
+    //    console.log(this.uploadingFileItem)
   }
 
   totalUploaderSize(uploader) {
@@ -171,14 +176,17 @@ export class UploadService {
     for (let i = 0; i < uploadersArr.length; i++) {
       totalSize += this.totalUploaderSize(uploadersArr[i])
     }
-    console.log('totalSize: '+ totalSize)
     this.totalSize = totalSize
+    console.log('totalSize: ' + this.totalSize)
   }
 
   abort() {
     Object.values(this.uploaders).forEach((uploader: FileUploader) => {
-      uploader.cancelAll()
+      uploader.cancelAll();
+      uploader.destroy()
     })
+    this.uploadQueue.forEach(timer => { try { timer.unref() } catch (e) { console.log(e) } })
+    this.uploadQueue = []
   }
 
   ngOnDestroy() {

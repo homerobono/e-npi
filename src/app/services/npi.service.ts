@@ -93,7 +93,7 @@ export class NpiService {
     console.log(npi);
     return this.http.put(this.npiMigrateUrl, npi)
       .concatMap(update => {
-        console.log('NPI updated');
+        console.log('NPI updated', update);
         return this.uploadService.upload(npiForm.id).map(
           upload => {
             var res = { update, upload }

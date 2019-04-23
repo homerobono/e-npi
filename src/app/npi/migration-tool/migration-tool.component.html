@@ -615,8 +615,8 @@
                       {{ user.lastName }}</option>
                   </select>
                 </td>
-                <td formGroupName='signature'>
-                  <input type='text' class='form-control' formControlName='date' [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
+                <td>
+                  <input type='text' class='form-control' formControlName='endDate' [ngClass]='{"is-invalid text-danger": activity.get("endDate").value < activity.get("startDate").value }'
                     #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right' id='{{activity.get("activity").value}}_END_DATE'
                     appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
                     [dependents]='getControlsDependentActivities(activity)'>

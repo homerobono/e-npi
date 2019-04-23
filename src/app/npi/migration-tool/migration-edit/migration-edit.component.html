@@ -555,16 +555,16 @@
                 <td>
                   {{ utils.getActivity(activity.activity, entry).label }}
                 </td>
-                <td formGroupName='signature'>
+                <td>
                   {{ activity.dept }}
-                  <select class='custom-select' formControlName='user'>
+                  <select class='custom-select' formControlName='responsible'>
                     <option *ngFor='let user of deptUsers[activity.dept]; let first=first' value='{{ user._id }}'>{{
                       user.firstName }}
                       {{ user.lastName }}</option>
                   </select>
                 </td>
-                <td formGroupName='signature'>
-                  <input type='text' class='form-control' formControlName='date' #adp="bsDatepicker" bsDatepicker
+                <td>
+                  <input type='text' class='form-control' formControlName='endDate' #adp="bsDatepicker" bsDatepicker
                     [bsConfig]='datePickerConfig' placement='right' id='{{activity.activity}}_END_DATE' appBlink
                     [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
                     [dependents]='getControlsDependentActivities(activity)'>

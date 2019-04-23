@@ -14,11 +14,11 @@
         <a class="nav-link" routerLink="/users"><span class='fa fa-users'></span> Usuários <span class="sr-only">(current)</span></a>
       </li>
       </ul>
-    <ul class="navbar-nav ml-5">
+    <!--ul class="navbar-nav ml-5">
       <li class="nav-item m-auto" routerLinkActive="active">
         <btn class="btn btn-orange shadow-none pointer" routerLink="/npi/create">NPI <span class='fa fa-plus'></span><span class="sr-only">(current)</span></btn>
       </li>
-    </ul>
+    </ul-->
     <ul class="navbar-nav ml-5" *ngIf='userLevel>= 1'>
       <li class="nav-item m-auto" routerLinkActive="active">
         <btn class="btn btn-outline-info shadow-none pointer" routerLink="/npi/migrate"><span class='fa fa-exchange'></span> Ferramenta de Migração <span class="sr-only">(current)</span></btn>

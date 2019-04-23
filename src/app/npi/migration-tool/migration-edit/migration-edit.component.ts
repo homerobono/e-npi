@@ -327,7 +327,7 @@ export class MigrationEditComponent implements OnInit {
   }
 
   migrateUpdateNpi(migrateForm): void {
-    
+
     this.openSendingFormModal()
 
     let npiForm = migrateForm
@@ -358,10 +358,10 @@ export class MigrationEditComponent implements OnInit {
     this.resolveSubmission
       .finally(() => {
         this.sendingForm = false;
-        setTimeout(()=> this.modalRef.hide(), 500)
+        setTimeout(() => this.modalRef.hide(), 500)
       })
       .subscribe(res => {
-        if (res.upload){
+        if (res.upload && !this.uploadService.isUploading) {
           console.log('All complete');
           console.log(res);
           this.messenger.set({
@@ -409,6 +409,10 @@ export class MigrationEditComponent implements OnInit {
   }
 
   updateNpi(migrateForm) {
+    migrateForm.stage = 5
+    migrateForm.entry = this.npi.entry
+    migrateForm.__t = this.npi.entry
+
     if (migrateForm.clientApproval.approval == "deny") {
       delete migrateForm.activities
       delete migrateForm.validation
@@ -493,7 +497,7 @@ export class MigrationEditComponent implements OnInit {
         class: "modal-lg"
       });
   }
-  
+
   openSendingFormModal() {
     this.modalRef = this.modalService.show(SendingFormModalComponent, {
       class: 'modal-md modal-dialog-centered',
@@ -508,7 +512,7 @@ export class MigrationEditComponent implements OnInit {
       this.npi.oemActivities.forEach(activity => {
         var oemActivityControl = this.fb.group(
           {
-            //_id: null,
+            _id: activity._id,
             activity: activity.activity,
             dept: activity.dept,
             responsible: activity.responsible._id,
@@ -561,12 +565,13 @@ export class MigrationEditComponent implements OnInit {
   insertCriticalAnalisys() {
     this.npi.critical.forEach(analisys => {
       let control = this.fb.group({
+        _id: analisys._id,
         dept: analisys.dept,
         status: analisys.status,
         comment: analisys.comment,
         signature: this.fb.group({
           user: analisys.signature.user._id,
-          date: null
+          date: analisys.signature.date,
         })
       })
       this.criticalFormArray.controls.push(control)
@@ -586,16 +591,18 @@ export class MigrationEditComponent implements OnInit {
     this.npi.activities.forEach(activity => {
       var activityControl = this.fb.group(
         {
+          _id: activity._id,
           activity: activity.activity,
           dept: activity.dept,
           responsible: activity.responsible._id,
           registry: activity.registry,
+          endDate: activity.signature.date,
           annex: activity.annex,
           apply: activity.apply,
           closed: activity.closed,
           signature: this.fb.group({
             user: null,
-            date: null
+            date: activity.signature.date
           })
         }
       )
@@ -608,13 +615,14 @@ export class MigrationEditComponent implements OnInit {
 
   subscribeToInputChanges() {
     this.activitiesFormArray.controls.forEach(activityControl => {
-      activityControl.get('endDate').valueChanges.subscribe(
-        endDate => {
-          if (activityControl.get('activity').value == "PILOT")
+      if (activityControl.get('activity').value == "PILOT")
+        activityControl.get('endDate').valueChanges.subscribe(
+          endDate => {
+            console.log("Data piloto atualizada")
             this.pilotDate =
               new Date(endDate)
                 .toLocaleDateString('pt-br')
-        })
+          })
     })
   }
 

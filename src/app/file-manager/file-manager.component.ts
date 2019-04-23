@@ -26,6 +26,7 @@ export class FileManagerComponent implements OnInit {
   relativePath: String;
   currentPath: String;
   canNavigateUp = false;
+  editFlag: Boolean
 
   constructor(
     public modalRef: BsModalRef,
