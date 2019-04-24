@@ -134,6 +134,7 @@ export class MigrationEditComponent implements OnInit {
         'annex': null
       }),
       'regulations': fb.group({
+        'none': null,
         'standard': fb.group({}),
         'additional': null,
         'description': null,
@@ -207,7 +208,15 @@ export class MigrationEditComponent implements OnInit {
     let regulations = this.utils.getRegulations()
     let additionalArray = this.migrateForm.get('regulations').get('standard') as FormGroup
     regulations.forEach(reg => {
-      additionalArray.addControl(reg.value, this.fb.control(null))
+      additionalArray.addControl(reg.value, new FormControl({
+        value: null, disabled: this.migrateForm.get("regulations").get("none").value
+      }))
+    })
+    this.migrateForm.get("regulations").get("none").valueChanges.subscribe(value => {
+      let action = value ? 'disable' : 'enable'
+      this.migrateForm.get("regulations").get("standard")[action]()
+      this.migrateForm.get("regulations").get("additional")[action]()
+      this.migrateForm.get("regulations").get("description")[action]()
     })
 
     this.migrateForm.get('npiRef').valueChanges.subscribe(res => this.loadNpiRef(res))

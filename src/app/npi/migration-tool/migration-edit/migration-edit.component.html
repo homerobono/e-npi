@@ -16,8 +16,8 @@
               <i class='fa fa-calendar fa-fw'></i>
             </span>
           </div>
-          <input type='text' class='form-control' formControlName='created' name='created' id="date" aria-describedby="Data e criação"
-            #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+          <input type='text' class='form-control' formControlName='created' name='created' id="date"
+            aria-describedby="Data e criação" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
         </div>
       </div>
       <div class="form-group col-xs-6 col-sm col-md col-lg-auto">
@@ -28,18 +28,21 @@
               #
             </span>
           </div>
-          <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
+          <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef'
+            [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
           <div class="input-group-append">
             <span class='input-group-text'>
               <small *ngIf='npiRefField.value!=""'>
-                <a routerLink='/npi/{{ npiRef.number }}' style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'
+                <a routerLink='/npi/{{ npiRef.number }}'
+                  style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'
                   *ngIf='npiRef'>{{ npiRef.name }}
                   <i>({{ utils.getEntry(npiRef.entry) }})</i>
                 </a>
                 <span class='text-danger' *ngIf='npiRefField.value!="" && !npiRef'>NPI inválida</span>
               </small>
             </span>
-            <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend" (click)='openNpiChooserModal()'>
+            <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend"
+              (click)='openNpiChooserModal()'>
               <span class="fa npi-search-icon fa-sm"></span>
             </button>
           </div>
@@ -51,7 +54,8 @@
       <div class='w-100 d-lg-none'></div>
       <div class="form-group col-sm-12 col-md mb-3">
         <label for="client">Cliente</label>
-        <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client' [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
+        <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client'
+          [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
         <div class='invalid-feedback'>
           Defina o cliente
         </div>
@@ -59,7 +63,8 @@
       <div class='w-100'></div>
       <div class="form-group col-sm-4 mb-4">
         <label for="requester">Autor</label>
-        <select class='custom-select' id=requester formControlName='requester' [ngClass]='{"is-invalid": fieldHasErrors("requester")}'>
+        <select class='custom-select' id=requester formControlName='requester'
+          [ngClass]='{"is-invalid": fieldHasErrors("requester")}'>
           <option *ngFor='let user of allUsers' value='{{ user._id }}'>{{ user.firstName }}
             {{ user.lastName }}</option>
         </select>
@@ -69,7 +74,8 @@
       </div>
       <div class="form-group col-sm-8 mb-4">
         <label for="name">Nome do Projeto</label>
-        <input type="text" class="form-control" id="name" placeholder="Nome" formControlName='name' [ngClass]='{"is-invalid": fieldHasErrors("name")}'>
+        <input type="text" class="form-control" id="name" placeholder="Nome" formControlName='name'
+          [ngClass]='{"is-invalid": fieldHasErrors("name")}'>
         <div class='invalid-feedback'>
           Defina o nome do projeto
         </div>
@@ -85,8 +91,8 @@
           <label for="pixel-npi" class='custom-control-label'>Pixel</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem' #oem [formControl]="migrateForm.controls['entry']"
-            readonly>
+          <input type="radio" class="custom-control-input" id="oem-npi" name='entry' value='oem' #oem
+            [formControl]="migrateForm.controls['entry']" readonly>
           <label for="oem-npi" class='custom-control-label'>O&M</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
@@ -110,9 +116,8 @@
               #designThinkingApply>
             <label class="custom-control-label" for="designThinking">Design Thinking</label>
           </div>
-          <app-file-button [fieldControl]='migrateForm.get("designThinking")' 
-            [fieldLabel]='"designThinking"' [npiId]='npi.id' [editFlag]='designThinkingApply.checked' 
-            [canEdit]='true'></app-file-button>
+          <app-file-button [fieldControl]='migrateForm.get("designThinking")' [fieldLabel]='"designThinking"'
+            [npiId]='npi.id' [editFlag]='designThinkingApply.checked' [canEdit]='true'></app-file-button>
           <div class='invalid-feedback'>
             Forneça os requisitos gerais do projeto
           </div>
@@ -127,10 +132,12 @@
           <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
         </label>
         <div class="input-group">
-          <textarea class="form-control" rows=5 formControlName='description' id='description' [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+          <textarea class="form-control" rows=5 formControlName='description' id='description'
+            [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
           </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend" (click)='openFileAction("description")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="descriptionAppend"
+              (click)='openFileAction("description")'
               [ngClass]='{"text-primary":uploadService.uploaders["description"], "border-danger": fieldHasErrors("description") && !uploadService.uploaders["description"]}'>
               <i class='fa fa-fw' [ngClass]='npi.description?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
@@ -146,10 +153,12 @@
       <div class="form-group col-sm-12 mb-4" formGroupName='resources'>
         <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
         <div class="input-group">
-          <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
+          <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription'
+            [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
               </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend" (click)='openFileAction("resources")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="resourcesAppend"
+              (click)='openFileAction("resources")'
               [ngClass]='{"text-primary":uploadService.uploaders["resources"], "border-danger": fieldHasErrors("resources") && !uploadService.uploaders["resources"]}'>
               <i class='fa fa-fw' [ngClass]='npi.resources?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
@@ -162,7 +171,12 @@
       <div class="col-sm-12" *ngIf='!internal.checked'>
         <label for="regulations">Homologações/Regulamentações</label>
         <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
-          <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard' *ngFor='let reg of objectkeys(migrateForm.get("regulations").get("standard").controls)'>
+          <div class="custom-control custom-checkbox custom-control-inline">
+            <input type="checkbox" class="custom-control-input" id="none" formControlName='none'>
+            <label class="custom-control-label" for="none">Nenhuma</label>
+          </div>
+          <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard'
+            *ngFor='let reg of objectkeys(migrateForm.get("regulations").get("standard").controls)'>
             <input type="checkbox" class="custom-control-input" id="{{ reg }}" formControlName='{{ reg }}'>
             <label class="custom-control-label" for="{{ reg }}">{{ utils.getRegulation(reg).label }}</label>
           </div>
@@ -170,8 +184,10 @@
                 <input type="checkbox" class="custom-control-input" checked id='other' (change)="true" #other>
                 <label class="custom-control-label" for="other">Outro(s)</label>
               </div-->
-          <input class='form-control' type='text' formControlName='additional' name='additional' aria-describedby="Homologações/Regulamentações"
-            [ngClass]='{"is-invalid": fieldHasErrors("regulations.additional")}' *ngIf='migrateForm.get("regulations").get("standard").get("other").value'>
+          <input class='form-control' type='text' formControlName='additional' name='additional'
+            aria-describedby="Homologações/Regulamentações"
+            [ngClass]='{"is-invalid": fieldHasErrors("regulations.additional")}'
+            *ngIf='migrateForm.get("regulations").get("standard").get("other").value'>
           <div class='invalid-feedback'>
             Defina as homologações/regulações aplicáveis
           </div>
@@ -179,10 +195,12 @@
       </div>
       <div class="form-group col-sm-12 mb-4" formGroupName='regulations' *ngIf='isRegulationApplyable()'>
         <div class="input-group">
-          <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription' [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
+          <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription'
+            [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
             </textarea>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openFileAction("regulations")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend"
+              (click)='openFileAction("regulations")'
               [ngClass]='{"text-primary":uploadService.uploaders["regulations.description"], "border-danger": fieldHasErrors("regulations.description") && !uploadService.uploaders["regulations"]}'>
               <i class='fa fa-fw' [ngClass]='npi.regulations?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
@@ -196,7 +214,8 @@
 
     <div class="form-row align-items-end">
       <!-- Cost -->
-      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked' formGroupName='cost'>
+      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked'
+        formGroupName='cost'>
         <label for="cost">Custo do Produto</label>
         <div class="input-group" id='cost'>
           <div class="input-group-prepend">
@@ -212,7 +231,8 @@
         </div>
       </div>
       <!-- Price -->
-      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked' formGroupName='price'>
+      <div class='col-sm-6 col-md-4 col-lg-4 form-group mb-4' *ngIf='!internal.checked && !oem.checked'
+        formGroupName='price'>
         <label for="price">Preço de Venda</label>
         <div class="input-group" id='price'>
           <div class="input-group-prepend">
@@ -232,8 +252,9 @@
         *ngIf='!internal.checked'>
         <label for="inStockDate">Data em Estoque</label>
         <div class="input-group" *ngIf='!oem.checked'>
-          <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-            #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDate")}'>
+          <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate'
+            aria-describedby="Data em Estoque" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockDate")}'>
           <div class="input-group-append">
             <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
               <i class='fa fa-calendar fa-fw'></i>
@@ -260,8 +281,9 @@
         </div>
         <div class="form-row" *ngIf='oem.checked && migrateForm.controls["inStockDateType"].value=="fixed"'>
           <div class="input-group col">
-            <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-              #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <input type='text' class='form-control' formControlName='inStockDate' name='inStockDate'
+              aria-describedby="Data em Estoque" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
             <div class="input-group-append">
               <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
                 <i class='fa fa-calendar fa-fw'></i>
@@ -276,8 +298,8 @@
                 +
               </span>
             </div>
-            <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate' aria-describedby="Data em Estoque"
-              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <input type='number' class='form-control' formControlName='inStockDate' name='inStockDate'
+              aria-describedby="Data em Estoque" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
             <div class="input-group-append">
               <span class="input-group-text" id="inStockDateAppend">
                 dias
@@ -287,7 +309,8 @@
         </div>
       </div>
       <!-- Demand -->
-      <div class='col-sm-7 col-md-5 col-lg-4 order-md-6 order-lg-12 form-group mb-4' [ngClass]='{"order-md-6": pixel.checked || custom.checked, "col-md-6 order-md-2": oem.checked || internal.checked}'
+      <div class='col-sm-7 col-md-5 col-lg-4 order-md-6 order-lg-12 form-group mb-4'
+        [ngClass]='{"order-md-6": pixel.checked || custom.checked, "col-md-6 order-md-2": oem.checked || internal.checked}'
         formGroupName='demand' *ngIf='!internal.checked'>
         <label for="projectCost">Demanda</label>
         <div class="input-group">
@@ -299,7 +322,8 @@
             </span>
           </div>
           <div class="input-group-append">
-            <select formControlName='period' class='custom-select' id="period" placeholder="Período" [ngClass]='{"is-invalid": fieldHasErrors("demand.period")}'>
+            <select formControlName='period' class='custom-select' id="period" placeholder="Período"
+              [ngClass]='{"is-invalid": fieldHasErrors("demand.period")}'>
               <option *ngFor='let period of utils.getDemandPeriods()' value='{{ period.value }}'>{{ period.label }}
               </option>
             </select>
@@ -310,10 +334,12 @@
         </div>
       </div>
       <!-- Fiscals -->
-      <div class='col-sm-12 order-md-4 form-group mb-4' [ngClass]='{"col-md-7": pixel.checked || custom.checked, "col-lg-12": !oem.checked, "col-md-12 col-lg-8": oem.checked, "col-md-12": internal.checked}'>
+      <div class='col-sm-12 order-md-4 form-group mb-4'
+        [ngClass]='{"col-md-7": pixel.checked || custom.checked, "col-lg-12": !oem.checked, "col-md-12 col-lg-8": oem.checked, "col-md-12": internal.checked}'>
         <label for="fiscals">Incentivos Fiscais</label>
-        <input type='text' class='form-control' formControlName='fiscals' name='fiscals' aria-describedby="Incentivos Fiscais"
-          placeholder='Incentivos Fiscais' [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
+        <input type='text' class='form-control' formControlName='fiscals' name='fiscals'
+          aria-describedby="Incentivos Fiscais" placeholder='Incentivos Fiscais'
+          [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
         <div class='invalid-feedback'>
           Defina os incentivos fiscais
         </div>
@@ -330,7 +356,8 @@
           <input class='form-control' type='text' [textMask]="currencyMask" formControlName='value' placeholder='00,00'
             aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
           <div class="input-group-append">
-            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend" (click)='openFileAction("investment")'
+            <button type=button class="input-group-text btn btn-light shadow-none" id="investmentAppend"
+              (click)='openFileAction("investment")'
               [ngClass]='{"text-primary":uploadService.uploaders["investment"], "border-danger": fieldHasErrors("investment") && !uploadService.uploaders["investment"]}'>
               <i class='fa fa-fw' [ngClass]='npi.investment?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
@@ -353,7 +380,8 @@
             aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
           <div class="input-group-append">
             <button type=button class="input-group-text btn btn-light shadow-none is-invalid" id="projectCostAppend"
-              (click)='openFileAction("projectCost")' [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost") && !uploadService.uploaders["projectCost"]}'>
+              (click)='openFileAction("projectCost")'
+              [ngClass]='{"text-primary":uploadService.uploaders["projectCost"], "border-danger": fieldHasErrors("projectCost") && !uploadService.uploaders["projectCost"]}'>
               <i class='fa fa-fw' [ngClass]='npi.projectCost?.annex ? "append-icon" : "fa-upload"'></i>
             </button>
           </div>
@@ -400,13 +428,16 @@
                   </select>
                 </td>
                 <td>
-                    <app-file-button *ngIf='utils.getOemActivity(oemActivity.activity).annex' [fieldControl]='oemActivitiesFormArray.controls[i]' 
-                    [fieldLabel]='oemActivity.activity' [parent]='"oemActivities"' [npiId]='npi.id' [editFlag]='oemActivity.apply' 
-                    [canEdit]='true'></app-file-button>
+                  <app-file-button *ngIf='utils.getOemActivity(oemActivity.activity).annex'
+                    [fieldControl]='oemActivitiesFormArray.controls[i]' [fieldLabel]='oemActivity.activity'
+                    [parent]='"oemActivities"' [npiId]='npi.id' [editFlag]='oemActivity.apply' [canEdit]='true'>
+                  </app-file-button>
                 </td>
                 <td>
-                  <input type='text' class='form-control' formControlName='endDate' aria-describedby="Data final para atividade {{ utils.getOemActivity(oemActivity.activity).label }}"
-                   #odp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right' id='{{oemActivity.activity}}_END_DATE'>
+                  <input type='text' class='form-control' formControlName='endDate'
+                    aria-describedby="Data final para atividade {{ utils.getOemActivity(oemActivity.activity).label }}"
+                    #odp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' placement='right'
+                    id='{{oemActivity.activity}}_END_DATE'>
                 </td>
               </tr>
             </tbody>
@@ -452,7 +483,8 @@
                       <span class='fa radio-approval radio-accept' name='criticalApprove'></span>
                     </label>
                     <label class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
-                      <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
+                      <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status'
+                        id='deny-{{i}}'>
                       <span class='fa radio-approval radio-deny' name='criticalApprove'></span>
                     </label>
                   </div>
@@ -469,8 +501,9 @@
                 </td>
                 <td formGroupName="signature">
                   <div class='form-group'>
-                    <input type='text' class='form-control' formControlName='date' name='date' aria-describedby="Data da aprovação"
-                      #cdp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+                    <input type='text' class='form-control' formControlName='date' name='date'
+                      aria-describedby="Data da aprovação" #cdp="bsDatepicker" bsDatepicker
+                      [bsConfig]='datePickerConfig'>
                   </div>
                 </td>
               </tr>
@@ -501,9 +534,11 @@
         <div class='form-group col'>
           <label for='comment'>Justificativa/Comentário </label>
           <div class='input-group'>
-            <textarea class='form-control' id='comment' formControlName='comment' rows='1' [ngClass]='{"is-invalid": fieldHasErrors("clientApproval")}'></textarea>
+            <textarea class='form-control' id='comment' formControlName='comment' rows='1'
+              [ngClass]='{"is-invalid": fieldHasErrors("clientApproval")}'></textarea>
             <div class="input-group-append">
-              <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend" (click)='openFileAction("clientApproval")'
+              <button type=button class="input-group-text btn btn-light shadow-none" id="regulationsAppend"
+                (click)='openFileAction("clientApproval")'
                 [ngClass]='{"text-primary":uploadService.uploaders["clientApproval"], "border-danger": fieldHasErrors("clientApproval") && !uploadService.uploaders["clientApproval"]}'>
                 <i class='fa fa-fw' [ngClass]='npi.clientApproval?.annex ? "append-icon" : "fa-upload"'></i>
               </button>
@@ -539,15 +574,17 @@
               <tr>
                 <th>
                   <div class='custom-control custom-checkbox'>
-                    <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input' id='toggle-apply-all'
-                      style='font-size:30pt' checked=true>
-                    <label for='toggle-apply-all' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
+                    <input type='checkbox' (click)='toggleApplyAll($event)' class='custom-control-input'
+                      id='toggle-apply-all' style='font-size:30pt' checked=true>
+                    <label for='toggle-apply-all' class='custom-control-label pointer'
+                      style='position: relative; top: -16px; left:4px'></label>
                   </div>
                 </th>
               </tr>
             </thead>
             <tbody #tableBody id='tableBody' formArrayName='activities'>
-              <tr *ngFor='let activity of npi.activities; let last = last; index as i;' [formGroupName]='i' [ngClass]='activitiesFormArray.controls[i].get("apply").value ? "applyable" : "not-applyable"'
+              <tr *ngFor='let activity of npi.activities; let last = last; index as i;' [formGroupName]='i'
+                [ngClass]='activitiesFormArray.controls[i].get("apply").value ? "applyable" : "not-applyable"'
                 [disabled]='activity.closed'>
                 <td>
                   {{ i+1 }}
@@ -570,14 +607,18 @@
                     [dependents]='getControlsDependentActivities(activity)'>
                 </td>
                 <td>
-                  <app-file-button *ngIf='utils.getActivity(activity.activity).annex' [fieldControl]='activitiesFormArray.controls[i]' 
-                  [fieldLabel]='activity.activity' [parent]='"activities"' [npiId]='npi.id' [editFlag]='activitiesFormArray.controls[i].get("apply").value' 
-                  [canEdit]='true'></app-file-button>
+                  <app-file-button *ngIf='utils.getActivity(activity.activity).annex'
+                    [fieldControl]='activitiesFormArray.controls[i]' [fieldLabel]='activity.activity'
+                    [parent]='"activities"' [npiId]='npi.id'
+                    [editFlag]='activitiesFormArray.controls[i].get("apply").value' [canEdit]='true'></app-file-button>
                 </td>
                 <td>
-                  <div class='custom-control custom-checkbox' *ngIf='!utils.getActivity(activity.activity, entry).required'>
-                    <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}' style='font-size:30pt'>
-                    <label for='apply-{{i}}' class='custom-control-label pointer' style='position: relative; top: -16px; left:4px'></label>
+                  <div class='custom-control custom-checkbox'
+                    *ngIf='!utils.getActivity(activity.activity, entry).required'>
+                    <input type='checkbox' class='custom-control-input' formControlName='apply' id='apply-{{i}}'
+                      style='font-size:30pt'>
+                    <label for='apply-{{i}}' class='custom-control-label pointer'
+                      style='position: relative; top: -16px; left:4px'></label>
                   </div>
                 </td>
               </tr>
@@ -603,15 +644,16 @@
       <div class="form-row" formGroupName='validation'>
         <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
           <label for='validationUser'>Responsável pela finalização: </label>
-          <select class='custom-select' id=validationUser formControlName='user' [ngClass]='{"is-invalid": fieldHasErrors("validation.signature.user")}'>
+          <select class='custom-select' id=validationUser formControlName='user'
+            [ngClass]='{"is-invalid": fieldHasErrors("validation.signature.user")}'>
             <option *ngFor='let user of allUsers' value='{{ user._id }}'>{{ user.firstName }}
               {{ user.lastName }}</option>
           </select>
         </div>
         <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
           <label for='date'>Data de finalização: </label>
-          <input type='text' class='form-control' formControlName='date' name='date' aria-describedby="Data da aprovação"
-            #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+          <input type='text' class='form-control' formControlName='date' name='date'
+            aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
         </div>
       </div>
 
@@ -624,7 +666,8 @@
 
     <div class="row align-items-center">
       <div class='col'>
-        <button type="button" class="btn btn-secondary w-100" [disabled]="sendingForm || migrateForm.pristine" (click)='migrateForm.reset()'>
+        <button type="button" class="btn btn-secondary w-100" [disabled]="sendingForm || migrateForm.pristine"
+          (click)='migrateForm.reset()'>
           <span class='fa fa-undo'></span>
           Limpar Campos
         </button>
