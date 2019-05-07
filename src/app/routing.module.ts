@@ -84,19 +84,27 @@ const appRoutes: Routes = [
   },
   {
     path: 'npi/migrate',
-    canActivate: [AuthGuard],
-    data: { allowedToMigrate: true },
+    canActivate:
+      [
+        AuthGuard,
+        AccessGuard
+      ],
+    data: { allowedLevel: 3 },
     component: MigrationToolComponent
   },
   {
     path: 'npi/:npiNumber/migrate',
-    canActivate: [AuthGuard],
-    data: { allowedToMigrate: true },
+    canActivate:
+      [
+        AuthGuard,
+        AccessGuard
+      ],
+    data: { allowedLevel: 3 },
     component: MigrationEditComponent
   },
   {
     path: 'npi/:npiNumber',
-    canActivate: [AuthGuard], 
+    canActivate: [AuthGuard],
     component: NpiComponent
   },
   { path: 'error', component: ErrorComponent },
