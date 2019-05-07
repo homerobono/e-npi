@@ -226,7 +226,12 @@ class Npi {
                 if (this.finalApproval.signature && this.finalApproval.signature.date)
                     this.finalApproval.signature.date = new Date(this.finalApproval.signature.date);
             }
-            if (npiModel.clientApproval != null) this.clientApproval = npiModel.clientApproval
+            if (npiModel.clientApproval != null) {
+                this.clientApproval = npiModel.clientApproval
+                if (npiModel.clientApproval && npiModel.clientApproval.signature && npiModel.clientApproval.signature.date)
+                    this.clientApproval.signature.date = new Date(npiModel.clientApproval.signature.date)
+
+            }
             if (npiModel.activities != null) {
                 this.activities = npiModel.activities
                 this.activities.forEach(activity => {

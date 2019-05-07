@@ -1,0 +1,9 @@
+
+.append-icon:after {
+    content: "\f07b";
+}
+
+button:enabled:hover .append-icon:after {
+    content: "\f07c";
+    color: blue
+}

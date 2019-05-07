@@ -60,6 +60,7 @@ export class HomeComponent implements OnInit {
     this.sortParams =
       [{ field: 'number', order: -1 },
       { field: 'name', order: 1 },
+      { field: 'client', order: 1 },
       { field: 'entry', order: 1 },
       { field: 'stage', order: -1 },
       { field: 'updated', order: -1 }]
@@ -69,6 +70,7 @@ export class HomeComponent implements OnInit {
 
     this.filterForm = fb.group({
       name: null,
+      client: null,
       entry: null,
       stage: null,
       updated: null

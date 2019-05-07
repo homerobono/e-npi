@@ -27,6 +27,7 @@ import { map } from 'rxjs-compat/operator/map';
 import { UsersService } from 'src/app/services/users.service';
 import User from 'src/app/models/user.model';
 import { FileManagerComponent } from 'src/app/file-manager/file-manager.component';
+import { isDate } from 'rxjs/internal/util/isDate';
 
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
@@ -120,6 +121,7 @@ export class MigrationEditComponent implements OnInit {
       'requester': null,
       'name': null,
       'entry': new FormControl({ value: null, disabled: true }),
+      'stage': null,
       'npiRef': null,
       'designThinking': fb.group({
         'apply': null,
@@ -170,7 +172,11 @@ export class MigrationEditComponent implements OnInit {
       'clientApproval': fb.group({
         'approval': null,
         'comment': null,
-        'annex': []
+        'annex': [],
+        'signature': fb.group({
+          'user': null,
+          'date': null
+        })
       }),
       'activities': this.activitiesFormArray,
       'validation': fb.group({
@@ -311,6 +317,13 @@ export class MigrationEditComponent implements OnInit {
         })
       });
 
+    if (this.npi.clientApproval)
+      this.migrateForm.get("clientApproval").patchValue({
+        signature: {
+          user: this.npi.clientApproval.signature.user._id
+        }
+      })
+
     this.npi.activities.forEach(activity => {
       let control = (this.migrateForm.get("activities") as FormArray).controls
         .find(actControl => actControl.get("activity").value == activity.activity)
@@ -332,7 +345,11 @@ export class MigrationEditComponent implements OnInit {
       } else
         if (model[field] != null && model[field] != undefined) {
           try {
-            control.setValue(model[field])
+            //console.log("Setting value of " + field + ' to ' + model[field])
+            if (isDate(model[field]))
+              control.setValue(model[field])
+            else
+              control.setValue(model[field].toString())
           }
           catch (err) { console.log(err) }
         }
@@ -344,19 +361,19 @@ export class MigrationEditComponent implements OnInit {
     this.openSendingFormModal()
 
     let npiForm = migrateForm
-    console.log(npiForm, this.uploadService.uploaders)
+    //console.log(npiForm, this.uploadService.uploaders)
 
     npiForm.number = this.npi.number
     npiForm.id = this.npi.id
 
     for (let field in this.uploadService.uploaders) {
-      console.log(field, this.uploadService.uploaders[field].queue)
+      //console.log(field, this.uploadService.uploaders[field].queue)
       let propsArr = field.split(".")
       let subfield = npiForm[propsArr[0]]
-      console.log(subfield)
+      //console.log(subfield)
       if (propsArr.length > 1)
         subfield = subfield.find(act => act.activity == propsArr[1])
-      console.log(subfield)
+      //console.log(subfield)
       if (!subfield.annex)
         subfield.annex = []
       subfield.annex = subfield.annex.concat(
@@ -375,8 +392,8 @@ export class MigrationEditComponent implements OnInit {
       })
       .subscribe(res => {
         if (res.upload && !this.uploadService.isUploading) {
-          console.log('All complete');
-          console.log(res);
+          //console.log('All complete');
+          //console.log(res);
           this.messenger.set({
             'type': 'success',
             'message': 'NPI editada com sucesso'
@@ -422,7 +439,7 @@ export class MigrationEditComponent implements OnInit {
   }
 
   updateNpi(migrateForm) {
-    migrateForm.stage = 5
+    if (!migrateForm.stage) migrateForm.stage = 5
     migrateForm.entry = this.npi.entry
     migrateForm.__t = this.npi.entry
 
@@ -431,7 +448,7 @@ export class MigrationEditComponent implements OnInit {
       delete migrateForm.validation
       migrateForm.stage = 0
     }
-    console.log(migrateForm)
+    //console.log(migrateForm)
 
     this.resolveSubmission = this.npiService.migrateUpdateNpi(migrateForm)
 
@@ -466,7 +483,7 @@ export class MigrationEditComponent implements OnInit {
 
   loadNpiRef(res) {
     if (!isNaN(res) && res != null) {
-      console.log(res)
+      //console.log(res)
       this.npiService.getNpi(res).subscribe(npi => { this.npiRef = npi[0] })
     }
   }

@@ -108,6 +108,42 @@
       </div>
     </div>
 
+    <label for='stage-group'>Status</label>
+    <div class="form-row">
+      <div class="form-group col" id='stage-group'>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="stage-0" value=0 name='stage'
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-0" class='custom-control-label'>Cancelada</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="stage-1" value=1 name='stage'
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-1" class='custom-control-label'>Rascunho</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="stage-2" name='stage' value=2
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-2" class='custom-control-label'>Análise Crítica</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline" *ngIf='oem.checked'>
+          <input type="radio" class="custom-control-input" id="stage-3" name='stage' value="3"
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-3" class='custom-control-label'>Aprovação do Cliente</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="stage-4" name='stage' value="4"
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-4" class='custom-control-label'>Desenvolvimento</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" class="custom-control-input" id="stage-5" name='stage' value=5
+            [formControl]="migrateForm.controls['stage']">
+          <label for="stage-5" class='custom-control-label'>Concluída</label>
+        </div>
+      </div>
+    </div>
+
     <div class="form-row">
       <div class="col-sm-12">
         <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='designThinking'>
@@ -513,11 +549,11 @@
       </div>
     </div>
 
-    <div *ngIf='npi.entry=="oem"'>
+    <div *ngIf='npi.entry=="oem"' formGroupName='clientApproval'>
       <h4>
         <b>Aprovação do Cliente</b>
       </h4>
-      <div class="form-row" formGroupName='clientApproval'>
+      <div class="form-row">
         <div class='form-group col-auto'>
           <label for='approval'>Aprovado?</label>
           <div class='form-group' id='approval'>
@@ -548,8 +584,23 @@
             </div>
           </div>
         </div>
-        <hr>
       </div>
+      <div class="form-row">
+        <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
+          <label for='clientApprovalUser'>Responsável por incluir a aprovação: </label>
+          <select class='custom-select' id=clientApprovalUser formControlName='user'
+            [ngClass]='{"is-invalid": fieldHasErrors("clientApproval.signature.user")}'>
+            <option *ngFor='let user of allUsers' [selected]='first' value='{{ user._id }}'>{{ user.firstName }}
+              {{ user.lastName }}</option>
+          </select>
+        </div>
+        <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
+          <label for='date'>Data da aprovação: </label>
+          <input type='text' class='form-control' formControlName='date' name='date'
+            aria-describedby="Data da aprovação" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'>
+        </div>
+      </div>
+      <hr>
     </div>
 
     <!-- ATIVIDADES MACRO -->

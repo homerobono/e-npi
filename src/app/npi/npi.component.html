@@ -120,7 +120,7 @@
     <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'>
     </app-critical>
 
-    <app-client *ngIf='npi.entry=="oem" && npi.isOemComplete() && npi.stage > 2 && npi.isCriticallyApproved()'
+    <app-client *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()'
       [npi]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)'></app-client>
 
     <app-activities [npiSetter]='npi' [toggleEdit]='editFlag'

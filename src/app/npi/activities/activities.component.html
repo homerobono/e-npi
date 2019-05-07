@@ -54,7 +54,7 @@
               </select>
             </td>
             <td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
-              <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM'
+              <input type='number' class='form-control center' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM'
                 appBlink>
             </td>
             <td>

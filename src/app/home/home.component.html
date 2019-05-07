@@ -59,6 +59,18 @@
                   <input type=text class='form-control' formControlName='name'>
                 </th>
                 <th scope="col">
+                  <div class='sort-header' (click)='toggleSortBy("name")'>
+                    <b>Cliente</b>
+                    <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem ascendente por cliente"
+                      *ngIf='sortParams[0].field=="client" && sortParams[0].order==1'></span>
+                    <span class='fa fa-sort-down pl-2' data-toggle="tooltip" data-placement="top"
+                      title="Ordem descendente cliente"
+                      *ngIf='sortParams[0].field=="client" && sortParams[0].order==-1'></span>
+                  </div>
+                  <input type=text class='form-control' formControlName='client'>
+                </th>
+                <th scope="col">
                   <div class='sort-header' (click)='toggleSortBy("entry")'>
                     <b>Entrada</b>
                     <span class='fa fa-sort-up ml-2' data-toggle="tooltip" data-placement="top"
@@ -129,6 +141,9 @@
                 </th>
                 <td [ngClass]='{"strike": !npi.stage}'>
                   <i class='fa fa-user' *ngIf='npi.requester == me._id'></i> {{ npi.name }}
+                </td>
+                <td [ngClass]='{"strike": !npi.stage}'>
+                  <i class='fa fa-user' *ngIf='npi.requester == me._id'></i> {{ npi.client }}
                 </td>
                 <td>
                   <h5>

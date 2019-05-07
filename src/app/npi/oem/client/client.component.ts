@@ -4,6 +4,9 @@ import Npi from '../../../models/npi.model';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../../npi.component';
 import { OemComponent } from '../oem.component';
+import { UploadService } from 'src/app/services/upload.service';
+import { UploaderComponent } from 'src/app/file-manager/uploader/uploader.component';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 
 @Component({
   selector: 'app-client',
@@ -26,11 +29,14 @@ export class ClientComponent implements OnInit {
   npiForm: FormGroup
   deny: FormControl
   isFormEnabled: Boolean = true
+  modalRef: BsModalRef
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private npiComponent: NpiComponent
+    private npiComponent: NpiComponent,
+    public uploadService: UploadService,
+    private modalService: BsModalService,
   ) {
     this.npiForm = fb.group({
       'clientApproval': fb.group({
@@ -70,7 +76,8 @@ export class ClientComponent implements OnInit {
   fillFormData() {
     this.npiForm.get("clientApproval").setValue({
       'approval': this.npi.clientApproval.approval,
-      'comment': this.npi.clientApproval.comment
+      'comment': this.npi.clientApproval.comment,
+      'annex': this.npi.clientApproval.annex,
     })
   }
 
@@ -78,6 +85,21 @@ export class ClientComponent implements OnInit {
     this.npiComponent.newFormVersionFlag = !this.npiComponent.newFormVersionFlag
     this.npiComponent.newFormVersion.next(this.npiComponent.newFormVersionFlag)
     window.scrollTo({ left: 0, top: 120, behavior: 'smooth' });
+  }
+
+  openFileAction(field) {
+    if (!this.npi[field].annex || !this.npi[field].annex.length)
+      this.npiComponent.openFileUploader(field)
+    else this.npiComponent.openFileManager(field)
+  }
+
+  fieldHasErrors(field) {
+    let propsArr = field.split(".")
+    let control = this.npiForm.get(propsArr[0])
+    for (let i = 1; i < propsArr.length; i++) {
+      control = control.get(propsArr[i])
+    }
+    return control.hasError('required')
   }
 
 }

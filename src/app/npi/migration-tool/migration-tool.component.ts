@@ -204,7 +204,11 @@ export class MigrationToolComponent implements OnInit {
       'clientApproval': fb.group({
         'approval': 'accept',
         'comment': null,
-        'annex': []
+        'annex': [],
+        'signature': fb.group({
+          'user': null,
+          'date': null
+        })
       }),
       'activities': null,
       'validation': fb.group({
