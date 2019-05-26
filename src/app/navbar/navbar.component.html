@@ -1,6 +1,7 @@
 <nav *ngIf="userIsLogged" class="navbar navbar-expand-sm navbar-dark bg-dark shadow">
   <a class="navbar-brand" routerLink="/home">
       <span style="color:chartreuse; font-family:sans-serif"><b>e</b>-</span><span style="color: orange; font-family: sans-serif">NPI</span>
+      <span style="color:rgb(172, 172, 172); font-family:sans-serif; font-size: 8pt">&nbsp;v{{version}}</span>
   </a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -19,7 +20,7 @@
         <btn class="btn btn-orange shadow-none pointer" routerLink="/npi/create">NPI <span class='fa fa-plus'></span><span class="sr-only">(current)</span></btn>
       </li>
     </ul-->
-    <ul class="navbar-nav ml-5" *ngIf='userLevel>= 1'>
+    <ul class="navbar-nav ml-5" *ngIf='userLevel == 3'>
       <li class="nav-item m-auto" routerLinkActive="active">
         <btn class="btn btn-outline-info shadow-none pointer" routerLink="/npi/migrate"><span class='fa fa-exchange'></span> Ferramenta de Migração <span class="sr-only">(current)</span></btn>
       </li>

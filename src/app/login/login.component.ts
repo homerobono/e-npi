@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MessageService } from '../services/message.service';
 import { Observable, Observer } from 'rxjs/Rx';
 import { slideInOutTopAnimation, scaleUpDownAnimation } from '../_animations/slide_in_out.animation'
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ import { slideInOutTopAnimation, scaleUpDownAnimation } from '../_animations/sli
 export class LoginComponent {
   loginForm: FormGroup;
   operationResponse
-  
+  public version: string = environment.version;
+
   constructor(
       private fb: FormBuilder,
       private authService: AuthService, 

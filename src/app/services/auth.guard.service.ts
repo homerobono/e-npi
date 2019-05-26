@@ -26,7 +26,7 @@ export class AuthGuardService implements CanActivate{
       return true;
     }
     if(notLogged){
-      //console.log('not logged')  
+      //console.log('not logged')
       this.messenger.set({
         type : 'error',
         message : 'É preciso efetuar o login para acessar essa página'

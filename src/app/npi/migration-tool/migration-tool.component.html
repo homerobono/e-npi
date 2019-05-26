@@ -617,7 +617,7 @@
       </div>
       <div class="form-row">
         <div class='form-group col-xs-12 col-md-6' formGroupName='signature'>
-          <label for='clientApprovalUser'>Responsável por incluir a aprovação: </label>
+          <label for='clientApprovalUser'>Responsável pela aprovação: </label>
           <select class='custom-select' id=clientApprovalUser formControlName='user'
             [ngClass]='{"is-invalid": fieldHasErrors("clientApproval.signature.user")}'>
             <option *ngFor='let user of allUsers' [selected]='first' value='{{ user._id }}'>{{ user.firstName }}
