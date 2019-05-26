@@ -34,7 +34,7 @@ export class ClientComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private npiComponent: NpiComponent,
+    public npiComponent: NpiComponent,
     public uploadService: UploadService,
     private modalService: BsModalService,
   ) {
