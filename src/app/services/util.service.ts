@@ -139,13 +139,13 @@ export class UtilService {
             rest_suffix = diff < 4 && rest > 0.5 ?
               ' dia' + (rest > 2 ? 's' : '')
               : null
-            suffix = ' mes' + (diff > 2 ? 'es' : '') +
+            suffix = ' mês' + (diff > 2 ? 'es' : '') +
               (rest_suffix ? ' e ' : '')
             if (diff > 12) {
               rest = diff % 12
               diff /= 12
               rest_suffix = diff < 4 && rest > 0.5 ?
-                ' mes' + (rest > 2 ? 'es' : '')
+                ' mês' + (rest > 2 ? 'es' : '')
                 : null
               suffix = ' ano' + (diff > 2 ? 's' : '') +
                 (rest_suffix ? ' e ' : '')

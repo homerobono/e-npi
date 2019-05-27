@@ -61,6 +61,10 @@ export class OemComponent implements OnInit {
     this.npiForm = fb.group({
       'client': null,
       'npiRef': null,
+      'designThinking': fb.group({
+        'apply': null,
+        'annex': []
+      }),
       'description': fb.group({
         'description': null,
         'annex': []
@@ -70,6 +74,7 @@ export class OemComponent implements OnInit {
         'annex': []
       }),
       'regulations': fb.group({
+        none: null,
         standard: fb.group({}),
         additional: null,
         'description': null,
@@ -96,15 +101,32 @@ export class OemComponent implements OnInit {
       }),
       'fiscals': null,
     })
-    let regulations = utils.getRegulations()
-    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
-    regulations.forEach(reg => {
-      additionalArray.addControl(reg.value, fb.control(null))
-    })
   }
 
   ngOnInit() {
     this.standardRegulationsArray = (this.npiForm.get('regulations').get('standard') as FormGroup).controls
+    
+    let regulations = this.utils.getRegulations()
+    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
+    regulations.forEach(reg => {
+      additionalArray.addControl(reg.value, new FormControl({
+        value: false, disabled: this.npiForm.get("regulations").get("none").value
+      }))
+    })
+    this.npiForm.valueChanges.subscribe(value => { //for eddit flag enable effect
+      if (this.npiForm.get("regulations").get("none").value) {
+        this.npiForm.get("regulations").get("standard").disable()
+        this.npiForm.get("regulations").get("additional").disable()
+        this.npiForm.get("regulations").get("description").disable()
+      }
+    })
+
+    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
+      let action = value ? 'disable' : 'enable'
+      this.npiForm.get("regulations").get("standard")[action]()
+      this.npiForm.get("regulations").get("additional")[action]()
+      this.npiForm.get("regulations").get("description")[action]()
+    })
 
     this.npiFormOutput.emit(this.npiForm)
     this.npiForm.get('npiRef').valueChanges.subscribe(
@@ -180,6 +202,10 @@ export class OemComponent implements OnInit {
               this.npi.inStockDate.offset : null : null
       }
     });
+  }
+
+  amITheOwner(): Boolean {
+    return this.npi.requester._id == this.npiComponent.user._id
   }
 
   fieldHasErrors(field) {

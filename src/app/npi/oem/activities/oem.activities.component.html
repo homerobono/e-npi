@@ -72,11 +72,11 @@
                 data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)' data-toggle="tooltip"
+              <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity) && !signatures[i]' data-toggle="tooltip"
                 data-placement="bottom" title="Aguardando conclusão">
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
               </span>
-              <span *ngIf='activity.get("closed").value'>
+              <span *ngIf='activity.get("closed").value || signatures[i]'>
                 <i class='fa fa-check fa-sm text-success'></i>
                 {{ signatures[i] }}
               </span>
@@ -84,6 +84,7 @@
           </tr>
         </tbody>
       </table>
+      <hr>
     </div>
   </div>
 </div>

@@ -572,6 +572,7 @@ export class NpiComponent implements OnInit {
       (this.user.level == 1 && (
         (this.npi.stage == 1 && this.amITheOwner()) ||
         (this.npi.stage == 2 && (
+          (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))) ||
           (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
           (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
         ) ||

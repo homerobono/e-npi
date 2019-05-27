@@ -8,19 +8,21 @@
             #
           </span>
         </div>
-        <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef' [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
+        <input type="text" size=2 #npiRefField class="form-control" id="npiRef" formControlName='npiRef'
+          [ngClass]='{"is-invalid": fieldHasErrors("npiRef")}'>
         <div class="input-group-append">
           <span class='input-group-text'>
             <small *ngIf='npiRefField.value!=""'>
-              <a routerLink='/npi/{{ npiComponent.npiRef.number }}' *ngIf='npiComponent.npiRef' style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'>
+              <a routerLink='/npi/{{ npiComponent.npiRef.number }}' *ngIf='npiComponent.npiRef'
+                style='display: block; max-width: 160px; white-space: nowrap; overflow: hidden !important; text-overflow:ellipsis'>
                 {{ npiComponent.npiRef.name }}
                 <i>({{ utils.getEntry(npiComponent.npiRef.entry) }})</i>
               </a>
               <span class='text-danger' *ngIf='npiRefField.value!="" && !npiComponent.npiRef'>NPI inválida</span>
             </small>
           </span>
-          <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend" (click)='npiComponent.openNpiChooserModal()'
-            [disabled]='npiForm.disabled'>
+          <button type='button' class="input-group-text btn btn-light shadow-none" id="npiRefAppend"
+            (click)='npiComponent.openNpiChooserModal()' [disabled]='npiForm.disabled'>
             <span class="fa npi-search-icon fa-sm"></span>
           </button>
         </div>
@@ -32,29 +34,56 @@
 
     <div class="form-group col mb-3">
       <label for="client">Cliente</label>
-      <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client' [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
+      <input type="text" class="form-control" id="client" placeholder="Cliente" formControlName='client'
+        [ngClass]='{"is-invalid": fieldHasErrors("client")}'>
       <div class='invalid-feedback'>
         Defina o cliente
       </div>
     </div>
   </div>
 
-  <div class="form-group mb-4" formGroupName='description'>
-    <label for='descriptionDescription'>
-      <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
-    </label>
-    <div class="input-group">
-      <textarea class="form-control" rows=5 formControlName='description' id='descriptionDescription' [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
-        </textarea>
-      <div class="input-group-append">
-        <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="resourcesAppend"
-          (click)='openFileAction("description")' [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["description"] && !npi.description.annex?.length, "border-danger": fieldHasErrors("description.annex") && !npi.description.annex?.length}'
-          [disabled]='!npiComponent.editFlag && !npi.description.annex?.length'>
-          <i class='fa fa-fw' [ngClass]='npi.description.annex?.length? "append-icon":"upload-icon"'></i>
-        </button>
+  <div class="form-row">
+    <div class="form-group col-sm-12 mb-4 d-md-flex align-items-center" formGroupName='designThinking'>
+      <div class="custom-control custom-checkbox custom-control-inline">
+        <input type="checkbox" class="custom-control-input" style='z-index: 0' id="designThinking"
+          formControlName='apply' #designThinkingApply>
+        <label class="custom-control-label" for="designThinking">Design Thinking</label>
       </div>
+      <app-file-button class="input-group-append p-0" style='z-index: 0' id="designThinkingAppend"
+        [fieldControl]='npiForm.get("designThinking")' [fieldLabel]='"designThinking"' [npiId]='npi.id'
+        [editFlag]='npiComponent.editFlag && !((!npiComponent.editFlag && !npi.designThinking?.annex?.length) || !designThinkingApply.checked)'
+        [canEdit]='amITheOwner() && (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved()
+              && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+      </app-file-button>
+      <!--button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="designThinkingAppend"
+          (click)='openFileAction("designThinking")'
+          [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["designThinking"] && !npi.designThinking?.annex?.length, "border-danger": fieldHasErrors("designThinking.annex") && !npi.designThinking?.annex?.length}'
+          [disabled]='!npiComponent.editFlag && !npi.designThinking?.annex?.length'>
+          <i class='fa fa-fw' [ngClass]='npi.designThinking?.annex?.length? "append-icon":"upload-icon"'></i>
+        </button-->
       <div class='invalid-feedback'>
-        Forneça os requisitos gerais do projeto
+        Anexe um documento para o Design thinking
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-sm-12 mb-4" formGroupName='description'>
+      <label for='descriptionDescription'>
+        <b>Requisitos de Funcionamento, Essenciais, de Desempenho do Produto e Análise de Riscos</b>
+      </label>
+      <div class="input-group">
+        <textarea class="form-control" rows=5 formControlName='description' id='descriptionDescription'
+          [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
+        </textarea>
+        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("description")'
+          [fieldLabel]='"description"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
+          [canEdit]='amITheOwner() && 
+      (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+        </app-file-button>
+        <div class='invalid-feedback'>
+          Forneça os requisitos gerais do projeto
+        </div>
       </div>
     </div>
   </div>
@@ -63,15 +92,14 @@
     <div class="form-group col-sm-12 mb-4" formGroupName='resources'>
       <label for="resourcesDescription">Recursos/Capacidade Fabril</label>
       <div class="input-group">
-        <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription' [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
+        <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription'
+          [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
         </textarea>
-        <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="resourcesAppend"
-            (click)='openFileAction("resources")' [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["resources"] && !npi.resources.annex?.length, "border-danger": fieldHasErrors("resources.annex") && !npi.resources.annex?.length}'
-            [disabled]='!npiComponent.editFlag && !npi.resources.annex?.length'>
-            <i class='fa fa-fw' [ngClass]='npi.resources.annex?.length? "append-icon":"upload-icon"'></i>
-          </button>
-        </div>
+        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("resources")'
+          [fieldLabel]='"resources"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
+          [canEdit]='amITheOwner() && 
+        (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+        </app-file-button>
         <div class='invalid-feedback'>
           Defina os recursos necessários
         </div>
@@ -81,16 +109,20 @@
     <div class="col-sm-12">
       <label for="regulations">Homologações/Regulamentações</label>
       <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
-        <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard' *ngFor='let reg of objectkeys(npi.regulations.standard)'>
-          <input type="checkbox" class="custom-control-input" style='z-index: 0' id="{{ reg }}" formControlName='{{ reg }}'>
+        <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard'
+          *ngFor='let reg of objectkeys(npi.regulations.standard)'>
+          <input type="checkbox" class="custom-control-input" style='z-index: 0' id="{{ reg }}"
+            formControlName='{{ reg }}'>
           <label class="custom-control-label" for="{{ reg }}">{{ utils.getRegulation(reg).label }}</label>
         </div>
         <!--div class="custom-control custom-checkbox custom-control-inline">
               <input type="checkbox" class="custom-control-input" checked id='other' (change)="true" #other>
               <label class="custom-control-label" for="other">Outro(s)</label>
             </div-->
-        <input class='form-control' type='text' formControlName='additional' name='additional' aria-describedby="Homologações/Regulamentações"
-          [ngClass]='{"is-invalid": fieldHasErrors("regulations.additional")}' *ngIf='npiForm.get("regulations").get("standard").get("other").value'>
+        <input class='form-control' type='text' formControlName='additional' name='additional'
+          aria-describedby="Homologações/Regulamentações"
+          [ngClass]='{"is-invalid": fieldHasErrors("regulations.additional")}'
+          *ngIf='npiForm.get("regulations").get("standard").get("other").value'>
         <div class='invalid-feedback'>
           Descreva as homologações/regulações aplicáveis ou anexe algum arquivo
         </div>
@@ -99,15 +131,14 @@
     <div class="form-group col-sm-12 mb-4" formGroupName='regulations' *ngIf='isRegulationApplyable()'>
       <label for="regulationsDescription">Leis/Normas Aplicáveis</label>
       <div class="input-group">
-        <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription' [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
+        <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription'
+          [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
         </textarea>
-        <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="regulationsAppend"
-            (click)='openFileAction("regulations")' [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["regulations"] && !npi.regulations.annex?.length, "border-danger": fieldHasErrors("regulations.description") && !npi.regulations.annex?.length}'
-            [disabled]='!npiComponent.editFlag && !npi.regulations.annex?.length'>
-            <i class='fa fa-fw' [ngClass]='npi.regulations.annex?.length? "append-icon":"upload-icon"'></i>
-          </button>
-        </div>
+        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("regulations")'
+          [fieldLabel]='"regulations"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
+          [canEdit]='amITheOwner() && 
+        (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+        </app-file-button>
         <div class='invalid-feedback'>
           Descreva as homologações/regulações aplicáveis ou anexe algum arquivo
         </div>
@@ -128,8 +159,9 @@
             </label>
           </div>
           <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" class="custom-control-input" id="offset-date" #offset value='offset' name='inStockDateType'
-              formControlName="inStockDateType" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+            <input type="radio" class="custom-control-input" id="offset-date" #offset value='offset'
+              name='inStockDateType' formControlName="inStockDateType"
+              [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
             <label for="offset-date" class='custom-control-label'>
               Prazo após aprovação
             </label>
@@ -138,8 +170,9 @@
       </div>
       <div class="form-row" *ngIf='fixed.checked'>
         <div class="input-group col" formGroupName='inStockDate'>
-          <input type='text' class='form-control' formControlName='fixed' name='fixed' aria-describedby="Data em Estoque"
-            #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig' [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+          <input type='text' class='form-control' formControlName='fixed' name='fixed'
+            aria-describedby="Data em Estoque" #dp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig'
+            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
           <div class="input-group-append">
             <li class="input-group-text" id="inStockDateAppend" (click)="dp.toggle()">
               <i class='fa fa-calendar fa-fw'></i>
@@ -154,8 +187,8 @@
               +
             </span>
           </div>
-          <input type='number' class='form-control' formControlName='offset' name='offset' aria-describedby="Data em Estoque"
-            [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
+          <input type='number' class='form-control' formControlName='offset' name='offset'
+            aria-describedby="Data em Estoque" [ngClass]='{"is-invalid": fieldHasErrors("inStockDateType")}'>
           <div class="input-group-append">
             <span class="input-group-text" id="inStockDateAppend">
               dias
@@ -176,7 +209,8 @@
           </span>
         </div>
         <div class="input-group-append">
-          <select formControlName='period' class='custom-select' id="period" placeholder="Período" [ngClass]='{"is-invalid": fieldHasErrors("demand.period")}'>
+          <select formControlName='period' class='custom-select' id="period" placeholder="Período"
+            [ngClass]='{"is-invalid": fieldHasErrors("demand.period")}'>
             <option *ngFor='let period of utils.getDemandPeriods()' value='{{ period.value }}'>{{ period.label }}
             </option>
           </select>
@@ -189,8 +223,9 @@
     <!-- Fiscals -->
     <div class='col-sm-12 col-md-12 col-lg-8 order-md-4 form-group mb-4'>
       <label for="fiscals">Incentivos Fiscais</label>
-      <input type='text' class='form-control' formControlName='fiscals' name='fiscals' aria-describedby="Incentivos Fiscais"
-        placeholder='Incentivos Fiscais' [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
+      <input type='text' class='form-control' formControlName='fiscals' name='fiscals'
+        aria-describedby="Incentivos Fiscais" placeholder='Incentivos Fiscais'
+        [ngClass]='{"is-invalid": fieldHasErrors("fiscals")}'>
       <div class='invalid-feedback'>
         Defina os incentivos fiscais
       </div>
@@ -206,13 +241,11 @@
         </div>
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value'
           placeholder='00,00' aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
-        <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="investmentAppend"
-            (click)='openFileAction("investment")' [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["investment"] && !npi.investment.annex?.length, "border-danger": fieldHasErrors("investment") && !npi.investment.annex?.length}'
-            [disabled]='!npiComponent.editFlag && !npi.investment.annex?.length'>
-            <i class='fa fa-fw' [ngClass]='npi.investment.annex?.length? "append-icon":"upload-icon"'></i>
-          </button>
-        </div>
+        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("investment")'
+          [fieldLabel]='"investment"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
+          [canEdit]='amITheOwner() && 
+        (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+        </app-file-button>
         <div class='invalid-feedback'>
           Defina o investimento
         </div>
@@ -228,14 +261,13 @@
           </select>
         </div>
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value'
-          placeholder='00,00' aria-describedby="Custo do Projeto" [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
-        <div class="input-group-append">
-          <button type=button class="input-group-text btn btn-light shadow-none" style='z-index: 0' id="projectCostAppend"
-            (click)='openFileAction("projectCost")' [ngClass]='{"text-primary": npiComponent.uploadService.uploaders["projectCost"] && !npi.projectCost.annex?.length, "border-danger": fieldHasErrors("projectCost") && !npi.projectCost.annex?.length}'
-            [disabled]='!npiComponent.editFlag && !npi.projectCost.annex?.length'>
-            <i class='fa fa-fw' [ngClass]='npi.projectCost.annex?.length? "append-icon":"upload-icon"'></i>
-          </button>
-        </div>
+          placeholder='00,00' aria-describedby="Custo do Projeto"
+          [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
+        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("projectCost")'
+          [fieldLabel]='"projectCost"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
+          [canEdit]='amITheOwner() && 
+        (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
+        </app-file-button>
         <div class='invalid-feedback'>
           Defina o custo do projeto
         </div>
@@ -244,4 +276,3 @@
   </div>
   <hr>
 </div>
-<hr>

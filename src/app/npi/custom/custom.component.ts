@@ -24,8 +24,8 @@ import { Globals } from 'config';
   styleUrls: ['./custom.component.scss']
 })
 export class CustomComponent implements OnInit {
-  
-  npi : Npi
+
+  npi: Npi
   @Input() set npiSetter(npi: Npi) {
     this.npi = npi;
     this.fillFormData()
@@ -68,6 +68,7 @@ export class CustomComponent implements OnInit {
         'annex': []
       }),
       'regulations': fb.group({
+        none: null,
         standard: fb.group({}),
         additional: null,
         'description': null,
@@ -98,15 +99,32 @@ export class CustomComponent implements OnInit {
       }),
       'fiscals': null,
     })
-
-    let regulations = utils.getRegulations()
-    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
-    regulations.forEach(reg => {
-      additionalArray.addControl(reg.value, fb.control(null))
-    })
   }
 
   ngOnInit() {
+
+    let regulations = this.utils.getRegulations()
+    let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
+    regulations.forEach(reg => {
+      additionalArray.addControl(reg.value, new FormControl({
+        value: false, disabled: this.npiForm.get("regulations").get("none").value
+      }))
+    })
+    this.npiForm.valueChanges.subscribe(value => { //for eddit flag enable effect
+      if (this.npiForm.get("regulations").get("none").value) {
+        this.npiForm.get("regulations").get("standard").disable()
+        this.npiForm.get("regulations").get("additional").disable()
+        this.npiForm.get("regulations").get("description").disable()
+      }
+    })
+
+    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
+      let action = value ? 'disable' : 'enable'
+      this.npiForm.get("regulations").get("standard")[action]()
+      this.npiForm.get("regulations").get("additional")[action]()
+      this.npiForm.get("regulations").get("description")[action]()
+    })
+
     this.npiFormOutput.emit(this.npiForm)
     this.npiForm.get('npiRef').valueChanges.subscribe(res => { this.npiComponent.loadNpiRef(res) })
     this.fillFormData()
@@ -128,7 +146,7 @@ export class CustomComponent implements OnInit {
         && model[field]) {
         this.fillNestedFormData(control, model[field])
       } else
-        if (model[field] != null && model[field] != undefined && !(model[field] instanceof Object)) {
+        if (model[field] != null && model[field] != undefined) {
           try {
             control.setValue(model[field])
           }
@@ -144,38 +162,42 @@ export class CustomComponent implements OnInit {
     this.npiForm.patchValue({
       npiRef: this.npi.npiRef ? this.npi.npiRef.number : null,
       price: this.npi.price ? {
-        value: this.npi.price.value ? 
+        value: this.npi.price.value ?
           this.npi.price.value.toFixed(2).toString().replace('.', ',')
-          :null,
-        currency: this.npi.price.currency ? 
-          this.npi.price.currency:null,
+          : null,
+        currency: this.npi.price.currency ?
+          this.npi.price.currency : null,
       } : null,
       cost: this.npi.cost ? {
-        value: this.npi.cost.value ? 
+        value: this.npi.cost.value ?
           this.npi.cost.value.toFixed(2).toString().replace('.', ',')
-          :null,
-        currency: this.npi.cost.currency ? 
-          this.npi.cost.currency:null,
+          : null,
+        currency: this.npi.cost.currency ?
+          this.npi.cost.currency : null,
       } : null,
       projectCost: this.npi.projectCost ?
         {
           value: this.npi.projectCost.value ?
             this.npi.projectCost.value.toFixed(2).toString().replace('.', ',')
             : null,
-          currency: this.npi.projectCost.currency ? 
-            this.npi.projectCost.currency:null,
+          currency: this.npi.projectCost.currency ?
+            this.npi.projectCost.currency : null,
           annex: null
         } : null,
       investment: this.npi.investment ?
-      {
-        value: this.npi.investment.value ?
-          this.npi.investment.value.toFixed(2).toString().replace('.', ',')
-          : null,
-        currency: this.npi.investment.currency ? 
-          this.npi.investment.currency:null,
-        annex: null
-      } : null,
+        {
+          value: this.npi.investment.value ?
+            this.npi.investment.value.toFixed(2).toString().replace('.', ',')
+            : null,
+          currency: this.npi.investment.currency ?
+            this.npi.investment.currency : null,
+          annex: null
+        } : null,
     })
+  }
+
+  amITheOwner(): Boolean {
+    return this.npi.requester._id == this.npiComponent.user._id
   }
 
   fieldHasErrors(field) {
@@ -186,13 +208,13 @@ export class CustomComponent implements OnInit {
     return Object.keys((this.npiForm.get("regulations").get("standard") as FormArray).controls)
       .some(reg => this.npiForm.get("regulations").get("standard").get(reg).value == true)
   }
-  
+
   openFileAction(field) {
     if (!this.npi[field].annex || !this.npi[field].annex.length)
       this.npiComponent.openFileUploader(field)
     else this.npiComponent.openFileManager(field)
   }
-  
+
   updateParentForm() {
     this.npiFormOutput.emit(this.npiForm)
   }

@@ -171,7 +171,7 @@ export class MigrationToolComponent implements OnInit {
         'none': true,
         'standard': fb.group({}),
         'additional': null,
-        'description': 'Descricao das homologações/regulações aplicáveis',
+        'description': 'Descrição das homologações/regulações aplicáveis',
         'annex': null
       }),
       'cost': fb.group({
@@ -223,7 +223,6 @@ export class MigrationToolComponent implements OnInit {
     this.pixelCriticalDepts = this.utils.getPixelCriticalDepartments()
     this.nonPixelCriticalDepts = this.pixelCriticalDepts.slice(1)
     this.oemActivities = this.utils.getOemActivities()
-
   }
 
   ngOnInit() {

@@ -4,7 +4,7 @@ export const Globals = Object.freeze({
 	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
 	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
 	//ENPI_SERVER_URL: 'http://10.0.0.175:1110/e-npi/v2',
-	ENPI_SERVER_URL: 'http://191.252.113.160:3001/e-npi/v1',
+	ENPI_SERVER_URL: 'http://191.252.113.160:3002/e-npi/v1',
 	//ENPI_SERVER_URL : 'http://191.252.113.160:1110/e-npi/v2',
 	LOCAL_ENPI_URL: 'http://191.252.113.160:3001/e-npi/v1',
 
@@ -47,6 +47,7 @@ export const Globals = Object.freeze({
 		status: 'Status',
 		npiRef: 'NPI de Referência',
 		complexity: 'Complexidade',
+		designThinking: 'Design Thinking',
 		description: 'Requisitos',
 		annex: 'Anexos',
 		client: 'Cliente',
@@ -214,7 +215,7 @@ export const Globals = Object.freeze({
 		{ value: 'anatel', label: 'ANATEL' },
 		{ value: 'inmetro', label: 'INMETRO' },
 		{ value: 'anvisa', label: 'ANVISA' },
-		{ value: 'other', label: 'Outro(s)' }
+		{ value: 'other', label: 'Outra(s)' }
 	],
 
 	DEMAND_PERIODS: [

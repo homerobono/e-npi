@@ -152,7 +152,7 @@ export class ActivitiesComponent implements OnInit {
                     activity: activity.activity,
                     dept: activity.dept,
                     responsible: activity.responsible,
-                    term: null,
+                    term: this.fb.control({ value: null, disabled: this.npi.stage >= 4 }),
                     startDate: null,
                     endDate: null,
                     registry: activity.registry,
@@ -499,9 +499,12 @@ export class ActivitiesComponent implements OnInit {
 
     toggleFields(edit: Boolean) {
         this.activitiesFormArray.controls.forEach(control => {
-            if (edit) {
+            if (edit && this.npi.stage < 4) {
                 if (this.canChangeActivity(control)) control.enable({ emitEvent: false })
-            } else control.disable({ emitEvent: false })
+            } else if (edit && this.npi.stage >= 4 && this.canCloseActivity(control))
+                control.get("annex").enable()
+            else
+                control.disable({ emitEvent: false })
         })
     }
 
@@ -528,11 +531,19 @@ export class ActivitiesComponent implements OnInit {
     }
 
     canCloseActivity(activity: AbstractControl): Boolean {
-        return this.amIResponsible(activity) || this.canChangeActivity(activity)
+        //console.log(activity.value.activity, (new Date()) > this.getControlActivityStartDate(activity), this.getControlsDependencyActivities(activity).map(act => act.get("closed").value))
+        let user = this.npiComponent.user
+        return (this.amIResponsible(activity) || (user.level == 1 && user.department == activity.get('dept').value)) && this.canStartActivity(activity)
     }
 
     amIResponsible(activity: AbstractControl): Boolean {
         return this.npiComponent.user._id == activity.get('responsible').value
+    }
+
+    canStartActivity(activity: AbstractControl): Boolean {
+        return (new Date()) >= this.getControlActivityStartDate(activity) &&
+            (this.getControlsDependencyActivities(activity).every(act => act.get("closed").value) ||
+            this.getControlsDependencyActivities(activity).length == 0)
     }
 
     closeAllActivities() {
@@ -554,12 +565,12 @@ export class ActivitiesComponent implements OnInit {
         if (!confirm(
             "Tem certeza que deseja concluir essa atividade?")
         ) return;
-        let activityControl = this.activitiesFormArray.controls.find(a => a.get('_id').value == activity.value._id)
-        activityControl.patchValue({
+        //let activityControl = this.activitiesFormArray.controls.find(a => a.get('_id').value == activity.value._id)
+        activity.patchValue({
             endDate: new Date(),
             closed: true
         })
-        this.confirmCloseActivity.emit(activityControl)
+        this.confirmCloseActivity.emit(activity)
     }
 
     displayActivityRow(activity: AbstractControl) {

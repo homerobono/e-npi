@@ -6,6 +6,7 @@ import { UploaderComponent } from '../uploader/uploader.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FileManagerComponent } from '../file-manager.component';
 import { UploadService } from '../../services/upload.service';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'app-file-button',
@@ -20,12 +21,14 @@ export class FileButtonComponent implements OnInit {
   @Input() editFlag: Boolean = true
   @Input() canEdit: Boolean = true
   @Input() npiId: String
+  @Input() class: String
 
   private modalRef: BsModalRef
 
   constructor(
     private modalService: BsModalService,
     public uploadService: UploadService,
+    public utilService: UtilService
   ) { }
 
   ngOnInit() {
@@ -42,7 +45,7 @@ export class FileButtonComponent implements OnInit {
     const initialState = {
       npiId: this.npiId,
       field,
-      editFlag: this.editFlag
+      editFlag: this.editFlag && this.canEdit
     }
     this.modalRef = this.modalService.show( FileManagerComponent,
       {

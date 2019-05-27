@@ -98,6 +98,11 @@ export class InternalComponent implements OnInit {
       () => this.fillFormData()
     )
   }
+
+  amITheOwner(): Boolean {
+    return this.npi.requester._id == this.npiComponent.user._id
+  }
+
   fillNestedFormData(form: FormGroup | FormArray, model) {
     if (!this.npiComponent.editFlag) form.disable()
     Object.keys(form.controls).forEach((field: string) => {
@@ -106,7 +111,7 @@ export class InternalComponent implements OnInit {
         && model[field]) {
         this.fillNestedFormData(control, model[field])
       } else
-        if (model[field] != null && model[field] != undefined && !(model[field] instanceof Object)) {
+        if (model[field] != null && model[field] != undefined) {
           try {
             control.setValue(model[field])
           }

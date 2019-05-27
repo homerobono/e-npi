@@ -107,8 +107,8 @@ export class CreateComponent implements OnInit {
             'entry': 'pixel',
             'npiRef': null,
             'designThinking': fb.group({
-              'apply': null,
-              'annex': []
+                'apply': null,
+                'annex': []
             }),
             'description': fb.group({
                 'description': 'Requisitos gerais',
@@ -119,9 +119,10 @@ export class CreateComponent implements OnInit {
                 'annex': null
             }),
             'regulations': fb.group({
+                'none': true,
                 'standard': fb.group({}),
                 'additional': null,
-                'description': 'Descricao das homologações/regulações aplicáveis',
+                'description': 'Descrição das homologações/regulações aplicáveis',
                 'annex': null
             }),
             'cost': fb.group({
@@ -168,17 +169,25 @@ export class CreateComponent implements OnInit {
         npiService.npisList.subscribe(res => this.npisList = res)
 
         let regulations = utils.getRegulations()
-        let additionalArray = this.createForm.get('regulations').get('standard') as FormGroup
-        regulations.forEach(reg => {
-            additionalArray.addControl(reg.value, fb.control(null))
-        })
-
         this.createForm.get('npiRef').valueChanges.subscribe(res => { this.loadNpiRef(res) })
     }
 
     ngOnInit() {
         this.localeService.use('pt-br');
         this.oemDatePickerConfig = this.initDatePickerConfigArray(this.oemActivities.length)
+        let regulations = this.utils.getRegulations()
+        let additionalArray = this.createForm.get('regulations').get('standard') as FormGroup
+        regulations.forEach(reg => {
+            additionalArray.addControl(reg.value, new FormControl({
+                value: false, disabled: this.createForm.get("regulations").get("none").value
+            }))
+        })
+        this.createForm.get("regulations").get("none").valueChanges.subscribe(value => {
+            let action = value ? 'disable' : 'enable'
+            this.createForm.get("regulations").get("standard")[action]()
+            this.createForm.get("regulations").get("additional")[action]()
+            this.createForm.get("regulations").get("description")[action]()
+        })
         this.subscribeToInputChanges()
         //setTimeout(() => this.openUploadModal("resources"), 600)
     }
