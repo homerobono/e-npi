@@ -28,6 +28,7 @@ import { UsersService } from 'src/app/services/users.service';
 import User from 'src/app/models/user.model';
 import { FileManagerComponent } from 'src/app/file-manager/file-manager.component';
 import { isDate } from 'rxjs/internal/util/isDate';
+import { isBoolean } from 'util';
 
 defineLocale('pt-br', ptBrLocale)
 const DAYS = 24 * 3600 * 1000
@@ -248,7 +249,6 @@ export class MigrationEditComponent implements OnInit {
   }
 
   fillFormData() {
-
     this.fillNestedFormData(this.migrateForm, this.npi)
 
     this.migrateForm.patchValue({
@@ -346,7 +346,7 @@ export class MigrationEditComponent implements OnInit {
         if (model[field] != null && model[field] != undefined) {
           try {
             //console.log("Setting value of " + field + ' to ' + model[field])
-            if (isDate(model[field]))
+            if (isDate(model[field]) || isBoolean(model[field]))
               control.setValue(model[field])
             else
               control.setValue(model[field].toString())

@@ -151,7 +151,7 @@ export class ActivitiesComponent implements OnInit {
                     _id: activity._id,
                     activity: activity.activity,
                     dept: activity.dept,
-                    responsible: activity.responsible,
+                    responsible: this.fb.control({ value: activity.responsible, disabled: activity.closed || !this.canDefineActivities() }),
                     term: this.fb.control({ value: null, disabled: this.npi.stage >= 4 }),
                     startDate: null,
                     endDate: null,
@@ -530,6 +530,15 @@ export class ActivitiesComponent implements OnInit {
             )
     }
 
+    canDefineActivities(): Boolean {
+        let user = this.npiComponent.user
+        return user.level > 1 || (
+            user.level == 1 && (
+                (user.department == 'MPR' && this.npi.stage == 2)
+            )
+        )
+    }
+
     canCloseActivity(activity: AbstractControl): Boolean {
         //console.log(activity.value.activity, (new Date()) > this.getControlActivityStartDate(activity), this.getControlsDependencyActivities(activity).map(act => act.get("closed").value))
         let user = this.npiComponent.user
@@ -543,7 +552,7 @@ export class ActivitiesComponent implements OnInit {
     canStartActivity(activity: AbstractControl): Boolean {
         return (new Date()) >= this.getControlActivityStartDate(activity) &&
             (this.getControlsDependencyActivities(activity).every(act => act.get("closed").value) ||
-            this.getControlsDependencyActivities(activity).length == 0)
+                this.getControlsDependencyActivities(activity).length == 0)
     }
 
     closeAllActivities() {
@@ -560,16 +569,17 @@ export class ActivitiesComponent implements OnInit {
         this.confirmCloseActivity.emit()
     }
 
-    closeActivity(activity) {
+    closeActivity(activity: FormGroup) {
         //console.log(activity)
         if (!confirm(
             "Tem certeza que deseja concluir essa atividade?")
         ) return;
-        //let activityControl = this.activitiesFormArray.controls.find(a => a.get('_id').value == activity.value._id)
+        let activityControl = this.activitiesFormArray.controls.find(a => a.get('_id').value == activity.value._id)
         activity.patchValue({
             endDate: new Date(),
             closed: true
         })
+        //console.log(activity.value, activity.getRawValue() )
         this.confirmCloseActivity.emit(activity)
     }
 

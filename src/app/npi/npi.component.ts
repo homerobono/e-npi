@@ -308,7 +308,7 @@ export class NpiComponent implements OnInit {
 
   closeActivity(activityControl) {
     let form = this.npiForm.value
-    form.activities = [activityControl.value]
+    form.activities = [activityControl.getRawValue()]
     this.saveNpi(this.npiForm.value)
   }
 
