@@ -584,7 +584,7 @@ export class ActivitiesComponent implements OnInit {
     }
 
     displayActivityRow(activity: AbstractControl) {
-        if (activity.get("apply").value || (this.npi.stage == 2 && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
+        if (activity.get("apply").value || ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isApproved() && this.npiComponent.canIChangeActivities))
             return "table-row"
         return "none"
     }

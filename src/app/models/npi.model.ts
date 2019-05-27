@@ -300,7 +300,7 @@ class Npi {
     }
 
     public isCriticallyApproved(): Boolean {
-        if (this.critical) {
+        if (this.critical && this.critical.length) {
             return this.critical.every(
                 analysis => analysis.status == 'accept'
             ) || this.finalApproval.status == 'accept'
@@ -309,7 +309,7 @@ class Npi {
     }
 
     public isApproved(): Boolean {
-        if (this.critical) {
+        if (this.critical && this.critical.length) {
             if (this.isCriticallyApproved())
                 if (this.entry == 'oem')
                     return (this.clientApproval && this.clientApproval.approval == 'accept')

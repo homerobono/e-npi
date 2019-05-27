@@ -40,7 +40,8 @@
         <i class='fa fa-arrow-right fa-fw'></i>
       </button>
       <button (click)='npiComponent.saveNpi(npiComponent.npiForm.value)' class='btn btn-primary' *ngIf='npiComponent.editFlag && (npi.stage == 2 || npi.stage == 3) && !npiComponent.newFormVersionFlag && npi.isApproved() && npiComponent.isReleaseEstimateDelayed'
-        data-toggle="tooltip" data-placement="top" title="Avançar para desenvolvimento com data de lançamento em atraso">
+        data-toggle="tooltip" data-placement="top" disabled title="Recurso temporariamente indisponível, aguarde próxima atualização">
+        <!--title="Avançar para desenvolvimento com data de lançamento em atraso"-->
         <i class='fa fa-warning fa-fw'></i>
       </button>
       <button (click)='npiComponent.finalizeNpi()' class='btn btn-primary text-white' *ngIf='npiComponent.editFlag && npi.stage == 4 && npiComponent.canCloseNpi()'

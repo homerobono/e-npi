@@ -192,9 +192,9 @@
           <i class='fa fa-arrow-right fa-fw'></i>
           Avançar para Desenvolvimento
         </button>
-        <button type="submit" class="btn btn-outline-primary w-100" [disabled]="sendingForm"
+        <button type="submit" class="btn btn-outline-primary w-100" [disabled]="sendingForm || true"
           *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && isReleaseEstimateDelayed && !npi.isRequestRegistered("DELAYED_RELEASE")'
-          disabled data-toggle="tooltip" data-placement="top" title="Recurso temporariamente indisponível, aguarde próxima atualização">
+          data-toggle="tooltip" data-placement="top" title="Recurso temporariamente indisponível, aguarde próxima atualização">
           <i class='fa fa-warning fa-fw'></i>
           Avançar para Desenvolvimento com Data de Lançamento em Atraso
         </button>

@@ -273,7 +273,7 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    if ((this.npi.stage == 2 || this.npi.stage == 3) && this.isFinalApproval()) {
+    if ((this.npi.stage == 2 && this.isFinalApproval()) || (this.npi.stage == 3 && this.isClientApproval()) ) {
       if (this.npi.activities.length && this.isReleaseEstimateDelayed)
         if (!this.npi.isRequestOpen('DELAYED_RELEASE')){
           if (!confirm(
