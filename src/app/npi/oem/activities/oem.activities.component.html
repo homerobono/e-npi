@@ -62,7 +62,7 @@
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td>
-              <app-file-button *ngIf='utils.getOemActivity(activity.get("activity").value).annex' [fieldControl]='activity'
+              <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' *ngIf='utils.getOemActivity(activity.get("activity").value).annex' [fieldControl]='activity'
                 [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiId]='npi.id'
                 [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
             </td>

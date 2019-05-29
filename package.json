@@ -1,6 +1,6 @@
 {
   "name": "enpi-client",
-  "version": "0.5.27",
+  "version": "1.5.29",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -27,6 +27,7 @@
     "@ng-bootstrap/ng-bootstrap": "^2.2.2",
     "@ngtools/webpack": "^6.2.1",
     "angular": "^1.7.4",
+    "angular-progress-http": "^1.0.0",
     "angular2-text-mask": "^9.0.0",
     "bootstrap": "^4.1.3",
     "chart.js": "^2.7.2",

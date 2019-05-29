@@ -209,7 +209,7 @@ export class NpiComponent implements OnInit {
 
   getNpi(npiNumber) {
     //console.log('getting npi ' + npiNumber)
-    this.npiService.getNpi(npiNumber).takeUntil(this.ngUnsubscribe)
+    this.npiService.getNpi(npiNumber).takeUntil(this.ngUnsubscribe).retry(5)
       .subscribe(
         npis => {
           this.npi = npis[0]
@@ -225,7 +225,7 @@ export class NpiComponent implements OnInit {
           //this.resetFormFlagSubject.next()
         }, err => {
           this.location.replaceState(null)
-          this.router.navigateByUrl('/error')
+          this.router.navigateByUrl('/home')
         }
       )
   }
@@ -256,6 +256,7 @@ export class NpiComponent implements OnInit {
     }
     console.log(npiForm)
 
+    this.openSendingFormModal()
     if (this.newFormVersionFlag) {
       console.log('creating NPI version: ')
       npiForm.number = this.npi.number
@@ -273,14 +274,15 @@ export class NpiComponent implements OnInit {
   }
 
   saveNpi(npiForm) {
-    if ((this.npi.stage == 2 && this.isFinalApproval()) || (this.npi.stage == 3 && this.isClientApproval()) ) {
+    if ((this.npi.stage == 2 && this.isFinalApproval()) || (this.npi.stage == 3 && this.isClientApproval())) {
       if (this.npi.activities.length && this.isReleaseEstimateDelayed)
-        if (!this.npi.isRequestOpen('DELAYED_RELEASE')){
+        if (!this.npi.isRequestOpen('DELAYED_RELEASE')) {
           if (!confirm(
             "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
           this.submitNpi(npiForm)
+          console.log("PROMOTING NPI")
       this.promoteNpi(npiForm)
     } else {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
@@ -480,9 +482,12 @@ export class NpiComponent implements OnInit {
   openFileManager(field) {
     const initialState = {
       npiId: this.npi.id,
+      npiNumber: this.npi.number,
+      npiVersion: this.npi.version,
       field,
       editFlag: this.editFlag
     }
+    console.log("opening modal com", initialState)
     this.modalRef = this.modalService.show(
       FileManagerComponent,
       {
@@ -598,16 +603,18 @@ export class NpiComponent implements OnInit {
   }
 
   iHavePendingTask() {
-    return this.user.level == 2 || this.npi.activities.some(activity =>
+    return this.npi.activities && (this.user.level == 2 || this.npi.activities.some(activity =>
       !activity.closed && // em aberto
       (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
         this.user.department == activity.dept && this.user.level >= 1)
-      )) ||
-      this.npi.oemActivities.some(activity =>
-        !activity.closed && // em aberto
-        (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
-          this.user.department == activity.dept && this.user.level >= 1)
-        ))
+      )) || (this.npi.oemActivities &&
+        this.npi.oemActivities.some(activity =>
+          !activity.closed && // em aberto
+          (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+            this.user.department == activity.dept && this.user.level >= 1)
+          ))
+      )
+    )
   }
 
   amITheOwner(): Boolean {

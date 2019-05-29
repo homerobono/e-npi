@@ -3,6 +3,7 @@ import FileElement from '../../../models/file.model';
 import { FileService } from '../../../services/file.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { BsModalRef } from 'ngx-bootstrap';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-preview',
@@ -23,15 +24,17 @@ export class PreviewComponent implements OnInit {
 
   ngOnInit() {
     this.fileService.download(this.currentPath, this.element.name).subscribe(
-      data => {
-        console.log('File downloaded')
-        this.dataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(data));
-        //this.dataUrl = window.URL.createObjectURL(data);
+      (event: any) => {
+        if (event.type == HttpEventType.Response) {
+          console.log('File downloaded')
+          this.dataUrl = this.sanitizer.bypassSecurityTrustResourceUrl(window.URL.createObjectURL(event.body));
+          //this.dataUrl = window.URL.createObjectURL(data);
+        }
       })
   }
 
-  getFileType(){
-    if (this.element){
+  getFileType() {
+    if (this.element) {
       let extension = this.element.name.split('.').pop()
       if (['pdf'].some(ext => extension.includes(ext)))
         return 'pdf'

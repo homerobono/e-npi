@@ -114,7 +114,7 @@ export class UtilService {
   getTimeDifference(end: Date, start: Date): String {
     if (!end) end = new Date()
     if (!start) start = new Date()
-    var diff = Math.abs(end.getTime() - start.getTime()) / 1000
+    var diff = Math.abs(end.valueOf() - start.valueOf()) / 1000
     var rest = null
     var suffix = 's'
     var rest_suffix = null
@@ -147,14 +147,15 @@ export class UtilService {
               rest_suffix = diff < 4 && rest > 0.5 ?
                 (rest >= 2 ? ' meses' : ' mês')
                 : null
-              suffix = ' ano' + (diff > 1 ? 's' : '') +
+              suffix = ' ano' + (diff >= 2 ? 's' : '') +
                 (rest_suffix ? ' e ' : '')
             }
           }
         }
       }
     }
-    return diff.toFixed(0) + suffix + (rest_suffix ? rest.toFixed(0) + rest_suffix : '')
+    console.log()
+    return Math.floor(diff) + suffix + (rest_suffix ? Math.floor(rest) + rest_suffix : '')
   }
 
 }

@@ -48,14 +48,25 @@ export class ExplorerComponent {
 
   open(event: MouseEvent, element: FileElement): void {
     event.stopPropagation()
-    if (element.isFolder()) {
+    if (element.isFolder())
       this.navigate(element)
-    } else
+    else if (this.canPreview(element))
       this.openPreview(element)
+    else this.downloadElement(element)
   }
 
   openPreview(element: FileElement): void {
     this.preview.emit(element)
+  }
+
+  canPreview(element): Boolean {
+    if (element) {
+      let extension = element.name.split('.').pop()
+      if (['pdf'].some(ext => extension.includes(ext)) ||
+        ['jpg', 'jpeg', 'bmp', 'png', 'gif'].some(ext => extension.includes(ext)))
+        return true
+    }
+    return false
   }
 
   deleteElement(element: FileElement) {

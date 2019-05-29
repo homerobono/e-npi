@@ -207,19 +207,19 @@ export class CreateComponent implements OnInit {
 
         this.resolveSubmission
             .finally(() => {
+                console.log('All complete');
                 this.sendingForm = false;
                 //setTimeout(()=> this.modalRef.hide(), 500)
             })
             .subscribe(res => {
-                console.log('All complete');
                 console.log(res);
+                /*this.formSent = true;
                 this.messenger.set({
                     'type': 'success',
-                    'message': 'NPI cadastrado com sucesso'
+                    'message': 'NPI cadastrada com sucesso'
                 });
-                this.formSent = true;
-                this.clearFields();
-                this.router.navigateByUrl('/npi/' + res.create.data.number)
+                this.clearFields();*/
+                //this.router.navigateByUrl('/npi/' + res.create.data.number)
             }, err => {
                 this.invalidFieldsError(err)
                 this.formSent = false;
@@ -232,7 +232,7 @@ export class CreateComponent implements OnInit {
             var errors = err.error.message.errors
             console.log(errors)
             var errorFields = Object.keys(errors)
-            var invalidFieldsMessage = 'Corrija o' +
+            var invalidFieldsMessage = 'Falha ao submeter para análise crítica: corrija o' +
                 (errorFields.length == 1 ? ' campo ' : 's campos ')
             try {
                 for (let i = 0; i < errorFields.length; i++) {
@@ -264,42 +264,64 @@ export class CreateComponent implements OnInit {
                 console.log('NPI created');
                 console.log(create.data);
                 if (this.uploadService.totalSize) this.openSendingFormModal()
-                return this.uploadService.upload(create.data._id).map(
+                return this.uploadService.upload(create.data._id).take(1).map(
                     upload => {
                         var res = { create, upload }
+                        this.router.navigateByUrl('/npi/' + create.data.number)
+                        console.log(res);
+                        this.formSent = true;
+                        this.messenger.set({
+                            'type': 'success',
+                            'message': 'NPI cadastrada com sucesso'
+                        });
+                        this.clearFields();
                         console.log(res)
                         return res
                     }
                 )
             })
-
         this.createNpi()
     }
 
     submitToAnalysis() {
-        this.createForm.value.stage = 2
+        this.createForm.value.stage = 1
         this.resolveSubmission = this.npiService.createNpi(this.createForm.value)
-            .switchMap(create => {
+            .concatMap(create => {
                 console.log('NPI created');
+                this.messenger.set({
+                    'type': 'success',
+                    'message': 'NPI cadastrada com sucesso'
+                });
                 console.log(create.data);
                 if (this.uploadService.totalSize) this.openSendingFormModal()
-                return this.uploadService.upload(create.data._id).map(
+                return this.uploadService.upload(create.data._id).take(1).map(
                     upload => {
+                        console.log(upload)
                         var res = { create, upload }
                         console.log(res)
+                        this.router.navigateByUrl('/npi/' + create.data.number)
                         return res
                     }
                 )
-            }).switchMap(
+            }).concatMap(
                 createUpload => {
-                    console.log('Promoting NPI', createUpload.create.data.number);
-                    return this.npiService.promoteNpi(createUpload.create.data.number)
+                    console.log('Promoting NPI', createUpload['create'].data.number);
+                    return this.npiService.promoteNpi(createUpload['create'].data.number)
                         .map(promote => {
-                            return {
+                            let res = {
                                 promote,
-                                create: createUpload.create,
-                                upload: createUpload.upload
+                                create: createUpload['create'],
+                                upload: createUpload['upload']
                             }
+                            console.log(res);
+                            this.formSent = true;
+                            this.messenger.set({
+                                'type': 'success',
+                                'message': 'NPI submetida para análise crítica'
+                            });
+                            this.clearFields();
+                            this.router.navigateByUrl('/npi/' + createUpload['create'].data.number)
+                            return res
                         })
                 }
             )

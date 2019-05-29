@@ -17,14 +17,15 @@ export class SendingFormModalComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.uploadService.onCompleteUploadReplay.subscribe( 
+    this.uploadService.onCompleteUpload.subscribe( 
     (res) => {
       if (res){
+        console.log('Closing Modal: onCompleteUploadReplay called')
         this.finished = true
         this.modalRef.hide()
       }
     })
-    if (!this.uploadService.isUploading)
+    if (!this.uploadService.isUploading || this.finished)
       this.modalRef.hide()
   }
 

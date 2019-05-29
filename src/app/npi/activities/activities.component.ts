@@ -572,7 +572,7 @@ export class ActivitiesComponent implements OnInit {
     closeActivity(activity: FormGroup) {
         //console.log(activity)
         if (!confirm(
-            "Tem certeza que deseja concluir essa atividade?")
+            "Depois de concluída a alteração de uma atividade só é possível mediante solicitação e análise crítica. Tem certeza que deseja concluir essa atividade?")
         ) return;
         let activityControl = this.activitiesFormArray.controls.find(a => a.get('_id').value == activity.value._id)
         activity.patchValue({

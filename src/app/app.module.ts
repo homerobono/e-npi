@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatepickerModule, BsDatepickerModule, ModalModule } from 'ngx-bootstrap';
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpModule } from "@angular/http";
+import { ProgressHttpModule } from "angular-progress-http";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -98,6 +100,8 @@ import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migr
   imports: [
     BrowserModule,
     HttpClientModule,
+    HttpModule,
+    ProgressHttpModule,
     FormsModule, 
     ReactiveFormsModule,
     BrowserModule, BrowserAnimationsModule,
@@ -109,7 +113,7 @@ import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migr
     ClickOutsideModule,
     PaginationModule.forRoot(),
     RoutingModule,
-    FileManagerModule
+    FileManagerModule,
   ],
   providers: [
     UsersService,
@@ -130,7 +134,7 @@ import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migr
     FileManagerComponent, 
     NpiChooserModalComponent,
     UploaderComponent,
-    SendingFormModalComponent
+    SendingFormModalComponent,
   ]
 })
 export class AppModule { }

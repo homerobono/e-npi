@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader, FileItem, FileLikeObject } from 'ng2-file-upload';
 import { Observable } from 'rxjs/Observable';
 import { FileService } from '../../services/file.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
@@ -20,6 +20,7 @@ export class UploaderComponent implements OnInit {
   public uploader: FileUploader = new FileUploader({})
   public field: string
   public hasBaseDropZoneOver: boolean = false;
+  public totalSize: String
 
   public fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
@@ -34,12 +35,13 @@ export class UploaderComponent implements OnInit {
   ngOnInit() {
     if (this.uploadService.uploaders[this.field])
       this.uploader = this.uploadService.uploaders[this.field]
+    this.uploader.onAfterAddingFile = (file: FileItem) => this.updateTotalSize()
   }
 
   @HostListener('window:keyup', ['$event'])
   keyUpEvent(e) {
     e.stopPropagation()
-    if (e.keyCode == 13){
+    if (e.keyCode == 13) {
       this.confirm()
     }
   }
@@ -49,4 +51,19 @@ export class UploaderComponent implements OnInit {
     this.modalRef.hide()
   }
 
+  removeItem(item: FileItem) {
+    item.remove()
+    this.updateTotalSize()
+  }
+
+  removeAll() {
+    this.uploader.clearQueue()
+  }
+
+  updateTotalSize() {
+    let totalSize = this.uploader.queue.map((f: FileItem) => f.file.size)
+      .reduce((acc, size) => acc + size, 0)
+    if (totalSize) this.totalSize = (totalSize / 1024 / 1024).toFixed(2) + ' MB'
+    else this.totalSize = ''
+  }
 }

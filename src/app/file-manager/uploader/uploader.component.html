@@ -1,6 +1,6 @@
 <div class="modal-content">
   <div class="modal-header bg-light-gray">
-    <h4>Anexar Arquivos: {{ utils.getLabel(field) }}</h4>
+    <h4>Anexos de {{ utils.getLabel(field) }}</h4>
   </div>
   <div class="modal-body pt-1 pb-1">
     <div class="row">
@@ -18,8 +18,7 @@
       </div>
 
       <div class="col-md-8 p-4 pt-0 mt-0" style="max-height:250px">
-        <h5>Anexos</h5>
-        <small>Número de arquivos: {{ uploader?.queue?.length }}</small>
+        <h5>{{ uploader?.queue?.length }} anexo{{uploader?.queue?.length != 1 ? 's' : '' }}{{ totalSize? ', ' + totalSize : '' }}</h5>
         <div style='overflow-y: auto; max-height:220px' class='mb-2'>
           <table class="table text-left table-sm">
             <thead>
@@ -32,13 +31,13 @@
             <tbody>
               <tr *ngFor="let item of uploader.queue">
                 <td>
-                  <strong>{{ item?.file?.name }}</strong>
+                  {{ item?.file?.name }}
                 </td>
                 <td nowrap>
                   {{ (item?.file?.size/1024/1024).toFixed(2) | number:'.2' }} MB
                 </td>
                 <td nowrap>
-                  <span class="remove-item pointer fa fa-times fa-sm" (click)="item.remove()">
+                  <span class="remove-item pointer fa fa-times fa-sm" (click)="removeItem(item)">
                   </span>
                 </td>
               </tr>
@@ -46,7 +45,7 @@
           </table>
         </div>
         <div>
-          <button type="button" class="btn btn-outline-danger btn-sm shadow-none" (click)="uploader.clearQueue()" [disabled]="!uploader.queue.length">
+          <button type="button" class="btn btn-outline-danger btn-sm shadow-none" (click)="removeAll()" [disabled]="!uploader.queue.length">
             <span class="fa fa-trash"></span> Remover Todos
           </button>
         </div>

@@ -21,6 +21,8 @@ export class FileButtonComponent implements OnInit {
   @Input() editFlag: Boolean = true
   @Input() canEdit: Boolean = true
   @Input() npiId: String
+  @Input() npiNumber: Number
+  @Input() npiVersion: Number
   @Input() class: String
 
   private modalRef: BsModalRef
@@ -44,6 +46,8 @@ export class FileButtonComponent implements OnInit {
   openFileManager(field : string) {
     const initialState = {
       npiId: this.npiId,
+      npiNumber: this.npiNumber,
+      npiVersion: this.npiVersion,
       field,
       editFlag: this.editFlag && this.canEdit
     }

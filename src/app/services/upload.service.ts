@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FileUploader, FileUploaderOptions, FileItem } from 'ng2-file-upload';
 import { Globals } from 'config';
-import { Subject, BehaviorSubject, of, Observable } from 'rxjs';
+import { Subject, BehaviorSubject, of, Observable, Observer } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap';
 import { SendingFormModalComponent } from '../npi/sending-form-modal/sending-form-modal.component';
 import { isNgTemplate } from '@angular/compiler';
@@ -14,7 +14,7 @@ const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
 export class UploadService {
 
   public uploaders: Object = new Object()
-  public onCompleteUpload: BehaviorSubject<any>
+  public onCompleteUpload: Subject<any>
   public onCompleteUploadReplay: Observable<any>
   public totalSize: number
   public progress: Number = 0
@@ -28,7 +28,7 @@ export class UploadService {
 
   constructor() {
     console.log("Constructing uploader Service")
-    this.onCompleteUpload = new BehaviorSubject<Boolean>(false)
+    this.onCompleteUpload = new Subject<Boolean>()
     this.onCompleteUploadReplay = this.onCompleteUpload.asObservable()
     this.uploaders = new Object()
   }
@@ -46,13 +46,22 @@ export class UploadService {
   }
 
   upload(id) {
+    return Observable.create((observer: any) => {
+      this.onCompleteUpload.subscribe(res => observer.next(res))
+      setTimeout(() => this.executeUpload(id), 100)
+      //observer.next()
+    })
+  }
+
+  executeUpload(id) {
     this._id = id
     let fields = Object.keys(this.uploaders)
 
+    console.log(fields.length)
     if (!fields.length) {
-      this.onCompleteUpload.next(true)
+      this.onCompleteUpload.next('No uploads to make')
       //this.onCompleteUpload.next(false)
-      return of(['No uploads to make'])
+      return// of(['No uploads to make'])
     }
 
     fields.sort(this.sortByTotalSize())
@@ -71,7 +80,7 @@ export class UploadService {
     this.prevTime = Date.now()
     this.uploaders[fields[0]].uploadAll()
 
-    return this.onCompleteUpload
+    //return this.onCompleteUploadReplay
   }
 
   addUploader(subject: string, uploader: FileUploader) {

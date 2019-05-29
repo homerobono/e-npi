@@ -28,11 +28,13 @@
           </div>
         </div>
         <div class='btn-group' role='group'>
-          <button type='button' class='btn btn-primary' (click)='downloadAll()'>
+          <button type='button' class='btn btn-primary' (click)='downloadAll()' data-toggle="tooltip" data-placement="top"
+          title="Baixar todos os arquivos">
             <span class='fa fa-download fa-fw'></span>
           </button>
           <button type='button' class="btn btn-success" (click)='openUploadModal()' [disabled]='!editFlag'>
-            <span class='fa fa-upload fa-fw'></span>
+            <span class='fa fa-upload fa-fw' data-toggle="tooltip" data-placement="top"
+            title="Selecionar arquivos para upload"></span>
           </button>
         </div>
       </div>

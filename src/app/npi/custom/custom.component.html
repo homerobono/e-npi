@@ -49,7 +49,7 @@
           formControlName='apply' #designThinkingApply>
         <label class="custom-control-label" for="designThinking">Design Thinking</label>
       </div>
-      <app-file-button class="input-group-append p-0" style='z-index: 0' id="designThinkingAppend"
+      <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' id="designThinkingAppend"
         [fieldControl]='npiForm.get("designThinking")' [fieldLabel]='"designThinking"' [npiId]='npi.id'
         [editFlag]='npiComponent.editFlag && !((!npiComponent.editFlag && !npi.designThinking?.annex?.length) || !designThinkingApply.checked)'
         [canEdit]='amITheOwner() && (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved()
@@ -69,7 +69,7 @@
       <textarea class="form-control" rows=5 formControlName='description' id='descriptionDescription'
         [ngClass]='{"is-invalid": fieldHasErrors("description")}'>
         </textarea>
-      <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("description")'
+      <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("description")'
         [fieldLabel]='"description"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
         [canEdit]='amITheOwner() && 
         (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
@@ -87,7 +87,7 @@
         <textarea class="form-control" rows=3 formControlName='description' id='resourcesDescription'
           [ngClass]='{"is-invalid": fieldHasErrors("resources")}'>
         </textarea>
-        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("resources")'
+        <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("resources")'
           [fieldLabel]='"resources"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
           [canEdit]='amITheOwner() && 
         (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
@@ -131,7 +131,7 @@
         <textarea class="form-control" rows=3 formControlName='description' id='regulationsDescription'
           [ngClass]='{"is-invalid": fieldHasErrors("regulations.description")}'>
         </textarea>
-        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("regulations")'
+        <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("regulations")'
           [fieldLabel]='"regulations"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
           [canEdit]='amITheOwner() && 
         (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
@@ -234,7 +234,7 @@
         </div>
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value'
           placeholder='00,00' aria-describedby="Investimento" [ngClass]='{"is-invalid": fieldHasErrors("investment")}'>
-        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("investment")'
+        <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("investment")'
           [fieldLabel]='"investment"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
           [canEdit]='amITheOwner() && 
           (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>
@@ -256,7 +256,7 @@
         <input class='form-control' type='text' [textMask]="npiComponent.currencyMask" formControlName='value'
           placeholder='00,00' aria-describedby="Custo do Projeto"
           [ngClass]='{"is-invalid": fieldHasErrors("projectCost")}'>
-        <app-file-button class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("projectCost")'
+        <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' class="input-group-append p-0" style='z-index: 0' [fieldControl]='npiForm.get("projectCost")'
           [fieldLabel]='"projectCost"' [npiId]='npi.id' [editFlag]='npiComponent.editFlag'
           [canEdit]='amITheOwner() && 
           (npi.stage == 1 || (npi.stage == 2 && !npi.isCriticallyApproved() && (npi.hasCriticalDisapproval() || !npi.hasCriticalApproval())))'>

@@ -10,6 +10,9 @@ import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
 import { PreviewComponent } from './modals/preview/preview.component';
 import { UploaderComponent } from './uploader/uploader.component';
+import { DownloadingModalComponent } from './modals/download-component/downloading-modal.component';
+import { HttpEventType, HttpEvent } from '@angular/common/http';
+import { UtilService } from '../services/util.service';
 
 @Component({
   selector: 'app-file-manager',
@@ -23,6 +26,8 @@ export class FileManagerComponent implements OnInit {
   rootPath: String;
   npiId: String;
   field: String;
+  npiNumber: Number;
+  npiVersion: Number;
   relativePath: String;
   currentPath: String;
   canNavigateUp = false;
@@ -30,10 +35,12 @@ export class FileManagerComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
+    public downloadModalRef: BsModalRef,
     public subModalRef: BsModalRef,
     private modalService: BsModalService,
     private fileService: FileService,
-    private uploader: UploadService
+    private uploader: UploadService,
+    private utils: UtilService
   ) {
   }
 
@@ -89,27 +96,39 @@ export class FileManagerComponent implements OnInit {
   }
 
   downloadAll() {
-    let fileName = 'NPI#' + this.currentPath.replace(/\//g, '') + ' Anexos.zip'
+    let fieldLabel = this.utils.getLabel(this.field)
+    console.log(fieldLabel)
+    let fileName = `NPI-${this.npiNumber}-v${this.npiVersion}-${fieldLabel.replace(/ /g, '_')}-Anexos.zip`
     console.log(fileName)
-    this.fileService.download(this.currentPath, '').subscribe(
+    /*this.fileService.download(this.currentPath, '').subscribe(
       data => {
         console.log('saving data')
         saveAs(data, fileName)
+        this.downloadModalRef.hide()
       }
-    )
+    )*/
+    this.downloadModalRef = this.modalService.show(DownloadingModalComponent, {
+      class: 'modal-md modal-dialog-centered',
+      backdrop: 'static',
+      keyboard: false
+    })
+    this.downloadModalRef.content.downloading = true
+    this.downloadModalRef.content.downloadObservable =
+      //this.fileService.getData(this.currentPath, element.name)
+    this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, ''), new FileElement({name: fileName}))
   }
 
   downloadElement(element: FileElement) {
-    let fileName = element.name + (element.isFolder() ? '.zip' : '')
-    this.fileService.download(this.currentPath, element.name).subscribe(
-      data => {
-        console.log('saving data: ', data)
-        saveAs(data, fileName)
-        var downloadUrl = window.URL.createObjectURL(data);
-        window.open(downloadUrl)
-        //return downloadUrl
-      }
-    )
+    //this.openDownloadModal()
+    this.downloadModalRef = this.modalService.show(DownloadingModalComponent, {
+      class: 'modal-md modal-dialog-centered',
+      backdrop: 'static',
+      keyboard: false
+    })
+    this.downloadModalRef.content.downloading = true
+    this.downloadModalRef.content.downloadObservable =
+      //this.fileService.getData(this.currentPath, element.name)
+    this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, element.name), element)
   }
 
   removeElement(element: FileElement) {
@@ -177,6 +196,15 @@ export class FileManagerComponent implements OnInit {
       initialState: { field: this.field },
       class: 'modal-lg modal-dialog-centered upload-modal'
     });
+  }
+
+  openDownloadModal() {
+    this.downloadModalRef = this.modalService.show(DownloadingModalComponent, {
+      class: 'modal-md modal-dialog-centered',
+      backdrop: 'static',
+      keyboard: false
+    })
+    this.downloadModalRef.content.downloading = true
   }
 
 }

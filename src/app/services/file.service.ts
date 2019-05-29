@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
 
 import { v4 } from 'uuid';
 import FileElement from '../models/file.model';
@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Globals } from 'config';
 import { ResponseContentType, Response } from '@angular/http';
+import { ProgressHttp } from "angular-progress-http";
 
 export interface IFileService {
   add(path: String, folderName: String);
@@ -82,10 +83,38 @@ export class FileService implements IFileService {
     return this.http.get(this.downloadUrl, { 
       headers,
       responseType: 'blob',
-      observe: 'body',
+      observe: 'events',
       reportProgress: true,
       params
     })
+  }
+
+  getData(path: String, fileName: String) {
+    const fullFileName = path as string + fileName as string
+    const headers = new HttpHeaders().set('content-type', 'application/blob');
+    const params = new HttpParams().set('path', fullFileName)
+    const req = new HttpRequest('GET', this.downloadUrl, {
+      reportProgress: true,
+      params
+    });
+
+    return this.http.request(req)
+    /*.subscribe((event: HttpEvent<any>) => {
+      switch (event.type) {
+        case HttpEventType.Sent:
+          console.log('Request sent!');
+          break;
+        case HttpEventType.ResponseHeader:
+          console.log('Response header received!');
+          break;
+        case HttpEventType.DownloadProgress:
+          const kbLoaded = Math.round(event.loaded / 1024);
+          console.log(`Download in progress! ${ kbLoaded }Kb loaded`);
+          break;
+        case HttpEventType.Response:
+          console.log('😺 Done!', event.body);
+      }
+    });*/
   }
 
   delete(path: String, elementName: String) {
