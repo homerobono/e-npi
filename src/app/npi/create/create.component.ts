@@ -102,8 +102,8 @@ export class CreateComponent implements OnInit {
         this.createForm = fb.group({
             'date': new Date().toLocaleDateString('pt-br'),
             'complexity': 2,
-            'client': 'Pixel',
-            'name': 'Versões',
+            'client': '',
+            'name': '',
             'entry': 'pixel',
             'npiRef': null,
             'designThinking': fb.group({
@@ -111,45 +111,45 @@ export class CreateComponent implements OnInit {
                 'annex': []
             }),
             'description': fb.group({
-                'description': 'Requisitos gerais',
+                'description': '',
                 'annex': null
             }),
             'resources': fb.group({
-                'description': 'Recursos necessários',
+                'description': '',
                 'annex': null
             }),
             'regulations': fb.group({
                 'none': true,
                 'standard': fb.group({}),
                 'additional': null,
-                'description': 'Descrição das homologações/regulações aplicáveis',
+                'description': '',
                 'annex': null
             }),
             'cost': fb.group({
-                'value': '30,00',
+                'value': '',
                 'currency': 'BRL'
             }),
             'price': fb.group({
-                'value': '90,00',
+                'value': '',
                 'currency': 'BRL'
             }),
             'inStockDateType': 'fixed',
             'inStockDate': oemDefaultDeadLine,
             'investment': fb.group({
-                'value': '50000,00',
+                'value': '',
                 'currency': 'BRL',
                 'annex': null
             }),
             'projectCost': fb.group({
-                'value': '10000,00',
+                'value': '',
                 'currency': 'BRL',
                 'annex': null
             }),
             'demand': fb.group({
-                'amount': 1000,
+                'amount': null,
                 'period': null
             }),
-            'fiscals': 'Incentivos fiscais disponíveis',
+            'fiscals': '',
             'oemActivities': this.oemActivitiesFormArray
         })
 
