@@ -209,7 +209,8 @@ export class CreateComponent implements OnInit {
             .finally(() => {
                 console.log('All complete');
                 this.sendingForm = false;
-                //setTimeout(()=> this.modalRef.hide(), 500)
+                if (this.modalRef) 
+                    this.modalRef.hide()
             })
             .subscribe(res => {
                 console.log(res);

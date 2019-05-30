@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Globals } from 'config';
 import { ResponseContentType, Response } from '@angular/http';
-import { ProgressHttp } from "angular-progress-http";
 
 export interface IFileService {
   add(path: String, folderName: String);

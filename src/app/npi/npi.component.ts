@@ -256,18 +256,29 @@ export class NpiComponent implements OnInit {
     }
     console.log(npiForm)
 
-    this.openSendingFormModal()
+    if (this.uploadService.totalSize)
+      this.openSendingFormModal()
     if (this.newFormVersionFlag) {
       console.log('creating NPI version: ')
       npiForm.number = this.npi.number
       npiForm.stage = this.npi.stage
-      this.npiService.newNpiVersion(npiForm).
-        subscribe(
+      this.npiService.newNpiVersion(npiForm)
+        .finally(() => {
+          if (this.modalRef) {
+            console.log('hiding it')
+            this.modalRef.hide()
+          }
+        }).subscribe(
           res => this.successResponse(res),
           err => this.invalidFieldsError(err)
         )
     } else
-      this.resolveSubmission.subscribe(
+      this.resolveSubmission.finally(() => {
+        if (this.modalRef) {
+          console.log('hiding it')
+          this.modalRef.hide()
+        }
+      }).subscribe(
         res => this.successResponse(res),
         err => this.invalidFieldsError(err)
       )
@@ -282,7 +293,7 @@ export class NpiComponent implements OnInit {
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
           this.submitNpi(npiForm)
-          console.log("PROMOTING NPI")
+      console.log("PROMOTING NPI")
       this.promoteNpi(npiForm)
     } else {
       this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)

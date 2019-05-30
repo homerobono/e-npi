@@ -145,13 +145,13 @@ export class UploadService {
 
   updateSpeed(progress1, progress2, timeDiff) {
     let speed = Math.abs(Math.round((progress2 - progress1) * this.totalSize / timeDiff / 100 / 1024)) // kB/s
-    console.log(progress2, progress1, this.totalSize / 1024)
+    //console.log(progress2, progress1, this.totalSize / 1024)
     this.speed = Math.round(this.speed == 0 ? speed : (this.speed + speed) / 2)
     //this.speed = speed < 1024 ? speed + 'kB/s' : (speed / 1024).toFixed(1) + 'MB/s'
   }
 
   updateProgress() {
-    console.log(this.totalSize)
+    //console.log(this.totalSize)
     let progress = 0
     Object.values(this.uploaders).forEach(uploader => {
       try {
