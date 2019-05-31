@@ -35,7 +35,7 @@ export class DownloadingModalComponent implements OnInit {
     this.name = element.name
     this.size = element.size ? element.size : 0
     this.downloadItself = downloadObservable.subscribe((event: any) => {
-      console.log(event);
+      //console.log(event);
       switch (event.type) {
         case HttpEventType.Sent:
           console.log('Request sent!');
