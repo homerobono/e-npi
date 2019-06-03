@@ -15,7 +15,7 @@
         data-toggle="tooltip" data-placement="top" title="Remover NPI">
         <i class='fa fa-trash fa-fw'></i>
       </button>
-      <button (click)="npiComponent.toggleEdit()" class='btn btn-info' *ngIf='!npiComponent.editFlag && npiComponent.canIEdit()' data-toggle="tooltip"
+      <button (click)="npiComponent.toggleEdit()" class='btn btn-info' *ngIf='npiComponent.canIEdit()' data-toggle="tooltip"
         data-placement="top" title="Editar NPI">
         <i class='fa fa-pencil fa-fw'></i>
       </button>

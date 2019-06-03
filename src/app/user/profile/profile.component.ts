@@ -115,9 +115,9 @@ export class ProfileComponent implements OnInit {
   autoFillData(){
     this.profileForm.setValue({
       firstName : this.user.firstName,
-      lastName : this.user.lastName,
+      lastName : this.user.lastName ? this.user.lastName : null,
       email : this.user.email,
-      phone : this.user.phone,
+      phone : this.user.phone ? this.user.phone : null,
       department : this.user.department,
       notify : this.user.notify,
       level : this.user.level.toString(),
