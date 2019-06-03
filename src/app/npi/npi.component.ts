@@ -263,6 +263,7 @@ export class NpiComponent implements OnInit {
       npiForm.number = this.npi.number
       npiForm.stage = this.npi.stage
       this.npiService.newNpiVersion(npiForm)
+        .takeUntil(this.ngUnsubscribe)
         .finally(() => {
           if (this.modalRef) {
             console.log('hiding it')
@@ -273,15 +274,17 @@ export class NpiComponent implements OnInit {
           err => this.invalidFieldsError(err)
         )
     } else
-      this.resolveSubmission.finally(() => {
-        if (this.modalRef) {
-          console.log('hiding it')
-          this.modalRef.hide()
-        }
-      }).subscribe(
-        res => this.successResponse(res),
-        err => this.invalidFieldsError(err)
-      )
+      this.resolveSubmission
+        .takeUntil(this.ngUnsubscribe)
+        .finally(() => {
+          if (this.modalRef) {
+            console.log('hiding it')
+            this.modalRef.hide()
+          }
+        }).subscribe(
+          res => this.successResponse(res),
+          err => this.invalidFieldsError(err)
+        )
   }
 
   saveNpi(npiForm) {
@@ -296,7 +299,7 @@ export class NpiComponent implements OnInit {
       console.log("PROMOTING NPI")
       this.promoteNpi(npiForm)
     } else {
-      this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value)
+      this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value).take(1)
       this.submitNpi(npiForm)
     }
   }
@@ -309,7 +312,7 @@ export class NpiComponent implements OnInit {
   }
 
   promoteNpi(npiForm) {
-    this.resolveSubmission = this.npiService.updateAndPromoteNpi(this.npiForm.value)
+    this.resolveSubmission = this.npiService.updateAndPromoteNpi(this.npiForm.value).take(1)
     this.submitNpi(npiForm)
   }
 

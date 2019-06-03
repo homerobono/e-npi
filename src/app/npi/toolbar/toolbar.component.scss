@@ -1,0 +1,9 @@
+.sticky-top {
+    height:0;
+    @supports (position: sticky) or (position: -webkit-sticky) {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 20px;
+      z-index: 1;
+    }
+  }

@@ -34,7 +34,7 @@ export class AuthService {
   }
     
   login(email:string, password:string ) {
-    console.log('service: trying to login');
+    //console.log('service: trying to login');
     return this.http.post <{message, token}>
       (this.loginUrl, {email: email, password: password})
       .do( res => this.setSession(res.token))
@@ -42,7 +42,7 @@ export class AuthService {
 }
 
   private setSession( sessionToken ) {
-    console.log(sessionToken)
+    //console.log(sessionToken)
     const tokenPayload = this.jwtHelper.decodeToken(sessionToken);
     localStorage.setItem('id_token', sessionToken);
     localStorage.setItem('first_name', tokenPayload.data.firstName);
@@ -57,7 +57,7 @@ export class AuthService {
       localStorage.removeItem("user_level");
       localStorage.removeItem("expires_at");
       this.isLoggedStatus.next(false)
-      console.log('user logged out')
+      //console.log('user logged out')
   }
 
   public isLoggedIn() {
@@ -89,12 +89,12 @@ export class AuthService {
   }
   
   verifyRegisterToken(token: String){
-    console.log(token)
+    //console.log(token)
     return this.http.get(this.verifyRegisterTokenUrl+token);
   }
 
   verifyResetToken(token: String){
-    console.log(token)
+    //console.log(token)
     return this.http.get(this.verifyResetTokenUrl+token);
   }
 
