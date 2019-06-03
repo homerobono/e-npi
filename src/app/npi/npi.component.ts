@@ -292,7 +292,7 @@ export class NpiComponent implements OnInit {
       if (this.npi.activities.length && this.isReleaseEstimateDelayed)
         if (!this.npi.isRequestOpen('DELAYED_RELEASE')) {
           if (!confirm(
-            "Para submeter uma NPI com data de lançamento em atraso e necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
+            "Para submeter uma NPI com data de lançamento em atraso é necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
           this.submitNpi(npiForm)
@@ -578,7 +578,7 @@ export class NpiComponent implements OnInit {
   }
 
   canIEdit() {
-    return this.npi.stage < 5 && (
+    return this.npi.stage <= 5 && (
       // Usuário Básico (padrão)
       (this.user.level == 0 && (
         (this.amITheOwner() && (this.npi.stage == 1 ||
@@ -617,11 +617,14 @@ export class NpiComponent implements OnInit {
   }
 
   iHavePendingTask() {
-    return this.npi.activities && (this.user.level == 2 || this.npi.activities.some(activity =>
-      !activity.closed && // em aberto
-      (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
-        this.user.department == activity.dept && this.user.level >= 1)
-      )) || (this.npi.oemActivities &&
+    return this.npi.activities && (
+      this.user.level == 2 ||
+      this.npi.activities.some(activity => {
+        //console.log(`Analysing ${activity.activity}: dept ${activity.dept} == ${this.user.department} => ${activity.dept == this.user.department}`)
+        return !activity.closed && // em aberto
+        (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+          this.user.department == activity.dept && this.user.level >= 1))}) ||
+      (this.npi.oemActivities &&
         this.npi.oemActivities.some(activity =>
           !activity.closed && // em aberto
           (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)

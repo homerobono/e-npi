@@ -79,7 +79,7 @@
             </td>
             <td class=signature *ngIf='npi.stage>=4'>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
-                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag'
+                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag || !fieldHasAnnex(activity)'
                 data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">
                 <i class='fa fa-fw fa-check'></i>
               </button>
