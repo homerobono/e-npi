@@ -20,7 +20,7 @@ export class UploadService {
   public progress: Number = 0
   public isUploading: Boolean = false
   public uploadingFileItem: FileItem
-  public _id: Number
+  public _id: String
   public evolve = false
   public speed: number = 0
   private prevTime: number = Date.now()
@@ -45,9 +45,10 @@ export class UploadService {
     }
   }
 
-  upload(id) {
+  upload(id): Observable<any> {
+    console.log(id)
     return Observable.create((observer: any) => {
-      this.onCompleteUpload.subscribe(res => observer.next(res))
+      this.onCompleteUpload.subscribe(res => { console.log("Upload subscription", res); return observer.next(res)})
       setTimeout(() => this.executeUpload(id), 100)
       //observer.next()
     })
@@ -55,6 +56,7 @@ export class UploadService {
 
   executeUpload(id) {
     this._id = id
+    console.log(id)
     let fields = Object.keys(this.uploaders)
 
     console.log(fields.length)
@@ -67,7 +69,7 @@ export class UploadService {
     fields.sort(this.sortByTotalSize())
     //console.log(fields)
 
-    this.uploaders[fields[0]].uploadAll()
+    //this.uploaders[fields[0]].uploadAll()
     for (let i = 1; i < fields.length; i++) {
       console.log('setting ' + fields[i])
       let previous = fields[i - 1]

@@ -124,16 +124,16 @@ export class NpiService {
   }
 
   updateNpi(npiForm): Observable<any> {
-    console.log('updating npi');
+    console.log('updating npi '+npiForm.id);
     var npi = this.formToModel(npiForm)
     console.log(npi);
-    return this.http.put(this.npiUrl, npi)
-      .concatMap(update => {
-        console.log('NPI updated');
-        return this.uploadService.upload(npiForm.id).map(
-          upload => {
+    return this.uploadService.upload(npi.id)
+      .concatMap(upload => {
+        console.log('NPI annexes uploaded', upload);
+        return this.http.put(this.npiUrl, npi).map(
+          update => {
             var res = { update, upload }
-            console.log(res)
+            console.log("Npi updated", res)
             return res
           }
         )
@@ -248,8 +248,7 @@ export class NpiService {
         }
       }
     }
-
-    console.log(model.inStockDate)
+    //console.log(model.inStockDate)
     return model
   }
 
