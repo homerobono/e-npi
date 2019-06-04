@@ -233,27 +233,6 @@ export class NpiComponent implements OnInit {
   submitNpi(npiForm): void {
     //this.toggleEdit()
     this.sendingForm = true
-
-    npiForm.name = this.titleField
-    npiForm.number = this.npi.number
-    npiForm.id = this.npi.id
-    npiForm.entry = this.npi.entry
-
-    for (let field in this.uploadService.uploaders) {
-      console.log(field, this.uploadService.uploaders[field].queue)
-      let propsArr = field.split(".")
-      let subfield = npiForm[propsArr[0]]
-      console.log(subfield)
-      if (propsArr.length > 1)
-        subfield = subfield.find(act => act.activity == propsArr[1])
-      console.log(subfield)
-      if (!subfield.annex)
-        subfield.annex = []
-      subfield.annex = subfield.annex.concat(
-        (this.uploadService.uploaders[field].queue as FileItem[]).map(
-          fI => new FileDescriptor(field, fI.file)
-        ))
-    }
     console.log(npiForm)
 
     if (this.uploadService.totalSize)
@@ -295,13 +274,11 @@ export class NpiComponent implements OnInit {
             "Para submeter uma NPI com data de lançamento em atraso é necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
-          this.submitNpi(npiForm)
+          this.promoteNpi(npiForm)
       console.log("PROMOTING NPI")
       this.promoteNpi(npiForm)
-    } else {
-      this.resolveSubmission = this.npiService.updateNpi(this.npiForm.value).take(1)
-      this.submitNpi(npiForm)
-    }
+    } else
+      this.updateNpi(npiForm)
   }
 
   submitToAnalysis(npiForm) {
@@ -311,8 +288,51 @@ export class NpiComponent implements OnInit {
     this.promoteNpi(npiForm)
   }
 
+  updateNpi(npiForm) {
+    npiForm.name = this.titleField
+    npiForm.number = this.npi.number
+    npiForm.id = this.npi.id
+    npiForm.entry = this.npi.entry
+    for (let field in this.uploadService.uploaders) {
+      console.log(field, this.uploadService.uploaders[field].queue)
+      let propsArr = field.split(".")
+      let subfield = npiForm[propsArr[0]]
+      console.log(subfield)
+      if (propsArr.length > 1)
+        subfield = subfield.find(act => act.activity == propsArr[1])
+      console.log(subfield)
+      if (!subfield.annex)
+        subfield.annex = []
+      subfield.annex = subfield.annex.concat(
+        (this.uploadService.uploaders[field].queue as FileItem[]).map(
+          fI => new FileDescriptor(field, fI.file)
+        ))
+    }
+    this.resolveSubmission = this.npiService.updateNpi(npiForm).take(1)
+    this.submitNpi(npiForm)
+  }
+
   promoteNpi(npiForm) {
-    this.resolveSubmission = this.npiService.updateAndPromoteNpi(this.npiForm.value).take(1)
+    npiForm.name = this.titleField
+    npiForm.number = this.npi.number
+    npiForm.id = this.npi.id
+    npiForm.entry = this.npi.entry
+    for (let field in this.uploadService.uploaders) {
+      console.log(field, this.uploadService.uploaders[field].queue)
+      let propsArr = field.split(".")
+      let subfield = npiForm[propsArr[0]]
+      console.log(subfield)
+      if (propsArr.length > 1)
+        subfield = subfield.find(act => act.activity == propsArr[1])
+      console.log(subfield)
+      if (!subfield.annex)
+        subfield.annex = []
+      subfield.annex = subfield.annex.concat(
+        (this.uploadService.uploaders[field].queue as FileItem[]).map(
+          fI => new FileDescriptor(field, fI.file)
+        ))
+    }
+    this.resolveSubmission = this.npiService.updateAndPromoteNpi(npiForm).take(1)
     this.submitNpi(npiForm)
   }
 
@@ -606,7 +626,9 @@ export class NpiComponent implements OnInit {
         ))
       ))
       || // Usuário Master
-      this.user.level == 2
+      this.user.level == 2 && (
+        this.npi.stage == 2 && this.npi.isCriticallyApproved()
+      )
     )
   }
 
@@ -622,8 +644,9 @@ export class NpiComponent implements OnInit {
       this.npi.activities.some(activity => {
         //console.log(`Analysing ${activity.activity}: dept ${activity.dept} == ${this.user.department} => ${activity.dept == this.user.department}`)
         return !activity.closed && // em aberto
-        (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
-          this.user.department == activity.dept && this.user.level >= 1))}) ||
+          (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+            this.user.department == activity.dept && this.user.level >= 1))
+      }) ||
       (this.npi.oemActivities &&
         this.npi.oemActivities.some(activity =>
           !activity.closed && // em aberto

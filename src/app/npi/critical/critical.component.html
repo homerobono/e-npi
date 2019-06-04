@@ -22,7 +22,7 @@
                 utils.getDepartment(npi.critical[i].dept).label }})</span>
             </td>
             <td>
-              <i *ngIf='!npi.critical[i].status && !amITheAnalysisGestor(analysis)' style='color: gray; font-size: 10pt'>Em
+              <i *ngIf='!npi.critical[i]?.status && !amITheAnalysisGestor(analysis)' style='color: gray; font-size: 10pt'>Em
                 análise</i>
               <div *ngIf='npi.critical[i].status || amITheAnalysisGestor(analysis)'>
                 <label *ngIf='(npi.critical[i].status && npi.critical[i].status=="accept") || amITheAnalysisGestor(analysis)'

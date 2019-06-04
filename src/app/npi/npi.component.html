@@ -148,11 +148,11 @@
     </div-->
     <div class="row align-items-center" *ngIf='editFlag'>
       <div class='col'>
-        <!--button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' 
-        *ngIf='amITheOwner() && npi.stage == 1'>
+        <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' 
+        *ngIf='amITheOwner() && npi.stage == 2'>
           <span class='fa fa-times-circle'></span>
           Cancelar NPI
-        </button-->
+        </button>
         <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm"
           (click)='cancelNpi()' *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
           <span class='fa fa-trash'></span>

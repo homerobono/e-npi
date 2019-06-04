@@ -87,6 +87,14 @@ export class CriticalComponent implements OnInit {
   }
 
   insertCriticalAnalysis() {
+    this.criticalFormArray = this.fb.array([])
+    this.criticalFormGroup = this.fb.group({
+      'critical': this.criticalFormArray,
+      'finalApproval': this.fb.group({
+        status: null,
+        comment: null
+      })
+    })
     var criticalModelArray = this.npi.critical
 
     criticalModelArray.forEach(analysis => {
