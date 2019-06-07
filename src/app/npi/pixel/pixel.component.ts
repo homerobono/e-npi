@@ -26,7 +26,14 @@ export class PixelComponent implements OnInit {
       this.npiForm.enable()
       this.npiForm.updateValueAndValidity()
     }
-    else this.npiForm.disable()
+    else {
+      this.npiForm.disable();
+      (Object.keys(this.npiForm.controls)).forEach(key => {
+        let control = this.npiForm.get(key)
+        control.clearValidators()
+        control.updateValueAndValidity()
+      })
+    }
   }
   @Output() npiFormOutput = new EventEmitter<FormGroup>()
 
@@ -99,22 +106,28 @@ export class PixelComponent implements OnInit {
     let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
     regulations.forEach(reg => {
       additionalArray.addControl(reg.value, new FormControl({
-        value: false, disabled: this.npiForm.get("regulations").get("none").value
+        value: false
       }))
     })
-    this.npiForm.valueChanges.subscribe(value => { //for edit flag enable effect
-      if (this.npiForm.get("regulations").get("none").value) {
-        this.npiForm.get("regulations").get("standard").disable()
+    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
+      if (value) {
+        console.log('setting standard to false', value)
+        regulations.forEach(regulation => {
+          this.npiForm.get("regulations").get("standard").get(regulation.value)
+            .setValue(false, { emitEvent: false })
+        })
         this.npiForm.get("regulations").get("additional").disable()
         this.npiForm.get("regulations").get("description").disable()
       }
     })
 
-    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
-      let action = value ? 'disable' : 'enable'
-      this.npiForm.get("regulations").get("standard")[action]()
-      this.npiForm.get("regulations").get("additional")[action]()
-      this.npiForm.get("regulations").get("description")[action]()
+    this.npiForm.get("regulations").get("standard").valueChanges.subscribe(values => {
+      if (Object.values(values).some(v => v == true)) {
+        console.log('setting none to false', values)
+        this.npiForm.get("regulations").get("none").setValue(false)
+        this.npiForm.get("regulations").get("description").enable()
+        this.npiForm.get("regulations").get("additional").enable()
+      }
     })
 
     this.fillFormData()

@@ -1,6 +1,6 @@
 {
   "name": "enpi-client",
-  "version": "1.5.30",
+  "version": "1.6.7",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

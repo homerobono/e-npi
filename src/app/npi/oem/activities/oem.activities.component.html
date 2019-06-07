@@ -2,7 +2,7 @@
   <div class='col'>
     <label for='activities' class=col>
       <center>
-        <h4>Etapas O&M</h4>
+        <h4>Etapas O&M {{ editFlag }}</h4>
       </center>
     </label>
     <div id='activities' class='table-responsive' [formGroup]='activitiesFormGroup'>
@@ -62,21 +62,25 @@
                 [dependents]='getControlsDependentActivities(activity)'>
             </td>
             <td>
-              <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' *ngIf='utils.getOemActivity(activity.get("activity").value).annex' [fieldControl]='activity'
-                [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiId]='npi.id'
-                [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)'></app-file-button>
+              <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' *ngIf='utils.getOemActivity(activity.get("activity").value).annex' 
+              [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiId]='npi.id'
+                [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)' [hasError]='fieldHasErrors(i+".annex")'></app-file-button>
             </td>
             <td class=signature>
-              <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
-                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag'
-                data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">
+                <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
+                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag || !fieldHasAnnex(activity)'
+                data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade" [ngClass]='{"border-danger" : fieldHasErrors(i+".closed")}' >
                 <i class='fa fa-fw fa-check'></i>
               </button>
-              <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity) && !signatures[i]' data-toggle="tooltip"
-                data-placement="bottom" title="Aguardando conclusão">
+              <!--span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)'
+              data-toggle="tooltip" data-placement="bottom" title="Aguardando atividades anteriores">
+                <i class='fa fa-clock-o fa-lg text-info'></i>
+              </span-->
+              <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)'
+              data-toggle="tooltip" data-placement="bottom" title="Em andamento">
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
               </span>
-              <span *ngIf='activity.get("closed").value || signatures[i]'>
+              <span *ngIf='activity.get("closed").value'>
                 <i class='fa fa-check fa-sm text-success'></i>
                 {{ signatures[i] }}
               </span>

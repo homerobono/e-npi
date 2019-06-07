@@ -119,7 +119,7 @@ export class CreateComponent implements OnInit {
                 'annex': null
             }),
             'regulations': fb.group({
-                'none': true,
+                'none': false,
                 'standard': fb.group({}),
                 'additional': null,
                 'description': '',
@@ -178,17 +178,31 @@ export class CreateComponent implements OnInit {
         let regulations = this.utils.getRegulations()
         let additionalArray = this.createForm.get('regulations').get('standard') as FormGroup
         regulations.forEach(reg => {
-            additionalArray.addControl(reg.value, new FormControl({
-                value: false, disabled: this.createForm.get("regulations").get("none").value
-            }))
+            additionalArray.addControl(reg.value, this.fb.control(false))
         })
         this.createForm.get("regulations").get("none").valueChanges.subscribe(value => {
-            let action = value ? 'disable' : 'enable'
-            this.createForm.get("regulations").get("standard")[action]()
-            this.createForm.get("regulations").get("additional")[action]()
-            this.createForm.get("regulations").get("description")[action]()
+            if (value) {
+                console.log('setting standard to false', value)
+                regulations.forEach(regulation => {
+                    this.createForm.get("regulations").get("standard").get(regulation.value)
+                        .setValue(false, { emitEvent: false })
+                })
+                this.createForm.get("regulations").get("additional").disable()
+                this.createForm.get("regulations").get("description").disable()
+            }
+        })
+
+        this.createForm.get("regulations").get("standard").valueChanges.subscribe(values => {
+            if (Object.values(values).some(v => v == true)) {
+                console.log('setting none to false', values)
+                this.createForm.get("regulations").get("none").setValue(false)
+                this.createForm.get("regulations").get("description").enable()
+                this.createForm.get("regulations").get("additional").enable()
+            } else
+                this.createForm.get("regulations").get("none").setValue(true)
         })
         this.subscribeToInputChanges()
+        this.createForm.updateValueAndValidity()
         //setTimeout(() => this.openUploadModal("resources"), 600)
     }
 
@@ -209,7 +223,7 @@ export class CreateComponent implements OnInit {
             .finally(() => {
                 console.log('All complete');
                 this.sendingForm = false;
-                if (this.modalRef) 
+                if (this.modalRef)
                     this.modalRef.hide()
             })
             .subscribe(res => {

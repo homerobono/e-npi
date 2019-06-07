@@ -104,6 +104,7 @@ export class HomeComponent implements OnInit {
   }
 
   getNpis() {
+    this.refresh()
     this.gettingNpis = true;
     this.npiService.npisList.takeUntil(this.ngUnsubscribe)
     .subscribe(npis => {

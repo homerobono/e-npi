@@ -23,7 +23,7 @@ export class FileButtonComponent implements OnInit {
   @Input() npiId: String
   @Input() npiNumber: Number
   @Input() npiVersion: Number
-  @Input() class: String
+  @Input() hasError: Boolean
 
   private modalRef: BsModalRef
 

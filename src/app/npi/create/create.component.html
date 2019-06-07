@@ -163,14 +163,14 @@
         <label for="regulations">Homologações/Regulamentações</label>
         <div class="form-group mb-4 d-md-flex align-items-center" formGroupName='regulations' id='regulations'>
           <div class="custom-control custom-checkbox custom-control-inline">
-            <input type="checkbox" class="custom-control-input" id="none" formControlName='none'
+            <input type="checkbox" class="custom-control-input" id="none" formControlName='none' name='none'
               [ngClass]='{"is-invalid": fieldHasErrors("regulations")}'>
             <label class="custom-control-label" for="none">Nenhuma</label>
           </div>
           <div class="custom-control custom-checkbox custom-control-inline" formGroupName='standard'
             *ngFor='let reg of objectkeys(createForm.get("regulations").get("standard").controls)'>
             <input type="checkbox" class="custom-control-input" id="{{ reg }}" formControlName='{{ reg }}'
-            [ngClass]='{"is-invalid": fieldHasErrors("regulations")}'>
+            [ngClass]='{"is-invalid": fieldHasErrors("regulations")}' name='{{ reg }}'>
             <label class="custom-control-label" for="{{ reg }}">{{ utils.getRegulation(reg).label }}</label>
           </div>
           <!--div class="custom-control custom-checkbox custom-control-inline">

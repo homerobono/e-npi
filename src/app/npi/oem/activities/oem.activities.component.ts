@@ -7,6 +7,7 @@ import { BsDatepickerConfig, DatepickerConfig } from 'ngx-bootstrap';
 import User from '../../../models/user.model';
 import { UsersService } from '../../../services/users.service';
 import Npi from '../../../models/npi.model';
+import { UploadService } from 'src/app/services/upload.service';
 
 const DAYS = 24 * 3600 * 1000
 
@@ -25,14 +26,14 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     @Input() set toggleEdit(edit: Boolean) {
+        console.log("TOGGLE EDIT", edit)
         if (edit && this.npi.amITheOwner(this.npiComponent.user._id) &&
             (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
                 && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
-            ))) {
-            this.activitiesFormGroup.enable()
-            this.activitiesFormGroup.updateValueAndValidity()
-        }
-        else this.activitiesFormGroup.disable()
+            )))
+            this.toggleFields(edit)
+        this.editFlag = edit
+        this.isFormEnabled = edit
     }
 
     @Output() npiFormOutput = new EventEmitter<FormGroup>()
@@ -52,7 +53,8 @@ export class OemActivitiesComponent implements OnInit {
         public utils: UtilService,
         private route: ActivatedRoute,
         public npiComponent: NpiComponent,
-        private userService: UsersService
+        private userService: UsersService,
+        private uploadService: UploadService
     ) {
         this.activitiesFormArray = fb.array([])
         this.activitiesFormGroup = fb.group({
@@ -62,10 +64,6 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     ngOnInit() {
-
-        this.editFlag = this.isFormEnabled =
-            !this.route.snapshot.data['readOnly'] &&
-            this.npi.stage == 1
 
         this.datePickerConfig = this.initDatePickerConfigArray(this.npi.oemActivities.length)
 
@@ -141,10 +139,10 @@ export class OemActivitiesComponent implements OnInit {
                     _id: activity._id,
                     activity: activity.activity,
                     dept: activity.dept,
-                    responsible: activity.responsible,
-                    term: null,
+                    responsible: this.fb.control({ value: activity.responsible, disabled: activity.closed || this.isFormEnabled }),
+                    term: this.fb.control({ value: null, disabled: activity.closed || this.isFormEnabled }),
                     startDate: null,
-                    endDate: null,
+                    endDate: this.fb.control({ value: null, disabled: activity.closed || this.isFormEnabled }),
                     registry: activity.registry,
                     annex: activity.annex,
                     apply: null,
@@ -410,11 +408,16 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     toggleFields(edit: Boolean) {
+        if (edit)
+            this.activitiesFormGroup.enable()
         this.activitiesFormArray.controls.forEach(control => {
             if (edit) {
-                if (this.canChangeActivity(control)) control.enable({ emitEvent: false })
-            } else control.disable({ emitEvent: false })
+                if (this.canChangeActivity(control))
+                    control.enable({ emitEvent: false })
+            }
+            else control.disable({ emitEvent: false })
         })
+        //this.activitiesFormGroup.updateValueAndValidity()
     }
 
     toggleApplyAll(event) {
@@ -431,7 +434,7 @@ export class OemActivitiesComponent implements OnInit {
 
     canChangeActivity(activity: AbstractControl): Boolean {
         let user = this.npiComponent.user
-        return user.level > 1 ||
+        return user.level > 1 || this.npi.amITheOwner(user._id) ||
             (user.level == 1 && (
                 user.department == activity.get('dept').value ||
                 (user.department == 'MPR' && this.npi.stage == 1)
@@ -496,5 +499,15 @@ export class OemActivitiesComponent implements OnInit {
             else this.signatures[i] = null
         }
     }
-
+    fieldHasAnnex(activity: FormGroup) {
+        let field = activity.get("activity").value
+        /*console.log((this.uploadService.uploaders[`activities.${field}`] && 
+        this.uploadService.uploaders[`activities.${field}`].queue && 
+        this.uploadService.uploaders[`activities.${field}`].queue.length),
+        activity.get("annex").value)*/
+        return (this.uploadService.uploaders[`oemActivities.${field}`] &&
+            this.uploadService.uploaders[`oemActivities.${field}`].queue &&
+            this.uploadService.uploaders[`oemActivities.${field}`].queue.length) ||
+            (activity.get("annex").value && activity.get("annex").value.length)
+    }
 }

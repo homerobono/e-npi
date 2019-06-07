@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, ViewChild, HostListener, AfterViewInit, AfterViewChecked } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BsLocaleService, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { createNumberMask } from 'text-mask-addons/dist/textMaskAddons';
@@ -372,7 +372,7 @@ export class NpiComponent implements OnInit {
 
   invalidFieldsError(err) {
     //this.toggleEdit()
-    console.log(err)
+    console.log(err, this.npiForm.value)
     if (err.error.message.errors) {
       var errors = err.error.message.errors
       var errorFields = Object.keys(errors)
@@ -382,7 +382,8 @@ export class NpiComponent implements OnInit {
       try {
         for (let i = 0; i < errorFields.length; i++) {
           let propsArr = errorFields[i].split(".")
-          let control = this.npiForm.get(propsArr[0])
+          console.log(propsArr)
+          let control : AbstractControl = this.npiForm.get(propsArr[0])
           for (let i = 1; i < propsArr.length; i++) {
             control = control.get(propsArr[i])
           }

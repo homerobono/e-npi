@@ -113,19 +113,25 @@ export class OemComponent implements OnInit {
         value: false, disabled: this.npiForm.get("regulations").get("none").value
       }))
     })
-    this.npiForm.valueChanges.subscribe(value => { //for eddit flag enable effect
-      if (this.npiForm.get("regulations").get("none").value) {
-        this.npiForm.get("regulations").get("standard").disable()
+    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
+      if (value) {
+        console.log('setting standard to false', value)
+        regulations.forEach(regulation => {
+          this.npiForm.get("regulations").get("standard").get(regulation.value)
+            .setValue(false, { emitEvent: false })
+        })
         this.npiForm.get("regulations").get("additional").disable()
         this.npiForm.get("regulations").get("description").disable()
       }
     })
 
-    this.npiForm.get("regulations").get("none").valueChanges.subscribe(value => {
-      let action = value ? 'disable' : 'enable'
-      this.npiForm.get("regulations").get("standard")[action]()
-      this.npiForm.get("regulations").get("additional")[action]()
-      this.npiForm.get("regulations").get("description")[action]()
+    this.npiForm.get("regulations").get("standard").valueChanges.subscribe(values => {
+      if (Object.values(values).some(v => v == true)) {
+        console.log('setting none to false', values)
+        this.npiForm.get("regulations").get("none").setValue(false)
+        this.npiForm.get("regulations").get("description").enable()
+        this.npiForm.get("regulations").get("additional").enable()
+      }
     })
 
     this.npiFormOutput.emit(this.npiForm)

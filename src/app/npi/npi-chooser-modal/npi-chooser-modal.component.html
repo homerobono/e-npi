@@ -6,12 +6,24 @@
 </div>
 <div class="modal-body">
   Escolha uma NPI:
+  <div class=form-row [formGroup]='filterForm'>
+    <div class="col-7">
+      <input placeholder=Nome type=text class='form-control' id=name formControlName='name'>
+    </div>
+    <div class="col-5">
+      <select type=text class='form-control' formControlName='entry' id=entry>
+        <option selected [ngValue]="null">Entrada...</option>
+        <option *ngFor='let entry of utils.getEntriesArray(); index as i' value='{{ entry.value }}'>{{
+          entry.label }}</option>
+      </select>
+    </div>
+  </div>
   <div class='npis-list'>
-    <span (click)='selectNpi(npi)' class="list-group-item list-group-item-action npis-list-item" *ngFor='let npi of npisList'
+    <span (click)='selectNpi(npi)' class="list-group-item list-group-item-action npis-list-item" *ngFor='let npi of filteredData'
       id='{{npi.number}}'>
       <b>#{{ npi.number }}</b> {{ npi.name }}
       <i>({{ utils.getEntry(npi.entry)}})</i>
-  </span>
+    </span>
   </div>
 </div>
 <div class="modal-footer">
