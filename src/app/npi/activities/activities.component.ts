@@ -613,21 +613,21 @@ export class ActivitiesComponent implements OnInit {
     }
 
     setRequestChild(requestForm, requestClass) {
-        let requestControlIndex = (this.activitiesFormGroup.value.requests as Array<any>).findIndex(
-            request => request.class == requestClass
+        let requestControlIndex = this.requestsFormArray.controls.findIndex(
+            request => request.get('class').value == requestClass
         )
         //console.log(this.activitiesFormGroup.value, this.activitiesFormGroup.get('requests'), requestControlIndex)
 
         if (requestControlIndex < 0) {
-            //console.log('pushing')
+            console.log('pushing')
             this.requestsFormArray.controls.push(requestForm);
         } else
             Object.keys(requestForm.controls).forEach((field: string) => {
-                ((this.activitiesFormGroup.get('requests') as FormArray)[requestControlIndex] as FormGroup)
+                (this.requestsFormArray.controls[requestControlIndex] as FormGroup)
                     .addControl(field, requestForm.get(field))
             });
         this.activitiesFormGroup.updateValueAndValidity()
-        //console.log(this.requestsFormArray.value)
+        //console.log(this.requestsFormArray.getRawValue())
         this.updateParentForm()
     }
 

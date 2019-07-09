@@ -2,14 +2,14 @@
   <div class='col'>
     <label for='analysis' class=col>
       <center>
-        <h4>Requerimento: Data de lancamento em atraso com data em estoque</h4>
+        <h4>Requerimento: Data de lançamento em atraso com data em estoque</h4>
       </center>
     </label>
     <div class='table-responsive' id='analysis' formArrayName='analysis'>
       <table class="table table-sm table-bordered">
         <thead class='thead-dark'>
           <tr>
-            <th scope="col">Responsavel</th>
+            <th scope="col">Responsável</th>
             <th scope="col">Status</th>
             <th scope="col">Observações</th>
             <th scope="col">Assinatura Digital</th>
@@ -25,15 +25,15 @@
               {{ npiComponent.npi.requester.firstName }} {{ npiComponent.npi.requester.lastName }}
             </td>
             <td>
-              <i *ngIf='!request.analysis[i].status && !amITheAnalysisGestor(analysis)' style='color: gray; font-size: 10pt'>Em
+              <i *ngIf='!request.analysis[i].status && !amITheRequestAnalyser(analysis)' style='color: gray; font-size: 10pt'>Em
                 análise</i>
-              <div *ngIf='request.analysis[i].status || amITheAnalysisGestor(analysis)'>
-                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="accept") || amITheAnalysisGestor(analysis)'
+              <div *ngIf='request.analysis[i].status || amITheRequestAnalyser(analysis)'>
+                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="accept") || amITheRequestAnalyser(analysis)'
                   class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                   <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept-{{i}}'>
                   <span class='fa radio-approval radio-accept' name='analysisApprove'></span>
                 </label>
-                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="deny") || amITheAnalysisGestor(analysis)'
+                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="deny") || amITheRequestAnalyser(analysis)'
                   class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                   <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
                   <span class='fa radio-approval radio-deny' name='analysisApprove'></span>
@@ -57,7 +57,7 @@
     </div>
   </div>
 </div>
-<!-->div class='row align-items-center mt-3 mb-4' *ngIf='npi.isCriticallyDisapproved()' [formGroup]='requestFormGroup'>
+<div class='row align-items-center mt-3 mb-4' *ngIf='npi.isRequestDisapproved(requestClass)' [formGroup]='requestFormGroup'>
   <div class='col-auto text-center'>
     <span style='font-size: 20px'>
       <b>Aprovação Final:</b>
@@ -99,5 +99,5 @@
       </i>
     </div>
   </div>
-</div-->
+</div>
 <hr>

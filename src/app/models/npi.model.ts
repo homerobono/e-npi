@@ -136,6 +136,7 @@ class Npi {
     }>;
     requests: Array<{
         _id: String,
+        approval: String,
         class: String,
         responsible: any,
         comment: String,
@@ -147,7 +148,7 @@ class Npi {
         analysis: Array<{
             _id: String,
             status: String,
-            dept: String,
+            responsible: any,
             comment: String,
             signature: {
                 user: any,
@@ -343,6 +344,22 @@ class Npi {
         let request = this.requests.find(request => request.class == className)
         if (request)
             return !Boolean(request.closed)
+        return false
+    }
+
+    public isRequestApproved(className: String): Boolean {
+        let request = this.requests.find(request => request.class == className)
+        //console.log(Boolean(request.closed), Boolean(request.analysis.every(a => a.status == 'accept')))
+        if (request)
+            return Boolean(request.closed) && Boolean(request.analysis.every(a => a.status == 'accept'))
+        return false
+    }
+
+    public isRequestDisapproved(className: String): Boolean {
+        let request = this.requests.find(request => request.class == className)
+        //console.log(Boolean(request.closed), Boolean(request.analysis.some(a => a.status == 'deny')))
+        if (request)
+            return Boolean(request.closed) && Boolean(request.analysis.some(a => a.status == 'deny') )
         return false
     }
 

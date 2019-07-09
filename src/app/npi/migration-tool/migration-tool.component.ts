@@ -154,6 +154,7 @@ export class MigrationToolComponent implements OnInit {
       'requester': null,
       'name': 'Versões',
       'entry': 'oem',
+      'stage': null,
       'npiRef': null,
       'designThinking': fb.group({
         'apply': null,
@@ -388,7 +389,7 @@ export class MigrationToolComponent implements OnInit {
   }
 
   saveNpi(migrateForm) {
-    migrateForm.stage = 5
+    //migrateForm.stage = 5
     migrateForm.validation.status = true
 
     if (migrateForm.clientApproval.approval == "deny") {

@@ -35,11 +35,14 @@ export class RequestComponent implements OnInit {
 
   @Input() set toggleEdit(edit: Boolean) {
     if (edit) {
-      if (this.npiComponent.user.level >= 1)
+      if (this.requestClass == "DELAYED_RELEASE" && (this.npi.stage == 2 || this.npi.stage == 3))
         this.analysisFormArray.controls.forEach(control => {
-          if (this.amITheAnalysisGestor(control))
+          //if (this.amITheAnalysisGestor(control))
+          if (this.amITheRequestAnalyser(control))
             control.enable()
         })
+      this.requestFormGroup.get('class').enable()
+      //this.requestFormGroup.get('_id').enable()
     }
     else this.requestFormGroup.disable()
   }
@@ -60,6 +63,7 @@ export class RequestComponent implements OnInit {
   ) {
     this.analysisFormArray = fb.array([])
     this.requestFormGroup = fb.group({
+      '_id': '',
       'class': '',
       'analysis': this.analysisFormArray,
     })
@@ -169,7 +173,7 @@ export class RequestComponent implements OnInit {
   }
 
   updateParentForm() {
-    console.log('updating')
+    //console.log(this.requestFormGroup.value)
     this.requestForm.emit(this.requestFormGroup)
   }
 
@@ -209,8 +213,13 @@ export class RequestComponent implements OnInit {
   }
 
   amITheAnalysisGestor(analysis: AbstractControl): Boolean {
-    return (this.getRequestRow(analysis.get('_id').value).dept == this.npiComponent.user.department
+    return (this.getRequestRow(analysis.get('_id').value).responsible == this.npiComponent.user.department
       && (this.npiComponent.user.level == 1 || this.npiComponent.user.level == 2))
+  }
+
+  amITheRequestAnalyser(analysis: AbstractControl): Boolean {
+    return (this.getRequestRow(analysis.get('_id').value).responsible == this.npiComponent.user._id ||
+      this.amITheAnalysisGestor(analysis))
   }
 
   cancelNpi() {

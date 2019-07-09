@@ -51,6 +51,7 @@ export class NpiComponent implements OnInit {
   editFlag: Boolean = false
 
   showNpiToolbar: Boolean = false
+  loading: Boolean = true
 
   response: any
   date: Date
@@ -140,6 +141,7 @@ export class NpiComponent implements OnInit {
     public dialog: MatDialog,
     public uploadService: UploadService
   ) {
+    this.loading = true
     this.user = authService.getUser()
     this.npi = new Npi(null)
     this.npiVersions = new Array<Npi>()
@@ -183,11 +185,18 @@ export class NpiComponent implements OnInit {
       (this.user.level > 1 || (this.user.level == 1 && this.user.department == "MPR"))
 
     this.route.params.subscribe(
-      params => this.getNpi(params.npiNumber)
+      params => {
+        this.loading = true
+        this.getNpi(params.npiNumber)
+      }
     )
 
+    this.loading = true
     this.npiService.npisList.subscribe(
-      res => this.npisList = res
+      res => {
+        this.npisList = res
+        this.loading = false
+      }
     )
 
     setInterval(() => this.lastModifiedDifference = this.utils.getTimeDifference(null, this.npi.updated),
@@ -208,6 +217,7 @@ export class NpiComponent implements OnInit {
   }
 
   getNpi(npiNumber) {
+    this.loading = true
     //console.log('getting npi ' + npiNumber)
     this.npiService.getNpi(npiNumber).takeUntil(this.ngUnsubscribe).retry(5)
       .subscribe(
@@ -222,6 +232,7 @@ export class NpiComponent implements OnInit {
           }
           this.lastModifiedDifference = this.utils.getTimeDifference(null, this.npi.updated)
           console.log(this.npi)
+          this.loading = false
           //this.resetFormFlagSubject.next()
         }, err => {
           this.location.replaceState(null)
@@ -271,14 +282,21 @@ export class NpiComponent implements OnInit {
       if (this.npi.activities.length && this.isReleaseEstimateDelayed)
         if (!this.npi.isRequestOpen('DELAYED_RELEASE')) {
           if (!confirm(
-            "Para submeter uma NPI com data de lançamento em atraso é necessário análise e aprovacão de MPR, PRO, OPR, ADM e do COM, bem como do autor da NPI. Tem certeza que deseja realizar essa operação? ")
+            "Para avançar uma NPI com data de lançamento em atraso será aberta uma solicitação de aprovação do autor da NPI. Tem certeza que deseja realizar essa operação? ")
           ) return;
         } else if (!this.isRequestFinalApproval('DELAYED_RELEASE'))
-          this.promoteNpi(npiForm)
+          this.updateNpi(npiForm)
       console.log("PROMOTING NPI")
       this.promoteNpi(npiForm)
     } else
       this.updateNpi(npiForm)
+  }
+
+  confirmDialog(message: String) {
+    var iframe = document.createElement("IFRAME");
+    iframe.setAttribute("src", 'data:text/plain,');
+    document.documentElement.appendChild(iframe);
+    return window.frames[0].window.confirm("Are you sure?")
   }
 
   submitToAnalysis(npiForm) {
@@ -383,7 +401,7 @@ export class NpiComponent implements OnInit {
         for (let i = 0; i < errorFields.length; i++) {
           let propsArr = errorFields[i].split(".")
           console.log(propsArr)
-          let control : AbstractControl = this.npiForm.get(propsArr[0])
+          let control: AbstractControl = this.npiForm.get(propsArr[0])
           for (let i = 1; i < propsArr.length; i++) {
             control = control.get(propsArr[i])
           }
@@ -549,10 +567,12 @@ export class NpiComponent implements OnInit {
   }
 
   isRequestFinalApproval(requestClass) {
-    console.log(this.npiForm.getRawValue())
-    let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
-    if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
-      return request.analysis(analysis => analysis.status == 'accept')
+    if (this.npiForm.getRawValue().requests) {
+      let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
+      //console.log(request)
+      if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
+        return request.analysis.every(analysis => analysis.status == 'accept')
+    }
     return false
   }
 
@@ -561,6 +581,19 @@ export class NpiComponent implements OnInit {
       if ((this.npi.stage == 2 || this.npi.stage == 3) && !request.closed)
         return request.analysis.every(analysis => analysis.status == 'accept')
     })
+    return false
+  }
+
+  isRequestFinalReproval(requestClass) {
+    //console.log(this.npiForm.getRawValue())
+    if (this.npiForm.getRawValue().requests) {
+      let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
+      if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
+        return (
+          request.analysis.every(analysis => analysis.status == 'accept' || analysis.status == 'deny') &&
+          request.analysis.some(analysis => analysis.status == 'deny')
+        )
+    }
     return false
   }
 
@@ -600,35 +633,37 @@ export class NpiComponent implements OnInit {
 
   canIEdit() {
     return this.npi.stage <= 5 && (
-      // Usuário Básico (padrão)
-      (this.user.level == 0 && (
-        (this.amITheOwner() && (this.npi.stage == 1 ||
-          (this.npi.stage == 2 && !this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())) ||
-          (this.npi.stage == 4 && this.npi.isComplete()))
-        ) ||
-        (this.npi.stage == 4 && this.iHavePendingTask())
-      ))
-      || // Usuário Gestor
-      (this.user.level == 1 && (
-        (this.npi.stage == 1 && this.amITheOwner()) ||
-        (this.npi.stage == 2 && (
-          (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))) ||
-          (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
-          (this.npi.isCriticallyApproved() && this.user.department == "MPR"))
-        ) ||
-        (this.npi.stage == 3 && (
-          (this.user.department == "COM" && this.user.level == 1 && !(this.npi.activities && this.npi.activities.length)) ||
-          (this.user.department == "MPR" && this.npi.activities && this.npi.activities.length) ||
-          (!this.npi.isOemComplete() && this.iHavePendingTask())
-        )) ||
-        (this.npi.stage == 4 && (
-          (!this.npi.isComplete() && this.iHavePendingTask()) ||
-          (this.npi.isComplete() && (this.user.department == "MPR" || this.amITheOwner()))
+      (this.npi.stage == 1 && this.amITheOwner()) || (
+        // Usuário Básico (padrão)
+        (this.user.level == 0 && (
+          (this.amITheOwner() && (
+            (this.npi.stage == 2 && !this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())) ||
+            (this.npi.stage == 4 && this.npi.isComplete()))
+          ) ||
+          (this.npi.stage == 4 && this.iHavePendingTask())
         ))
-      ))
-      || // Usuário Master
-      this.user.level == 2 && (
-        this.npi.stage == 2 && this.npi.isCriticallyApproved()
+        || // Usuário Gestor
+        (this.user.level == 1 && (
+          (this.npi.stage == 2 && (
+            (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))) ||
+            (!this.npi.isCriticallyApproved() && this.amICriticalAnalyser()) ||
+            (this.npi.isCriticallyApproved() && this.user.department == "MPR" && !this.npi.requests.find(r => r.class == 'DELAYED_RELEASE')) ||
+            (this.npi.isCriticallyApproved() && this.npi.requests.find(r => r.class == 'DELAYED_RELEASE')) && this.amITheOwner())
+          ) ||
+          (this.npi.stage == 3 && (
+            (this.user.department == "COM" && this.user.level == 1 && !(this.npi.activities && this.npi.activities.length)) ||
+            (this.user.department == "MPR" && this.npi.activities && this.npi.activities.length) ||
+            (!this.npi.isOemComplete() && this.iHavePendingTask())
+          )) ||
+          (this.npi.stage == 4 && (
+            (!this.npi.isComplete() && this.iHavePendingTask()) ||
+            (this.npi.isComplete() && (this.user.department == "MPR" || this.amITheOwner()))
+          ))
+        ))
+        || // Usuário Master
+        this.user.level == 2 && (
+          this.npi.stage == 2 && this.npi.isCriticallyApproved()
+        )
       )
     )
   }

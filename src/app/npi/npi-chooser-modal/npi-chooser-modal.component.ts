@@ -21,7 +21,7 @@ export class NpiChooserModalComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     public modalRef: BsModalRef,
-    private utils: UtilService
+    public utils: UtilService
   ) {
     this.onConfirm = new Subject<Npi>()
     this.selectedNpi = null

@@ -9,25 +9,29 @@
     <i class='fa fa-plus '></i>
     </button-->
   </div>
-  <div class='row pb-0'>
-    <div class='col'>
-      <div class='row pb-0 align-items-end'>
-        <div class='col-xs col-md mb-0 mr-0 pr-0'>
-          <h3 class='mb-0 d-inline' [ngClass]='{strike: npi.stage == 0}'>
-            NPI #{{ npi.number }} -
-            <span id='titleLabel' *ngIf='!titleEdit' #name 
-            [ngStyle]='{"color" : npi.name == "" ? "lightgray" : "default" }' 
-            [ngClass]='{"text-primary": titleField != npi.name && editFlag}'>
-              {{ this.editFlag ? (titleField ? titleField : "(sem nome)") : (npi.name ? npi.name : "(sem nome)") }}
-              <small class='text-secondary'>{{ npiVersions.length > 1 ? ' (v' + npi.version + ')' : '' }} </small>
-            </span>
-          </h3>
-          <div class="input-group input-group-lg" [ngClass]='{"d-inline-flex" : titleEdit, "d-none": !titleEdit}'>
-            <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)"
-              name='titleInput' autofocus id='titleInput' [(ngModel)]='titleField'>
-          </div>
-          <div class='d-inline-flex flex-nowrap'>
-            <span class='fa fa-circle mr-1' [ngClass]='{
+  <div class='row justify-content-center' *ngIf='loading || !npi || !npi?.name'>
+    <div class='circle-loader'></div>
+    <div class='w-100'></div>
+  </div>
+  <div *ngIf='!loading && npi?.name'>
+    <div class='row pb-0'>
+      <div class='col'>
+        <div class='row pb-0 align-items-end'>
+          <div class='col-xs col-md mb-0 mr-0 pr-0'>
+            <h3 class='mb-0 d-inline' [ngClass]='{strike: npi.stage == 0}'>
+              NPI #{{ npi.number }} -
+              <span id='titleLabel' *ngIf='!titleEdit' #name [ngStyle]='{"color" : npi.name == "" ? "lightgray" : "default" }'
+                [ngClass]='{"text-primary": titleField != npi.name && editFlag}'>
+                {{ this.editFlag ? (titleField ? titleField : "(sem nome)") : (npi.name ? npi.name : "(sem nome)") }}
+                <small class='text-secondary'>{{ npiVersions.length > 1 ? ' (v' + npi.version + ')' : '' }} </small>
+              </span>
+            </h3>
+            <div class="input-group input-group-lg" [ngClass]='{"d-inline-flex" : titleEdit, "d-none": !titleEdit}'>
+              <input type=text class='form-control' (keyup)="changeTitle($event)" (clickOutside)="toggleTitleEdit($event)"
+                name='titleInput' autofocus id='titleInput' [(ngModel)]='titleField'>
+            </div>
+            <div class='d-inline-flex flex-nowrap'>
+              <span class='fa fa-circle mr-1' [ngClass]='{
                 "text-danger" : npi.stage == 0,
                 "text-secondary" : npi.stage == 1,
                 "text-warning" : npi.stage == 2,
@@ -35,101 +39,102 @@
                 "text-success" : npi.stage == 4,
                 "text-info" : npi.stage == 5
                 }'></span>
-            <i class='text-secondary'>{{ utils.getStatus(npi.stage) }} </i>
+              <i class='text-secondary'>{{ utils.getStatus(npi.stage) }} </i>
+            </div>
           </div>
         </div>
+
       </div>
 
-    </div>
-
-    <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
-      <div class='form-row' *ngIf='postConclusionEdit'>
-        <div class='col-6'>
-          <select class="custom-select" id="motivation" #motivation>
-            <option disabled selected value>Selecione um motivo...</option>
-            <option *ngFor="let mot of motivations" value='{{ mot.value }}'>
-              {{ mot.label }}
-            </option>
-          </select>
-        </div>
-        <div class='col-6' *ngIf='motivation.value!=""'>
-          <div class='form-row'>
-            <div class='input-group'>
-              <select class="custom-select" id="field" #selectedAfectedFields>
-                <option disabled selected value>Selecione o campo afetado...</option>
-                <option *ngFor="let field of afectedFields" value='{{ field }}'>
-                  {{ utils.getActivity(field) }}
-                </option>
-              </select>
-              <div class="input-group-append">
-                <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
-                  [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
-                  <i class='fa fa-chevron-right'></i>
-                </button>
+      <div class='col-6 pl-md-0 ml-0' *ngIf='npi.stage == 5'>
+        <div class='form-row' *ngIf='postConclusionEdit'>
+          <div class='col-6'>
+            <select class="custom-select" id="motivation" #motivation>
+              <option disabled selected value>Selecione um motivo...</option>
+              <option *ngFor="let mot of motivations" value='{{ mot.value }}'>
+                {{ mot.label }}
+              </option>
+            </select>
+          </div>
+          <div class='col-6' *ngIf='motivation.value!=""'>
+            <div class='form-row'>
+              <div class='input-group'>
+                <select class="custom-select" id="field" #selectedAfectedFields>
+                  <option disabled selected value>Selecione o campo afetado...</option>
+                  <option *ngFor="let field of afectedFields" value='{{ field }}'>
+                    {{ utils.getActivity(field) }}
+                  </option>
+                </select>
+                <div class="input-group-append">
+                  <button type="button" (click)='enablePostConclusionEditFields(selectedAfectedFields.value)' class="btn btn-info shadow-none"
+                    [disabled]="sendingForm" *ngIf='selectedAfectedFields.value!=""'>
+                    <i class='fa fa-chevron-right'></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class='row align-items-end'>
-    <small class='col-auto mb-0 mt-0 pr-0'>
-      <a routerLink='/users/{{ authorId }}'>
-        {{ authorName }}</a>, {{ npi.createdString }}
-    </small>
-    <div class='col-auto align-self-center'>
-      <span class='badge mt-1' [ngClass]='{
+    <div class='row align-items-end'>
+      <small class='col-auto mb-0 mt-0 pr-0'>
+        <a routerLink='/users/{{ authorId }}'>
+          {{ authorName }}</a>, {{ npi.createdString }}
+      </small>
+      <div class='col-auto align-self-center'>
+        <span class='badge mt-1' [ngClass]='{
             "badge-success" : npi.entry=="pixel",
             "badge-purple" : npi.entry=="oem",
             "badge-secondary" : npi.entry=="internal",
             "badge-info" : npi.entry=="custom"
             }'>
-        {{ utils.getEntry(npi.entry) }}
-      </span>
+          {{ utils.getEntry(npi.entry) }}
+        </span>
+      </div>
+      <div class='col text-right'>
+        <small>Última modificação: {{ lastModifiedDifference }}</small>
+      </div>
     </div>
-    <div class='col text-right'>
-      <small>Última modificação: {{ lastModifiedDifference }}</small>
-    </div>
-  </div>
-  <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
-    <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
-      <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
-        v{{ npiv.version }}
-      </a>
-    </li>
-  </ul>
-  <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
-    <hr *ngIf='npiVersions.length == 1'>
-    <app-oem [npiSetter]='npi' [npis]='npiVersions' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
-    <app-pixel [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'>
-    </app-pixel>
-    <app-internal [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
-    <app-custom [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
+    <ul class="nav nav-tabs mb-3" *ngIf='npiVersions.length > 1 && npi.entry == "oem"'>
+      <li class="nav-item" *ngFor='let npiv of npiVersions; index as i'>
+        <a class="nav-link" (click)='loadVersion(npiv)' routerLink='./' [ngClass]='{"active": npi.version == npiv.version}'>
+          v{{ npiv.version }}
+        </a>
+      </li>
+    </ul>
+    <form [formGroup]='npiForm' (ngSubmit)="saveNpi(npiForm.value)">
+      <hr *ngIf='npiVersions.length == 1'>
+      <app-oem [npiSetter]='npi' [npis]='npiVersions' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="oem"'></app-oem>
+      <app-pixel [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="pixel"'>
+      </app-pixel>
+      <app-internal [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="internal"'></app-internal>
+      <app-custom [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.entry=="custom"'></app-custom>
 
-    <app-oem-activities *ngIf='npi.entry=="oem"' [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeOemActivity($event)'
-      (npiFormOutput)='setChild($event)'>
-    </app-oem-activities>
+      <app-oem-activities *ngIf='npi.entry=="oem"' [npiSetter]='npi' [toggleEdit]='editFlag' (confirmCloseActivity)='closeOemActivity($event)'
+        (npiFormOutput)='setChild($event)'>
+      </app-oem-activities>
 
-    <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'>
-    </app-critical>
+      <app-critical [npiSetter]='npi' [toggleEdit]='editFlag' (criticalForm)='setChild($event)' *ngIf='npi.stage > 1'>
+      </app-critical>
 
-    <app-client *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()' [npi]='npi' [toggleEdit]='editFlag'
-      (npiFormOutput)='setChild($event)'></app-client>
+      <app-client *ngIf='npi.entry=="oem" && npi.stage > 2 && npi.isCriticallyApproved()' [npi]='npi' [toggleEdit]='editFlag'
+        (npiFormOutput)='setChild($event)'></app-client>
 
-    <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
-      (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)' *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && canIChangeActivities))'>
-    </app-activities>
+      <app-activities [npiSetter]='npi' [toggleEdit]='editFlag' (isReleaseEstimateDelayed)='setReleaseEstimateDelayedStatus($event)'
+        (confirmCloseActivity)='closeActivity($event)' (npiFormOutput)='setChild($event)' *ngIf='npi.isApproved() && (npi.stage >= 4 || (npi.activities?.length && (canIChangeActivities || npi.isRequestOpen("DELAYED_RELEASE"))))'>
+      </app-activities>
 
-    <div *ngIf='(npi.stage == 2 || npi.stage == 3) && npi.isApproved() && !canIChangeActivities' class='text-center'>
-      <h4>Etapas Macro do Projeto</h4>
-      <i class='text-secondary'>
-        Aguardando definição das atividades pelo MPR (Produto).</i>
-    </div>
+      <div *ngIf='(npi.stage == 2 || npi.stage == 3) && npi.isApproved() && !canIChangeActivities && !npi.isRequestOpen("DELAYED_RELEASE")'
+        class='text-center'>
+        <h4>Etapas Macro do Projeto</h4>
+        <i class='text-secondary'>
+          Aguardando definição das atividades pelo MPR (Produto).</i>
+      </div>
 
-    <app-validate [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
+      <app-validate [npiSetter]='npi' [toggleEdit]='editFlag' (npiFormOutput)='setChild($event)' *ngIf='npi.stage >= 4 && npi.isComplete()'></app-validate>
 
-    <!--div class="row align-items-center justify-content-between" *ngIf='editFlag'>
+      <!--div class="row align-items-center justify-content-between" *ngIf='editFlag'>
       <div class='col-auto text-secondary'>
         <div class='text-secondary reset' (click)='reset()' data-toggle="tooltip" data-placement="top" title="Desfazer alterações"
           [ngClass]='{"reset-disabled":npi===npiForm.value}'>
@@ -137,60 +142,61 @@
         </div>
       </div>
     </div-->
-    <div class="row align-items-center" *ngIf='editFlag'>
-      <div class='col'>
-        <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='amITheOwner() && npi.stage == 2'>
-          <span class='fa fa-times-circle'></span>
-          Cancelar NPI
-        </button>
-        <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
-          *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
-          <span class='fa fa-trash'></span>
-          Remover NPI
-        </button>
-        <button class='btn btn-outline-info w-100' type='button' (click)='toggleNewVersion()' *ngIf='npi.stage >= 4 && !newFormVersionFlag'>
-          <i class='fa fa-edit fa-fw'></i>
-          Alterar Projeto
-        </button>
+      <div class="row align-items-center" *ngIf='editFlag'>
+        <div class='col'>
+          <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='(amITheOwner() && npi.stage == 1)'>
+            <span class='fa fa-times-circle'></span>
+            Cancelar NPI
+          </button>
+          <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
+            *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
+            <span class='fa fa-trash'></span>
+            Remover NPI
+          </button>
+          <button class='btn btn-outline-info w-100' type='button' (click)='toggleNewVersion()' *ngIf='npi.stage >= 4 && !newFormVersionFlag'>
+            <i class='fa fa-edit fa-fw'></i>
+            Alterar Projeto
+          </button>
+        </div>
+        <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
+          <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalysis(npiForm.value)'>
+            <span class='fa fa-check-circle-o fa-fw'></span>
+            Análise Crítica
+          </button>
+        </div>
+        <div class='col text-right'>
+          <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && !isRequestFinalApproval("DELAYED_RELEASE"))'>
+            <i class='fa fa-save fa-fw'></i>
+            Salvar
+          </button>
+          <button type="submit" class="btn btn-warning w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'>
+            <i class='fa fa-check-circle-o fa-fw'></i>
+            Concluir Análise Crítica
+          </button>
+          <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && !npi.activities.length'>
+            <i class='fa fa-th-list fa-fw'></i>
+            Concluir e Definir Atividades
+          </button>
+          <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved() && isRequestFinalApproval("DELAYED_RELEASE")) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && (!isReleaseEstimateDelayed || isRequestFinalApproval("DELAYED_RELEASE"))'>
+            <i class='fa fa-arrow-right fa-fw'></i>
+            Avançar para Desenvolvimento
+          </button>
+          <button type="submit" class="btn btn-outline-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && isReleaseEstimateDelayed && !npi.isRequestRegistered("DELAYED_RELEASE")'
+            data-toggle="tooltip" data-placement="top" title="Recurso temporariamente indisponível, aguarde próxima atualização">
+            <i class='fa fa-warning fa-fw'></i>
+            Avançar para Desenvolvimento com Data de Lançamento em Atraso
+          </button>
+          <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && newFormVersionFlag)'>
+            <i class='fa fa-save fa-fw'></i>
+            Salvar Nova Versão
+          </button>
+          <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 5'>
+            Alterar Campos...
+          </button>
+        </div>
       </div>
-      <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
-        <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalysis(npiForm.value)'>
-          <span class='fa fa-check-circle-o fa-fw'></span>
-          Análise Crítica
-        </button>
-      </div>
-      <div class='col text-right'>
-        <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && npi.isRequestOpen("DELAYED_RELEASE") )'>
-          <i class='fa fa-save fa-fw'></i>
-          Salvar
-        </button>
-        <button type="submit" class="btn btn-warning w-100" [disabled]="sendingForm" *ngIf='npi.stage == 2 && !newFormVersionFlag && isFinalApproval() && !npi.isApproved()'>
-          <i class='fa fa-check-circle-o fa-fw'></i>
-          Concluir Análise Crítica
-        </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && !npi.activities.length'>
-          <i class='fa fa-th-list fa-fw'></i>
-          Concluir e Definir Atividades
-        </button>
-        <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && !isReleaseEstimateDelayed'>
-          <i class='fa fa-arrow-right fa-fw'></i>
-          Avançar para Desenvolvimento
-        </button>
-        <button type="submit" class="btn btn-outline-primary w-100" [disabled]="sendingForm || true" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved()) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && isReleaseEstimateDelayed && !npi.isRequestRegistered("DELAYED_RELEASE")'
-          data-toggle="tooltip" data-placement="top" title="Recurso temporariamente indisponível, aguarde próxima atualização">
-          <i class='fa fa-warning fa-fw'></i>
-          Avançar para Desenvolvimento com Data de Lançamento em Atraso
-        </button>
-        <button type="submit" class="btn btn-outline-success shadow-none w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && newFormVersionFlag)'>
-          <i class='fa fa-save fa-fw'></i>
-          Salvar Nova Versão
-        </button>
-        <button type="toggleEdit()" class="btn btn-outline-info w-100 shadow-none" [disabled]="sendingForm" *ngIf='npi.stage == 5'>
-          Alterar Campos...
-        </button>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>
 
 <div class='fixed-top text-right mt-5 mr-3 bg-danger' style='height:0; overflow: visible' *ngIf='showGoToTopButton'>
