@@ -299,7 +299,7 @@ export class NpiComponent implements OnInit {
     return window.frames[0].window.confirm("Are you sure?")
   }
 
-  submitToAnalysis(npiForm) {
+  submitToanalisys(npiForm) {
     if (!confirm(
       "Tem certeza que deseja enviar para Análise Crítica? Todos os funcionários envolvidos serão notificados da submissão.")
     ) return;
@@ -497,9 +497,11 @@ export class NpiComponent implements OnInit {
       })
   }
 
-  finalApprove() {
+  finalApprove(kind?) {
     if (!confirm(
-      "Tem certeza que deseja aprovar a NPI?")
+      (kind == 'request' ? 
+      "Tem certeza que deseja aprovar essa solicitação?" : 
+      "Tem certeza que deseja aprovar a NPI?"))
     ) return;
     this.promoteNpi(this.npiForm.value)
   }
@@ -562,7 +564,7 @@ export class NpiComponent implements OnInit {
 
   isFinalApproval() {
     if (this.npi.stage == 2 && this.npiForm.getRawValue().critical)
-      return this.npiForm.getRawValue().critical.every(analysis => analysis.status == 'accept')
+      return this.npiForm.getRawValue().critical.every(analisys => analisys.status == 'accept')
     return false
   }
 
@@ -571,7 +573,7 @@ export class NpiComponent implements OnInit {
       let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
       //console.log(request)
       if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
-        return request.analysis.every(analysis => analysis.status == 'accept')
+        return request.analisys.every(analisys => analisys.status == 'accept')
     }
     return false
   }
@@ -579,7 +581,7 @@ export class NpiComponent implements OnInit {
   isAnyRequestFinalApproval() {
     this.npiForm.getRawValue().requests.some(request => {
       if ((this.npi.stage == 2 || this.npi.stage == 3) && !request.closed)
-        return request.analysis.every(analysis => analysis.status == 'accept')
+        return request.analisys.every(analisys => analisys.status == 'accept')
     })
     return false
   }
@@ -590,8 +592,8 @@ export class NpiComponent implements OnInit {
       let request = this.npiForm.getRawValue().requests.find(request => request.class == requestClass)
       if ((this.npi.stage == 2 || this.npi.stage == 3) && this.npi.isRequestOpen(requestClass))
         return (
-          request.analysis.every(analysis => analysis.status == 'accept' || analysis.status == 'deny') &&
-          request.analysis.some(analysis => analysis.status == 'deny')
+          request.analisys.every(analisys => analisys.status == 'accept' || analisys.status == 'deny') &&
+          request.analisys.some(analisys => analisys.status == 'deny')
         )
     }
     return false
@@ -670,7 +672,7 @@ export class NpiComponent implements OnInit {
 
   amICriticalAnalyser() {
     return this.npi.critical.some(
-      analysis => analysis.dept == this.user.department && this.user.level == 1
+      analisys => analisys.dept == this.user.department && this.user.level == 1
     )
   }
 

@@ -159,13 +159,13 @@
           </button>
         </div>
         <div class='col text-center' *ngIf='npi.stage == 1 && amITheOwner()'>
-          <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToAnalysis(npiForm.value)'>
+          <button type="button" class="btn btn-warning text-light w-100 " [disabled]="sendingForm" (click)='submitToanalisys(npiForm.value)'>
             <span class='fa fa-check-circle-o fa-fw'></span>
             Análise Crítica
           </button>
         </div>
         <div class='col text-right'>
-          <button type="submit" class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && !isRequestFinalApproval("DELAYED_RELEASE"))'>
+          <button type="button" (click)='updateNpi(npiForm.value)' class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && !isRequestFinalApproval("DELAYED_RELEASE"))'>
             <i class='fa fa-save fa-fw'></i>
             Salvar
           </button>

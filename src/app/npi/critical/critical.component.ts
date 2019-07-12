@@ -22,7 +22,7 @@ export class CriticalComponent implements OnInit {
       if (this.npiComponent.user.level > 1)
         this.criticalFormGroup.get("finalApproval").enable()
       this.criticalFormArray.controls.forEach(control => {
-        if (this.amITheAnalysisGestor(control))
+        if (this.amITheanalisysGestor(control))
           control.enable()
       })
     }
@@ -60,7 +60,7 @@ export class CriticalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.insertCriticalAnalysis()
+    this.insertCriticalanalisys()
 
     this.isFormEnabled =
       this.npiComponent.editFlag &&
@@ -86,7 +86,7 @@ export class CriticalComponent implements OnInit {
     )
   }
 
-  insertCriticalAnalysis() {
+  insertCriticalanalisys() {
     this.criticalFormArray = this.fb.array([])
     this.criticalFormGroup = this.fb.group({
       'critical': this.criticalFormArray,
@@ -97,12 +97,12 @@ export class CriticalComponent implements OnInit {
     })
     var criticalModelArray = this.npi.critical
 
-    criticalModelArray.forEach(analysis => {
+    criticalModelArray.forEach(analisys => {
       var criticalControl = this.fb.group(
         {
-          _id: analysis._id,
-          status: analysis.status,
-          comment: analysis.comment
+          _id: analisys._id,
+          status: analisys.status,
+          comment: analisys.comment
         }
       )
       criticalControl.valueChanges.subscribe(
@@ -148,10 +148,10 @@ export class CriticalComponent implements OnInit {
     var criticalFormArray =
       this.criticalFormArray.controls
 
-    criticalFormArray.forEach(analysis => {
-      var criticalRow = this.getCriticalRow(analysis.get('_id').value)
+    criticalFormArray.forEach(analisys => {
+      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
       //console.log(criticalRow)
-      analysis.patchValue(
+      analisys.patchValue(
         {
           status: criticalRow.status,
           comment: criticalRow.comment
@@ -186,10 +186,10 @@ export class CriticalComponent implements OnInit {
     var criticalFormArray =
       this.criticalFormArray.controls
 
-    criticalFormArray.forEach(analysis => {
-      var criticalRow = this.getCriticalRow(analysis.get('_id').value)
+    criticalFormArray.forEach(analisys => {
+      var criticalRow = this.getCriticalRow(analisys.get('_id').value)
       console.log(criticalRow)
-      analysis.patchValue(
+      analisys.patchValue(
         {
           status: null,
           comment: null,
@@ -209,8 +209,8 @@ export class CriticalComponent implements OnInit {
     else return null
   }
 
-  amITheAnalysisGestor(analysis: AbstractControl): Boolean {
-    return this.getCriticalRow(analysis.get('_id').value).dept == this.npiComponent.user.department
+  amITheanalisysGestor(analisys: AbstractControl): Boolean {
+    return this.getCriticalRow(analisys.get('_id').value).dept == this.npiComponent.user.department
       && (this.npiComponent.user.level == 1 || this.npiComponent.user.level == 2)
   }
 

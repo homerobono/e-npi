@@ -1,12 +1,11 @@
-<div class="form-row" [formGroup]='requestFormGroup'>
-  <div class='col'>
-    <label for='analysis' class=col>
-      <center>
-        <h4>Requerimento: Data de lançamento em atraso com data em estoque</h4>
-      </center>
-    </label>
-    <div class='table-responsive' id='analysis' formArrayName='analysis'>
-      <table class="table table-sm table-bordered">
+<div class='card'>
+  <div style='background: rgb(255, 243, 235)' class='p-3 pb-0 mb-0'>
+    <h4>Requerimento</h4>
+    <i>Data de Lançamento em <b>atraso de {{ delayValue }} dias</b> com Data em Estoque</i>
+  </div>
+  <div class="card-body" [formGroup]='requestFormGroup'>
+    <div class='table-responsive mb-0 pb-0' id='analisys'>
+      <table class="table table-sm table-bordered" formArrayName='analisys'>
         <thead class='thead-dark'>
           <tr>
             <th scope="col">Responsável</th>
@@ -16,27 +15,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor='let analysis of analysisFormArray.controls; index as i; last as last' [formGroupName]='i'>
+          <tr *ngFor='let analisys of analisysFormArray.controls; index as i; last as last' [formGroupName]='i'>
             <td *ngIf='!last'>
-              <b>{{ request.analysis[i].dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
-                utils.getDepartment(request.analysis[i].dept).label }})</span>
+              <b>{{ request.analisys[i].dept }}</b> <span style='color: gray; font-size: 10pt'> ({{
+                utils.getDepartment(request.analisys[i].dept).label }})</span>
             </td>
             <td *ngIf='last'>
               {{ npiComponent.npi.requester.firstName }} {{ npiComponent.npi.requester.lastName }}
             </td>
             <td>
-              <i *ngIf='!request.analysis[i].status && !amITheRequestAnalyser(analysis)' style='color: gray; font-size: 10pt'>Em
+              <i *ngIf='!request.analisys[i].status && !amITheRequestAnalyser(analisys)' style='color: gray; font-size: 10pt'>Em
                 análise</i>
-              <div *ngIf='request.analysis[i].status || amITheRequestAnalyser(analysis)'>
-                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="accept") || amITheRequestAnalyser(analysis)'
+              <div *ngIf='request.analisys[i].status || amITheRequestAnalyser(analisys)'>
+                <label *ngIf='(request.analisys[i].status && request.analisys[i].status=="accept") || amITheRequestAnalyser(analisys)'
                   class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                   <input type='radio' class='radio-approval radio-accept' value='accept' formControlName='status' id='accept-{{i}}'>
-                  <span class='fa radio-approval radio-accept' name='analysisApprove'></span>
+                  <span class='fa radio-approval radio-accept' name='analisysApprove'></span>
                 </label>
-                <label *ngIf='(request.analysis[i].status && request.analysis[i].status=="deny") || amITheRequestAnalyser(analysis)'
+                <label *ngIf='(request.analisys[i].status && request.analisys[i].status=="deny") || amITheRequestAnalyser(analisys)'
                   class='radio-container form-check-inline' (click)='toggleStatus(i, $event)'>
                   <input type='radio' class='radio-approval radio-deny' value='deny' formControlName='status' id='deny-{{i}}'>
-                  <span class='fa radio-approval radio-deny' name='analysisApprove'></span>
+                  <span class='fa radio-approval radio-deny' name='analisysApprove'></span>
                 </label>
               </div>
             </td>
@@ -55,48 +54,47 @@
         </tbody>
       </table>
     </div>
-  </div>
-</div>
-<div class='row align-items-center mt-3 mb-4' *ngIf='npi.isRequestDisapproved(requestClass)' [formGroup]='requestFormGroup'>
-  <div class='col-auto text-center'>
-    <span style='font-size: 20px'>
-      <b>Aprovação Final:</b>
-    </span>
-  </div>
-  <div class='col-auto' *ngIf='npi.finalApproval?.status'>
-    <span class='fa fa-check-circle-o fa-2x text-primary' style='vertical-align: middle' *ngIf='npi.finalApproval?.status=="accept"'></span>
-  </div>
-  <div class='col' formGroupName='finalApproval'>
-    <div class='form-group'>
-      <label for='finalComment'>Justificativa</label>
-      <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval.comment")}'>
-      <div class='invalid-feedback'>
-        Descreva o motivo da aprovação
+    <div class="mt-0 mb-0 pt-0" *ngIf='npi.isRequestDisapproved(requestClass) || this.request.finalApproval.status'>
+      <h5 class='card-title'>
+        <b>Aprovação Final </b> <small><i> (usuário Master)</i></small>
+      </h5>
+      <div class='row align-items-center' [formGroup]='requestFormGroup'>
+        <div class='col-auto' *ngIf='npi.finalApproval?.status'>
+          <span class='fa fa-check-circle-o fa-2x text-primary' style='vertical-align: middle' *ngIf='npi.finalApproval?.status=="accept"'></span>
+        </div>
+        <div class='col' formGroupName='finalApproval'>
+          <div class='form-group'>
+            <label for='finalComment'>Justificativa</label>
+            <input class='form-control' formControlName='comment' id='finalComment' #comment [ngClass]='{"is-invalid": fieldHasErrors("finalApproval.comment")}'>
+            <div class='invalid-feedback'>
+              Descreva o motivo da aprovação
+            </div>
+          </div>
+        </div>
+        <div class='col pl-0' *ngIf='!npi.finalApproval?.status'>
+          <div class='row no-gutters'>
+            <div class='col-12 col-md-6'>
+              <button class='btn btn-primary btn-block' type=button (click)='finalApprove()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2 || !comment.value'>
+                <i class='fa fa-check fa-lg' style='vertical-align: middle'></i>
+                <span> Aprovar</span>
+              </button>
+            </div>
+            <div class='col-12 col-md-6'>
+              <button class='btn btn-danger btn-block mr-2' type=button (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2'>
+                <i class='fa fa-trash fa-lg' style='vertical-align: middle;'></i>
+                <span> Cancelar NPI</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class='col-12 col-sm text-center final-signature' *ngIf='finalSignature'>
+          <div class='rounded bg-light m-0 p-2'>
+            <i>
+              <b>{{ finalSignature }}</b>
+            </i>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class='col pl-0 pr-0' *ngIf='!npi.finalApproval?.status'>
-    <div class='row no-gutters'>
-      <div class='col-12 col-md-6'>
-        <button class='btn btn-primary btn-block' (click)='finalApprove()'
-          [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2 || !comment.value'>
-          <i class='fa fa-check fa-2x' style='vertical-align: middle'></i>
-          <span> Aprovar</span>
-          </button>
-      </div>
-      <div class='col-12 col-md-6'>
-        <button class='btn btn-danger btn-block mr-2' (click)='cancelNpi()' [disabled]='npi.finalApproval?.status || !this.npiComponent.editFlag || npi.stage != 2 || this.npiComponent.user.level < 2'>
-          <i class='fa fa-trash fa-2x' style='vertical-align: middle;'></i>
-          <span> Cancelar NPI</span>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class='col-12 col-sm text-center final-signature' *ngIf='finalSignature'>
-    <div class='rounded bg-light m-0 p-2'>
-      <i>
-        <b>{{ finalSignature }}</b>
-      </i>
     </div>
   </div>
 </div>

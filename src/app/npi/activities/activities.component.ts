@@ -28,7 +28,7 @@ export class ActivitiesComponent implements OnInit {
     }
 
     @Input() set toggleEdit(edit: Boolean) {
-        if (!this.npi.isComplete())
+        if (!this.npi.isComplete() && !this.npi.isRequestOpen("DELAYED_RELEASE"))
             this.toggleFields(edit)
         this.isFormEnabled = edit
         this.editFlag = edit
@@ -183,9 +183,8 @@ export class ActivitiesComponent implements OnInit {
                 {
                     _id: request._id,
                     class: request.class,
-                    comment: request.comment,
                     responsible: request.responsible,
-                    analysis: request.analysis,
+                    analisys: request.analisys,
                     closed: request.closed
                 }
             )

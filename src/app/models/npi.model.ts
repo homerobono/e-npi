@@ -120,7 +120,7 @@ class Npi {
     };
     activities: Array<{
         _id: String,
-        activity: String,
+        activity: String, skype
         term: Number,
         dept: String,
         responsible: any,
@@ -136,16 +136,11 @@ class Npi {
     }>;
     requests: Array<{
         _id: String,
-        approval: String,
+        approval: Boolean,
         class: String,
         responsible: any,
-        comment: String,
         closed: Boolean,
-        signature: {
-            user: any,
-            date: Date,
-        },
-        analysis: Array<{
+        analisys: Array<{
             _id: String,
             status: String,
             responsible: any,
@@ -155,6 +150,15 @@ class Npi {
                 date: Date
             }
         }>;
+        finalApproval: {
+            _id: String,
+            status: String,
+            comment: String,
+            signature: {
+                user: any,
+                date: Date
+            }
+        };
     }>;
     validation: {
         final: String
@@ -256,7 +260,7 @@ class Npi {
     public isCriticallyTouched(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analysis) => analysis.status != null
+                (analisys) => analisys.status != null
             )
         }
         return false
@@ -265,7 +269,7 @@ class Npi {
     public isCriticallyAnalysed(): Boolean {
         if (this.critical) {
             return this.critical.every(
-                analysis => analysis.status != null
+                analisys => analisys.status != null
             ) || this.finalApproval.status != null
         }
         return false
@@ -274,9 +278,9 @@ class Npi {
     public isCriticallyDisapproved(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analysis) => analysis.status == 'deny'
+                (analisys) => analisys.status == 'deny'
             ) && this.critical.every(
-                analysis => analysis.status != null
+                analisys => analisys.status != null
             )
         }
         return false
@@ -285,7 +289,7 @@ class Npi {
     public hasCriticalApproval(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                analysis => analysis.status == 'accept'
+                analisys => analisys.status == 'accept'
             )
         }
         return false
@@ -294,7 +298,7 @@ class Npi {
     public hasCriticalDisapproval(): Boolean {
         if (this.critical) {
             return this.critical.some(
-                (analysis) => analysis.status == 'deny'
+                (analisys) => analisys.status == 'deny'
             )
         }
         return false
@@ -303,7 +307,7 @@ class Npi {
     public isCriticallyApproved(): Boolean {
         if (this.critical && this.critical.length) {
             return this.critical.every(
-                analysis => analysis.status == 'accept'
+                analisys => analisys.status == 'accept'
             ) || this.finalApproval.status == 'accept'
         }
         return false
@@ -349,28 +353,27 @@ class Npi {
 
     public isRequestApproved(className: String): Boolean {
         let request = this.requests.find(request => request.class == className)
-        //console.log(Boolean(request.closed), Boolean(request.analysis.every(a => a.status == 'accept')))
+        //console.log(Boolean(request.closed), Boolean(request.analisys.every(a => a.status == 'accept')))
         if (request)
-            return Boolean(request.closed) && Boolean(request.analysis.every(a => a.status == 'accept'))
+            return Boolean(request.approval)
         return false
     }
 
     public isRequestDisapproved(className: String): Boolean {
         let request = this.requests.find(request => request.class == className)
-        //console.log(Boolean(request.closed), Boolean(request.analysis.some(a => a.status == 'deny')))
-        if (request)
-            return Boolean(request.closed) && Boolean(request.analysis.some(a => a.status == 'deny') )
-        return false
+        //console.log(Boolean(request.closed), Boolean(request.analisys.some(a => a.status == 'deny')))
+        return request.analisys.every(a => a.status == 'accept' || a.status == 'deny') &&
+            request.analisys.some(a => a.status == 'deny') && !request.closed
     }
 
     public getCriticalApprovalDate(): Date {
         if (this.isCriticallyApproved) {
             if (this.finalApproval && this.finalApproval.status == 'accept') return this.finalApproval.signature.date
-            var lastAnalysisDate = this.critical[0].signature.date
-            this.critical.forEach(analysis => {
-                lastAnalysisDate = lastAnalysisDate < analysis.signature.date ? analysis.signature.date : lastAnalysisDate
+            var lastanalisysDate = this.critical[0].signature.date
+            this.critical.forEach(analisys => {
+                lastanalisysDate = lastanalisysDate < analisys.signature.date ? analisys.signature.date : lastanalisysDate
             })
-            return lastAnalysisDate
+            return lastanalisysDate
         } return null
     }
 

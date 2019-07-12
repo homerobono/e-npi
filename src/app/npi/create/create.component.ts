@@ -298,7 +298,7 @@ export class CreateComponent implements OnInit {
         this.createNpi()
     }
 
-    submitToAnalysis() {
+    submitToanalisys() {
         this.createForm.value.stage = 1
         this.resolveSubmission = this.npiService.createNpi(this.createForm.value)
             .concatMap(create => {
