@@ -4,7 +4,8 @@
 
 export const environment = {
   version: require('../../package.json').version,
-  production: false
+  production: false,
+  enpiServerUrl: 'http://191.252.113.160:3002/e-npi/v1',
 };
 
 /*

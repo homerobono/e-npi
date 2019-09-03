@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Globals } from 'config';
 import { ResponseContentType, Response } from '@angular/http';
+import { environment } from '../../environments/environment'
 
 export interface IFileService {
   add(path: String, folderName: String);
@@ -18,7 +19,7 @@ export interface IFileService {
 @Injectable()
 export class FileService implements IFileService {
 
-  apiUrl = Globals.ENPI_SERVER_URL + '/files'
+  apiUrl = environment.enpiServerUrl + '/files'
   listUrl = `${this.apiUrl}/list`;
   addUrl = `${this.apiUrl}/createFolder`;
   downloadUrl = `${this.apiUrl}/download`;

@@ -5,8 +5,9 @@ import { Subject, BehaviorSubject, of, Observable, Observer } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap';
 import { SendingFormModalComponent } from '../npi/sending-form-modal/sending-form-modal.component';
 import { isNgTemplate } from '@angular/compiler';
+import { environment } from '../../environments/environment'
 
-const uploadUrl = Globals.ENPI_SERVER_URL + '/files/upload'
+const uploadUrl = environment.enpiServerUrl + '/files/upload'
 
 @Injectable({
   providedIn: 'root'

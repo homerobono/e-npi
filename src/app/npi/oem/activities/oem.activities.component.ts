@@ -26,7 +26,7 @@ export class OemActivitiesComponent implements OnInit {
     }
 
     @Input() set toggleEdit(edit: Boolean) {
-        console.log("TOGGLE EDIT", edit)
+        //console.log("TOGGLE EDIT", edit)
         if (edit && this.npi.amITheOwner(this.npiComponent.user._id) &&
             (this.npi.stage == 1 || (this.npi.stage == 2 && !this.npi.isCriticallyApproved()
                 && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval())
@@ -87,7 +87,7 @@ export class OemActivitiesComponent implements OnInit {
         this.npiComponent.resetFormFlagSubject.subscribe(
             () => this.fillFormData())
 
-        this.subscribeToInputChanges()
+        //this.subscribeToInputChanges()
 
         this.npiFormOutput.emit(this.activitiesFormGroup)
 
@@ -361,10 +361,10 @@ export class OemActivitiesComponent implements OnInit {
     //========================================================================
 
     fillFormData() {
-        console.log('filling form');
+        //console.log('filling form');
         this.activitiesFormArray.controls.forEach(activityControl => {
             var activity = this.getOemActivityRow(activityControl.get('_id').value)
-            console.log(activity, activityControl.get('_id').value)
+            //console.log(activity, activityControl.get('_id').value)
             activityControl.patchValue(
                 {
                     //_id: activity._id,

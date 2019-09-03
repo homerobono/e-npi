@@ -2,7 +2,7 @@
   <div class='col'>
     <label for='activities' class=col>
       <center>
-        <h4>Etapas O&M {{ editFlag }}</h4>
+        <h4>Etapas O&M</h4>
       </center>
     </label>
     <div id='activities' class='table-responsive' [formGroup]='activitiesFormGroup'>
@@ -11,15 +11,15 @@
           <tr>
             <th scope="col" rowspan=2>#</th>
             <th scope="col" rowspan=2>Atividade</th>
-            <th scope="col" rowspan=2>Responsável</th>
-            <th scope="col" colspan=3>Prazo</th>
+            <!--th scope="col" rowspan=2>Responsável</th-->
+            <!--th scope="col" colspan=3>Prazo</th-->
             <th scope="col" rowspan=2>Arquivos</th>
-            <th scope="col" rowspan=2>Status</th>
+            <!--th scope="col" rowspan=2>Status</th-->
           </tr>
           <tr>
-            <th scope=col>Período (dias)</th>
-            <th class='date' scope=col>Início</th>
-            <th class='date' scope=Fim>Término</th>
+            <!--th scope=col>Período (dias)</th-->
+            <!--th class='date' scope=col>Início</th-->
+            <!--th class='date' scope=Fim>Término</th-->
             <!--th >
               <button class='btn btn-sm btn-light text-primary shadow-none pr-0' type=button (click)='closeAllActivities()'>
                 <i class='fa fa-check pr-0 mr-0'></i>
@@ -38,14 +38,14 @@
             <td>
               {{ utils.getOemActivity(activity.get("activity").value).label }}
             </td>
-            <td [appActivityRow]='activity'>
+            <!--td [appActivityRow]='activity'>
               {{ npi.oemActivities[i].dept }}
               <select class='custom-select' formControlName='responsible'>
                 <option *ngFor='let user of users[npi.oemActivities[i].dept]' value='{{ user._id }}'>{{ user.firstName }}
                   {{ user.lastName }}</option>
               </select>
-            </td>
-            <td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
+            </td-->
+            <!--td [ngClass]='{"text-danger": activity.get("term").value < 0 }'>
               <input type='number' class='form-control' formControlName='term' style='width: 60px' min=0 id='{{activity.get("activity").value}}_TERM'
                 appBlink>
             </td>
@@ -60,13 +60,13 @@
                 #edp="bsDatepicker" bsDatepicker [bsConfig]='datePickerConfig[i]' placement='right' id='{{activity.get("activity").value}}_END_DATE'
                 appBlink [activity]='activity' [npi]=npi [dependencies]='getControlsDependencyActivities(activity)'
                 [dependents]='getControlsDependentActivities(activity)'>
-            </td>
+            </td-->
             <td>
               <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' *ngIf='utils.getOemActivity(activity.get("activity").value).annex' 
               [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiId]='npi.id'
                 [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)' [hasError]='fieldHasErrors(i+".annex")'></app-file-button>
             </td>
-            <td class=signature>
+            <!--td class=signature>
                 <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
                 *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag || !fieldHasAnnex(activity)'
                 data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade" [ngClass]='{"border-danger" : fieldHasErrors(i+".closed")}' >
@@ -75,7 +75,7 @@
               <!--span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)'
               data-toggle="tooltip" data-placement="bottom" title="Aguardando atividades anteriores">
                 <i class='fa fa-clock-o fa-lg text-info'></i>
-              </span-->
+              </span>
               <span *ngIf='!activity.get("closed").value && !canCloseActivity(activity)'
               data-toggle="tooltip" data-placement="bottom" title="Em andamento">
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
@@ -84,7 +84,7 @@
                 <i class='fa fa-check fa-sm text-success'></i>
                 {{ signatures[i] }}
               </span>
-            </td>
+            </td-->
           </tr>
         </tbody>
       </table>

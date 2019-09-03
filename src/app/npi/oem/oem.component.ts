@@ -105,7 +105,7 @@ export class OemComponent implements OnInit {
 
   ngOnInit() {
     this.standardRegulationsArray = (this.npiForm.get('regulations').get('standard') as FormGroup).controls
-    
+
     let regulations = this.utils.getRegulations()
     let additionalArray = this.npiForm.get('regulations').get('standard') as FormGroup
     regulations.forEach(reg => {
@@ -137,6 +137,7 @@ export class OemComponent implements OnInit {
     this.npiFormOutput.emit(this.npiForm)
     this.npiForm.get('npiRef').valueChanges.subscribe(
       res => { this.npiComponent.loadNpiRef(res) })
+      
     this.fillFormData()
 
     if (this.npi.isCriticallyTouched() ||
@@ -230,6 +231,7 @@ export class OemComponent implements OnInit {
   }
 
   updateParentForm() {
+    console.log('updating')
     this.npiFormOutput.emit(this.npiForm)
   }
 

@@ -1,12 +1,4 @@
 export const Globals = Object.freeze({
-	//SERVER_BASE_URL: 'http://201.77.131.165:1110',
-	//LOCAL_BASE_URL: 'http://127.0.0.1:3000',
-	//ENPI_SERVER_URL : 'http://201.77.131.165:1110/e-npi/v2',
-	//ENPI_SERVER_URL : 'http://192.168.10.121:1110/e-npi/v2',
-	//ENPI_SERVER_URL: 'http://10.0.0.175:1110/e-npi/v2',
-	//ENPI_SERVER_URL: 'http://191.252.113.160:3002/e-npi/v1',
-	//ENPI_SERVER_URL : 'http://191.252.113.160:1110/e-npi/v2',
-	ENPI_SERVER_URL: 'http://191.252.113.160:3001/e-npi/v1',
 
 	STATUS: [
 		'Cancelada',
@@ -74,6 +66,10 @@ export const Globals = Object.freeze({
 		validation: 'Validação',
 		clientApproval: 'Aprovação do Cliente',
 		oemActivities: {
+			0: 'Solicitação de Documentos (BOM, Gerbers, etc)',
+			1: 'Proposta de Desenvolvimento', 
+			2: 'Cotação da BOM',               
+			3: 'Formação de preço',
 			DOCS: 'Solicitação de Documentos (BOM, Gerbers, etc)',
 			PROP: 'Proposta de Desenvolvimento', 
 			BOM: 'Cotação da BOM',               
@@ -169,13 +165,13 @@ export const Globals = Object.freeze({
 		{ value: 'PRODUCTION',	label: 'Compra do Primeiro Lote de Produção',		dept: 'OSC', term: 90,dep: ["BOM_SUBMIT", "CHECKLIST"], required: true, annex: true },
 		{ value: 'ASSEMBLY',    label: 'Instrução de Montagem', 					dept: 'PRO', term: 5, dep: ["JIG", "CHECKLIST", "GOLDEN", "PRODUCTION"], required: true, annex: true },
 		{ value: 'PILOT', 		label: 'Lote Piloto', 								dept: 'PRO', term: 5, dep: ["ASSEMBLY", "PRODUCTION"], required: true, annex: true },
-		{ value: 'RELEASE',		label: 'Data de Lançamento', 						dept: null,  term: 0, dep: ["MECH_LAYOUT", "SPEC_TAG", "SPEC_PACKING", "SMT", "DOCUMENT_FW", "DOCUMENT_SW", "RELEASE_PLAN", "PILOT"], required: true, annex: false }
+		{ value: 'RELEASE',		label: 'Data de Lançamento', 						dept: null,  term: 0, dep: ["MECH_LAYOUT", "SPEC_TAG", "SPEC_PACKING", "SMT", "DOCUMENT_FW", "DOCUMENT_SW", "RELEASE_PLAN", "PILOT", "HOMOLOG", "TRYOUT"], required: true, annex: false }
 	],
 	
 	OEM_STAGES: [
-		{ value: 'SPECS_HW', 	label:'Especificação Técnica - Funcionalidade HW',  dept: null, term: 1, annex: true },
-		{ value: 'SPECS_SW', 	label:'Especificação Técnica - Funcionalidade de SW',dept:null, term: 1, annex: true },
-		{ value: 'MECH_SPEC', 	label: 'Especificação Mecânica/Dimensional', 		dept: null, term: 1, annex: true },
+		{ value: 'SPECS_HW', 	label:'Especificação Técnica - Funcionalidade HW',  dept: 'MPR', term: 1, annex: true },
+		{ value: 'SPECS_SW', 	label:'Especificação Técnica - Funcionalidade de SW',dept:'MPR', term: 1, annex: true },
+		{ value: 'MECH_SPEC', 	label: 'Especificação Mecânica/Dimensional', 		dept: 'MPR', term: 1, annex: true },
 		{ value: 'ELETRIC_LAYOUT',label:'Esquema Elétrico/Layout', 					dept: 'PRO', term: 60, annex: true },
 		{ value: 'BOM_DESC', 	label: 'BOM com P/N, Descrição', 					dept: 'PRO', term: 5,  required: true, annex: true },
 		{ value: 'GERBER', 		label: 'Arquivo Gerber e Centroide', 				dept: 'PRO', term: 5,  annex: true },
@@ -207,7 +203,7 @@ export const Globals = Object.freeze({
 		{ value: 'PRODUCTION',	label: 'Compra do Primeiro Lote de Produção',		dept: 'OSC', term: 90,dep: ["BOM_SUBMIT", "CHECKLIST"], required: true, annex: true },
 		{ value: 'ASSEMBLY',    label: 'Instrução de Montagem', 					dept: 'PRO', term: 7, dep: ["JIG", "CHECKLIST", "GOLDEN", "PRODUCTION"], required: true, annex: true },		
 		{ value: 'PILOT', 		label: 'Lote Piloto', 								dept: 'PRO', term: 5, dep: ["ASSEMBLY", "PRODUCTION"], required: true, annex: true },
-		{ value: 'RELEASE',		label: 'Data de Lançamento', 						dept: null,  term: 0, dep: ["MECH_LAYOUT", "SPEC_TAG", "SPEC_PACKING", "SMT", "DOCUMENT_FW", "DOCUMENT_SW", "RELEASE_PLAN", "PILOT"], required: true, annex: false }
+		{ value: 'RELEASE',		label: 'Data de Lançamento', 						dept: null,  term: 0, dep: ["MECH_LAYOUT", "SPEC_TAG", "SPEC_PACKING", "SMT", "DOCUMENT_FW", "DOCUMENT_SW", "RELEASE_PLAN", "PILOT", "HOMOLOG", "TRYOUT"], required: true, annex: false }
 	],
 
 	REGULATIONS: [

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { Observable, Subject } from 'rxjs/Rx';
 import { Globals } from 'config';
+import { environment } from '../../environments/environment'
 
 import Npi from '../models/npi.model';
 import 'rxjs/add/operator/do';
@@ -15,7 +16,7 @@ import { UploadService } from './upload.service';
 })
 
 export class NpiService {
-  api_url = Globals.ENPI_SERVER_URL
+  api_url = environment.enpiServerUrl
   npisUrl = `${this.api_url}/npis`;
   npiUrl = `${this.api_url}/npi/`;
   npiMigrateUrl = `${this.api_url}/npis/migrate`;

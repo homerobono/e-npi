@@ -19,11 +19,11 @@ export class ActivityRowDirective {
   constructor(private el: ElementRef, private renderer: Renderer2) { }
 
   @HostListener('mouseenter') onHoverIn() {
-    this.colorizeElement('row')
+      //this.colorizeElement('row')
   }
 
   @HostListener('mouseleave') onHoverOut() {
-    this.unColorizeElement('row')
+      //this.unColorizeElement('row')
   }
 
   ngOnChanges(changes: SimpleChanges) {

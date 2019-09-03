@@ -7,8 +7,9 @@ import { UploadService } from '../../services/upload.service';
 import { Globals } from 'config';
 import FileElement from '../../models/file.model';
 import { UtilService } from '../../services/util.service';
+import { environment } from '../../../environments/environment'
 
-const URL = Globals.ENPI_SERVER_URL
+const URL = environment.enpiServerUrl
 
 @Component({
   selector: 'app-uploader',

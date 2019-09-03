@@ -530,7 +530,7 @@ export class ActivitiesComponent implements OnInit {
         return user.level > 1 ||
             (user.level == 1 && (
                 user.department == activity.get('dept').value ||
-                (user.department == 'MPR' && this.npi.stage == 2)
+                (user.department == 'MPR' && (this.npi.stage == 2 || this.npi.stage == 3))
             )
             )
     }
@@ -539,7 +539,7 @@ export class ActivitiesComponent implements OnInit {
         let user = this.npiComponent.user
         return user.level > 1 || (
             user.level == 1 && (
-                (user.department == 'MPR' && this.npi.stage == 2)
+                (user.department == 'MPR' && (this.npi.stage == 2 || this.npi.stage == 3))
             )
         )
     }

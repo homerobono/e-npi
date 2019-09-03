@@ -202,11 +202,14 @@ export class NpiComponent implements OnInit {
     setInterval(() => this.lastModifiedDifference = this.utils.getTimeDifference(null, this.npi.updated),
       1000)
 
-    //setTimeout(() => this.openFileManager('resources'), 400)
-
-    //setTimeout(() => console.log(this.npiForm.value), 1000)
-    //changes.subscribe(res => {this.path = res[0].path; console.log('CHANGED ROUTE!')})
-    //console.log(this.route.firstChild.snapshot.routeConfig.path.includes('edit'))
+    console.log(
+      (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))),
+      (this.user.department == "COM" && !(this.npi.activities && this.npi.activities.length)),
+      (this.user.department == "MPR" && this.npi.activities && this.npi.activities.length),
+      (this.npi.isCriticallyApproved() && this.user.department == "MPR" && !this.npi.requests.find(r => r.class == 'DELAYED_RELEASE')),
+      (this.npi.isCriticallyApproved() && this.npi.requests.find(r => r.class == 'DELAYED_RELEASE') && this.amITheOwner()),
+      !this.npi.isOemComplete(), this.iHavePendingTask()
+    )
   }
 
   scrollBackToPosition() {
@@ -307,6 +310,7 @@ export class NpiComponent implements OnInit {
   }
 
   updateNpi(npiForm) {
+    console.log(npiForm)
     npiForm.name = this.titleField
     npiForm.number = this.npi.number
     npiForm.id = this.npi.id
@@ -381,6 +385,7 @@ export class NpiComponent implements OnInit {
         'message': 'Nenhum campo modificado'
       });
     this.sendingForm = false;
+    this.npiForm = this.fb.group({})
     this.refresh()
   }
 
@@ -389,14 +394,12 @@ export class NpiComponent implements OnInit {
   }
 
   invalidFieldsError(err) {
-    //this.toggleEdit()
+    this.toggleEdit()
     console.log(err, this.npiForm.value)
     if (err.error.message.errors) {
       var errors = err.error.message.errors
       var errorFields = Object.keys(errors)
       this.invalidFields = errorFields
-      var invalidFieldsMessage = 'Corrija o' +
-        (errorFields.length == 1 ? ' campo ' : 's campos ')
       try {
         for (let i = 0; i < errorFields.length; i++) {
           let propsArr = errorFields[i].split(".")
@@ -406,19 +409,33 @@ export class NpiComponent implements OnInit {
             control = control.get(propsArr[i])
           }
           control.setErrors({ 'required': true })
-          invalidFieldsMessage += Globals.LABELS[propsArr[0]] +
-            (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
         }
       } catch (e) {
         console.log(e)
       }
       this.messenger.set({
         type: 'error',
-        message: invalidFieldsMessage
+        message: this.invalidFieldsMessage(errorFields)
       })
     }
     this.formSent = false;
     this.sendingForm = false;
+  }
+
+  invalidFieldsMessage(errorFields) {
+    var invalidFieldsMessage = 'Corrija o' +
+      (errorFields.length == 1 ? ' campo ' : 's campos ')
+    for (let i = 0; i < errorFields.length; i++) {
+      let propsArr = errorFields[i].split(".")
+      console.log(propsArr)
+      let label = Globals.LABELS
+      for (let i = 0; i < propsArr.length && label instanceof Object; i++) {
+        label = label[propsArr[i]]
+      }
+      invalidFieldsMessage += label +
+        (i < errorFields.length - 1 ? i < errorFields.length - 2 ? ', ' : ' e ' : '. ')
+    }
+    return invalidFieldsMessage
   }
 
   toggleEdit() {
@@ -478,8 +495,10 @@ export class NpiComponent implements OnInit {
   setChild(form) {
     Object.keys(form.controls).forEach((field: string) => {
       this.npiForm.addControl(field, form.get(field))
+      this.npiForm.updateValueAndValidity()
+      //console.log(form.get(field).value, this.npiForm.get(field).value)
     });
-    this.npiForm.updateValueAndValidity()
+    //this.npiForm.updateValueAndValidity()
   }
 
   newOemVersion(): void {
@@ -499,9 +518,9 @@ export class NpiComponent implements OnInit {
 
   finalApprove(kind?) {
     if (!confirm(
-      (kind == 'request' ? 
-      "Tem certeza que deseja aprovar essa solicitação?" : 
-      "Tem certeza que deseja aprovar a NPI?"))
+      (kind == 'request' ?
+        "Tem certeza que deseja aprovar essa solicitação?" :
+        "Tem certeza que deseja aprovar a NPI?"))
     ) return;
     this.promoteNpi(this.npiForm.value)
   }
@@ -653,9 +672,11 @@ export class NpiComponent implements OnInit {
             (this.npi.isCriticallyApproved() && this.npi.requests.find(r => r.class == 'DELAYED_RELEASE')) && this.amITheOwner())
           ) ||
           (this.npi.stage == 3 && (
-            (this.user.department == "COM" && this.user.level == 1 && !(this.npi.activities && this.npi.activities.length)) ||
+            (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))) ||
+            (this.user.department == "COM" && !(this.npi.activities && this.npi.activities.length)) ||
             (this.user.department == "MPR" && this.npi.activities && this.npi.activities.length) ||
-            (!this.npi.isOemComplete() && this.iHavePendingTask())
+            (this.npi.isCriticallyApproved() && this.user.department == "MPR" && !this.npi.requests.find(r => r.class == 'DELAYED_RELEASE')) ||
+            (this.npi.isCriticallyApproved() && this.npi.requests.find(r => r.class == 'DELAYED_RELEASE') && this.amITheOwner())
           )) ||
           (this.npi.stage == 4 && (
             (!this.npi.isComplete() && this.iHavePendingTask()) ||
@@ -664,7 +685,9 @@ export class NpiComponent implements OnInit {
         ))
         || // Usuário Master
         this.user.level == 2 && (
-          this.npi.stage == 2 && this.npi.isCriticallyApproved()
+          (this.npi.stage == 2 && (this.amITheOwner() && (!this.npi.isApproved() && (this.npi.hasCriticalDisapproval() || !this.npi.hasCriticalApproval()))) ||
+            this.npi.isCriticallyApproved()
+          )
         )
       )
     )
@@ -677,14 +700,14 @@ export class NpiComponent implements OnInit {
   }
 
   iHavePendingTask() {
-    return this.npi.activities && (
+    return Boolean(this.npi.activities) && (
       this.user.level == 2 ||
-      this.npi.activities.some(activity => {
+      this.npi.activities.some(activity =>
         //console.log(`Analysing ${activity.activity}: dept ${activity.dept} == ${this.user.department} => ${activity.dept == this.user.department}`)
-        return !activity.closed && // em aberto
-          (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
-            this.user.department == activity.dept && this.user.level >= 1))
-      }) ||
+        !activity.closed && // em aberto
+        (activity.responsible == this.user._id || ( // E (sou responsavel OU sou gestor da atividade)
+          this.user.department == activity.dept && this.user.level >= 1))
+      ) ||
       (this.npi.oemActivities &&
         this.npi.oemActivities.some(activity =>
           !activity.closed && // em aberto
@@ -702,7 +725,7 @@ export class NpiComponent implements OnInit {
   }
 
   setReleaseEstimateDelayedStatus(status) {
-    console.log(status)
+    //console.log(status)
     this.isReleaseEstimateDelayed = status
   }
 

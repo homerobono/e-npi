@@ -3,6 +3,7 @@ import { Observable, Subject, BehaviorSubject } from 'rxjs/Rx';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment'
 
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/shareReplay';
@@ -14,7 +15,7 @@ import { Globals } from 'config';
 })
 export class AuthService {
 
-    api_url = Globals.ENPI_SERVER_URL;
+    api_url = environment.enpiServerUrl;
     loginUrl = `${this.api_url}/login`;
     resetUrl = `${this.api_url}/reset/`;
     forgotUrl = `${this.api_url}/forgot/`;

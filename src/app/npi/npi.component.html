@@ -144,10 +144,10 @@
     </div-->
       <div class="row align-items-center" *ngIf='editFlag'>
         <div class='col'>
-          <button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='(amITheOwner() && npi.stage == 1)'>
+          <!--button type="button" class="btn btn-danger w-100" [disabled]="sendingForm" (click)='cancelNpi()' *ngIf='(amITheOwner() && npi.stage == 1)'>
             <span class='fa fa-times-circle'></span>
             Cancelar NPI
-          </button>
+          </button-->
           <button type="button" class="btn btn-outline-danger shadow-none w-100" [disabled]="sendingForm" (click)='cancelNpi()'
             *ngIf='(npi.stage == 0 && amITheOwner()) || npi.stage == 1'>
             <span class='fa fa-trash'></span>
@@ -165,7 +165,7 @@
           </button>
         </div>
         <div class='col text-right'>
-          <button type="button" (click)='updateNpi(npiForm.value)' class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && !isRequestFinalApproval("DELAYED_RELEASE"))'>
+          <button type="button" (click)='npiForm.updateValueAndValidity(); updateNpi(npiForm.value)' class="btn btn-success w-100" [disabled]="sendingForm" *ngIf='(npi.stage < 5 && !newFormVersionFlag && !isFinalApproval()) || ((npi.stage == 2 || npi.stage == 3) && !isRequestFinalApproval("DELAYED_RELEASE"))'>
             <i class='fa fa-save fa-fw'></i>
             Salvar
           </button>
@@ -177,7 +177,8 @@
             <i class='fa fa-th-list fa-fw'></i>
             Concluir e Definir Atividades
           </button>
-          <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved() && isRequestFinalApproval("DELAYED_RELEASE")) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && (!isReleaseEstimateDelayed || isRequestFinalApproval("DELAYED_RELEASE"))'>
+          <button type="submit" class="btn btn-primary w-100" [disabled]="sendingForm" 
+          *ngIf='((npi.stage == 2 && !newFormVersionFlag && npi.isApproved() && isRequestFinalApproval("DELAYED_RELEASE")) || (npi.stage == 3 && isClientApproval())) && npi.activities.length && (!isReleaseEstimateDelayed || isRequestFinalApproval("DELAYED_RELEASE"))'>
             <i class='fa fa-arrow-right fa-fw'></i>
             Avançar para Desenvolvimento
           </button>

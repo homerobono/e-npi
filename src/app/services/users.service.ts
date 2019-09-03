@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { Globals } from 'config';
+import { environment } from '../../environments/environment'
 
 import User from '../models/user.model';
 import 'rxjs/add/operator/map';
@@ -12,7 +13,7 @@ import 'rxjs/add/operator/map';
 })
 
 export class UsersService {
-  api_url = Globals.ENPI_SERVER_URL
+  api_url = environment.enpiServerUrl
   usersUrl = `${this.api_url}/users`;
   userUrl = `${this.api_url}/user/`;
   registerPendingUserUrl = `${this.api_url}/users/register`;

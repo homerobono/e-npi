@@ -102,9 +102,9 @@ export class CreateComponent implements OnInit {
         this.createForm = fb.group({
             'date': new Date().toLocaleDateString('pt-br'),
             'complexity': 2,
-            'client': '',
-            'name': '',
-            'entry': 'pixel',
+            'client': 'Cliente',
+            'name': 'Novo Projeto',
+            'entry': 'oem',
             'npiRef': null,
             'designThinking': fb.group({
                 'apply': null,
@@ -201,7 +201,7 @@ export class CreateComponent implements OnInit {
             } else
                 this.createForm.get("regulations").get("none").setValue(true)
         })
-        this.subscribeToInputChanges()
+        //this.subscribeToInputChanges()
         this.createForm.updateValueAndValidity()
         //setTimeout(() => this.openUploadModal("resources"), 600)
     }
@@ -211,10 +211,20 @@ export class CreateComponent implements OnInit {
         console.log(npiForm)
 
         for (let field in this.uploadService.uploaders) {
-            npiForm[field].annex =
-                (this.uploadService.uploaders[field].queue as FileItem[]).map(
-                    fI => new FileDescriptor(field, fI.file)
-                )
+            console.log(field)
+            let annex = (this.uploadService.uploaders[field].queue as FileItem[]).map(
+                fI => new FileDescriptor(field, fI.file)
+            )
+            if (field.includes('oemActivities')) {
+                let subFields = field.split('.')
+                let actIndex = this.oemActivitiesFormArray.controls.findIndex(a => a.value.activity == subFields[1])
+                console.log(subFields, actIndex)
+                npiForm[subFields[0]][
+                    actIndex
+                ].annex = annex
+            } else
+                npiForm[field].annex = annex
+
         }
         console.log(npiForm)
         this.sendingForm = true
@@ -424,9 +434,16 @@ export class CreateComponent implements OnInit {
                     this.updateDateFields(activityControl)
                 })
 
-            activityControl.get('apply').valueChanges.subscribe(
-                apply => this.updateDateFields(activityControl))
+            activityControl.valueChanges.subscribe((res) => {
+                console.log(activityControl.value, this.createForm.value)
+            });
 
+
+            ((this.createForm.get('oemActivities') as FormArray).controls
+                .find((control) => control.value.activity == activityControl.value.activity) as FormGroup)
+                .valueChanges.subscribe(
+                    res => { console.log(res); this.createForm.updateValueAndValidity() }
+                )
             /*if (this.utils.getOemActivity('DEV').dep.includes(activityControl.get('activity').value)) {
                 activityControl.get('endDate').valueChanges.subscribe(
                     endDate => this.updateDevDate()
@@ -473,9 +490,10 @@ export class CreateComponent implements OnInit {
                         minDate: activityControl.get('startDate').value
                     })
 
-            this.oemActivitiesFormArray.controls.push(activityControl)
+            this.oemActivitiesFormArray.push(activityControl)
             //console.log(activityControl.value)
         });
+        this.createForm.setControl('oemActivities', this.oemActivitiesFormArray)
     }
 
     //===================== Model functions ================================
@@ -665,11 +683,9 @@ export class CreateComponent implements OnInit {
         })
         return deps
     }
-    //========================================================================
-
+    //======================================================================
     //===================== Model functions ================================
-
-    //========================================================================
+    //======================================================================
 
     toggleApplyAll(event) {
         //console.log(event.target.checked)

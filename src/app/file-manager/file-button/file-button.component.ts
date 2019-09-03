@@ -34,7 +34,7 @@ export class FileButtonComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-   }
+  }
 
   openFileAction(field) {
     console.log(field)
