@@ -1,16 +1,17 @@
 .pointer {
-    cursor: pointer;
-  }
-  
-  .spacer {
-    flex: 1 1 auto;
-  }
+  cursor: pointer;
+}
 
-  .bg-light-gray{
-    background-color: #eee
-  }
-  
-.body{
-    height: calc(100vh - 245px);
-    overflow-y: scroll;
+.spacer {
+  flex: 1 1 auto;
+}
+
+.bg-light-gray{
+  background-color: #eee
+}
+
+.body {
+  max-height: calc(100vh - 320px);
+  min-height: 400px;
+  overflow-y: scroll;
 }

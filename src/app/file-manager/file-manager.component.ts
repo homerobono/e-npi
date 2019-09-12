@@ -37,6 +37,7 @@ export class FileManagerComponent implements OnInit {
   editFlag: Boolean;
   title: string
   footer: string
+  showSelect: Boolean
   
   constructor(
     public modalRef: BsModalRef,

@@ -48,6 +48,7 @@
   <div class="modal-body pt-0 mt-0 body">
     <app-explorer [editFlag]='editFlag' [files]="files | async" [phantomFiles]="filesToUpload | async"
       [folders]="folders | async" [path]="relativePath" [canNavigateUp]="canNavigateUp"
+      [showSelect]='showSelect'
       (elementDownload)='downloadElement($event)' (folderAdded)="addFolder($event)"
       (elementRemoved)="removeElement($event)" (navigatedDown)="navigateToFolder($event)" (navigatedUp)="navigateUp()"
       (elementRenamed)="renameElement($event)" (elementMoved)="moveElement($event)" (preview)='openPreview($event)'>

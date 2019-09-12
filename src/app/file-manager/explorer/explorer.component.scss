@@ -1,64 +1,81 @@
 
 .cdk-global-overlay-container {
   z-index: 1041 !important;
-}    
-  .file-or-folder {
-    padding: 8px;
-    width: 107px;
-    height: 100px;
-    overflow: visible;
-  }
-  .file-or-folder:hover {
-    z-index: 10
-  }
-  
-  .file-or-folder-icon {
-    margin: 6px;
-    text-align: center;
-  }
+}
 
-  .file-label {
-    text-align: center;
-    height: 18px;
-    font-size: 16px;
-    line-height: 18px;
-    overflow: hidden;
-    word-wrap: break-word;
-    text-overflow:ellipsis;
-    white-space: nowrap;
-  }
-  
-  .size-label {
-    text-align: center;
-    height: 12px;
-    line-height: 12px;
-  }
+.file-or-folder {
+  padding: 8px;
+  width: 107px;
+  height: 100px;
+  overflow: visible;
+}
 
-  .file-or-folder:hover .file-label {
-    white-space: normal;
-    height:auto;
-  }
+.file-or-folder:hover {
+  z-index: 10
+}
 
-  .file-or-folder:hover .label {
-    background-color: rgba(white, 0.7);
-  }
+.file-or-folder-icon {
+  margin: 6px;
+  text-align: center;
+}
 
-  .spacer {
-    flex: 1 1 auto;
-  }
+.file-label {
+  text-align: center;
+  height: 18px;
+  font-size: 16px;
+  line-height: 18px;
+  overflow: hidden;
+  word-wrap: break-word;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  .bg-light-gray{
-    background-color: #eee
-  }
+.size-label {
+  text-align: center;
+  height: 12px;
+  line-height: 12px;
+}
 
-  .phantom{
-    opacity : 0.4
-  }
+.file-or-folder:hover .file-label {
+  white-space: normal;
+  height: auto;
+}
 
-  .upload {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-right: 7px;
-    font-size: 18pt;
-  }
+.file-or-folder:hover .label {
+  background-color: rgba(white, 0.7);
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.bg-light-gray{
+  background-color: #eee
+}
+
+.phantom{
+  opacity: 0.4
+}
+
+.upload {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-right: 7px;
+  font-size: 18pt;
+}
+
+.checkbox {
+  left: 6px;
+  position: absolute;
+  top: 0;
+}
+
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before{
+  background-color: #dee2e6ff;
+}
+
+.custom-checkbox .custom-control-input:checked~.custom-control-label::after{
+  background-image: url("/assets/cross-red.svg");
+  background-size: 10px;
+}

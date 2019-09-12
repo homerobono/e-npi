@@ -105,7 +105,8 @@ export class RevisionComponent implements OnInit {
       title: "Selecione os arquivos a serem removidos/substituídos:",
       cancelButton: "<i class='fa fa-sm fa-chevron-left'></i> Voltar",
       footer: "<i>Obs.: Os arquivos selecionados serão removidos para dar lugar aos novos. " +
-        "Se houver arquivos com nomes iguais, aos novos será adicionado o número da versão no final.</i>"
+        "Se houver arquivos com nomes iguais, aos novos será adicionado o número da versão no final.</i>",
+      showSelect: true
     }
     console.log("opening modal com", initialState)
     this.modalRef = this.modalService.show(
