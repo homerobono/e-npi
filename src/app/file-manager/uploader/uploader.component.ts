@@ -8,6 +8,7 @@ import { Globals } from 'config';
 import FileElement from '../../models/file.model';
 import { UtilService } from '../../services/util.service';
 import { environment } from '../../../environments/environment'
+import { Subject } from 'rxjs';
 
 const URL = environment.enpiServerUrl
 
@@ -18,10 +19,16 @@ const URL = environment.enpiServerUrl
 })
 export class UploaderComponent implements OnInit {
 
+  public onConfirm = new Subject<any>()
   public uploader: FileUploader = new FileUploader({})
   public field: string
   public hasBaseDropZoneOver: boolean = false;
   public totalSize: String
+  public options = {
+    ok: "Concluído",
+    cancel: "Cancelar"
+  }
+  title: string
 
   public fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
@@ -34,6 +41,7 @@ export class UploaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.field)
     if (this.uploadService.uploaders[this.field])
       this.uploader = this.uploadService.uploaders[this.field]
     this.uploader.onAfterAddingFile = (file: FileItem) => this.updateTotalSize()
@@ -49,6 +57,12 @@ export class UploaderComponent implements OnInit {
 
   confirm() {
     this.uploadService.addUploader(this.field, this.uploader)
+    this.onConfirm.next(this.uploader.queue)
+    this.modalRef.hide()
+  }
+
+  cancel() {
+    this.onConfirm.next(null)
     this.modalRef.hide()
   }
 

@@ -7,6 +7,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { FileManagerComponent } from '../file-manager.component';
 import { UploadService } from '../../services/upload.service';
 import { UtilService } from 'src/app/services/util.service';
+import { Globals } from 'config';
 
 @Component({
   selector: 'app-file-button',

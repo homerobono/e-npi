@@ -3,11 +3,14 @@ import { FormBuilder, FormGroup, FormArray, FormControl, AbstractControl } from 
 import { UtilService } from '../../services/util.service';
 import { ActivatedRoute } from '@angular/router';
 import { NpiComponent } from '../npi.component';
-import { BsDatepickerConfig, DatepickerConfig } from 'ngx-bootstrap';
+import { BsDatepickerConfig, DatepickerConfig, BsModalService } from 'ngx-bootstrap';
 import User from '../../models/user.model';
 import { UsersService } from '../../services/users.service';
 import Npi from '../../models/npi.model';
 import { UploadService } from 'src/app/services/upload.service';
+import { Globals } from 'config';
+import { of, throwError } from 'rxjs';
+import { RevisionComponent } from './revision/revision.component';
 
 const DAYS = 24 * 3600 * 1000
 
@@ -56,7 +59,8 @@ export class ActivitiesComponent implements OnInit {
         private route: ActivatedRoute,
         public npiComponent: NpiComponent,
         private userService: UsersService,
-        private uploadService: UploadService
+        private uploadService: UploadService,
+        private modalService: BsModalService
     ) {
         this.activitiesFormArray = fb.array([])
         this.requestsFormArray = fb.array([])
@@ -251,7 +255,7 @@ export class ActivitiesComponent implements OnInit {
     }
 
     updateActivityDates(activityControl: AbstractControl) {
-        let greatestDate = this.npi.getCriticalApprovalDate()
+        let greatestDate = this.npi.entry == 'oem' ? this.npi.clientApproval.signature.date : this.npi.getCriticalApprovalDate()
         let dependentActivities = this.getControlsDependencyActivities(activityControl)
         dependentActivities.forEach(dep => {
             let depEndDate = this.getControlActivityEndDate(dep)
@@ -290,7 +294,8 @@ export class ActivitiesComponent implements OnInit {
         let activityLabel = activityControl.get('activity').value
         //console.log(activityLabel)
         let dependenciesControls = this.getControlsDependencyActivities(activityControl)
-        let startDate = this.npi.getCriticalApprovalDate()
+        let startDate = this.npi.entry == 'oem' ? this.npi.clientApproval.signature.date : this.npi.getCriticalApprovalDate()
+
 
         if (dependenciesControls) {
             dependenciesControls.forEach(depActivity => {
@@ -360,7 +365,8 @@ export class ActivitiesComponent implements OnInit {
         //console.log(activityLabel)
         let activities = this.npi.activities
         let dependencies = this.getModelDependencyActivities(activityLabel)
-        let startDate = this.npi.getCriticalApprovalDate()
+        let startDate = this.npi.entry == 'oem' ? this.npi.clientApproval.signature.date : this.npi.getCriticalApprovalDate()
+
 
         if (dependencies) {
             dependencies.forEach(depActivity => {
@@ -630,6 +636,33 @@ export class ActivitiesComponent implements OnInit {
         this.updateParentForm()
     }
 
+    openRevisionRequest(activity: FormGroup) {
+        if (!confirm(
+            "Você deverá selecionar os novos arquivos para upload e marcar os antigos que serão substituídos. " +
+            "Essa alteração será submetida para aprovação pelo autor da NPI e pelo gestor do MPR. Se aprovada, " +
+            "uma nova versão da NPI será gerada.\n\n" +
+            "A solicitação só será submetida após a seleção dos arquivos e confirmação final.")
+        ) return;
+        this
+
+        let options = {}
+        options[activity.get("activity").value] = true
+        let modalRef = this.modalService.show(RevisionComponent, {
+            initialState: {
+                npi: this.npi,
+                options,
+                myActivities: this.npi.getActivitiesByUser(this.npiComponent.user).filter(a => a.closed)
+            },
+            class: 'modal-lg modal-dialog-centered upload-modal'
+        });
+
+        modalRef.content.onConfirm
+            .subscribe(res => {
+                if (res)
+                    console.log('Submitting request')
+            })
+    }
+
     fieldHasAnnex(activity: FormGroup) {
         let field = activity.get("activity").value
         /*console.log((this.uploadService.uploaders[`activities.${field}`] && 
@@ -640,5 +673,10 @@ export class ActivitiesComponent implements OnInit {
             this.uploadService.uploaders[`activities.${field}`].queue &&
             this.uploadService.uploaders[`activities.${field}`].queue.length) ||
             (activity.get("annex").value && activity.get("annex").value.length)
+    }
+
+    doesAnnexApply(activity: FormGroup) {
+        //console.log(activity.get("activity").value)
+        return this.utils.getActivities(this.npi.entry).find(stage => stage.value == activity.get("activity").value).annex
     }
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

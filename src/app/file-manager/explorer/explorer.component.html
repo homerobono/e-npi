@@ -4,17 +4,30 @@
       [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
       <div (click)="open($event, element)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer label'>
         <div class="fa fa-3x file-or-folder-icon" [ngClass]='iconFor(element)'></div>
-        <div class='file-label'>{{element.name}}</div>
+        <div class='file-label'>{{ element.name }}</div>
         <small class='text-secondary size-label' *ngIf='!element.isFolder()'>{{ element.sizeString }}</small>
       </div>
     </div>
+
+    <div class='file-or-folder text-center' *ngFor="let element of phantomFiles">
+      <div class='label'>
+        <div class=position-relative>
+          <div class="fa fa-3x file-or-folder-icon phantom" [ngClass]='iconFor(element)'>
+          </div>
+          <div class='fa fa-cloud-upload upload text-primary'></div>
+        </div>
+        <div class='file-label phantom'>{{ element.name }}</div>
+        <small class='text-secondary size-label phantom' *ngIf='!element.isFolder()'>{{ element.sizeString }}</small>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <mat-menu #rootMenu="matMenu" [overlapTrigger]="false">
   <ng-template matMenuContent let-element="element">
     <button mat-menu-item [matMenuTriggerFor]="moveToMenu" [matMenuTriggerData]="{self: element}"
-    [disabled]='!((canNavigateUp || availableFolders(element)) && editFlag)'>
+      [disabled]='!((canNavigateUp || availableFolders(element)) && editFlag)'>
       <mat-icon>open_with</mat-icon>
       <span>Mover Para...</span>
     </button>

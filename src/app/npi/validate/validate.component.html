@@ -1,6 +1,6 @@
 <div [formGroup]='validateForm'>
   <h4>
-    <b>Validação do Projeto/Produto</b>
+    <b>Validação do Projeto/Produto</b> ({{ npi.entry != 'oem' ? "MPR" : "COM"}})
   </h4>
   <div class="form-row" formGroupName='validation'>
     <div class='form-group col-xs-12 col-md-4 col-lg-3'>

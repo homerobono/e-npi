@@ -553,23 +553,6 @@ export class NpiComponent implements OnInit {
     } catch (e) { console.log(e) }
   }
 
-  openFileManager(field) {
-    const initialState = {
-      npiId: this.npi.id,
-      npiNumber: this.npi.number,
-      npiVersion: this.npi.version,
-      field,
-      editFlag: this.editFlag
-    }
-    console.log("opening modal com", initialState)
-    this.modalRef = this.modalService.show(
-      FileManagerComponent,
-      {
-        initialState,
-        class: "modal-lg"
-      });
-  }
-
   loadVersion(npi: Npi) {
     this.npi = npi
   }
@@ -637,11 +620,30 @@ export class NpiComponent implements OnInit {
     })
   }
 
-  openFileUploader(field: String) {
+  openFileUploader(field: String, options?: {}) {
     this.modalRef = this.modalService.show(UploaderComponent, {
-      initialState: { field },
+      initialState: { field, options },
       class: 'modal-lg modal-dialog-centered upload-modal'
     });
+    return this.modalRef.content.onConfirm
+  }
+
+  openFileManager(field) {
+    const initialState = {
+      npiId: this.npi.id,
+      npiNumber: this.npi.number,
+      npiVersion: this.npi.version,
+      field,
+      editFlag: this.editFlag
+    }
+    console.log("opening modal com", initialState)
+    this.modalRef = this.modalService.show(
+      FileManagerComponent,
+      {
+        initialState,
+        class: "modal-lg"
+      });
+    return this.modalRef.content.onConfirm
   }
 
   openSendingFormModal() {
@@ -680,7 +682,10 @@ export class NpiComponent implements OnInit {
           )) ||
           (this.npi.stage == 4 && (
             (!this.npi.isComplete() && this.iHavePendingTask()) ||
-            (this.npi.isComplete() && (this.user.department == "MPR" || this.amITheOwner()))
+            (this.npi.isComplete() && (
+              (this.npi.entry != 'oem' && this.user.department == "MPR") ||
+              (this.npi.entry == 'oem' && this.user.department == "COM")
+            ))
           ))
         ))
         || // Usuário Master
@@ -738,6 +743,13 @@ export class NpiComponent implements OnInit {
 
   canCloseNpi() {
     return (this.npiForm.get("validation") != null && this.npiForm.get("validation").valid && this.amITheOwner())
+  }
+
+
+  toggleNewVersion() {
+    this.newFormVersionFlag = !this.newFormVersionFlag
+    this.newFormVersion.next(this.newFormVersionFlag)
+    window.scrollTo({ left: 0, top: 120, behavior: 'smooth' });
   }
 
   scrollTo(where) {

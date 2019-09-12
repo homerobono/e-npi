@@ -37,7 +37,6 @@
   .file-or-folder:hover .file-label {
     white-space: normal;
     height:auto;
-    cursor: pointer;
   }
 
   .file-or-folder:hover .label {
@@ -50,4 +49,16 @@
 
   .bg-light-gray{
     background-color: #eee
+  }
+
+  .phantom{
+    opacity : 0.4
+  }
+
+  .upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 7px;
+    font-size: 18pt;
   }

@@ -47,7 +47,7 @@
               {{ utils.getActivity(activity.get("activity").value).label }}
             </td>
             <td [appActivityRow]='activity'>
-              {{ npi.activities[i].dept }}
+              <span data-toggle="tooltip" [title]="utils.getDepartment(npi.activities[i].dept)?.label">{{ npi.activities[i].dept }}</span>
               <select class='custom-select' formControlName='responsible'>
                 <option *ngFor='let user of users[npi.activities[i].dept]; let first=first' [selected]='first' value='{{ user._id }}'>{{ user.firstName }}
                   {{ user.lastName }}</option>
@@ -80,7 +80,7 @@
             </td>
             <td class=signature *ngIf='npi.stage>=4'>
               <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'
-                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag || !fieldHasAnnex(activity)'
+                *ngIf='!activity.get("closed").value && canCloseActivity(activity)' [disabled]='!npiComponent.editFlag || (!fieldHasAnnex(activity) && doesAnnexApply(activity))'
                 data-toggle="tooltip" data-placement="bottom" title="Salvar anexos e concluir atividade">
                 <i class='fa fa-fw fa-check'></i>
               </button>
@@ -93,8 +93,15 @@
                 <i class='fa fa-clock-o fa-lg text-warning'></i>
               </span>
               <span *ngIf='activity.get("closed").value'>
-                <i class='fa fa-check fa-sm text-success'></i>
-                {{ signatures[i] }}
+                <div>
+                  <i class='fa fa-check fa-sm text-success'></i>
+                  {{ signatures[i] }}
+                </div>
+                <div>
+                  <btn *ngIf='amIResponsible(activity) || (npiComponent.user.level == 1 && npiComponent.user.department == activity.get("dept").value)'
+                  (click)='openRevisionRequest(activity)'
+                  class='btn btn-sm btn-outline-secondary m-1'>Incluir Alteração/Revisão</btn>
+                </div>
               </span>
             </td>
             <td *ngIf='(npi.stage==2 || npi.stage==3) && npiComponent.canIChangeActivities'>

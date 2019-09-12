@@ -23,6 +23,7 @@ export class ExplorerComponent {
   ) { }
 
   @Input() files: FileElement[];
+  @Input() phantomFiles: FileElement[];
   @Input() folders: FileElement[];
   @Input() canNavigateUp: string;
   @Input() path: string;

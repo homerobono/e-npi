@@ -57,6 +57,7 @@ import { ForbiddenComponent } from './user/forbidden/forbidden.component';
 import { RequestComponent } from './npi/activities/request/request.component';
 import { MigrationToolComponent } from './npi/migration-tool/migration-tool.component';
 import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migration-edit.component';
+import { RevisionComponent } from './npi/activities/revision/revision.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migr
     ToolbarComponent,
     BlinkDirective,
     ActivityRowDirective,
+    RevisionComponent
   ],
   imports: [
     BrowserModule,
@@ -133,6 +135,7 @@ import { MigrationEditComponent } from './npi/migration-tool/migration-edit/migr
     NpiChooserModalComponent,
     UploaderComponent,
     SendingFormModalComponent,
+    RevisionComponent
   ]
 })
 export class AppModule { }

@@ -45,7 +45,6 @@
     text-shadow: 2px 4px 7px #ddd
 }
 
-
 .npi:hover {
     background-color: #eee;
     cursor: pointer
@@ -131,4 +130,15 @@
 
 .status-order span:hover {
     font-size: 1rem; 
+}
+
+.progress {
+    margin: 0 20px;
+    position: relative;
+    background: #cfcfcf
+}
+
+.progress .value {
+    position: absolute;
+    width: 100%
 }

@@ -5,7 +5,7 @@ import { FileService } from '../services/file.service';
 import { saveAs } from 'file-saver'
 import { BsModalRef, BsModalService, ModalDirective } from 'ngx-bootstrap';
 import { InputDialogComponent } from './modals/input-dialog/input-dialog.component';
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader, FileItem } from 'ng2-file-upload';
 import { Globals } from 'config';
 import { UploadService } from '../services/upload.service';
 import { PreviewComponent } from './modals/preview/preview.component';
@@ -13,6 +13,7 @@ import { UploaderComponent } from './uploader/uploader.component';
 import { DownloadingModalComponent } from './modals/download-component/downloading-modal.component';
 import { HttpEventType, HttpEvent } from '@angular/common/http';
 import { UtilService } from '../services/util.service';
+import { Subject, of } from 'rxjs';
 
 @Component({
   selector: 'app-file-manager',
@@ -21,7 +22,9 @@ import { UtilService } from '../services/util.service';
 })
 export class FileManagerComponent implements OnInit {
 
+  onConfirm = new Subject<any>()
   files: Observable<FileElement[]>;
+  filesToUpload: Observable<FileElement[]>;
   folders: Observable<FileElement[]>;
   rootPath: String;
   npiId: String;
@@ -31,8 +34,10 @@ export class FileManagerComponent implements OnInit {
   relativePath: String;
   currentPath: String;
   canNavigateUp = false;
-  editFlag: Boolean
-
+  editFlag: Boolean;
+  title: string
+  footer: string
+  
   constructor(
     public modalRef: BsModalRef,
     public downloadModalRef: BsModalRef,
@@ -115,7 +120,7 @@ export class FileManagerComponent implements OnInit {
     this.downloadModalRef.content.downloading = true
     this.downloadModalRef.content.downloadObservable =
       //this.fileService.getData(this.currentPath, element.name)
-    this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, ''), new FileElement({name: fileName}))
+      this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, ''), new FileElement({ name: fileName }))
   }
 
   downloadElement(element: FileElement) {
@@ -128,7 +133,7 @@ export class FileManagerComponent implements OnInit {
     this.downloadModalRef.content.downloading = true
     this.downloadModalRef.content.downloadObservable =
       //this.fileService.getData(this.currentPath, element.name)
-    this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, element.name), element)
+      this.downloadModalRef.content.startUpload(this.fileService.download(this.currentPath, element.name), element)
   }
 
   removeElement(element: FileElement) {
@@ -156,6 +161,11 @@ export class FileManagerComponent implements OnInit {
 
   updateFileQuery() {
     this.files = this.fileService.list(this.currentPath, null)
+    if (this.uploader.uploaders[this.field as string] && this.uploader.uploaders[this.field as string].queue)
+      this.filesToUpload = of(
+        this.uploader.uploaders[this.field as string].queue
+          .map((fI: FileItem) => new FileElement(fI.file))
+      )
     this.folders = this.files.map((files) => files.filter(e => e.isFolder()))
   }
 
@@ -205,6 +215,21 @@ export class FileManagerComponent implements OnInit {
       keyboard: false
     })
     this.downloadModalRef.content.downloading = true
+  }
+
+  cancel() {
+    this.onConfirm.next(false)
+    this.modalRef.hide()
+  }
+
+  close() {
+    this.onConfirm.next(null)
+    this.modalRef.hide()
+  }
+
+  confirm() {
+    this.onConfirm.next(true)
+    this.close()
   }
 
 }

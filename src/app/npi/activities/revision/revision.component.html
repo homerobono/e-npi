@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">Submeter Revisão</h4>
+</div>
+<div class="modal-body" [formGroup]='revisionForm'>
+  <h5>Selecione as atividades e os respectivos documentos que
+    deseja atualizar:
+  </h5>
+  <div class='row align-items-center' [formGroupName]='activity.activity'
+    *ngFor='let activity of myActivities; index as i'>
+    <div class="col">
+      <div class="custom-control custom-checkbox custom-control-inline w-100 pointer">
+        <input formControlName='apply' type="checkbox" class="custom-control-input" [id]='"revApply"+i'>
+        <label for=revApply{{i}} class="custom-control-label w-100">
+          {{ activity.number }} - {{ utils.getActivity(activity.activity).label }}
+        </label>
+      </div>
+    </div>
+    <div class='col-auto p-0'>
+      <button (click)='openActivityFileSelector(activity)' class='btn btn-light btn-lg update-button'
+        [disabled]='!revisionForm?.get(activity.activity)?.get("apply")?.value'>
+        <i class='fa fa-3x fa-file'>
+          <i class='fa fa-arrow-up'></i>
+        </i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Cancelar</button>
+  <button type="submit" class="btn btn-primary" (click)="confirm()"
+    [disabled]='!willBeAnyActivityUpdated()'>Confirmar</button>
+</div>

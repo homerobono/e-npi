@@ -64,7 +64,7 @@
             <td>
               <app-file-button [npiVersion]='npi.version' [npiNumber]='npi.number' *ngIf='utils.getOemActivity(activity.get("activity").value).annex' 
               [fieldControl]='activity' [fieldLabel]='activity.get("activity").value' [parent]='"oemActivities"' [npiId]='npi.id'
-                [editFlag]='editFlag' [canEdit]='canCloseActivity(activity)' [hasError]='fieldHasErrors(i+".annex")'></app-file-button>
+                [editFlag]='editFlag && npi.stage == 1' [canEdit]='canCloseActivity(activity)' [hasError]='fieldHasErrors(i+".annex")'></app-file-button>
             </td>
             <!--td class=signature>
                 <button type=button class='btn btn-block btn-light text-secondary shadow-none m-0' (click)='closeActivity(activity)'

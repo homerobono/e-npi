@@ -140,7 +140,8 @@
                   {{ npi.number }}
                 </th>
                 <td [ngClass]='{"strike": !npi.stage}'>
-                  <i class='fa fa-user' *ngIf='npi.requester == me._id' data-toggle="tooltip" data-placement="top" title="Criada por mim"></i>
+                  <i class='fa fa-user' *ngIf='npi.requester == me._id' data-toggle="tooltip" data-placement="top"
+                    title="Criada por mim"></i>
                   {{ npi.name }}
                 </td>
                 <td [ngClass]='{"strike": !npi.stage}'>
@@ -171,19 +172,29 @@
                     <i> {{ utils.getStatus(npi.stage) }} </i>
                   </div>
                   <div *ngIf='npi.stage == 2'>
-                    <i style="vertical-align: middle" class='fa fa-2x' *ngFor='let crit of npi.critical; index as i'
-                      data-toggle="tooltip" data-placement="top" title="{{ utils.getDepartment(crit.dept)?.label }}"
-                      [ngClass]='{
-                        "fa-check-circle text-success": crit.status == "accept",
-                        "fa-times-circle text-danger": crit.status == "deny",
-                        "fa-circle text-gray": !crit.status
+                    <i style="vertical-align: middle" class='fa fa-sm fa-fw text-gray'
+                      *ngFor='let crit of npi.critical; index as i' data-toggle="tooltip" data-placement="top"
+                      title="{{ utils.getDepartment(crit.dept)?.label }}" [ngClass]='{
+                        "fa-check text-secondary": crit.status == "accept",
+                        "fa-times text-danger": crit.status == "deny",
+                        "fa-circle": !crit.status
                       }'></i>
-                    <i style="vertical-align: middle" class='fa fa-2x fa-fw' *ngIf='npi.entry == "oem"'
+                    <i style="vertical-align: middle" class='fa fa-sm fa-fw' *ngIf='npi.entry == "oem"'
                       data-toggle="tooltip" data-placement="top" title="Aprovação do cliente" [ngClass]='{
-                        "fa-check-circle text-purple": npi.clientApproval.approval == "accept",
-                        "fa-times-circle text-purple": npi.clientApproval.approval == "deny",
+                        "fa-check text-purple": npi.clientApproval.approval == "accept",
+                        "fa-times text-purple": npi.clientApproval.approval == "deny",
                         "fa-circle text-light-purple ": !npi.clientApproval.approval
                       }'></i>
+                  </div>
+                  <div *ngIf='npi.stage == 4' class="progress">
+                    <div class="progress-bar text-center" role="progressbar"
+                      [ngClass]="npi.developmentProgress == 1 ? 'bg-primary' : 'bg-success'"
+                      [ngStyle]="{'width': 100*npi.developmentProgress+'%'}" aria-valuenow="25" aria-valuemin="0"
+                      aria-valuemax="100">
+                      <span class=value>
+                        {{npi.closedActivities.length}}/{{npi.applyableActivities.length}}
+                      </span>
+                    </div>
                   </div>
                 </td>
                 <td>

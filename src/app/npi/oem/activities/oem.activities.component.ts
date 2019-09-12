@@ -499,6 +499,7 @@ export class OemActivitiesComponent implements OnInit {
             else this.signatures[i] = null
         }
     }
+    
     fieldHasAnnex(activity: FormGroup) {
         let field = activity.get("activity").value
         /*console.log((this.uploadService.uploaders[`activities.${field}`] && 

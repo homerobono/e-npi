@@ -120,7 +120,7 @@ class Npi {
     };
     activities: Array<{
         _id: String,
-        activity: String, skype
+        activity: String,
         term: Number,
         dept: String,
         responsible: any,
@@ -253,6 +253,23 @@ class Npi {
             }
         }
     }
+
+    public get applyableActivities(): Array<any> {
+        return this.activities.filter(a => a.apply)
+    }
+
+    public get developmentProgress(): number {
+        return this.activities.filter(a => a.apply && a.closed).length / this.activities.filter(a => a.apply).length
+    }
+
+    public get closedActivities(): Array<any> {
+        return this.activities.filter(a => a.apply && a.closed)
+    }
+
+    public getActivitiesByUser(user: User): Array<any> {
+        return this.activities.filter(a => a.responsible == user._id || (a.dept == user.department && user.level == 1))
+    }
+
     public amITheOwner(userId): Boolean {
         return this.requester._id == userId
     }

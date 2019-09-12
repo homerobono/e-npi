@@ -2,8 +2,8 @@
   <div class="modal-header bg-light-gray">
     <div class='container'>
       <div class='row justify-content-end'>
-        <div class='col'>
-          <button type="button" class="close pb-2 mb-0" aria-label="Close" (click)="modalRef.hide()">
+        <div class='col-auto'>
+          <button type="button" class="close pb-2 mb-0" aria-label="Close" (click)="close()">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -11,7 +11,8 @@
       <div class="btn-toolbar" role="toolbar">
         <div class='input-group mr-2'>
           <div class="input-group-prepend">
-            <button type='button' class='input-group-text btn btn-light shadow-none' (click)="navigateUp()" [disabled]='!canNavigateUp'>
+            <button type='button' class='input-group-text btn btn-light shadow-none' (click)="navigateUp()"
+              [disabled]='!canNavigateUp'>
               <span class='fa fa-arrow-left'></span>
             </button>
           </div>
@@ -20,44 +21,41 @@
             <button type='button' class='btn btn-light shadow-none text-primary' (click)='updateFileQuery()'>
               <span class='pointer fa fa-refresh'></span>
             </button>
-            <button type='button' class='btn btn-light shadow-none pr-2' (click)="openNewFolderDialog()" [disabled]='!editFlag'>
+            <button type='button' class='btn btn-light shadow-none pr-2' (click)="openNewFolderDialog()"
+              [disabled]='!editFlag'>
               <span class="fa fa-folder text-primary">
               </span>
-              <span style="position:relative; left:-10px; top: -2px; font-size: 8px" class='fa fa-plus text-light'></span>
+              <span style="position:relative; left:-10px; top: -2px; font-size: 8px"
+                class='fa fa-plus text-light'></span>
             </button>
           </div>
         </div>
         <div class='btn-group' role='group'>
-          <button type='button' class='btn btn-primary' (click)='downloadAll()' data-toggle="tooltip" data-placement="top"
-          title="Baixar todos os arquivos">
+          <button type='button' class='btn btn-success' (click)='downloadAll()' data-toggle="tooltip"
+            data-placement="top" title="Baixar todos os arquivos">
             <span class='fa fa-download fa-fw'></span>
           </button>
-          <button type='button' class="btn btn-success" (click)='openUploadModal()' [disabled]='!editFlag'>
+          <button type='button' class="btn btn-primary" (click)='openUploadModal()' [disabled]='!editFlag'>
             <span class='fa fa-upload fa-fw' data-toggle="tooltip" data-placement="top"
-            title="Selecionar arquivos para upload"></span>
+              title="Selecionar arquivos para upload"></span>
           </button>
         </div>
       </div>
+      <h5 class='mt-3 mb-0' [innerHTML]=title>
+      </h5>
     </div>
   </div>
   <div class="modal-body pt-0 mt-0 body">
-    <app-explorer 
-      [editFlag]='editFlag'
-      [files]="files | async" 
-      [folders]="folders | async"
-      [path]="relativePath" 
-      [canNavigateUp]="canNavigateUp"
-      (elementDownload)='downloadElement($event)' 
-      (folderAdded)="addFolder($event)"
-      (elementRemoved)="removeElement($event)" 
-      (navigatedDown)="navigateToFolder($event)" 
-      (navigatedUp)="navigateUp()"
-      (elementRenamed)="renameElement($event)" 
-      (elementMoved)="moveElement($event)"
-      (preview)='openPreview($event)' >
+    <app-explorer [editFlag]='editFlag' [files]="files | async" [phantomFiles]="filesToUpload | async"
+      [folders]="folders | async" [path]="relativePath" [canNavigateUp]="canNavigateUp"
+      (elementDownload)='downloadElement($event)' (folderAdded)="addFolder($event)"
+      (elementRemoved)="removeElement($event)" (navigatedDown)="navigateToFolder($event)" (navigatedUp)="navigateUp()"
+      (elementRenamed)="renameElement($event)" (elementMoved)="moveElement($event)" (preview)='openPreview($event)'>
     </app-explorer>
   </div>
   <div class="modal-footer bg-light-gray">
-    <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Concluído</button>
+    <button *ngIf='cancelButton' type="button" class="btn btn-secondary" (click)="cancel()" [innerHTML]=cancelButton></button>
+    <div class='p-2' [innerHTML]=footer></div>
+    <button type="button" class="btn btn-primary" (click)="confirm()">Concluído</button>
   </div>
 </div>
