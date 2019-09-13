@@ -8,7 +8,7 @@ class FileElement {
     constructor(data){
         this.name = data.name
         this.type = data.type
-        this.date = data.date
+        this.date = data.date ? data.date : data.lastModifiedDate
         this.rights = data.rights
         this.size = data.size
     }

@@ -16,9 +16,10 @@
       </div>
     </div>
     <div class='col-auto p-0'>
-      <button (click)='openActivityFileSelector(activity)' class='btn btn-light btn-lg update-button'
-        [disabled]='!revisionForm?.get(activity.activity)?.get("apply")?.value'>
-        <i class='fa fa-3x fa-file'>
+      <button
+        (click)='isUpdateConfirmed(activity) ? openActivityUpdateSummary(activity) : openActivityFileSelector(activity)'
+        class='btn btn-light btn-lg update-button'>
+        <i class='fa fa-3x fa-file' [ngClass]='isUpdateConfirmed(activity) ? "text-primary" : "text-secondary"'>
           <i class='fa fa-arrow-up'></i>
         </i>
       </button>

@@ -14,6 +14,7 @@ import { DownloadingModalComponent } from './modals/download-component/downloadi
 import { HttpEventType, HttpEvent } from '@angular/common/http';
 import { UtilService } from '../services/util.service';
 import { Subject, of } from 'rxjs';
+import { element } from '@angular/core/src/render3/instructions';
 
 @Component({
   selector: 'app-file-manager',
@@ -25,6 +26,7 @@ export class FileManagerComponent implements OnInit {
   onConfirm = new Subject<any>()
   files: Observable<FileElement[]>;
   filesToUpload: Observable<FileElement[]>;
+  filesToRemove: FileElement[];
   folders: Observable<FileElement[]>;
   rootPath: String;
   npiId: String;
@@ -38,6 +40,7 @@ export class FileManagerComponent implements OnInit {
   title: string
   footer: string
   showSelect: Boolean
+  confirmButton: string = "Fechar"
   
   constructor(
     public modalRef: BsModalRef,
@@ -160,12 +163,17 @@ export class FileManagerComponent implements OnInit {
     )
   }
 
+  setFilesToRemove(elements: FileElement[]){
+    console.log(elements)
+    this.filesToRemove = elements
+  }
+
   updateFileQuery() {
     this.files = this.fileService.list(this.currentPath, null)
     if (this.uploader.uploaders[this.field as string] && this.uploader.uploaders[this.field as string].queue)
       this.filesToUpload = of(
         this.uploader.uploaders[this.field as string].queue
-          .map((fI: FileItem) => new FileElement(fI.file))
+          .map((fI: FileItem) => new FileElement(fI._file))
       )
     this.folders = this.files.map((files) => files.filter(e => e.isFolder()))
   }
@@ -229,8 +237,8 @@ export class FileManagerComponent implements OnInit {
   }
 
   confirm() {
-    this.onConfirm.next(true)
-    this.close()
+    this.onConfirm.next(this.filesToRemove ? this.filesToRemove : true)
+    this.modalRef.hide()
   }
 
 }

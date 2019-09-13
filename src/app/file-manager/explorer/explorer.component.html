@@ -1,18 +1,18 @@
 <div class="container-fluid">
   <div class='row'>
     <div class='file-or-folder text-center' *ngFor="let element of files; index as i" [matMenuTriggerFor]="rootMenu"
-      [matMenuTriggerData]="{element: element}" #menuTrigger="matMenuTrigger">
-      <div (click)="open($event, element)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer label'>
+      [matMenuTriggerData]="{element: element.file}" #menuTrigger="matMenuTrigger">
+      <div (click)="open($event, element.file)" (contextmenu)="openMenu($event, menuTrigger)" class='pointer label'>
         <div class=position-relative>
-          <div class="fa fa-3x file-or-folder-icon" [ngClass]='iconFor(element)'></div>
-          <div *ngIf='showSelect' (click)='$event.stopPropagation()'
+          <div class="fa fa-3x file-or-folder-icon" [ngClass]='iconFor(element.file)'></div>
+          <div *ngIf='showSelect' (click)='markForRemoval(element)'
             class="custom-control custom-checkbox custom-control-inline pointer checkbox">
-            <input type="checkbox" class="custom-control-input" id=checkbox-{{i}}>
+            <input type="checkbox" class="custom-control-input" id=checkbox-{{i}} [ngModel]='element.remove' >
             <label class='custom-control-label pointer' for=checkbox-{{i}}></label>
           </div>
         </div>
-        <div class='file-label'>{{ element.name }}</div>
-        <small class='text-secondary size-label' *ngIf='!element.isFolder()'>{{ element.sizeString }}</small>
+        <div class='file-label'>{{ element.file.name }}</div>
+        <small class='text-secondary size-label' *ngIf='!element.file.isFolder()'>{{ element.file.sizeString }}</small>
       </div>
     </div>
 

@@ -17,19 +17,41 @@ import { PreviewComponent } from '../modals/preview/preview.component';
 export class ExplorerComponent {
 
   modalRef: BsModalRef
+  files: Array<{ remove: boolean, file: FileElement }>
+  phantomFiles: FileElement[];
 
-  constructor(
-    private modalService: BsModalService,
-  ) { }
+  @Input() set filesSetter(files) {
+    if (files) {
+      this.files = files.map(f => {
+        return {
+          remove: this.similarFileExists(f, this.phantomFiles),
+          file: f
+        }
+      })
+      this.markForRemoval()
+    }
+    //this.filesToRemove.emit(this.setFilesToRemove(files, this.phantomFiles))
+  }
 
-  @Input() files: FileElement[];
-  @Input() phantomFiles: FileElement[];
+  @Input() set phantomFilesSetter(phantomFiles) {
+    this.phantomFiles = phantomFiles
+    if (phantomFiles && this.files) {
+      this.files = this.files.map(f => {
+        f.remove = this.similarFileExists(f.file, phantomFiles)
+        return f
+      })
+      this.markForRemoval()
+    }
+    //this.filesToRemove.emit(this.setFilesToRemove(this.files, phantomFiles))
+  }
+
   @Input() folders: FileElement[];
   @Input() canNavigateUp: string;
   @Input() path: string;
   @Input() editFlag: Boolean;
   @Input() showSelect: Boolean;
 
+  @Output() filesToRemove = new EventEmitter<FileElement[]>();
   @Output() elementDownload = new EventEmitter<FileElement>();
   @Output() preview = new EventEmitter<FileElement>();
   @Output() folderAdded = new EventEmitter<{ name: string }>();
@@ -39,9 +61,28 @@ export class ExplorerComponent {
   @Output() navigatedDown = new EventEmitter<string>();
   @Output() navigatedUp = new EventEmitter();
 
+  constructor(
+    private modalService: BsModalService,
+  ) { }
+
   ngOnInit() {
     //setTimeout(() => console.log(this.folders), 400)
     //setTimeout(() => console.log(this.files), 400)
+  }
+
+  markForRemoval() {
+    event.stopPropagation();
+    this.filesToRemove.emit(this.files.filter(f => f.remove).map(f => f.file))
+  }
+
+  similarFileExists(file, phantomFiles) {
+    if (file && phantomFiles)
+      return phantomFiles.filter(pF => {
+        let fName = file.name.replace(/[ _\-\.]/g, '').toLowerCase()
+        let pFName = pF.name.replace(/[ _\-\.]/g, '').toLowerCase()
+        console.log(fName, pFName)
+        return fName == pFName
+      }).length > 0
   }
 
   downloadElement(element: FileElement) {

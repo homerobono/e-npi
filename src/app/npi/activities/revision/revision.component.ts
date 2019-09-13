@@ -9,6 +9,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { NpiComponent } from '../../npi.component';
 import { UploaderComponent } from 'src/app/file-manager/uploader/uploader.component';
 import { FileManagerComponent } from 'src/app/file-manager/file-manager.component';
+import FileElement from 'src/app/models/file.model';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-revision',
@@ -60,31 +62,74 @@ export class RevisionComponent implements OnInit {
   }
 
   activityFileSelector(activity) {
+    let filesToUpload
     return this.openFileUploader(
       "activities." + activity.activity,
       { ok: "Prosseguir", cancel: "Cancelar" }
     )
-      .concatMap((res: boolean) => {
-        console.log("upload files selected", res)
-        this.revisionForm.get(activity.activity).get("annex").setValue(res)
-        if (res) {
-          return this.openFileManager("activities." + activity.activity)
+      .concatMap(upload => {
+        console.log("upload files selected", upload)
+        this.revisionForm.get(activity.activity).get("annex").setValue(upload)
+        if (upload) {
+          console.log(upload)
+          filesToUpload = upload.map(fI => new FileElement(fI._file))
+          return this.openFileManager("activities." + activity.activity, {
+            title: "Selecione os arquivos a serem removidos/substituídos:",
+            cancelButton: "<i class='fa fa-sm fa-chevron-left'></i> Voltar",
+            confirmButton: "<i class='fa fa-sm fa-check'></i> Concluído",
+            footer: "<i>Obs.: Os arquivos selecionados serão removidos para dar lugar aos novos. " +
+              "Se houver arquivos com nomes iguais, aos novos será adicionado o número da versão no final.</i>",
+            showSelect: true
+          })
         } else
           return throwError("Canceled by user")
       })
       .concatMap(res => {
         if (res) {
-          console.log("confirm update")
-          return of(true)
+          console.log("confirm update", res)
+          return of({ remove: res, upload: filesToUpload })
         }
         else if (res != null) {
-          console.log("going back")
+          console.log("going back", res)
           return this.activityFileSelector(activity)
         } else {
-          console.log("cancel update")
+          console.log("cancel update", res)
           return of(null)
         }
       })
+      .take(1).map(
+        (res: { "remove", "upload" }) => {
+          console.log("Files selected successfully!", res)
+          this.revisionForm.get(activity.activity).patchValue({
+            annex: res.upload ? res.upload : null,
+            replace: res.remove ? res.remove : null
+          })
+          if (res.upload)
+            this.revisionForm.get(activity.activity).patchValue({
+              apply: true
+            })
+        }
+      )
+  }
+
+  openActivityUpdateSummary(activity) {
+    this.openFileManager("activities." + activity.activity, {
+      title: "Resumo da atualização:",
+      cancelButton: "<i class='fa fa-sm fa-pencil'></i> Editar",
+      confirmButton: "Fechar",
+      footer: "<i>Obs.: Os arquivos selecionados serão removidos para dar lugar aos novos. " +
+        "Se houver arquivos com nomes iguais, aos novos será adicionado o número da versão no final.</i>",
+      showSelect: true
+    })
+      .concatMap(res => {
+        if (res || res == null) {
+          console.log("just close", res)
+          return of(null)
+        } else {
+          console.log("edit", res)
+          return this.activityFileSelector(activity)
+        }
+      }).subscribe()
   }
 
   openFileUploader(field: String, options?: {}) {
@@ -95,18 +140,14 @@ export class RevisionComponent implements OnInit {
     return modalRef.content.onConfirm
   }
 
-  openFileManager(field) {
+  openFileManager(field, options) {
     const initialState = {
       npiId: this.npi.id,
       npiNumber: this.npi.number,
       npiVersion: this.npi.version,
       field,
       editFlag: false,
-      title: "Selecione os arquivos a serem removidos/substituídos:",
-      cancelButton: "<i class='fa fa-sm fa-chevron-left'></i> Voltar",
-      footer: "<i>Obs.: Os arquivos selecionados serão removidos para dar lugar aos novos. " +
-        "Se houver arquivos com nomes iguais, aos novos será adicionado o número da versão no final.</i>",
-      showSelect: true
+      ...options,
     }
     console.log("opening modal com", initialState)
     this.modalRef = this.modalService.show(
@@ -120,6 +161,11 @@ export class RevisionComponent implements OnInit {
 
   willBeAnyActivityUpdated() {
     return Object.values(this.revisionForm.value).some(o => o['apply'] && o['annex'] && o['annex'].length)
+  }
+
+  isUpdateConfirmed(activity) {
+    let annexValue = this.revisionForm.get(activity.activity).get("annex").value
+    return annexValue ? annexValue.length > 0 : null
   }
 
   confirm() {
