@@ -11,6 +11,7 @@ import { UploadService } from 'src/app/services/upload.service';
 import { Globals } from 'config';
 import { of, throwError } from 'rxjs';
 import { RevisionComponent } from './revision/revision.component';
+import { environment } from '../../../environments/environment'
 
 const DAYS = 24 * 3600 * 1000
 
@@ -23,6 +24,8 @@ export class ActivitiesComponent implements OnInit {
 
     npi: Npi
     editFlag: Boolean
+    isEnvProduction: Boolean = environment.production
+
     @Input() set npiSetter(npi: Npi) {
         this.npi = npi;
         //console.log(this.npi.getInStockDate())

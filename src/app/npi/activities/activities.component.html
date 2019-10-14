@@ -98,7 +98,7 @@
                   {{ signatures[i] }}
                 </div>
                 <div>
-                  <btn *ngIf='amIResponsible(activity) || (npiComponent.user.level == 1 && npiComponent.user.department == activity.get("dept").value)'
+                  <btn *ngIf='!isEnvProduction && (amIResponsible(activity) || (npiComponent.user.level == 1 && npiComponent.user.department == activity.get("dept").value))'
                   (click)='openRevisionRequest(activity)'
                   class='btn btn-sm btn-outline-secondary m-1'>Incluir Alteração/Revisão</btn>
                 </div>
