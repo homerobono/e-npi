@@ -37,9 +37,10 @@ actionLabel : String = "Solicitar Alteração de Senha"
   ngOnInit() {
   }
 
-  sendResetToken(email){
+  sendResetToken(form){
     this.tokenResponse = null;
-    this.authService.sendToken(email)
+    console.log(form.email)
+    this.authService.sendToken(form.email)
     .subscribe(() => {
       this.tokenResponse='Um e-mail foi enviado para o endereço especificado com um link e instruções para alterar sua senha.';
       this.tokenSent = true;
