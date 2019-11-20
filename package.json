@@ -26,7 +26,7 @@
     "@auth0/angular-jwt": "^2.0.0",
     "@ng-bootstrap/ng-bootstrap": "^2.2.2",
     "@ngtools/webpack": "^6.2.1",
-    "angular": "^1.7.4",
+    "angular": "^1.7.9",
     "angular-progress-http": "^1.0.0",
     "angular2-text-mask": "^9.0.0",
     "bootstrap": "^4.1.3",
